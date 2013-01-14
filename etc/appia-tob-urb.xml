@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE appia PUBLIC "-//DTDName//DTD//EN"
+         "appiaxml.dtd">
+ 
+
+<appia>
+
+<template name="tcp_total_services">
+	<session name="tcp" sharing="global">
+		<protocol>net.sf.appia.protocols.tcpcomplete.TcpCompleteLayer</protocol>
+	</session>
+	<session name="gbl" sharing="global">
+		<protocol>net.sf.appia.protocols.group.bottom.GroupBottomLayer</protocol>
+	</session>
+	<session name="gol" sharing="global">
+		<protocol>net.sf.appia.protocols.group.heal.GossipOutLayer</protocol>
+	</session>
+	<session name="suspectl" sharing="global">
+		<protocol>net.sf.appia.protocols.group.suspect.SuspectLayer</protocol>
+	</session>
+	<session name="intral" sharing="global">
+		<protocol>net.sf.appia.protocols.group.intra.IntraLayer</protocol>
+	</session>
+	<session name="interl" sharing="global">
+		<protocol>net.sf.appia.protocols.group.inter.InterLayer</protocol>
+	</session>
+	<session name="hl" sharing="global">
+		<protocol>net.sf.appia.protocols.group.heal.HealLayer</protocol>
+	</session>
+	<session name="stablel" sharing="global">
+		<protocol>net.sf.appia.protocols.group.stable.StableLayer</protocol>
+	</session>
+	<session name="ll" sharing="global">
+		<protocol>net.sf.appia.protocols.group.leave.LeaveLayer</protocol>
+	</session>
+	<session name="vsl" sharing="global">
+		<protocol>net.sf.appia.protocols.group.sync.VSyncLayer</protocol>
+	</session>
+	<!-- Remove if total is token -->
+	<session name="loopback" sharing="global">
+		<protocol>net.sf.appia.protocols.loopBack.LoopBackLayer</protocol>
+	</session>
+	<session name="causal" sharing="global">
+		<protocol>net.sf.appia.protocols.causalWaiting.CausalWaitingLayer</protocol>
+	</session>
+	<session name="multiplexer" sharing="global">
+		<protocol>net.sf.appia.protocols.group.vsyncmultiplexer.VSyncMultiplexerLayer</protocol>
+	</session>	
+	<session name="total" sharing="private">
+<!--		<protocol>net.sf.appia.protocols.total.hybrid.TotalHybridLayer</protocol> -->
+<!--        <protocol>net.sf.appia.protocols.total.sequencer.TotalSequencerLayer</protocol> -->
+		<protocol>net.sf.appia.protocols.total.sequenceruniform.SequencerUniformLayer</protocol>
+<!--		<protocol>net.sf.appia.protocols.total.switching.SwitchingLayer</protocol> -->
+<!--		<protocol>net.sf.appia.protocols.total.seto.SETOLayer</protocol> -->
+<!--		<protocol>net.sf.appia.protocols.total.symmetric.TotalSymmetricLayer</protocol> -->
+<!--		<protocol>net.sf.appia.protocols.total.token.TotalTokenLayer</protocol> -->
+	</session>
+	<session name="atsl" sharing="global">
+		<protocol>net.sf.appia.jgcs.protocols.top.TOPLayer</protocol>
+	</session>
+</template>
+
+<template name="vsc_uniform">
+	<session name="tcp" sharing="global">
+			<protocol>net.sf.appia.protocols.tcpcomplete.TcpCompleteLayer</protocol>
+	</session>
+	<session name="gbl" sharing="global">
+		<protocol>net.sf.appia.protocols.group.bottom.GroupBottomLayer</protocol>
+	</session>
+	<session name="gol" sharing="global">
+		<protocol>net.sf.appia.protocols.group.heal.GossipOutLayer</protocol>
+	</session>
+	<session name="suspectl" sharing="global">
+		<protocol>net.sf.appia.protocols.group.suspect.SuspectLayer</protocol>
+	</session>
+	<session name="intral" sharing="global">
+		<protocol>net.sf.appia.protocols.group.intra.IntraLayer</protocol>
+	</session>
+	<session name="interl" sharing="global">
+		<protocol>net.sf.appia.protocols.group.inter.InterLayer</protocol>
+	</session>
+	<session name="hl" sharing="global">
+		<protocol>net.sf.appia.protocols.group.heal.HealLayer</protocol>
+	</session>
+	<session name="stablel" sharing="global">
+		<protocol>net.sf.appia.protocols.group.stable.StableLayer</protocol>
+	</session>
+	<session name="ll" sharing="global">
+		<protocol>net.sf.appia.protocols.group.leave.LeaveLayer</protocol>
+	</session>
+	<session name="vsl" sharing="global">
+		<protocol>net.sf.appia.protocols.group.sync.VSyncLayer</protocol>
+	</session>
+	<session name="loopback" sharing="global">
+		<protocol>net.sf.appia.protocols.loopBack.LoopBackLayer</protocol>
+	</session>
+	<session name="causal" sharing="global">
+		<protocol>net.sf.appia.protocols.causalWaiting.CausalWaitingLayer</protocol>
+	</session>
+	<session name="multiplexer" sharing="global">
+			<protocol>net.sf.appia.protocols.group.vsyncmultiplexer.VSyncMultiplexerLayer</protocol>
+	</session>	
+	<session name="uniform" sharing="private">
+		<protocol>net.sf.appia.protocols.uniform.UniformLayer</protocol>
+	</session>
+	<session name="servicedefault" sharing="private">
+		<protocol>net.sf.appia.jgcs.protocols.services.DefaultServiceLayer</protocol>
+	</session>
+	<session name="atsl" sharing="global">
+		<protocol>net.sf.appia.jgcs.protocols.top.TOPLayer</protocol>
+	</session>
+</template>
+
+<!--management local="yes" /-->
+
+<channel name="vsc+fifo+uniform" template="vsc_uniform" initialized="no" managed="no">
+<!--	<memorymanagement size="100000000" up_threshold="60000000" down_threshold="30000000" /> -->
+</channel>
+
+<channel name="vsc+total+services" template="tcp_total_services" initialized="no" managed="no">
+<!--	<memorymanagement size="100000000" up_threshold="60000000" down_threshold="30000000" /> -->
+	<chsession name="atsl">
+		<parameter name="gossip_address">224.1.1.7</parameter>
+	</chsession>
+	<chsession name="total">
+        <!-- sequenceruniform -->
+		<parameter name="uniform_info_period">10</parameter>
+        <!-- token -->
+<!--		<parameter name="num_messages_per_token">4</parameter> -->
+	</chsession>
+    <chsession name="suspectl">
+        <parameter name="suspect_sweep">3000000</parameter>
+        <parameter name="suspect_time">300000</parameter>
+    </chsession>
+</channel>
+
+</appia>

@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+
+<project name="TribuDSTM" default="agent" basedir=".">
+
+	<property name="source" location="src/java"/>
+	<property name="testsrc" location="src/test"/>
+	<property name="build" location="bin/classes"/>
+	<property name="dist" location="bin"/>
+	
+	<target name="init">
+	    <!-- Create the time stamp -->
+	    <tstamp/>
+	    <!-- Create the build directory structure used by compile -->
+	    <mkdir dir="${build}"/>
+	 </target>
+	
+	<target name="agent" depends="test">
+		<jar destfile="${dist}/deuceAgent.jar">
+			<fileset dir="${build}">
+				<exclude name="test/**"/>
+			</fileset>
+			<manifest>
+				<attribute name="Implementation-Vendor" value="deuce.org" />
+				<attribute name="Implementation-Version" value="1.3"/>
+				<attribute name="Premain-Class" value="org.deuce.transform.asm.Agent" />
+				<attribute name="Main-Class" value="org.deuce.transform.asm.Agent"/>
+				<attribute name="Can-Redefine-Classes" value="true"/>
+				<attribute name="Can-Retransform-Classes" value="true"/>
+				<attribute name="Compatible" value="1.6"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="Tests">
+		<junit>
+			<classpath>
+				<pathelement location="${build.tests}"/>
+				<pathelement path="${build}/deuceAgent.jar"/>
+			</classpath>
+		</junit>
+	</target>
+
+	<target name="test" depends="compile">
+			<javac includeantruntime="false" srcdir="${testsrc}" destdir="${build}" debug="true" >
+				<classpath> 
+					<pathelement location="lib/appia-core-4.1.2.jar" />
+					<pathelement location="lib/appia-groupcomm-4.1.2.jar" />
+					<pathelement location="lib/appia-test-4.1.2.jar" />
+					<pathelement location="lib/flanagan.jar" />
+					<pathelement location="lib/jgcs-0.6.1.jar" />
+					<pathelement location="lib/jgroups-3.1.0.Beta1.jar" />
+					<pathelement location="lib/junit-4.6.jar" />
+					<pathelement location="lib/jvstm.jar" />
+					<pathelement location="lib/log4j-1.2.14.jar" />
+					<pathelement location="lib/spread-4.2.0.jar" />
+				</classpath>
+			</javac>
+	</target>
+	
+	<target name="compile" depends="init">
+		<javac includeantruntime="false" srcdir="${source}" destdir="${build}" debug="true" >
+			<exclude name="org/deuce/transaction/tl2cm/**/*.java"/>
+			<classpath> 
+				<pathelement location="lib/appia-core-4.1.2.jar" />
+				<pathelement location="lib/appia-groupcomm-4.1.2.jar" />
+				<pathelement location="lib/appia-test-4.1.2.jar" />
+				<pathelement location="lib/flanagan.jar" />
+				<pathelement location="lib/jgcs-0.6.1.jar" />
+				<pathelement location="lib/jgroups-3.1.0.Beta1.jar" />
+				<pathelement location="lib/junit-4.6.jar" />
+				<pathelement location="lib/jvstm.jar" />
+				<pathelement location="lib/log4j-1.2.14.jar" />
+				<pathelement location="lib/spread-4.2.0.jar" />
+			</classpath>
+			</javac>
+	</target>
+	
+	<target name="clean"
+	        description="clean up" >
+	  <delete>
+            <fileset dir="." includes="**/*.class"/>
+          </delete>
+	</target>
+	
+</project>
