@@ -47,8 +47,8 @@ public class NonVoting extends FullReplicationProtocol implements DeliverySubscr
 
 		if (src.isLocal()) {
 			ctx = contexts.get(ctxState.ctxID);
-			ctx.profiler.onTODelivery();
-			ctx.profiler.newMsgRecv(payloadSize);
+//			ctx.profiler.onTODelivery();
+//			ctx.profiler.newMsgRecv(payloadSize);
 		} else {
 			ctx = (DistributedContext) ContextDelegator.getInstance();
 			ctx.recreateContextFromState(ctxState);
@@ -74,8 +74,8 @@ public class NonVoting extends FullReplicationProtocol implements DeliverySubscr
 	public void onTxCommit(DistributedContext ctx) {
 		byte[] payload = ObjectSerializer.object2ByteArray(ctx.createState());
 
-		ctx.profiler.onTOSend();
-		ctx.profiler.newMsgSent(payload.length);
+//		ctx.profiler.onTOSend();
+//		ctx.profiler.newMsgSent(payload.length);
 
 		TribuDSTM.sendTotalOrdered(payload);
 	}

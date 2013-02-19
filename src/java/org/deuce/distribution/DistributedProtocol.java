@@ -16,4 +16,7 @@ public interface DistributedProtocol {
 	public void onTxFinished(DistributedContext ctx, boolean committed);
 	
 	public ObjectSerializer getObjectSerializer();
+	
+//	public void onTxRead(DistributedContext ctx, ObjectMetadata metadata);
+//	public void onTxWrite(DistributedContext ctx, ObjectMetadata metadata, UniqueObject obj);
 }

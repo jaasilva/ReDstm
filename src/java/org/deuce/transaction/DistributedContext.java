@@ -4,7 +4,6 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.deuce.distribution.TribuDSTM;
-import org.deuce.profiling.Profiler;
 import org.deuce.transform.ExcludeTM;
 
 
@@ -15,7 +14,7 @@ import org.deuce.transform.ExcludeTM;
  */
 @ExcludeTM
 public abstract class DistributedContext implements ContextMetadata {
-	final public Profiler profiler;
+//	final public Profiler profiler;
 
 	/**
 	 * There's a 1:1 mapping between DistributedContext (DCtx) instances and
@@ -61,8 +60,8 @@ public abstract class DistributedContext implements ContextMetadata {
 		committed = false;
 		trxProcessed = new Semaphore(0);
 
-		profiler = new Profiler(false);
-		Profiler.addProfiler(profiler);
+//		profiler = new Profiler(false);
+//		Profiler.addProfiler(profiler);
 		TribuDSTM.onContextCreation(this);
 	}
 
@@ -77,8 +76,8 @@ public abstract class DistributedContext implements ContextMetadata {
 //		committed = false;
 //		trxProcessed = new Semaphore(0);
 
-		profiler.remote = true;
-		Profiler.txRemote++;
+//		profiler.remote = true;
+//		Profiler.txRemote++;
 	}
 
 	/**
@@ -114,8 +113,8 @@ public abstract class DistributedContext implements ContextMetadata {
 //		committed = false;
 		initialise(atomicBlockId, metainf);
 		TribuDSTM.onTxBegin(this);
-		profiler.txLocal++;
-		profiler.onTxBegin();
+//		profiler.txLocal++;
+//		profiler.onTxBegin();
 	}
 
 	/**
@@ -136,11 +135,11 @@ public abstract class DistributedContext implements ContextMetadata {
 	 * @return if the transaction was successfully validated
 	 */
 	public boolean validate() {
-		profiler.onTxValidateBegin();
+//		profiler.onTxValidateBegin();
 
 		boolean valid = performValidation();
 
-		profiler.onTxValidateEnd();
+//		profiler.onTxValidateEnd();
 
 		return valid;
 	}
@@ -155,11 +154,11 @@ public abstract class DistributedContext implements ContextMetadata {
 	 * was successfully validated first.
 	 */
 	public void applyWriteSet() {
-		profiler.onTxCommitStart();
+//		profiler.onTxCommitStart();
 
 		applyUpdates();
 
-		profiler.onTxCommitEnd();
+//		profiler.onTxCommitEnd();
 	}
 
 	/**
@@ -172,12 +171,12 @@ public abstract class DistributedContext implements ContextMetadata {
 	 * Triggers the distributed commit, and waits until it is processed.
 	 */
 	public boolean commit() {
-		profiler.onTxAppCommit();
+//		profiler.onTxAppCommit();
 
 		if (writeSet.isEmpty()) {
 
-			if (Profiler.enabled)
-				profiler.txCommitted++;
+//			if (Profiler.enabled)
+//				profiler.txCommitted++;
 
 			TribuDSTM.onTxFinished(this, true);
 			return true;
@@ -206,18 +205,18 @@ public abstract class DistributedContext implements ContextMetadata {
 	public void processed(boolean committed) {
 		this.committed = committed;
 
-		if (Profiler.enabled)
-			if (committed)
-				profiler.txCommitted++;
-			else
-				profiler.txAborted++;
+//		if (Profiler.enabled)
+//			if (committed)
+//				profiler.txCommitted++;
+//			else
+//				profiler.txAborted++;
 
 		trxProcessed.release();
 	}
 
 	public void rollback() {
-		if (Profiler.enabled)
-			profiler.txAborted++;
+//		if (Profiler.enabled)
+//			profiler.txAborted++;
 
 		TribuDSTM.onTxFinished(this, false);
 	}

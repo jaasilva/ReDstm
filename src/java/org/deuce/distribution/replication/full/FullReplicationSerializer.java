@@ -9,7 +9,6 @@ import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.replication.full.oid.UUIDFactory;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
-import org.deuce.transform.localmetadata.type.TxField;
 
 @ExcludeTM
 public class FullReplicationSerializer extends ObjectSerializer {

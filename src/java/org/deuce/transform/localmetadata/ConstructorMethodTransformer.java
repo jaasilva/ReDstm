@@ -112,6 +112,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter {
 					TribuDSTM.GETSERIALIZER_METHOD_DESC);
 			// stack: ..., Object (this), TxField, TxField, ObjectSerializer =>
 			mv.visitTypeInsn(Opcodes.CHECKCAST, FullReplicationSerializer.NAME);
+			// TODO: check replicatio type ................................................................................
 			// stack: ..., Object (this), TxField, TxField,
 			// FullReplicationSerializer =>
 			mv.visitInsn(Opcodes.SWAP);

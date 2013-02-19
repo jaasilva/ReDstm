@@ -18,11 +18,11 @@ public abstract class SpeculativeContext extends DistributedContext {
 	 * @return if the transaction was successfully validated
 	 */
 	final public boolean speculativeValidate() {
-		profiler.onTxSpecValidateBegin();
+//		profiler.onTxSpecValidateBegin();
 		
 		boolean valid = performSpeculativeValidation();
 		
-		profiler.onTxSpecValidateEnd();
+//		profiler.onTxSpecValidateEnd();
 		
 		return valid;
 	}
@@ -38,12 +38,12 @@ public abstract class SpeculativeContext extends DistributedContext {
 	 * transaction was successfully {speculatively,} validated first.
 	 */
 	final public void speculativeApplyWriteSet() {
-		profiler.onTxSpecCommitStart();
+//		profiler.onTxSpecCommitStart();
 
 		applySpeculativeUpdates();
 		
-		profiler.txSpecCommitted();
-		profiler.onTxSpecCommitEnd();
+//		profiler.txSpecCommitted();
+//		profiler.onTxSpecCommitEnd();
 	}
 	
 	/**
@@ -61,12 +61,12 @@ public abstract class SpeculativeContext extends DistributedContext {
 	}
 	
 	final public void speculativeAbort() {
-		profiler.onTxSpecAbortStart();
+//		profiler.onTxSpecAbortStart();
 		
 		performSpeculativeAbort();
 		
-		profiler.txSpecAborted();
-		profiler.onTxSpecAbortEnd();
+//		profiler.txSpecAborted();
+//		profiler.onTxSpecAbortEnd();
 	}
 	
 	/**

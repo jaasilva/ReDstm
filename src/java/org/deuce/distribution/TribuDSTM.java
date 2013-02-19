@@ -52,8 +52,8 @@ public class TribuDSTM {
 					.getProperty("tribu.groupcommunication.class");
 			if (className != null) {
 				try {
-					Class<? extends GroupCommunication> groupCommClass = (Class<? extends GroupCommunication>) Class
-							.forName(className);
+					@SuppressWarnings("unchecked")
+					Class<? extends GroupCommunication> groupCommClass = (Class<? extends GroupCommunication>) Class.forName(className);
 					groupComm = groupCommClass.newInstance();
 				} catch (Exception e) {
 					e.printStackTrace(); // TODO add logger
@@ -67,14 +67,14 @@ public class TribuDSTM {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void initTransactionContext() {
 		try {
 			String className = System
 					.getProperty("org.deuce.transaction.contextClass");
 			if (className != null) {
 				try {
-					ctxClass = (Class<? extends DistributedContext>) Class
-							.forName(className);
+					ctxClass = (Class<? extends DistributedContext>) Class.forName(className);
 				} catch (Exception e) {
 					e.printStackTrace(); // TODO add logger
 				}
@@ -93,8 +93,8 @@ public class TribuDSTM {
 					.getProperty("tribu.distributed.protocolClass");
 			if (className != null) {
 				try {
-					Class<? extends DistributedProtocol> distProtocolClass = (Class<? extends DistributedProtocol>) Class
-							.forName(className);
+					@SuppressWarnings("unchecked")
+					Class<? extends DistributedProtocol> distProtocolClass = (Class<? extends DistributedProtocol>) Class.forName(className);
 					distProtocol = distProtocolClass.newInstance();
 				} catch (Exception e) {
 					e.printStackTrace(); // TODO add logger
