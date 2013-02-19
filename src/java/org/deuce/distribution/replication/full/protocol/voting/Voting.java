@@ -11,8 +11,10 @@ import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
+import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.full.FullReplicationProtocol;
@@ -177,5 +179,20 @@ public class Voting extends FullReplicationProtocol implements
 
 	public void onTxContextCreation(DistributedContext ctx) {
 		contexts.put(ctx.threadID, ctx);
+	}
+
+	@Override
+	public void onTxRead(DistributedContext ctx, ObjectMetadata metadata)
+	{
+		// nothing to do
+		
+	}
+
+	@Override
+	public void onTxWrite(DistributedContext ctx, ObjectMetadata metadata,
+			UniqueObject obj)
+	{
+		// nothing to do
+		
 	}
 }
