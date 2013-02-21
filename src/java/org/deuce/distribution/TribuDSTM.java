@@ -135,6 +135,12 @@ public class TribuDSTM {
 	public static final void onTxCommit(DistributedContext ctx) {
 		distProtocol.onTxCommit(ctx);
 	}
+	public static final void onTxRead(DistributedContext ctx, ObjectMetadata metadata) {
+		distProtocol.onTxRead(ctx, metadata);
+	}
+	public static final void onTxWrite(DistributedContext ctx, ObjectMetadata metadata, UniqueObject obj) {
+		distProtocol.onTxWrite(ctx, metadata, obj);
+	}
 	
 	public static final String GETSERIALIZER_METHOD_NAME = "getObjectSerializer";
 	public static final String GETSERIALIZER_METHOD_DESC = "()"+ObjectSerializer.DESC;

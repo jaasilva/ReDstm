@@ -5,11 +5,13 @@ import java.io.ObjectStreamException;
 import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.UniqueObject;
+import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
  * 
  */
+@ExcludeTM
 public class PartialReplicationSerializer extends ObjectSerializer
 {
 

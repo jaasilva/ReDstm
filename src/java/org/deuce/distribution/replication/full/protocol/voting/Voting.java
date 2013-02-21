@@ -185,7 +185,6 @@ public class Voting extends FullReplicationProtocol implements
 	public void onTxRead(DistributedContext ctx, ObjectMetadata metadata)
 	{
 		// nothing to do
-		
 	}
 
 	@Override
@@ -193,6 +192,5 @@ public class Voting extends FullReplicationProtocol implements
 			UniqueObject obj)
 	{
 		// nothing to do
-		
 	}
 }

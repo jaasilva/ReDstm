@@ -6,11 +6,13 @@ import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.partial.PartialReplicationProtocol;
 import org.deuce.transaction.DistributedContext;
+import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
  * 
  */
+@ExcludeTM
 public class GMU extends PartialReplicationProtocol implements
 		DeliverySubscriber
 {
