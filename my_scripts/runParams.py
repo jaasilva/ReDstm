@@ -4,36 +4,15 @@ from subprocess import *
 jagent = "-javaagent:"
 deuceagent = "bin/deuceAgent.jar"
 
-initheapsize = "-Xms%sg" % 8
-maxheapsize = "-Xmx%sg" % 8
+heap = 1
+initheapsize = "-Xms%sg" % heap
+maxheapsize = "-Xmx%sg" % heap
 
 cp = "-cp"
-classpath = "bin/classes:\
-	etc:\
-	lib/appia-core-4.1.2.jar:\
-	lib/appia-groupcomm-4.1.2.jar:\
-	lib/appia-test-4.1.2.jar:\
-	lib/flanagan.jar:\
-	lib/jgcs-0.6.1.jar:\
-	lib/jgroups-3.1.0.Beta1.jar:\
-	lib/junit-4.6.jar:\
-	lib/jvstm.jar:\
-	lib/log4j-1.2.14.jar:\
-	lib/spread-4.2.0.jar"
+classpath = "bin/classes:etc:lib/appia-core-4.1.2.jar:lib/appia-groupcomm-4.1.2.jar:	lib/appia-test-4.1.2.jar:lib/flanagan.jar:lib/jgcs-0.6.1.jar:lib/jgroups-3.1.0.Beta1.jar:lib/junit-4.6.jar:lib/jvstm.jar:lib/log4j-1.2.14.jar:lib/spread-4.2.0.jar"
 
 exclude = "-Dorg.deuce.exclude="
-excludes = "java.*,\
-	sun.*,\
-	org.eclipse.*,\
-	org.junit.*,\
-	junit.*,\
-	net.sf.appia.*,\
-	net.sf.jgcs.*,\
-	org.jgroups.*,\
-	flanagan.*,\
-	org.apache.log4j.*,\
-	spread.*,\
-	org.deuce.trove.*"
+excludes = "java.*,sun.*,org.eclipse.*,org.junit.*,junit.*,net.sf.appia.*,net.sf.jgcs.*,org.jgroups.*,flanagan.*,org.apache.log4j.*,spread.*,org.deuce.trove.*"
 
 contextClass = "-Dorg.deuce.transaction.contextClass="
 commClass = "-Dtribu.groupcommunication.class="
@@ -115,17 +94,17 @@ def intset(bench, comm, sitenum, threads, replicasnum, run, args, stmArgs):
 		contextClass + stmArgs[0],
 		exclude + excludes,
 		commClass + stmArgs[1],
-		commGroup + "%s_%s" % (bench, run),
+		commGroup + "%s_%s" % (bench.replace(" ", "_"), run),
 		site + sitenum,
 		replicas + replicasnum,
 		protocolClass + stmArgs[2],
 		compress + compressRes,
 		"org.deuce.benchmark.Driver", "-n", threads, "-d", args[0],
 		"-w", args[1],
-		bench,
+		bench.split(" ")[0], bench.split(" ")[1],
 		"-r", args[2], "-i", args[3], "-w", args[4]
 		]
-	
+	print a
 	call = Popen(a, stdout=PIPE)
 	print call.stdout.read()
 
