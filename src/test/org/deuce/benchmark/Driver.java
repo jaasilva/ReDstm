@@ -3,7 +3,7 @@ package org.deuce.benchmark;
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.full.Bootstrap;
-import org.deuce.profiling.Profiler;
+//import org.deuce.profiling.Profiler;
 
 //import papi.j.PAPI_J;
 //import papi.j.CacheMonitor;
@@ -86,7 +86,7 @@ public class Driver {
 		initBarriers();
 		setupBarrier.join();
 		
-		Profiler.enabled = true;
+//		Profiler.enabled = true;
 
 		BenchmarkThread[] bt = new BenchmarkThread[nb_threads];
 		for (int i = 0; i < bt.length; i++)
@@ -159,9 +159,9 @@ public class Driver {
 		// new Scanner(System.in).nextLine();
 
 		finishBarrier.join();
-		Profiler.enabled = false;
+//		Profiler.enabled = false;
 		
-		Profiler.print();
+//		Profiler.print();
 		
 //		System.out.println(((org.deuce.benchmark.intset.Benchmark) b).m_set);
 

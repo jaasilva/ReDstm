@@ -89,7 +89,9 @@ def intruder(bench, comm, sitenum, threads, replicasnum, run, args, stmArgs):
 	print call.stdout.read()
 
 def intset(bench, comm, sitenum, threads, replicasnum, run, args, stmArgs):
-	a = ["java", initheapsize, maxheapsize, cp, classpath,
+	bench1 = bench.split(" ")[0]
+	bench2 = bench.split(" ")[1]
+	call = Popen(["java", initheapsize, maxheapsize, cp, classpath,
 		jagent + deuceagent,
 		contextClass + stmArgs[0],
 		exclude + excludes,
@@ -101,11 +103,9 @@ def intset(bench, comm, sitenum, threads, replicasnum, run, args, stmArgs):
 		compress + compressRes,
 		"org.deuce.benchmark.Driver", "-n", threads, "-d", args[0],
 		"-w", args[1],
-		bench.split(" ")[0], bench.split(" ")[1],
+		bench1, bench2,
 		"-r", args[2], "-i", args[3], "-w", args[4]
-		]
-	print a
-	call = Popen(a, stdout=PIPE)
+		], stdout=PIPE)
 	print call.stdout.read()
 
 def main(argv):

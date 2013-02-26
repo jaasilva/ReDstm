@@ -73,7 +73,7 @@ package jstamp.intruder;
 
 import org.deuce.Atomic;
 import org.deuce.distribution.replication.full.Bootstrap;
-import org.deuce.profiling.Profiler;
+//import org.deuce.profiling.Profiler;
 
 public class Intruder extends Thread {
 
@@ -251,7 +251,7 @@ public class Intruder extends Thread {
 	@Override
 	public void run() {
 		benchBarrier.join();
-		Profiler.enabled = true;
+//		Profiler.enabled = true;
 		Barrier.enterBarrier();
 //		System.out.println("Begin.");
 		processPackets(argument);
@@ -372,7 +372,7 @@ public class Intruder extends Thread {
 		System.out.println("TIME=" + elapsed);
 		
 		setupBarrier.join();
-		Profiler.enabled = true;
+//		Profiler.enabled = true;
 
 		finish = System.currentTimeMillis();
 		elapsed = finish - start;
@@ -423,7 +423,7 @@ public class Intruder extends Thread {
 
 		System.out.println("Finished");
 		
-		Profiler.print();
+//		Profiler.print();
 	}
 
 }

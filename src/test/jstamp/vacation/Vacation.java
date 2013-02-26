@@ -5,7 +5,7 @@ import java.util.Iterator;
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.full.Bootstrap;
-import org.deuce.profiling.Profiler;
+//import org.deuce.profiling.Profiler;
 
 /* =============================================================================
  *
@@ -380,7 +380,7 @@ public class Vacation {
     stop=System.currentTimeMillis();
     diff=stop-start;
     System.out.println("TIME2="+diff);
-    Profiler.enabled = false;
+//    Profiler.enabled = false;
     
     vac.checkTables(managerPtr);
     
@@ -391,7 +391,7 @@ public class Vacation {
      */
     System.out.println("done.");
     
-	Profiler.print();
+//	Profiler.print();
 	
 //	Thread.sleep(5000);
 	
