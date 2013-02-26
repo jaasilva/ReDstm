@@ -81,6 +81,21 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		dataSession.close();
 	}
 
+	public void sendTo(byte[] payload, Address addr)
+	{
+		try
+		{
+			Message msg = dataSession.createMessage();
+			msg.setPayload(payload);
+//			dataSession.send(msg, sendURBService, null, addr);
+			// TODO ..................................................................................
+		} catch (IOException e) {
+			System.err.println("Couldn't send message.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+
 	public void sendTotalOrdered(byte[] payload) {
 		try {
 			Message msg = dataSession.createMessage();

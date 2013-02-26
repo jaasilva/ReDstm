@@ -1,6 +1,7 @@
 package org.deuce.distribution.groupcomm.spread;
 
 import org.deuce.distribution.ObjectSerializer;
+import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.OptimisticDeliveryUnsupportedException;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
@@ -56,6 +57,12 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 	public void subscribeOptimisticDelivery(
 			OptimisticDeliverySubscriber optSubscriber) {
 		throw new OptimisticDeliveryUnsupportedException();
+	}
+	
+	public void sendTo(byte[] payload, Address addr)
+	{
+		// TODO ............................................................................
+		
 	}
 
 	public void sendTotalOrdered(byte[] payload) {

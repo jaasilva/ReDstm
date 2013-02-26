@@ -39,6 +39,9 @@ public abstract class GroupCommunication {
 	public abstract void sendTotalOrdered(byte[] payload);
 
 	public abstract void sendReliably(byte[] payload);
+	
+	public abstract void sendTo(byte[] payload, Address addr);
+	// TODO ver se é necessario ....................................................
 
 	public void subscribeDelivery(DeliverySubscriber subscriber) {
 		this.subscriber = subscriber;

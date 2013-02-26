@@ -35,7 +35,7 @@ public class FullReplicationSerializer extends ObjectSerializer {
 			throws ObjectStreamException {
 		OID oid = (OID) obj.getMetadata();
 
-		if (oid == null) {
+		if (oid == null) { // not published
 			oid = factory.generateOID();
 			obj.setMetadata(oid);
 			TribuDSTM.putObject(oid, obj);

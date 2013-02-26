@@ -24,17 +24,6 @@ import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
 public class NonVoting extends FullReplicationProtocol implements DeliverySubscriber {
-//	public static final Logger log = Logger.getLogger(NonVoting.class);
-//	static {
-//		try {
-//			log.removeAllAppenders();
-//			log.addAppender(new FileAppender(new PatternLayout("%c{1} - %m%n"), System.getProperty("tribu.groupcommunication.group", "tvale")+"id"+Integer.getInteger("tribu.site")+".log", false));
-//			log.setLevel(Level.TRACE);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
 			
 	private final Map<Integer, DistributedContext> contexts = Collections
 			.synchronizedMap(new HashMap<Integer, DistributedContext>());

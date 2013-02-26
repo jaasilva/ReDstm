@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.deuce.distribution.ObjectSerializer;
+import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.OptimisticDeliveryUnsupportedException;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
@@ -52,6 +53,22 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	public void subscribeOptimisticDelivery(
 			OptimisticDeliverySubscriber optSubscriber) {
 		throw new OptimisticDeliveryUnsupportedException();
+	}
+	
+	public void sendTo(byte[] payload, Address addr)
+	{
+		final Message msg = new Message();
+//		msg.setDest(addr);
+		// TODO .........................................................................
+		msg.setBuffer(payload);
+		msg.setFlag(Message.NO_TOTAL_ORDER);
+		try {
+			channelTOB.send(msg);
+		} catch (Exception e) {
+			System.err.println("Couldn't send message.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
 	}
 
 	public void sendTotalOrdered(final byte[] payload) {
