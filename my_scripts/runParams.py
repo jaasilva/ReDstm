@@ -55,8 +55,7 @@ benchmarks = {
 }
 
 def usage(argv):
-	print "%s <benchmark> <comm> <site> <threads> <replicas> <run> \
-		<contextClass> <protocolClass> [...]" % argv[0]
+	print "%s <benchmark> <comm> <site> <threads> <replicas> <run> <contextClass> <protocolClass> [...]" % argv[0]
 
 def vacation(bench, comm, sitenum, threads, replicasnum, run, args, stmArgs):
 	call = Popen(
@@ -154,8 +153,6 @@ def main(argv):
 			print "Missing benchmark specific arguments: \
 				<gene_length> <segment_length> <segments>"
 			sys.exit()
-		try:
-			stmArgs = ()
 		genome(benchmarks[bench], comm, site, threads, replicas, run, args, stmArgs)
 	elif bench == "intruder":
 		try:
