@@ -110,8 +110,7 @@ def intruder(bench, comm, sitenum, threads, replicasnum, run, args, stmArgs):
 	print call.stdout.read()
 
 def intset(bench, comm, sitenum, threads, replicasnum, run, args, stmArgs):
-	call = Popen(
-		["java", initheapsize, maxheapsize, cp, classpath,
+	a = ["java", initheapsize, maxheapsize, cp, classpath,
 		jagent + deuceagent,
 		contextClass + stmArgs[0],
 		exclude + excludes,
@@ -125,7 +124,9 @@ def intset(bench, comm, sitenum, threads, replicasnum, run, args, stmArgs):
 		"-w", args[1],
 		bench,
 		"-r", args[2], "-i", args[3], "-w", args[4]
-		], stdout=PIPE)
+		]
+	
+	call = Popen(a, stdout=PIPE)
 	print call.stdout.read()
 
 def main(argv):
