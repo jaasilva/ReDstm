@@ -15,48 +15,30 @@ import org.deuce.transform.localmetadata.type.TxField;
 
 /*
  * TODO Class fields should not be instrumented inside the constructor We need
- *      to implement this optimization!
- *      I believe that implementing this optimization will fix the following 
- *      issue.
- *      
- *      Consider the following class, in bytecode:
- *        public class asmconstructortest.Test2 extends java.lang.Object {
- *        
- *        public int property;
- *        
- *        public asmconstructortest.Test2();
- *          Code:
- *          0:   aload_0
- *          1:   iconst_1
- *          2:   putfield        #10; //Field property:I
- *          5:   aload_0
- *          6:   invokespecial   #12; //Method java/lang/Object."<init>":()V
- *          9:   return
- *        }
- *      While the putfield instruction before the call to the super's <init>
- *      is impossible to produce programming in Java, it is possible in 
- *      bytecode. And it executes.
- *      
- *      But it wouldn't run if instead of a putfield it was a getfield.
- *      The following error occurs (line 5 of Main2.java is "new Test2()"):
- *        
- *        Exception in thread "main" java.lang.VerifyError: 
- *          (class: asmconstructortest/Test2, method: <init> signature: ()V) 
- *          Expecting to find object/array on stack at 
- *          asmconstructortest.Main2.main(Main2.java:5)
- *          
- *      This is probably because self is not initialized yet.
- *      
- *      The transaction-aware duplication of Test2(), Test2(IContext), will 
- *      inject before the aforementioned putfield a getfield to the 
- *      corresponding metadata. That will cause a similar exception to the 
- *      above to be thrown.
+ * to implement this optimization! I believe that implementing this optimization
+ * will fix the following issue. Consider the following class, in bytecode:
+ * public class asmconstructortest.Test2 extends java.lang.Object { public int
+ * property; public asmconstructortest.Test2(); Code: 0: aload_0 1: iconst_1 2:
+ * putfield #10; //Field property:I 5: aload_0 6: invokespecial #12; //Method
+ * java/lang/Object."<init>":()V 9: return } While the putfield instruction
+ * before the call to the super's <init> is impossible to produce programming in
+ * Java, it is possible in bytecode. And it executes. But it wouldn't run if
+ * instead of a putfield it was a getfield. The following error occurs (line 5
+ * of Main2.java is "new Test2()"): Exception in thread "main"
+ * java.lang.VerifyError: (class: asmconstructortest/Test2, method: <init>
+ * signature: ()V) Expecting to find object/array on stack at
+ * asmconstructortest.Main2.main(Main2.java:5) This is probably because self is
+ * not initialized yet. The transaction-aware duplication of Test2(),
+ * Test2(IContext), will inject before the aforementioned putfield a getfield to
+ * the corresponding metadata. That will cause a similar exception to the above
+ * to be thrown.
  */
 /*
  * TODO: Try to move @Bootstrap related transformations to other class
  */
 @ExcludeTM
-public class ConstructorMethodTransformer extends AnalyzerAdapter {
+public class ConstructorMethodTransformer extends AnalyzerAdapter
+{
 	final static public String CLASS_BASE = "__CLASS_BASE__";
 
 	protected final List<Field> fields;
@@ -73,7 +55,8 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter {
 			String name, String desc, String fieldsHolderName/*
 															 * , boolean
 															 * isUniqueObject
-															 */) {
+															 */)
+	{
 		super(className, access, name, desc, mv);
 		this.fields = fields;
 		this.fieldsHolderName = fieldsHolderName;
@@ -83,7 +66,8 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter {
 		// this.isUniqueObject = isUniqueObject;
 	}
 
-	protected void initMetadataField(Field field) {
+	protected void initMetadataField(Field field)
+	{
 		// stack: ... =>
 		mv.visitVarInsn(Opcodes.ALOAD, 0);
 		// stack: ..., Object (this) =>
@@ -104,7 +88,8 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter {
 
 		// XXX @Bootstrap, assumes FullReplicationSerializer
 		Integer oid = field2OID.get(field.getFieldName());
-		if (oid != null) {
+		if (oid != null)
+		{
 			mv.visitInsn(Opcodes.DUP);
 			// stack: ..., Object (this), TxField, TxField =>
 			mv.visitMethodInsn(Opcodes.INVOKESTATIC, TribuDSTM.NAME,
@@ -112,7 +97,8 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter {
 					TribuDSTM.GETSERIALIZER_METHOD_DESC);
 			// stack: ..., Object (this), TxField, TxField, ObjectSerializer =>
 			mv.visitTypeInsn(Opcodes.CHECKCAST, FullReplicationSerializer.NAME);
-			// TODO: check replicatio type ................................................................................
+			// TODO: check replicatio type
+			// ................................................................................
 			// stack: ..., Object (this), TxField, TxField,
 			// FullReplicationSerializer =>
 			mv.visitInsn(Opcodes.SWAP);
@@ -131,7 +117,8 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter {
 		// stack: ..., Object (this), TxField =>
 	}
 
-	protected void addField(Field field) {
+	protected void addField(Field field)
+	{
 		// stack: ... =>
 		initMetadataField(field);
 		// stack: ..., Object (this), TxField =>
@@ -141,13 +128,18 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter {
 	}
 
 	@Override
-	public void visitInsn(int opcode) {
-		if (opcode == Opcodes.RETURN && !callsOtherCtor) {
+	public void visitInsn(int opcode)
+	{
+		if (opcode == Opcodes.RETURN && !callsOtherCtor)
+		{
 			((MethodTransformer) mv).disableDuplicateInstrumentation(true);
 			((MethodTransformer) mv).disableMethodInstrumentation(true);
-			if (fields.size() > 0) {
-				for (Field field : fields) {
-					if ((field.getAccess() & Opcodes.ACC_STATIC) == 0) {
+			if (fields.size() > 0)
+			{
+				for (Field field : fields)
+				{
+					if ((field.getAccess() & Opcodes.ACC_STATIC) == 0)
+					{
 						addField(field);
 					}
 				}
@@ -160,20 +152,24 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter {
 	}
 
 	@Override
-	public void visitEnd() {
+	public void visitEnd()
+	{
 		// ((MethodTransformer)mv).disableDuplicateInstrumentation(false);
 		super.visitEnd();
 	}
 
 	@Override
 	public void visitMethodInsn(final int opcode, final String owner,
-			final String name, final String desc) {
-		if (opcode == Opcodes.INVOKESPECIAL && name.equals("<init>")) {
+			final String name, final String desc)
+	{
+		if (opcode == Opcodes.INVOKESPECIAL && name.equals("<init>"))
+		{
 			/*
 			 * if (owner.equals(Type.getInternalName(Object.class)) &&
 			 * isUniqueObject) { super.visitMethodInsn(opcode,
 			 * UniqueObject.NAME, name, desc); return; } else
-			 */if (owner.equals(className)) {
+			 */if (owner.equals(className))
+			{
 				// The method is created merely to know the #params
 				int nParams = new Method(name, desc).getArgumentTypes().length;
 
@@ -184,7 +180,8 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter {
 
 				// Is it <this>, uninitialized?
 				if (stackObj instanceof Integer
-						&& ((Integer) stackObj) == Opcodes.UNINITIALIZED_THIS) {
+						&& ((Integer) stackObj) == Opcodes.UNINITIALIZED_THIS)
+				{
 					callsOtherCtor = true;
 				}
 			}

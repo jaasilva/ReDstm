@@ -16,38 +16,48 @@ import spread.SpreadMessage;
 
 @ExcludeTM
 public class SpreadGroupCommunication extends GroupCommunication implements
-		AdvancedMessageListener {
+		AdvancedMessageListener
+{
 
 	private SpreadConnection connection;
 	private SpreadGroup group;
 
-	public SpreadGroupCommunication() {
+	public SpreadGroupCommunication()
+	{
 		super();
 	}
 
-	public void init() {
+	public void init()
+	{
 		connection = new SpreadConnection();
 		group = new SpreadGroup();
-		try {
+		try
+		{
 			connection.connect(null, 0,
 					"replica" + Integer.getInteger("tribu.site"), false, true);
 			connection.add(this);
 			group.join(connection, System.getProperty(
 					"tribu.groupcommunication.group", "tvale"));
 			myAddress = new SpreadAddress(connection.getPrivateGroup());
-		} catch (SpreadException e) {
+		}
+		catch (SpreadException e)
+		{
 			System.err.println("Couldn't initialise Spread client.");
 			e.printStackTrace();
 			System.exit(-1);
 		}
 	}
 
-	public void close() {
-		try {
+	public void close()
+	{
+		try
+		{
 			connection.remove(this);
 			group.leave();
 			connection.disconnect();
-		} catch (SpreadException e) {
+		}
+		catch (SpreadException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -55,51 +65,65 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 
 	@Override
 	public void subscribeOptimisticDelivery(
-			OptimisticDeliverySubscriber optSubscriber) {
+			OptimisticDeliverySubscriber optSubscriber)
+	{
 		throw new OptimisticDeliveryUnsupportedException();
 	}
-	
+
 	public void sendTo(byte[] payload, Address addr)
 	{
-		// TODO ............................................................................
-		
+		// TODO
+		// ............................................................................
+
 	}
 
-	public void sendTotalOrdered(byte[] payload) {
+	public void sendTotalOrdered(byte[] payload)
+	{
 		SpreadMessage message = new SpreadMessage();
 		message.setData(payload);
 		message.addGroup(group);
 		message.setAgreed();
-		try {
+		try
+		{
 			connection.multicast(message);
-		} catch (SpreadException e) {
+		}
+		catch (SpreadException e)
+		{
 			System.err.println("Couldn't send message.");
 			e.printStackTrace();
 			System.exit(-1);
 		}
 	}
 
-	public void sendReliably(byte[] payload) {
+	public void sendReliably(byte[] payload)
+	{
 		SpreadMessage message = new SpreadMessage();
 		message.setData(payload);
 		message.addGroup(group);
 		message.setReliable();
-		try {
+		try
+		{
 			connection.multicast(message);
-		} catch (SpreadException e) {
+		}
+		catch (SpreadException e)
+		{
 			System.err.println("Couldn't send message.");
 			e.printStackTrace();
 			System.exit(-1);
 		}
 	}
 
-	public void regularMessageReceived(SpreadMessage message) {
+	public void regularMessageReceived(SpreadMessage message)
+	{
 		byte[] payload = message.getData();
 		Object obj = null;
 
-		try {
+		try
+		{
 			obj = ObjectSerializer.byteArray2Object(payload);
-		} catch (GCPayloadException e) {
+		}
+		catch (GCPayloadException e)
+		{
 			return;
 		}
 
@@ -107,7 +131,8 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 				payload.length);
 	}
 
-	public void membershipMessageReceived(SpreadMessage message) {
+	public void membershipMessageReceived(SpreadMessage message)
+	{
 		if (message.isMembership()
 				&& message.getMembershipInfo().isRegularMembership()
 				&& message.getMembershipInfo().getMembers().length == Integer

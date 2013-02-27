@@ -5,7 +5,8 @@ import org.deuce.transaction.DistributedContextState;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
-public class PendingTx {
+public class PendingTx
+{
 	public static final int WAITING = 0;
 	public static final int VALIDATED = 1;
 	public static final int COMMITTED = 2;
@@ -15,7 +16,8 @@ public class PendingTx {
 	public DistributedContextState ctxState;
 	public int result = WAITING;
 
-	public PendingTx(Address src, DistributedContextState msg) {
+	public PendingTx(Address src, DistributedContextState msg)
+	{
 		this.src = src;
 		this.ctxState = msg;
 	}

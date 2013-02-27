@@ -37,7 +37,8 @@ import org.deuce.trove.TObjectProcedure;
 @ExcludeTM
 @LocalMetadata(metadataClass = "org.deuce.transaction.tl2.SpeculativeTL2Field")
 final public class SpeculativeContext extends
-		org.deuce.transaction.SpeculativeContext {
+		org.deuce.transaction.SpeculativeContext
+{
 	public static final TransactionException RO_WRITE = new TransactionException(
 			"Read-only transaction tried to write");
 	private static final boolean TX_LOAD_OPT = Boolean
@@ -55,11 +56,14 @@ final public class SpeculativeContext extends
 	public int localClock;
 	private int lastReadLock;
 
-	final private SpeculativeLockProcedure lockProcedure = new SpeculativeLockProcedure(this);
+	final private SpeculativeLockProcedure lockProcedure = new SpeculativeLockProcedure(
+			this);
 
-	final private TObjectProcedure<WriteFieldAccess> putProcedure = new TObjectProcedure<WriteFieldAccess>() {
+	final private TObjectProcedure<WriteFieldAccess> putProcedure = new TObjectProcedure<WriteFieldAccess>()
+	{
 
-		public boolean execute(WriteFieldAccess writeField) {
+		public boolean execute(WriteFieldAccess writeField)
+		{
 			writeField.put();
 			return true;
 		}
@@ -68,8 +72,10 @@ final public class SpeculativeContext extends
 	/*
 	 * FIXME: Refactor. Speculative put procedure.
 	 */
-	final private TObjectProcedure<WriteFieldAccess> speculativePutProcedure = new TObjectProcedure<WriteFieldAccess>() {
-		public boolean execute(WriteFieldAccess writeField) {
+	final private TObjectProcedure<WriteFieldAccess> speculativePutProcedure = new TObjectProcedure<WriteFieldAccess>()
+	{
+		public boolean execute(WriteFieldAccess writeField)
+		{
 			((SpeculativeWriteFieldAccess) writeField)
 					.speculativePut(SpeculativeContext.this);
 			return true;
@@ -79,12 +85,14 @@ final public class SpeculativeContext extends
 	protected int lastAtomicBlockId = -1;
 	protected boolean readOnly = true;
 
-	public SpeculativeContext() {
+	public SpeculativeContext()
+	{
 		super();
 		localClock = speculativeClock.get();
 	}
 
-	public void recreateContextFromState(DistributedContextState ctxState) {
+	public void recreateContextFromState(DistributedContextState ctxState)
+	{
 		super.recreateContextFromState(ctxState);
 		localClock = ((SpeculativeContextState) ctxState).speculativeVersionNumber;
 		readOnly = false;
@@ -99,20 +107,24 @@ final public class SpeculativeContext extends
 		// } while (!done);
 	}
 
-	protected ReadSet createReadSet() {
+	protected ReadSet createReadSet()
+	{
 		return new SpeculativeTL2ReadSet();
 	}
 
-	protected WriteSet createWriteSet() {
+	protected WriteSet createWriteSet()
+	{
 		return new WriteSet();
 	}
 
-	public DistributedContextState createState() {
+	public DistributedContextState createState()
+	{
 		return new SpeculativeContextState(readSet, writeSet, threadID,
 				atomicBlockId, localClock);
 	}
 
-	public void initialise(int atomicBlockId, String metainf) {
+	public void initialise(int atomicBlockId, String metainf)
+	{
 		this.currentReadFieldAccess = null;
 		this.localClock = speculativeClock.get();
 		this.arrayPool.clear();
@@ -126,35 +138,45 @@ final public class SpeculativeContext extends
 		this.floatPool.clear();
 		this.doublePool.clear();
 		this.aborted = false;
-		if (lastAtomicBlockId != atomicBlockId) {
+		if (lastAtomicBlockId != atomicBlockId)
+		{
 			readOnly = true;
 			lastAtomicBlockId = atomicBlockId;
 		}
 	}
 
-	public boolean performValidation() {
+	public boolean performValidation()
+	{
 		boolean valid = true;
-		try {
+		try
+		{
 			((SpeculativeTL2ReadSet) readSet).checkClock(localClock);
-		} catch (TransactionException exception) {
+		}
+		catch (TransactionException exception)
+		{
 			valid = false;
 		}
 
 		return valid;
 	}
 
-	protected boolean performSpeculativeValidation() {
+	protected boolean performSpeculativeValidation()
+	{
 		boolean valid = true;
-		try {
+		try
+		{
 			((SpeculativeTL2ReadSet) readSet).speculativeCheckClock(localClock);
-		} catch (TransactionException exception) {
+		}
+		catch (TransactionException exception)
+		{
 			valid = false;
 		}
 
 		return valid;
 	}
 
-	public void applyUpdates() {
+	public void applyUpdates()
+	{
 		writeSet.forEach(lockProcedure);
 
 		// commit new values and release locks
@@ -166,7 +188,8 @@ final public class SpeculativeContext extends
 		lockProcedure.clear();
 	}
 
-	protected void applySpeculativeUpdates() {
+	protected void applySpeculativeUpdates()
+	{
 		writeSet.forEach(lockProcedure);
 
 		writeSet.forEach(speculativePutProcedure);
@@ -178,11 +201,14 @@ final public class SpeculativeContext extends
 		// lockProcedure.clear();
 	}
 
-	public void performSpeculativeAbort() {
+	public void performSpeculativeAbort()
+	{
 		writeSet.forEach(lockProcedure);
 
-		writeSet.forEach(new TObjectProcedure<WriteFieldAccess>() {
-			public boolean execute(WriteFieldAccess writeField) {
+		writeSet.forEach(new TObjectProcedure<WriteFieldAccess>()
+		{
+			public boolean execute(WriteFieldAccess writeField)
+			{
 				((SpeculativeWriteFieldAccess) writeField).speculativeRemove();
 				return true;
 			}
@@ -191,23 +217,29 @@ final public class SpeculativeContext extends
 		writeSet.forEach(lockProcedure.unlockProcedure);
 	}
 
-	public int getSpeculativeVersionNumber() {
+	public int getSpeculativeVersionNumber()
+	{
 		return localClock;
 	}
 
-	public void resetSpeculativeVersionNumbers() {
+	public void resetSpeculativeVersionNumbers()
+	{
 		speculativeClock.set(clock.get());
 	}
 
-	private WriteFieldAccess onReadAccess0(TxField field) {
-		if (!TX_LOAD_OPT) {
+	private WriteFieldAccess onReadAccess0(TxField field)
+	{
+		if (!TX_LOAD_OPT)
+		{
 			ReadFieldAccess current = currentReadFieldAccess;
 
 			((InPlaceLock) field).checkLock(localClock, lastReadLock);
 
 			// Check if it is already included in the write set
 			return writeSet.contains(current);
-		} else {
+		}
+		else
+		{
 			ReadFieldAccess current = readSet.getNext();
 			current.init(field);
 
@@ -217,8 +249,10 @@ final public class SpeculativeContext extends
 		}
 	}
 
-	private void addWriteAccess0(WriteFieldAccess write) {
-		if (readOnly) {
+	private void addWriteAccess0(WriteFieldAccess write)
+	{
+		if (readOnly)
+		{
 			readOnly = false;
 			throw RO_WRITE;
 		}
@@ -226,8 +260,10 @@ final public class SpeculativeContext extends
 		writeSet.put(write);
 	}
 
-	public void beforeReadAccess(TxField field) {
-		if (!TX_LOAD_OPT) {
+	public void beforeReadAccess(TxField field)
+	{
+		if (!TX_LOAD_OPT)
+		{
 			ReadFieldAccess next = readSet.getNext();
 			currentReadFieldAccess = next;
 			next.init(field);
@@ -237,16 +273,21 @@ final public class SpeculativeContext extends
 		}
 	}
 
-	public ArrayContainer onReadAccess(ArrayContainer value, TxField field) {
+	public ArrayContainer onReadAccess(ArrayContainer value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
-		if (writeAccess == null) {
-			try {
+		if (writeAccess == null)
+		{
+			try
+			{
 				if (readOnly)
 					return value;
 				else
 					return ((SpeculativeTxField) field)
 							.speculativeReadArray(this);
-			} finally {
+			}
+			finally
+			{
 				((InPlaceLock) field).checkLock(localClock, lastReadLock);
 			}
 		}
@@ -257,16 +298,21 @@ final public class SpeculativeContext extends
 		return r;
 	}
 
-	public Object onReadAccess(Object value, TxField field) {
+	public Object onReadAccess(Object value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
-		if (writeAccess == null) {
-			try {
+		if (writeAccess == null)
+		{
+			try
+			{
 				if (readOnly)
 					return value;
 				else
 					return ((SpeculativeTxField) field)
 							.speculativeReadObject(this);
-			} finally {
+			}
+			finally
+			{
 				((InPlaceLock) field).checkLock(localClock, lastReadLock);
 			}
 		}
@@ -276,16 +322,21 @@ final public class SpeculativeContext extends
 		return r;
 	}
 
-	public boolean onReadAccess(boolean value, TxField field) {
+	public boolean onReadAccess(boolean value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
-		if (writeAccess == null) {
-			try {
+		if (writeAccess == null)
+		{
+			try
+			{
 				if (readOnly)
 					return value;
 				else
 					return ((SpeculativeTxField) field)
 							.speculativeReadBoolean(this);
-			} finally {
+			}
+			finally
+			{
 				((InPlaceLock) field).checkLock(localClock, lastReadLock);
 			}
 		}
@@ -296,16 +347,21 @@ final public class SpeculativeContext extends
 		return r;
 	}
 
-	public byte onReadAccess(byte value, TxField field) {
+	public byte onReadAccess(byte value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
-		if (writeAccess == null) {
-			try {
+		if (writeAccess == null)
+		{
+			try
+			{
 				if (readOnly)
 					return value;
 				else
 					return ((SpeculativeTxField) field)
 							.speculativeReadByte(this);
-			} finally {
+			}
+			finally
+			{
 				((InPlaceLock) field).checkLock(localClock, lastReadLock);
 			}
 		}
@@ -315,16 +371,21 @@ final public class SpeculativeContext extends
 		return r;
 	}
 
-	public char onReadAccess(char value, TxField field) {
+	public char onReadAccess(char value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
-		if (writeAccess == null) {
-			try {
+		if (writeAccess == null)
+		{
+			try
+			{
 				if (readOnly)
 					return value;
 				else
 					return ((SpeculativeTxField) field)
 							.speculativeReadChar(this);
-			} finally {
+			}
+			finally
+			{
 				((InPlaceLock) field).checkLock(localClock, lastReadLock);
 			}
 		}
@@ -334,16 +395,21 @@ final public class SpeculativeContext extends
 		return r;
 	}
 
-	public short onReadAccess(short value, TxField field) {
+	public short onReadAccess(short value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
-		if (writeAccess == null) {
-			try {
+		if (writeAccess == null)
+		{
+			try
+			{
 				if (readOnly)
 					return value;
 				else
 					return ((SpeculativeTxField) field)
 							.speculativeReadShort(this);
-			} finally {
+			}
+			finally
+			{
 				((InPlaceLock) field).checkLock(localClock, lastReadLock);
 			}
 		}
@@ -354,16 +420,21 @@ final public class SpeculativeContext extends
 
 	}
 
-	public int onReadAccess(int value, TxField field) {
+	public int onReadAccess(int value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
-		if (writeAccess == null) {
-			try {
+		if (writeAccess == null)
+		{
+			try
+			{
 				if (readOnly)
 					return value;
 				else
 					return ((SpeculativeTxField) field)
 							.speculativeReadInt(this);
-			} finally {
+			}
+			finally
+			{
 				((InPlaceLock) field).checkLock(localClock, lastReadLock);
 			}
 		}
@@ -373,16 +444,21 @@ final public class SpeculativeContext extends
 		return r;
 	}
 
-	public long onReadAccess(long value, TxField field) {
+	public long onReadAccess(long value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
-		if (writeAccess == null) {
-			try {
+		if (writeAccess == null)
+		{
+			try
+			{
 				if (readOnly)
 					return value;
 				else
 					return ((SpeculativeTxField) field)
 							.speculativeReadLong(this);
-			} finally {
+			}
+			finally
+			{
 				((InPlaceLock) field).checkLock(localClock, lastReadLock);
 			}
 		}
@@ -392,16 +468,21 @@ final public class SpeculativeContext extends
 		return r;
 	}
 
-	public float onReadAccess(float value, TxField field) {
+	public float onReadAccess(float value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
-		if (writeAccess == null) {
-			try {
+		if (writeAccess == null)
+		{
+			try
+			{
 				if (readOnly)
 					return value;
 				else
 					return ((SpeculativeTxField) field)
 							.speculativeReadFloat(this);
-			} finally {
+			}
+			finally
+			{
 				((InPlaceLock) field).checkLock(localClock, lastReadLock);
 			}
 		}
@@ -411,16 +492,21 @@ final public class SpeculativeContext extends
 		return r;
 	}
 
-	public double onReadAccess(double value, TxField field) {
+	public double onReadAccess(double value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
-		if (writeAccess == null) {
-			try {
+		if (writeAccess == null)
+		{
+			try
+			{
 				if (readOnly)
 					return value;
 				else
 					return ((SpeculativeTxField) field)
 							.speculativeReadDouble(this);
-			} finally {
+			}
+			finally
+			{
 				((InPlaceLock) field).checkLock(localClock, lastReadLock);
 			}
 		}
@@ -430,7 +516,8 @@ final public class SpeculativeContext extends
 		return r;
 	}
 
-	public void onWriteAccess(ArrayContainer value, TxField field) {
+	public void onWriteAccess(ArrayContainer value, TxField field)
+	{
 
 		SpeculativeArrayWriteFieldAccess next = arrayPool.getNext();
 		next.set(value, field);
@@ -438,7 +525,8 @@ final public class SpeculativeContext extends
 
 	}
 
-	public void onWriteAccess(Object value, TxField field) {
+	public void onWriteAccess(Object value, TxField field)
+	{
 
 		SpeculativeObjectWriteFieldAccess next = objectPool.getNext();
 		next.set(value, field);
@@ -446,7 +534,8 @@ final public class SpeculativeContext extends
 
 	}
 
-	public void onWriteAccess(boolean value, TxField field) {
+	public void onWriteAccess(boolean value, TxField field)
+	{
 
 		SpeculativeBooleanWriteFieldAccess next = booleanPool.getNext();
 		next.set(value, field);
@@ -454,7 +543,8 @@ final public class SpeculativeContext extends
 
 	}
 
-	public void onWriteAccess(byte value, TxField field) {
+	public void onWriteAccess(byte value, TxField field)
+	{
 
 		SpeculativeByteWriteFieldAccess next = bytePool.getNext();
 		next.set(value, field);
@@ -462,7 +552,8 @@ final public class SpeculativeContext extends
 
 	}
 
-	public void onWriteAccess(char value, TxField field) {
+	public void onWriteAccess(char value, TxField field)
+	{
 
 		SpeculativeCharWriteFieldAccess next = charPool.getNext();
 		next.set(value, field);
@@ -470,7 +561,8 @@ final public class SpeculativeContext extends
 
 	}
 
-	public void onWriteAccess(short value, TxField field) {
+	public void onWriteAccess(short value, TxField field)
+	{
 
 		SpeculativeShortWriteFieldAccess next = shortPool.getNext();
 		next.set(value, field);
@@ -478,7 +570,8 @@ final public class SpeculativeContext extends
 
 	}
 
-	public void onWriteAccess(int value, TxField field) {
+	public void onWriteAccess(int value, TxField field)
+	{
 
 		SpeculativeIntWriteFieldAccess next = intPool.getNext();
 		next.set(value, field);
@@ -486,7 +579,8 @@ final public class SpeculativeContext extends
 
 	}
 
-	public void onWriteAccess(long value, TxField field) {
+	public void onWriteAccess(long value, TxField field)
+	{
 
 		SpeculativeLongWriteFieldAccess next = longPool.getNext();
 		next.set(value, field);
@@ -494,7 +588,8 @@ final public class SpeculativeContext extends
 
 	}
 
-	public void onWriteAccess(float value, TxField field) {
+	public void onWriteAccess(float value, TxField field)
+	{
 
 		SpeculativeFloatWriteFieldAccess next = floatPool.getNext();
 		next.set(value, field);
@@ -502,7 +597,8 @@ final public class SpeculativeContext extends
 
 	}
 
-	public void onWriteAccess(double value, TxField field) {
+	public void onWriteAccess(double value, TxField field)
+	{
 
 		SpeculativeDoubleWriteFieldAccess next = doublePool.getNext();
 		next.set(value, field);
@@ -511,8 +607,10 @@ final public class SpeculativeContext extends
 	}
 
 	private static class ArrayResourceFactory implements
-			ResourceFactory<SpeculativeArrayWriteFieldAccess> {
-		public SpeculativeArrayWriteFieldAccess newInstance() {
+			ResourceFactory<SpeculativeArrayWriteFieldAccess>
+	{
+		public SpeculativeArrayWriteFieldAccess newInstance()
+		{
 			return new SpeculativeArrayWriteFieldAccess();
 		}
 	}
@@ -521,8 +619,10 @@ final public class SpeculativeContext extends
 			new ArrayResourceFactory());
 
 	private static class ObjectResourceFactory implements
-			ResourceFactory<SpeculativeObjectWriteFieldAccess> {
-		public SpeculativeObjectWriteFieldAccess newInstance() {
+			ResourceFactory<SpeculativeObjectWriteFieldAccess>
+	{
+		public SpeculativeObjectWriteFieldAccess newInstance()
+		{
 			return new SpeculativeObjectWriteFieldAccess();
 		}
 	}
@@ -531,8 +631,10 @@ final public class SpeculativeContext extends
 			new ObjectResourceFactory());
 
 	private static class BooleanResourceFactory implements
-			ResourceFactory<SpeculativeBooleanWriteFieldAccess> {
-		public SpeculativeBooleanWriteFieldAccess newInstance() {
+			ResourceFactory<SpeculativeBooleanWriteFieldAccess>
+	{
+		public SpeculativeBooleanWriteFieldAccess newInstance()
+		{
 			return new SpeculativeBooleanWriteFieldAccess();
 		}
 	}
@@ -541,8 +643,10 @@ final public class SpeculativeContext extends
 			new BooleanResourceFactory());
 
 	private static class ByteResourceFactory implements
-			ResourceFactory<SpeculativeByteWriteFieldAccess> {
-		public SpeculativeByteWriteFieldAccess newInstance() {
+			ResourceFactory<SpeculativeByteWriteFieldAccess>
+	{
+		public SpeculativeByteWriteFieldAccess newInstance()
+		{
 			return new SpeculativeByteWriteFieldAccess();
 		}
 	}
@@ -551,8 +655,10 @@ final public class SpeculativeContext extends
 			new ByteResourceFactory());
 
 	private static class CharResourceFactory implements
-			ResourceFactory<SpeculativeCharWriteFieldAccess> {
-		public SpeculativeCharWriteFieldAccess newInstance() {
+			ResourceFactory<SpeculativeCharWriteFieldAccess>
+	{
+		public SpeculativeCharWriteFieldAccess newInstance()
+		{
 			return new SpeculativeCharWriteFieldAccess();
 		}
 	}
@@ -561,8 +667,10 @@ final public class SpeculativeContext extends
 			new CharResourceFactory());
 
 	private static class ShortResourceFactory implements
-			ResourceFactory<SpeculativeShortWriteFieldAccess> {
-		public SpeculativeShortWriteFieldAccess newInstance() {
+			ResourceFactory<SpeculativeShortWriteFieldAccess>
+	{
+		public SpeculativeShortWriteFieldAccess newInstance()
+		{
 			return new SpeculativeShortWriteFieldAccess();
 		}
 	}
@@ -571,8 +679,10 @@ final public class SpeculativeContext extends
 			new ShortResourceFactory());
 
 	private static class IntResourceFactory implements
-			ResourceFactory<SpeculativeIntWriteFieldAccess> {
-		public SpeculativeIntWriteFieldAccess newInstance() {
+			ResourceFactory<SpeculativeIntWriteFieldAccess>
+	{
+		public SpeculativeIntWriteFieldAccess newInstance()
+		{
 			return new SpeculativeIntWriteFieldAccess();
 		}
 	}
@@ -581,8 +691,10 @@ final public class SpeculativeContext extends
 			new IntResourceFactory());
 
 	private static class LongResourceFactory implements
-			ResourceFactory<SpeculativeLongWriteFieldAccess> {
-		public SpeculativeLongWriteFieldAccess newInstance() {
+			ResourceFactory<SpeculativeLongWriteFieldAccess>
+	{
+		public SpeculativeLongWriteFieldAccess newInstance()
+		{
 			return new SpeculativeLongWriteFieldAccess();
 		}
 	}
@@ -591,8 +703,10 @@ final public class SpeculativeContext extends
 			new LongResourceFactory());
 
 	private static class FloatResourceFactory implements
-			ResourceFactory<SpeculativeFloatWriteFieldAccess> {
-		public SpeculativeFloatWriteFieldAccess newInstance() {
+			ResourceFactory<SpeculativeFloatWriteFieldAccess>
+	{
+		public SpeculativeFloatWriteFieldAccess newInstance()
+		{
 			return new SpeculativeFloatWriteFieldAccess();
 		}
 	}
@@ -601,8 +715,10 @@ final public class SpeculativeContext extends
 			new FloatResourceFactory());
 
 	private static class DoubleResourceFactory implements
-			ResourceFactory<SpeculativeDoubleWriteFieldAccess> {
-		public SpeculativeDoubleWriteFieldAccess newInstance() {
+			ResourceFactory<SpeculativeDoubleWriteFieldAccess>
+	{
+		public SpeculativeDoubleWriteFieldAccess newInstance()
+		{
 			return new SpeculativeDoubleWriteFieldAccess();
 		}
 	}
@@ -611,7 +727,8 @@ final public class SpeculativeContext extends
 			new DoubleResourceFactory());
 
 	@Override
-	public void onIrrevocableAccess() {
+	public void onIrrevocableAccess()
+	{
 
 	}
 }

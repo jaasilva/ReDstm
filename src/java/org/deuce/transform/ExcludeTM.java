@@ -8,10 +8,12 @@ import java.lang.annotation.Target;
 
 /**
  * Annotated class won't suffer ANY instrumentation.
+ * 
  * @author Tiago Vale
  */
 @Target(TYPE)
 @Retention(CLASS)
-public @interface ExcludeTM {
+public @interface ExcludeTM
+{
 
 }

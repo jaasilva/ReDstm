@@ -8,21 +8,23 @@ import org.deuce.objectweb.asm.FieldVisitor;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.FieldVisitorAdapter;
 
-
 @ExcludeTM
-public class BootstrapFieldVisitor extends FieldVisitorAdapter {
+public class BootstrapFieldVisitor extends FieldVisitorAdapter
+{
 	private Map<String, Integer> field2OID;
 	private String field;
 
 	public BootstrapFieldVisitor(FieldVisitor next,
-			Map<String, Integer> field2OID, String field) {
+			Map<String, Integer> field2OID, String field)
+	{
 
 		super(next);
 		this.field2OID = field2OID;
 		this.field = field;
 	}
 
-	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+	public AnnotationVisitor visitAnnotation(String desc, boolean visible)
+	{
 		AnnotationVisitor va = super.visitAnnotation(desc, visible);
 
 		if (desc.equals(FullReplicationProtocol.BOOTSTRAP_DESC))

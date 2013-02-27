@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 // Copyright (c) 2001, Eric D. Friedman All Rights Reserved.
 //
 // This library is free software; you can redistribute it and/or
@@ -8,31 +8,33 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-///////////////////////////////////////////////////////////////////////////////
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+// /////////////////////////////////////////////////////////////////////////////
 
 package org.deuce.trove;
 
 /**
  * Interface for functions that accept and return one Object reference.
- *
- * Created: Mon Nov  5 22:19:36 2001
- *
+ * 
+ * Created: Mon Nov 5 22:19:36 2001
+ * 
  * @author Eric D. Friedman
  * @version $Id: TObjectFunction.java,v 1.3 2006/11/10 23:27:56 robeden Exp $
  */
 
-public interface TObjectFunction<T,R> {
-    /**
-     * Execute this function with <tt>value</tt>
-     *
-     * @param value an <code>Object</code> input
-     * @return an <code>Object</code> result
-     */
-    public R execute(T value);
+public interface TObjectFunction<T, R>
+{
+	/**
+	 * Execute this function with <tt>value</tt>
+	 * 
+	 * @param value
+	 *            an <code>Object</code> input
+	 * @return an <code>Object</code> result
+	 */
+	public R execute(T value);
 }// TObjectFunction

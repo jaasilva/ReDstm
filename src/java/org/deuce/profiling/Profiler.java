@@ -6,14 +6,17 @@ import java.util.List;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
-public class Profiler {
+public class Profiler
+{
 	static public boolean enabled = false;
 	static protected Object lock = new Object();
 
 	static protected List<Profiler> profilers = new LinkedList<Profiler>();
 
-	static public void addProfiler(Profiler prof) {
-		synchronized (profilers) {
+	static public void addProfiler(Profiler prof)
+	{
+		synchronized (profilers)
+		{
 			profilers.add(prof);
 		}
 	}
@@ -59,63 +62,73 @@ public class Profiler {
 
 	public boolean remote;
 
-	public Profiler(boolean remote) {
+	public Profiler(boolean remote)
+	{
 		this.remote = remote;
-//		if (remote)
-//			txRemote++;
+		// if (remote)
+		// txRemote++;
 	}
 
-	public void txCommitted() {
+	public void txCommitted()
+	{
 		if (enabled)
-//			if (remote)
-//				txCommittedRemote++;
-//			else
-				txCommitted++;
+			// if (remote)
+			// txCommittedRemote++;
+			// else
+			txCommitted++;
 	}
 
-	public void txSpecCommitted() {
+	public void txSpecCommitted()
+	{
 		if (enabled)
-//			if (remote)
-//				txSpecCommittedRemote++;
-//			else
-				txSpecCommitted++;
+			// if (remote)
+			// txSpecCommittedRemote++;
+			// else
+			txSpecCommitted++;
 	}
 
-	public void txAborted() {
+	public void txAborted()
+	{
 		if (enabled)
-//			if (remote)
-//				txAbortedRemote++;
-//			else
-				txAborted++;
+			// if (remote)
+			// txAbortedRemote++;
+			// else
+			txAborted++;
 	}
 
-	public void txSpecAborted() {
+	public void txSpecAborted()
+	{
 		if (enabled)
-//			if (remote)
-//				txSpecAbortedRemote++;
-//			else
-				txSpecAborted++;
+			// if (remote)
+			// txSpecAbortedRemote++;
+			// else
+			txSpecAborted++;
 	}
 
-	public void txOutOfOrder() {
+	public void txOutOfOrder()
+	{
 		if (enabled)
-//			if (remote)
-//				txOutOfOrderRemote++;
-//			else
-				txOutOfOrder++;
+			// if (remote)
+			// txOutOfOrderRemote++;
+			// else
+			txOutOfOrder++;
 	}
 
-	public void onTxBegin() {
+	public void onTxBegin()
+	{
 		if (enabled)
 			txAppStart = System.nanoTime();
 	}
 
-	public void onTxAppCommit() {
-		if (enabled) {
+	public void onTxAppCommit()
+	{
+		if (enabled)
+		{
 			txAppEnd = System.nanoTime();
 
 			long appElapsed = txAppEnd - txAppStart;
-			synchronized (lock) {
+			synchronized (lock)
+			{
 				if (appElapsed < txTimeAppMin)
 					txTimeAppMin = appElapsed;
 				if (appElapsed > txTimeAppMax)
@@ -128,17 +141,21 @@ public class Profiler {
 		}
 	}
 
-	public void onTOSend() {
+	public void onTOSend()
+	{
 		if (enabled)
 			txNetTOStart = System.nanoTime();
 	}
 
-	public void onOptTODelivery() {
-		if (enabled && !remote) {
+	public void onOptTODelivery()
+	{
+		if (enabled && !remote)
+		{
 			txNetOptEnd = System.nanoTime();
 
 			long optElapsed = txNetOptEnd - txNetTOStart;
-			synchronized (lock) {
+			synchronized (lock)
+			{
 				if (optElapsed < txTimeNetOptMin)
 					txTimeNetOptMin = optElapsed;
 				if (optElapsed > txTimeNetOptMax)
@@ -149,12 +166,15 @@ public class Profiler {
 		}
 	}
 
-	public void onTODelivery() {
-		if (enabled && !remote) {
+	public void onTODelivery()
+	{
+		if (enabled && !remote)
+		{
 			txNetTOEnd = System.nanoTime();
 
 			long toElapsed = txNetTOEnd - txNetTOStart;
-			synchronized (lock) {
+			synchronized (lock)
+			{
 				if (toElapsed < txTimeNetTOMin)
 					txTimeNetTOMin = toElapsed;
 				if (toElapsed > txTimeNetTOMax)
@@ -166,17 +186,21 @@ public class Profiler {
 		}
 	}
 
-	public void onURBSend() {
+	public void onURBSend()
+	{
 		if (enabled)
 			txNetURBStart = System.nanoTime();
 	}
 
-	public void onURBDelivery() {
-		if (enabled && !remote) {
+	public void onURBDelivery()
+	{
+		if (enabled && !remote)
+		{
 			txNetURBEnd = System.nanoTime();
 
 			long urbElapsed = txNetURBEnd - txNetURBStart;
-			synchronized (lock) {
+			synchronized (lock)
+			{
 				if (urbElapsed < txTimeNetURBMin)
 					txTimeNetURBMin = urbElapsed;
 				if (urbElapsed > txTimeNetURBMax)
@@ -188,17 +212,21 @@ public class Profiler {
 		}
 	}
 
-	public void onTxValidateBegin() {
+	public void onTxValidateBegin()
+	{
 		if (enabled)
 			txValidateStart = System.nanoTime();
 	}
 
-	public void onTxValidateEnd() {
-		if (enabled) {
+	public void onTxValidateEnd()
+	{
+		if (enabled)
+		{
 			txValidateEnd = System.nanoTime();
 
 			long validateElapsed = txValidateEnd - txValidateStart;
-			synchronized (lock) {
+			synchronized (lock)
+			{
 				if (validateElapsed < txTimeValidateMin)
 					txTimeValidateMin = validateElapsed;
 				if (validateElapsed > txTimeValidateMax)
@@ -210,27 +238,33 @@ public class Profiler {
 		}
 	}
 
-	public void onTxSpecValidateBegin() {
+	public void onTxSpecValidateBegin()
+	{
 		if (enabled)
 			txSpecValidateStart = System.nanoTime();
 	}
 
-	public void onTxSpecValidateEnd() {
+	public void onTxSpecValidateEnd()
+	{
 		if (enabled)
 			txSpecValidateEnd = System.nanoTime();
 	}
 
-	public void onTxCommitStart() {
+	public void onTxCommitStart()
+	{
 		if (enabled)
 			txCommitStart = System.nanoTime();
 	}
 
-	public void onTxCommitEnd() {
-		if (enabled) {
+	public void onTxCommitEnd()
+	{
+		if (enabled)
+		{
 			txCommitEnd = System.nanoTime();
 			long commitElapsed = txCommitEnd - txCommitStart;
 
-			synchronized (lock) {
+			synchronized (lock)
+			{
 				if (commitElapsed < txTimeCommitMin)
 					txTimeCommitMin = commitElapsed;
 				if (commitElapsed > txTimeCommitMax)
@@ -243,28 +277,34 @@ public class Profiler {
 		}
 	}
 
-	public void onTxSpecCommitStart() {
+	public void onTxSpecCommitStart()
+	{
 		if (enabled)
 			txSpecCommitStart = System.nanoTime();
 	}
 
-	public void onTxSpecCommitEnd() {
+	public void onTxSpecCommitEnd()
+	{
 		if (enabled)
 			txSpecCommitEnd = System.nanoTime();
 	}
 
-	public void onTxSpecAbortStart() {
+	public void onTxSpecAbortStart()
+	{
 		if (enabled)
 			txSpecAbortStart = System.nanoTime();
 	}
 
-	public void onTxSpecAbortEnd() {
+	public void onTxSpecAbortEnd()
+	{
 		if (enabled)
 			txSpecAbortEnd = System.nanoTime();
 	}
 
-	public void txProcessed(boolean committed) {
-		if (enabled) {
+	public void txProcessed(boolean committed)
+	{
+		if (enabled)
+		{
 			if (committed)
 				txCommitted();
 			else
@@ -272,8 +312,10 @@ public class Profiler {
 		}
 	}
 
-	public void newMsgSent(int bytes) {
-		if (enabled) {
+	public void newMsgSent(int bytes)
+	{
+		if (enabled)
+		{
 			msgSentSizeAvg = incrementalAvg(msgSentSizeAvg, bytes, msgSent);
 			msgSent++;
 
@@ -285,8 +327,10 @@ public class Profiler {
 		}
 	}
 
-	public void newMsgRecv(int bytes) {
-		if (enabled) {
+	public void newMsgRecv(int bytes)
+	{
+		if (enabled)
+		{
 			msgRecvSizeAvg = incrementalAvg(msgRecvSizeAvg, bytes, msgRecv);
 			msgRecv++;
 
@@ -299,22 +343,28 @@ public class Profiler {
 	}
 
 	private static long incrementalAvg(long currentAvg, long value,
-			long currentIteration) {
+			long currentIteration)
+	{
 		return currentAvg + (value - currentAvg) / (currentIteration + 1);
 	}
 
-	public static void print() {
+	public static void print()
+	{
 		long totalTxCommittedLocal = 0, totalTxAbortedLocal = 0, totalTxSpecCommittedLocal = 0, totalTxSpecAbortedLocal = 0, totalTxOutOfOrderLocal = 0, totalTxLocal = 0;
 		long totalTxCommittedRemote = 0, totalTxAbortedRemote = 0, totalTxSpecCommittedRemote = 0, totalTxSpecAbortedRemote = 0, totalTxOutOfOrderRemote = 0;
-		for (Profiler p : profilers) {
-			if (!p.remote) {
+		for (Profiler p : profilers)
+		{
+			if (!p.remote)
+			{
 				totalTxCommittedLocal += p.txCommitted;
 				totalTxAbortedLocal += p.txAborted;
 				totalTxSpecCommittedLocal += p.txSpecCommitted;
 				totalTxSpecAbortedLocal += p.txSpecAborted;
 				totalTxOutOfOrderLocal += p.txOutOfOrder;
 				totalTxLocal += p.txLocal;
-			} else {
+			}
+			else
+			{
 				totalTxCommittedRemote += p.txCommitted;
 				totalTxAbortedRemote += p.txAborted;
 				totalTxSpecCommittedRemote += p.txSpecCommitted;
@@ -326,14 +376,21 @@ public class Profiler {
 		long totalTxAborted = totalTxAbortedLocal + totalTxAbortedRemote;
 		long totalTxSpecCommitted = totalTxSpecCommittedLocal
 				+ totalTxSpecCommittedRemote;
-		long totalTxSpecAborted = totalTxSpecAbortedLocal + totalTxSpecAbortedRemote;
-		long totalTxOutOfOrder = totalTxOutOfOrderLocal + totalTxOutOfOrderRemote;
+		long totalTxSpecAborted = totalTxSpecAbortedLocal
+				+ totalTxSpecAbortedRemote;
+		long totalTxOutOfOrder = totalTxOutOfOrderLocal
+				+ totalTxOutOfOrderRemote;
 		long totalTx = totalTxLocal + txRemote;
 
 		System.out.println("\nSTATISTICS:");
-		System.out.printf("  Committed   = %d	Local = %d	Remote = %d\n", totalTxCommitted, totalTxCommittedLocal, totalTxCommittedRemote);
-		System.out.printf("  Aborted     = %d (%.2f%%)	Local = %d	Remote = %d\n", totalTxAborted,
-				100.0 * totalTxAborted / totalTxCommitted, totalTxAbortedLocal, totalTxAbortedRemote);
+		System.out
+				.printf("  Committed   = %d	Local = %d	Remote = %d\n",
+						totalTxCommitted, totalTxCommittedLocal,
+						totalTxCommittedRemote);
+		System.out.printf(
+				"  Aborted     = %d (%.2f%%)	Local = %d	Remote = %d\n",
+				totalTxAborted, 100.0 * totalTxAborted / totalTxCommitted,
+				totalTxAbortedLocal, totalTxAbortedRemote);
 		System.out.printf("  SCommitted  = %d\n", totalTxSpecCommitted);
 		System.out.printf("  SAborted    = %d (%.2f%%)\n", totalTxSpecAborted,
 				100.0 * totalTxSpecAborted / totalTx);
@@ -341,8 +398,9 @@ public class Profiler {
 		System.out.printf("  Local       = %d (%.2f%%)\n",
 				totalTxCommittedLocal, 100.0 * totalTxCommittedLocal
 						/ totalTxCommitted);
-		System.out.printf("  Remote      = %d (%.2f%%)\n", totalTxCommittedRemote,
-				100.0 * totalTxCommittedRemote / totalTxCommitted);
+		System.out.printf("  Remote      = %d (%.2f%%)\n",
+				totalTxCommittedRemote, 100.0 * totalTxCommittedRemote
+						/ totalTxCommitted);
 		System.out.println();
 		System.out.printf("  Tx execution time\n");
 		System.out.printf("    Application\n");

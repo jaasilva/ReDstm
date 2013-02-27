@@ -8,12 +8,14 @@ import org.deuce.transform.ExcludeTM;
  * @author Tiago Vale
  */
 @ExcludeTM
-public class ResultMessage implements java.io.Serializable {
+public class ResultMessage implements java.io.Serializable
+{
 	private static final long serialVersionUID = 1L;
 	public int ctxID;
 	public boolean result;
 
-	public ResultMessage(int ctxID, boolean result) {
+	public ResultMessage(int ctxID, boolean result)
+	{
 		this.ctxID = ctxID;
 		this.result = result;
 	}

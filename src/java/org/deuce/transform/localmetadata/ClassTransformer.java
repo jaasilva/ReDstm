@@ -26,7 +26,8 @@ import org.deuce.transform.localmetadata.replication.full.BootstrapFieldVisitor;
 import org.deuce.transform.util.Util;
 
 @ExcludeTM
-public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
+public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
+{
 	final protected static String ENUM_DESC = Type.getInternalName(Enum.class);
 
 	protected boolean excludeApp = false;
@@ -50,7 +51,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 
 	protected final FieldsHolder fieldsHolder;
 
-	public class NonInsnMethod {
+	public class NonInsnMethod
+	{
 		public String name;
 		public String desc;
 		public String origDesc;
@@ -61,7 +63,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 		public String insnOwner;
 
 		public NonInsnMethod(String name, String desc, String originalDesc,
-				String owner, int opcode) {
+				String owner, int opcode)
+		{
 			this.name = name;
 			this.desc = desc;
 			this.origDesc = originalDesc;
@@ -79,7 +82,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 		}
 
 		@Override
-		public int hashCode() {
+		public int hashCode()
+		{
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + getOuterType().hashCode();
@@ -95,7 +99,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 		}
 
 		@Override
-		public boolean equals(Object obj) {
+		public boolean equals(Object obj)
+		{
 			if (this == obj)
 				return true;
 			if (obj == null)
@@ -105,30 +110,39 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 			NonInsnMethod other = (NonInsnMethod) obj;
 			if (!getOuterType().equals(other.getOuterType()))
 				return false;
-			if (insnDesc == null) {
+			if (insnDesc == null)
+			{
 				if (other.insnDesc != null)
 					return false;
-			} else if (!insnDesc.equals(other.insnDesc))
+			}
+			else if (!insnDesc.equals(other.insnDesc))
 				return false;
-			if (origDesc == null) {
+			if (origDesc == null)
+			{
 				if (other.origDesc != null)
 					return false;
-			} else if (!origDesc.equals(other.origDesc))
+			}
+			else if (!origDesc.equals(other.origDesc))
 				return false;
-			if (insnName == null) {
+			if (insnName == null)
+			{
 				if (other.insnName != null)
 					return false;
-			} else if (!insnName.equals(other.insnName))
+			}
+			else if (!insnName.equals(other.insnName))
 				return false;
-			if (insnOwner == null) {
+			if (insnOwner == null)
+			{
 				if (other.insnOwner != null)
 					return false;
-			} else if (!insnOwner.equals(other.insnOwner))
+			}
+			else if (!insnOwner.equals(other.insnOwner))
 				return false;
 			return true;
 		}
 
-		private ClassTransformer getOuterType() {
+		private ClassTransformer getOuterType()
+		{
 			return ClassTransformer.this;
 		}
 	}
@@ -141,7 +155,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 	// XXX @Bootstrap
 	public final Map<String, Integer> field2OID = new java.util.HashMap<String, Integer>();
 
-	public ClassTransformer(String className, FieldsHolder fieldsHolder) {
+	public ClassTransformer(String className, FieldsHolder fieldsHolder)
+	{
 		super(className);
 		this.fieldsHolder = fieldsHolder == null ? this : fieldsHolder;
 	}
@@ -149,13 +164,16 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 	@Override
 	public void visit(final int version, final int access, final String name,
 			final String signature, final String superName,
-			final String[] interfaces) {
+			final String[] interfaces)
+	{
 		fieldsHolder.visit(superName);
 		isInterface = (access & Opcodes.ACC_INTERFACE) != 0;
 		isEnum = ENUM_DESC.equals(superName);
 
-		for (String inter : interfaces) {
-			if (inter.equals(ANNOTATION_NAME)) {
+		for (String inter : interfaces)
+		{
+			if (inter.equals(ANNOTATION_NAME))
+			{
 				excludeApp = true;
 				excludeSys = true;
 				break;
@@ -182,13 +200,16 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 		isAbstract = (access & Opcodes.ACC_ABSTRACT) != 0;
 		// If it is an allowed application class, make it implement
 		// UniqueObject.
-		if (!excludeApp && !excludeSys && !isInterface && !isAbstract) {
+		if (!excludeApp && !excludeSys && !isInterface && !isAbstract)
+		{
 			final String[] interfacesWithUniqueObject = Arrays.copyOf(
 					interfaces, interfaces.length + 1);
 			interfacesWithUniqueObject[interfaces.length] = UniqueObject.NAME;
 			super.visit(version, access, name, signature, superName,
 					interfacesWithUniqueObject);
-		} else {
+		}
+		else
+		{
 			super.visit(version, access, name, signature, superName, interfaces);
 		}
 	}
@@ -197,7 +218,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 	 * Checks if the class is marked as {@link ExcludeTM Exclude}
 	 */
 	@Override
-	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+	public AnnotationVisitor visitAnnotation(String desc, boolean visible)
+	{
 		excludeApp = excludeApp ? excludeApp : EXCLUDE_AP_DESC.equals(desc);
 		excludeSys = excludeSys ? excludeSys : EXCLUDE_DESC.equals(desc);
 		return super.visitAnnotation(desc, visible);
@@ -209,10 +231,12 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 	 */
 	@Override
 	public FieldVisitor visitField(int access, String name, String desc,
-			String signature, Object value) {
+			String signature, Object value)
+	{
 		String origDesc = desc;
 
-		if (Type.getType(desc).getSort() == Type.ARRAY && !excludeSys) {
+		if (Type.getType(desc).getSort() == Type.ARRAY && !excludeSys)
+		{
 			desc = ArrayUtil.getArrayContainerType(desc).getDescriptor();
 		}
 
@@ -232,15 +256,18 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 		final boolean include = (access & Opcodes.ACC_FINAL) == 0;
 		final boolean isStatic = (access & Opcodes.ACC_STATIC) != 0;
 
-		if (isStatic) {
+		if (isStatic)
+		{
 			fieldAccess |= Opcodes.ACC_STATIC;
 		}
 
-		if (include) { // include field if not final
+		if (include)
+		{ // include field if not final
 			Field field = new Field(name, addressFieldName, access,
 					ArrayUtil.getTxType(desc), Type.getType(origDesc));
 			fields.add(field);
-			if (isStatic) {
+			if (isStatic)
+			{
 				staticField = name;
 			}
 			fieldsHolder.addField(fieldAccess, addressFieldName, ArrayUtil
@@ -248,7 +275,9 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 			fieldsHolder.addField(fieldAccess | Opcodes.ACC_STATIC,
 					"__STATIC__" + addressFieldName,
 					Type.LONG_TYPE.getDescriptor(), -1L);
-		} else {
+		}
+		else
+		{
 			fieldsHolder.addField(fieldAccess, addressFieldName, ArrayUtil
 					.getTxType(desc).getDescriptor(), null);
 			fieldsHolder.addField(fieldAccess | Opcodes.ACC_STATIC,
@@ -265,8 +294,10 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String desc,
-			String signature, String[] exceptions) {
-		if (name.matches("000.*")) {
+			String signature, String[] exceptions)
+	{
+		if (name.matches("000.*"))
+		{
 			return new NonInstrumentedMethodTransformer(super.visitMethod(
 					access, name.substring(3), desc, signature, exceptions),
 					this);
@@ -274,27 +305,32 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 
 		Method nm = new Method(name, desc);
 		if (!(name.equals("main") && desc.equals("([Ljava/lang/String;)V"))
-				&& !excludeSys) {
+				&& !excludeSys)
+		{
 			nm = ArrayUtil.updateMethodArrayArgumentsAndReturn(nm);
 		}
 		MethodVisitor originalMethod = super.visitMethod(access, name,
 				nm.getDescriptor(), signature, exceptions);
 
-		if (excludeSys) {
+		if (excludeSys)
+		{
 			return originalMethod;
 		}
 
 		final boolean isNative = (access & Opcodes.ACC_NATIVE) != 0;
-		if (isNative) {
+		if (isNative)
+		{
 			createNativeMethod(access, name, desc, signature, exceptions);
 			return originalMethod;
 		}
 
-		if (name.equals("<clinit>") && !excludeApp) {
+		if (name.equals("<clinit>") && !excludeApp)
+		{
 			staticMethod = originalMethod;
 			visitclinit = true;
 
-			if (isInterface) {
+			if (isInterface)
+			{
 				return originalMethod;
 			}
 
@@ -314,12 +350,14 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 					fieldsHolder.getFieldsHolderName(className));
 		}
 
-		if (name.equals("<init>")) {
+		if (name.equals("<init>"))
+		{
 			Method newMethod = createNewMethod(name, nm.getDescriptor());
 			// Create a new duplicate SYNTHETIC method and remove the final
 			// marker if has one.
 			MethodVisitor copyMethod = null;
-			if (!excludeApp) {
+			if (!excludeApp)
+			{
 				copyMethod = super.visitMethod((access | Opcodes.ACC_SYNTHETIC)
 						& ~Opcodes.ACC_FINAL, name, newMethod.getDescriptor(),
 						signature, exceptions);
@@ -338,12 +376,14 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 		}
 
 		if (name.equals("main")
-				&& nm.getDescriptor().equals("([Ljava/lang/String;)V")) {
+				&& nm.getDescriptor().equals("([Ljava/lang/String;)V"))
+		{
 			Method newMethod = createNewMethod(name, nm.getDescriptor());
 			// Create a new duplicate SYNTHETIC method and remove the final
 			// marker if has one.
 			MethodVisitor copyMethod = null;
-			if (!excludeApp) {
+			if (!excludeApp)
+			{
 				copyMethod = super.visitMethod((access | Opcodes.ACC_SYNTHETIC)
 						& ~Opcodes.ACC_FINAL, name, newMethod.getDescriptor(),
 						signature, exceptions);
@@ -360,7 +400,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 		// Create a new duplicate SYNTHETIC method and remove the final marker
 		// if has one.
 		MethodVisitor copyMethod = null;
-		if (!excludeApp) {
+		if (!excludeApp)
+		{
 			copyMethod = super.visitMethod((access | Opcodes.ACC_SYNTHETIC)
 					& ~Opcodes.ACC_FINAL, name, newMethod.getDescriptor(),
 					signature, exceptions);
@@ -374,7 +415,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 	 * Build a dummy method that delegates the call to the native method
 	 */
 	protected void createNativeMethod(int access, String name, String desc,
-			String signature, String[] exceptions) {
+			String signature, String[] exceptions)
+	{
 		Method newMethod = createNewMethod(name, desc);
 		final int newAccess = access & ~Opcodes.ACC_NATIVE;
 
@@ -387,13 +429,15 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 		// load the arguments before calling the original method
 		final boolean isStatic = (access & ~Opcodes.ACC_STATIC) != 0;
 		int place = 0; // place on the stack
-		if (!isStatic) {
+		if (!isStatic)
+		{
 			copyMethod.visitVarInsn(Opcodes.ALOAD, 0); // load this
 			place = 1;
 		}
 
 		Type[] argumentTypes = newMethod.getArgumentTypes();
-		for (int i = 0; i < (argumentTypes.length - 1); ++i) {
+		for (int i = 0; i < (argumentTypes.length - 1); ++i)
+		{
 			Type type = argumentTypes[i];
 			copyMethod.visitVarInsn(type.getOpcode(Opcodes.ILOAD), place);
 			place += type.getSize();
@@ -406,9 +450,12 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 		TypeCodeResolver returnReolver = TypeCodeResolverFactory
 				.getReolver(newMethod.getReturnType());
 
-		if (returnReolver == null) {
+		if (returnReolver == null)
+		{
 			copyMethod.visitInsn(Opcodes.RETURN); // return;
-		} else {
+		}
+		else
+		{
 			copyMethod.visitInsn(returnReolver.returnCode());
 		}
 		copyMethod.visitMaxs(1, 1);
@@ -416,11 +463,14 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 	}
 
 	@Override
-	public void visitEnd() {
+	public void visitEnd()
+	{
 		// Didn't see any static method till now, so creates one.
-		if (!excludeApp && !excludeSys) {
+		if (!excludeApp && !excludeSys)
+		{
 			super.visitAnnotation(EXCLUDE_DESC, false);
-			if (!visitclinit && fields.size() > 0) {
+			if (!visitclinit && fields.size() > 0)
+			{
 				// creates a new <clinit> in case we didn't see one already.
 				// TODO avoid creating new static method in case of external
 				// fields
@@ -434,7 +484,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 				method.visitEnd();
 			}
 
-			if (isEnum) {
+			if (isEnum)
+			{
 				// Build a dummy ordinal() method
 				MethodVisitor ordinalMethod = super.visitMethod(
 						Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC, "ordinal",
@@ -448,7 +499,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 				ordinalMethod.visitEnd();
 			}
 
-			if (!isInterface && !isAbstract) {
+			if (!isInterface && !isAbstract)
+			{
 				/*
 				 * FIXME: Refactor. Add the synthetic metadata field to the
 				 * user's class, plus the getters/setters and the
@@ -518,8 +570,10 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 			}
 		}
 
-		if (!excludeSys) {
-			for (NonInsnMethod mim : nonInsnMethods) {
+		if (!excludeSys)
+		{
+			for (NonInsnMethod mim : nonInsnMethods)
+			{
 				MethodVisitor mv = visitMethod(Opcodes.ACC_STATIC
 						| Opcodes.ACC_FINAL | Opcodes.ACC_PRIVATE
 						| Opcodes.ACC_SYNTHETIC, "000" + mim.insnName,
@@ -534,7 +588,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 		fieldsHolder.close();
 	}
 
-	public static Method createNewMethod(String name, String desc) {
+	public static Method createNewMethod(String name, String desc)
+	{
 		Method method = new Method(name, desc);
 		Type[] arguments = method.getArgumentTypes();
 
@@ -547,18 +602,22 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 	}
 
 	public static Method createNewMethod2(String owner, String name,
-			String desc, int opcode) {
+			String desc, int opcode)
+	{
 		Method method = new Method(name, desc);
 		Type[] arguments = method.getArgumentTypes();
 
 		Type[] newArguments = null;
-		if (opcode != Opcodes.INVOKESTATIC && opcode != Opcodes.INVOKESPECIAL) {
+		if (opcode != Opcodes.INVOKESTATIC && opcode != Opcodes.INVOKESPECIAL)
+		{
 			newArguments = new Type[arguments.length + 2];
 			System.arraycopy(arguments, 0, newArguments, 1, arguments.length);
 			newArguments[0] = Type.getType("L" + owner + ";");
 			// add as a constant
 			newArguments[newArguments.length - 1] = Context.CONTEXT_TYPE;
-		} else {
+		}
+		else
+		{
 			newArguments = new Type[arguments.length + 1];
 			System.arraycopy(arguments, 0, newArguments, 0, arguments.length);
 			// add as a constant
@@ -566,7 +625,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 		}
 
 		Type returnType = method.getReturnType();
-		if (opcode == Opcodes.INVOKESPECIAL) {
+		if (opcode == Opcodes.INVOKESPECIAL)
+		{
 			returnType = Type.getType("L" + owner + ";");
 		}
 
@@ -574,22 +634,27 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder {
 	}
 
 	public void addField(int fieldAccess, String addressFieldName, String desc,
-			Object value) {
+			Object value)
+	{
 		super.visitField(fieldAccess, addressFieldName, desc, null, value);
 	}
 
-	public void close() {
+	public void close()
+	{
 	}
 
-	public MethodVisitor getStaticMethodVisitor() {
+	public MethodVisitor getStaticMethodVisitor()
+	{
 		return staticMethod;
 	}
 
-	public String getFieldsHolderName(String owner) {
+	public String getFieldsHolderName(String owner)
+	{
 		return owner;
 	}
 
-	public void visit(String superName) {
+	public void visit(String superName)
+	{
 		// nothing to do
 	}
 }

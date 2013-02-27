@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////
 // Copyright (c) 2001, Eric D. Friedman All Rights Reserved.
 //
 // This library is free software; you can redistribute it and/or
@@ -8,35 +8,39 @@
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-///////////////////////////////////////////////////////////////////////////////
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+// /////////////////////////////////////////////////////////////////////////////
 
 package org.deuce.trove;
 
 /**
  * A procedure which stores each value it receives into a target array.
- *
+ * 
  * Created: Sat Jan 12 10:13:42 2002
- *
+ * 
  * @author Eric D. Friedman
- * @version $Id: ToObjectArrayProcedure.java,v 1.2 2006/11/10 23:27:57 robeden Exp $
+ * @version $Id: ToObjectArrayProcedure.java,v 1.2 2006/11/10 23:27:57 robeden
+ *          Exp $
  */
 
-final class ToObjectArrayProcedure<T> implements TObjectProcedure<T> {
-    private final T[] target;
-    private int pos = 0;
-    
-    public ToObjectArrayProcedure(final T[] target) {
-        this.target = target;
-    }
+final class ToObjectArrayProcedure<T> implements TObjectProcedure<T>
+{
+	private final T[] target;
+	private int pos = 0;
 
-    public final boolean execute(T value) {
-        target[pos++] = value;
-        return true;
-    }
+	public ToObjectArrayProcedure(final T[] target)
+	{
+		this.target = target;
+	}
+
+	public final boolean execute(T value)
+	{
+		target[pos++] = value;
+		return true;
+	}
 } // ToObjectArrayProcedure
