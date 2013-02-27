@@ -55,96 +55,71 @@ public class TribuDSTM
 
 	private static void initGroupCommunication()
 	{
-		try
+		String className = System.getProperty("tribu.groupcommunication.class");
+		if (className != null)
 		{
-			String className = System
-					.getProperty("tribu.groupcommunication.class");
-			if (className != null)
+			try
 			{
-				try
-				{
-					@SuppressWarnings("unchecked")
-					Class<? extends GroupCommunication> groupCommClass = (Class<? extends GroupCommunication>) Class
-							.forName(className);
-					groupComm = groupCommClass.newInstance();
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace(); // TODO add logger
-				}
+				@SuppressWarnings("unchecked")
+				Class<? extends GroupCommunication> groupCommClass = (Class<? extends GroupCommunication>) Class
+						.forName(className);
+				groupComm = groupCommClass.newInstance();
 			}
-			else
+			catch (Exception e)
 			{
-				groupComm = new AppiaGroupCommunication();
+				e.printStackTrace(); // TODO add logger
 			}
 		}
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		else
+		{ // default commgroup
+			groupComm = new AppiaGroupCommunication();
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	private static void initTransactionContext()
 	{
-		try
+		String className = System
+				.getProperty("org.deuce.transaction.contextClass");
+		if (className != null)
 		{
-			String className = System
-					.getProperty("org.deuce.transaction.contextClass");
-			if (className != null)
+			try
 			{
-				try
-				{
-					ctxClass = (Class<? extends DistributedContext>) Class
-							.forName(className);
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace(); // TODO add logger
-				}
+				ctxClass = (Class<? extends DistributedContext>) Class
+						.forName(className);
 			}
-			else
+			catch (Exception e)
 			{
-				ctxClass = org.deuce.transaction.tl2.Context.class;
+				e.printStackTrace(); // TODO add logger
 			}
 		}
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		else
+		{ // default context
+			ctxClass = org.deuce.transaction.tl2.Context.class;
 		}
 	}
 
 	private static void initReplicationProtocol()
 	{
-		try
+		String className = System
+				.getProperty("tribu.distributed.protocolClass");
+		if (className != null)
 		{
-			String className = System
-					.getProperty("tribu.distributed.protocolClass");
-			if (className != null)
+			try
 			{
-				try
-				{
-					@SuppressWarnings("unchecked")
-					Class<? extends DistributedProtocol> distProtocolClass = (Class<? extends DistributedProtocol>) Class
-							.forName(className);
-					distProtocol = distProtocolClass.newInstance();
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace(); // TODO add logger
-				}
+				@SuppressWarnings("unchecked")
+				Class<? extends DistributedProtocol> distProtocolClass = (Class<? extends DistributedProtocol>) Class
+						.forName(className);
+				distProtocol = distProtocolClass.newInstance();
 			}
-			else
+			catch (Exception e)
 			{
-				distProtocol = new NonVoting();
+				e.printStackTrace(); // TODO add logger
 			}
 		}
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		else
+		{ // default protocol
+			distProtocol = new NonVoting();
 		}
 	}
 
@@ -189,10 +164,10 @@ public class TribuDSTM
 		distProtocol.onTxCommit(ctx);
 	}
 
-	public static final void onTxRead(DistributedContext ctx,
+	public static final Object onTxRead(DistributedContext ctx,
 			ObjectMetadata metadata)
 	{
-		distProtocol.onTxRead(ctx, metadata);
+		return distProtocol.onTxRead(ctx, metadata);
 	}
 
 	public static final void onTxWrite(DistributedContext ctx,
@@ -234,6 +209,11 @@ public class TribuDSTM
 			OptimisticDeliverySubscriber subscriber)
 	{
 		groupComm.subscribeOptimisticDelivery(subscriber);
+	}
+
+	public static final Address getAddress()
+	{
+		return groupComm.getAddress();
 	}
 
 }

@@ -58,7 +58,6 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		}
 		catch (SpreadException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

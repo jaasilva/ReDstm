@@ -3,7 +3,6 @@ package org.deuce.distribution.replication.full.protocol.voting;
 import org.deuce.transform.ExcludeTM;
 
 /**
- * FIXME: Refactor.
  * 
  * @author Tiago Vale
  */

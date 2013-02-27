@@ -45,12 +45,10 @@ public class ByteArrayContainer extends ArrayContainer
 			}
 			catch (InstantiationException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			catch (IllegalAccessException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

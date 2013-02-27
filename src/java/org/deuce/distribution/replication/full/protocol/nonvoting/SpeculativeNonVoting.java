@@ -375,8 +375,9 @@ public class SpeculativeNonVoting extends FullReplicationProtocol implements
 	}
 
 	@Override
-	public void onTxRead(DistributedContext ctx, ObjectMetadata metadata)
+	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata)
 	{
+		return null;
 		// nothing to do
 
 	}

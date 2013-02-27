@@ -24,8 +24,7 @@ public class PStore extends PartialReplicationProtocol implements
 	@Override
 	public void init()
 	{
-		// TODO Auto-generated method stub
-
+		// TODO init PStore
 	}
 
 	/*
@@ -37,8 +36,7 @@ public class PStore extends PartialReplicationProtocol implements
 	@Override
 	public void onTxContextCreation(DistributedContext ctx)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onTxContextCreation PStore
 	}
 
 	/*
@@ -50,8 +48,7 @@ public class PStore extends PartialReplicationProtocol implements
 	@Override
 	public void onTxBegin(DistributedContext ctx)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onTxBegin PStore
 	}
 
 	/*
@@ -63,8 +60,7 @@ public class PStore extends PartialReplicationProtocol implements
 	@Override
 	public void onTxCommit(DistributedContext ctx)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onTxCommit PStore
 	}
 
 	/*
@@ -76,8 +72,7 @@ public class PStore extends PartialReplicationProtocol implements
 	@Override
 	public void onTxFinished(DistributedContext ctx, boolean committed)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onTxFinished PStore
 	}
 
 	/*
@@ -87,10 +82,10 @@ public class PStore extends PartialReplicationProtocol implements
 	 * .DistributedContext, org.deuce.distribution.ObjectMetadata)
 	 */
 	@Override
-	public void onTxRead(DistributedContext ctx, ObjectMetadata metadata)
+	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onTxRead PStore
+		return null;
 	}
 
 	/*
@@ -104,8 +99,7 @@ public class PStore extends PartialReplicationProtocol implements
 	public void onTxWrite(DistributedContext ctx, ObjectMetadata metadata,
 			UniqueObject obj)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onTxWrite PStore
 	}
 
 	/*
@@ -117,8 +111,7 @@ public class PStore extends PartialReplicationProtocol implements
 	@Override
 	public void onDelivery(Object obj, Address src, int size)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onDelivery PStore
 	}
 
 }

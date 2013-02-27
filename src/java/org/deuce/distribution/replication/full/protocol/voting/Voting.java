@@ -43,7 +43,6 @@ public class Voting extends FullReplicationProtocol implements
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -221,8 +220,9 @@ public class Voting extends FullReplicationProtocol implements
 	}
 
 	@Override
-	public void onTxRead(DistributedContext ctx, ObjectMetadata metadata)
+	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata)
 	{
+		return null;
 		// nothing to do
 	}
 

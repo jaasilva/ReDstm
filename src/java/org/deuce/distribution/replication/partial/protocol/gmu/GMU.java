@@ -24,8 +24,7 @@ public class GMU extends PartialReplicationProtocol implements
 	@Override
 	public void init()
 	{
-		// TODO Auto-generated method stub
-
+		// TODO init GMU
 	}
 
 	/*
@@ -37,8 +36,7 @@ public class GMU extends PartialReplicationProtocol implements
 	@Override
 	public void onTxContextCreation(DistributedContext ctx)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onTxContextCreation GMU
 	}
 
 	/*
@@ -50,8 +48,7 @@ public class GMU extends PartialReplicationProtocol implements
 	@Override
 	public void onTxBegin(DistributedContext ctx)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onTxBegin GMU
 	}
 
 	/*
@@ -63,8 +60,7 @@ public class GMU extends PartialReplicationProtocol implements
 	@Override
 	public void onTxCommit(DistributedContext ctx)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onTxCommit GMU
 	}
 
 	/*
@@ -76,8 +72,7 @@ public class GMU extends PartialReplicationProtocol implements
 	@Override
 	public void onTxFinished(DistributedContext ctx, boolean committed)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onTxFinished GMU
 	}
 
 	/*
@@ -87,10 +82,10 @@ public class GMU extends PartialReplicationProtocol implements
 	 * .DistributedContext, org.deuce.distribution.ObjectMetadata)
 	 */
 	@Override
-	public void onTxRead(DistributedContext ctx, ObjectMetadata metadata)
+	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onTxRead GMU
+		return null;
 	}
 
 	/*
@@ -104,8 +99,7 @@ public class GMU extends PartialReplicationProtocol implements
 	public void onTxWrite(DistributedContext ctx, ObjectMetadata metadata,
 			UniqueObject obj)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onTxWrite GMU
 	}
 
 	/*
@@ -117,8 +111,7 @@ public class GMU extends PartialReplicationProtocol implements
 	@Override
 	public void onDelivery(Object obj, Address src, int size)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onDelivery GMU
 	}
 
 }

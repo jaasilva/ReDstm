@@ -82,12 +82,10 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		}
 		catch (ClosedSessionException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (JGCSException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		dataSession.close();
@@ -167,15 +165,13 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		}
 		catch (NotJoinedException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	public void onExcluded()
 	{
-		// TODO Auto-generated method stub
-
+		// nothing to do
 	}
 
 	public void onBlock()
@@ -186,12 +182,10 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		}
 		catch (NotJoinedException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (JGCSException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -237,8 +231,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 
 	public void onException(JGCSException exception)
 	{
-		// TODO Auto-generated method stub
-
+		// nothing to do
 	}
 
 	@ExcludeTM

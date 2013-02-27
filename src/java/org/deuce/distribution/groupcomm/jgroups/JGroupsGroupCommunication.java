@@ -87,8 +87,6 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 
 	public void sendTotalOrdered(final byte[] payload)
 	{
-		// new Thread(new Runnable() {
-		// public void run() {
 		try
 		{
 			channelTOB.send(null, payload);
@@ -99,8 +97,6 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		// }
-		// }).start();
 	}
 
 	public void sendReliably(byte[] payload)
@@ -144,14 +140,12 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 
 	public void getState(OutputStream output) throws Exception
 	{
-		// TODO Auto-generated method stub
-
+		// nothing to do
 	}
 
 	public void setState(InputStream input) throws Exception
 	{
-		// TODO Auto-generated method stub
-
+		// nothing to do
 	}
 
 	public void viewAccepted(View new_view)
@@ -163,19 +157,16 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 
 	public void suspect(org.jgroups.Address suspected_mbr)
 	{
-		// TODO Auto-generated method stub
-
+		// nothing to do
 	}
 
 	public void block()
 	{
-		// TODO Auto-generated method stub
-
+		// nothing to do
 	}
 
 	public void unblock()
 	{
-		// TODO Auto-generated method stub
-
+		// nothing to do
 	}
 }

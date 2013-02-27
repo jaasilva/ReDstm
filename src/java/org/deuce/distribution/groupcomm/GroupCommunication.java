@@ -26,7 +26,6 @@ public abstract class GroupCommunication
 		}
 		catch (InterruptedException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("-- Members arrived!");
@@ -82,5 +81,10 @@ public abstract class GroupCommunication
 	public boolean isLocal(Address addr)
 	{
 		return myAddress.equals(addr);
+	}
+
+	public Address getAddress()
+	{
+		return this.myAddress;
 	}
 }

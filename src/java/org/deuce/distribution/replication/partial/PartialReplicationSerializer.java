@@ -24,7 +24,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	public Object writeReplaceHook(UniqueObject obj)
 			throws ObjectStreamException
 	{
-		// TODO Auto-generated method stub
+		// TODO writeReplaceHook PartialReplicationSerializer
 		return null;
 	}
 
@@ -37,7 +37,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	public Object readResolveHook(UniqueObject obj)
 			throws ObjectStreamException
 	{
-		// TODO Auto-generated method stub
+		// TODO readResolveHook PartialReplicationSerializer
 		return null;
 	}
 
@@ -48,7 +48,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	@Override
 	public ObjectMetadata createMetadata()
 	{
-		// TODO Auto-generated method stub
+		// TODO createMetadata PartialReplicationSerializer
 		return null;
 	}
 

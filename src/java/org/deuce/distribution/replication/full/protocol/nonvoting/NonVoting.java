@@ -1,14 +1,9 @@
 package org.deuce.distribution.replication.full.protocol.nonvoting;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
@@ -92,8 +87,9 @@ public class NonVoting extends FullReplicationProtocol implements
 	}
 
 	@Override
-	public void onTxRead(DistributedContext ctx, ObjectMetadata metadata)
+	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata)
 	{
+		return null;
 		// nothing to do
 
 	}

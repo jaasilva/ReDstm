@@ -18,7 +18,7 @@ public interface DistributedProtocol
 
 	public ObjectSerializer getObjectSerializer();
 
-	public void onTxRead(DistributedContext ctx, ObjectMetadata metadata);
+	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata);
 
 	public void onTxWrite(DistributedContext ctx, ObjectMetadata metadata,
 			UniqueObject obj);

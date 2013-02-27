@@ -26,7 +26,7 @@ public class SCOReContext extends DistributedContext
 	 */
 	public SCOReContext()
 	{
-		// TODO Auto-generated constructor stub
+		// TODO SCOReContext
 	}
 
 	/*
@@ -38,8 +38,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void beforeReadAccess(TxField field)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO beforeReadAccess SCOReContext
 	}
 
 	/*
@@ -52,7 +51,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public ArrayContainer onReadAccess(ArrayContainer value, TxField field)
 	{
-		// TODO Auto-generated method stub
+		// TODO onReadAccess SCOReContext
 		return null;
 	}
 
@@ -64,7 +63,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public Object onReadAccess(Object value, TxField field)
 	{
-		// TODO Auto-generated method stub
+		// TODO onReadAccess SCOReContext
 		return null;
 	}
 
@@ -76,7 +75,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public boolean onReadAccess(boolean value, TxField field)
 	{
-		// TODO Auto-generated method stub
+		// TODO onReadAccess SCOReContext
 		return false;
 	}
 
@@ -88,7 +87,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public byte onReadAccess(byte value, TxField field)
 	{
-		// TODO Auto-generated method stub
+		// TODO onReadAccess SCOReContext
 		return 0;
 	}
 
@@ -100,7 +99,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public char onReadAccess(char value, TxField field)
 	{
-		// TODO Auto-generated method stub
+		// TODO onReadAccess SCOReContext
 		return 0;
 	}
 
@@ -112,7 +111,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public short onReadAccess(short value, TxField field)
 	{
-		// TODO Auto-generated method stub
+		// TODO onReadAccess SCOReContext
 		return 0;
 	}
 
@@ -124,7 +123,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public int onReadAccess(int value, TxField field)
 	{
-		// TODO Auto-generated method stub
+		// TODO onReadAccess SCOReContext
 		return 0;
 	}
 
@@ -136,7 +135,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public long onReadAccess(long value, TxField field)
 	{
-		// TODO Auto-generated method stub
+		// TODO onReadAccess SCOReContext
 		return 0;
 	}
 
@@ -148,7 +147,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public float onReadAccess(float value, TxField field)
 	{
-		// TODO Auto-generated method stub
+		// TODO onReadAccess SCOReContext
 		return 0;
 	}
 
@@ -160,7 +159,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public double onReadAccess(double value, TxField field)
 	{
-		// TODO Auto-generated method stub
+		// TODO onReadAccess SCOReContext
 		return 0;
 	}
 
@@ -174,8 +173,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(ArrayContainer value, TxField field)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onWriteAccess SCOReContext
 	}
 
 	/*
@@ -185,10 +183,9 @@ public class SCOReContext extends DistributedContext
 	 * org.deuce.transform.localmetadata.type.TxField)
 	 */
 	@Override
-	public void onWriteAccess(Object value, TxField field)
+	public void  onWriteAccess(Object value, TxField field)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onWriteAccess SCOReContext
 	}
 
 	/*
@@ -199,8 +196,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(boolean value, TxField field)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onWriteAccess SCOReContext
 	}
 
 	/*
@@ -211,8 +207,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(byte value, TxField field)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onWriteAccess SCOReContext
 	}
 
 	/*
@@ -223,8 +218,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(char value, TxField field)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onWriteAccess SCOReContext
 	}
 
 	/*
@@ -235,8 +229,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(short value, TxField field)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onWriteAccess SCOReContext
 	}
 
 	/*
@@ -247,8 +240,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(int value, TxField field)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onWriteAccess SCOReContext
 	}
 
 	/*
@@ -259,8 +251,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(long value, TxField field)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onWriteAccess SCOReContext
 	}
 
 	/*
@@ -271,8 +262,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(float value, TxField field)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onWriteAccess SCOReContext
 	}
 
 	/*
@@ -283,8 +273,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(double value, TxField field)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onWriteAccess SCOReContext
 	}
 
 	/*
@@ -294,8 +283,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onIrrevocableAccess()
 	{
-		// TODO Auto-generated method stub
-
+		// TODO onIrrevocableAccess SCOReContext
 	}
 
 	/*
@@ -305,7 +293,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	protected ReadSet createReadSet()
 	{
-		// TODO Auto-generated method stub
+		// TODO createReadSet SCOReContext
 		return null;
 	}
 
@@ -316,7 +304,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	protected WriteSet createWriteSet()
 	{
-		// TODO Auto-generated method stub
+		// TODO createWriteSet SCOReContext
 		return null;
 	}
 
@@ -327,7 +315,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public DistributedContextState createState()
 	{
-		// TODO Auto-generated method stub
+		// TODO createState SCOReContext
 		return null;
 	}
 
@@ -339,8 +327,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	protected void initialise(int atomicBlockId, String metainf)
 	{
-		// TODO Auto-generated method stub
-
+		// TODO initialise SCOReContext
 	}
 
 	/*
@@ -350,7 +337,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	protected boolean performValidation()
 	{
-		// TODO Auto-generated method stub
+		// TODO performValidation SCOReContext
 		return false;
 	}
 
@@ -361,8 +348,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	protected void applyUpdates()
 	{
-		// TODO Auto-generated method stub
-
+		// TODO applyUpdates SCOReContext
 	}
 
 }

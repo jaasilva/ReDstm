@@ -19,7 +19,7 @@ public abstract class PartialReplicationProtocol implements DistributedProtocol
 	@Override
 	public ObjectSerializer getObjectSerializer()
 	{
-		// TODO Auto-generated method stub
+		// TODO getObjectSerializer PartialReplicationProtocol
 		return null;
 	}
 
