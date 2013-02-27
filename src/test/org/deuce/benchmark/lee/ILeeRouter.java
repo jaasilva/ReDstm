@@ -1,6 +1,7 @@
 package org.deuce.benchmark.lee;
 
-public interface ILeeRouter {
+public interface ILeeRouter
+{
 
 	int getGridSize();
 

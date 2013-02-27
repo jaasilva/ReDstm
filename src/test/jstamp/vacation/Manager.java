@@ -1,81 +1,56 @@
 package jstamp.vacation;
 
-/* =============================================================================
- *
- * manager.c
- * -- Travel reservation resource manager
- *
+/*
  * =============================================================================
- *
- * Copyright (C) Stanford University, 2006.  All Rights Reserved.
- * Author: Chi Cao Minh
- *
+ * manager.c -- Travel reservation resource manager
  * =============================================================================
- *
- * For the license of bayes/sort.h and bayes/sort.c, please see the header
- * of the files.
- * 
- * ------------------------------------------------------------------------
- * 
- * For the license of kmeans, please see kmeans/LICENSE.kmeans
- * 
- * ------------------------------------------------------------------------
- * 
- * For the license of ssca2, please see ssca2/COPYRIGHT
- * 
- * ------------------------------------------------------------------------
- * 
- * For the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the
- * header of the files.
- * 
- * ------------------------------------------------------------------------
- * 
- * For the license of lib/rbtree.h and lib/rbtree.c, please see
+ * Copyright (C) Stanford University, 2006. All Rights Reserved. Author: Chi Cao
+ * Minh
+ * =============================================================================
+ * For the license of bayes/sort.h and bayes/sort.c, please see the header of
+ * the files.
+ * ------------------------------------------------------------------------ For
+ * the license of kmeans, please see kmeans/LICENSE.kmeans
+ * ------------------------------------------------------------------------ For
+ * the license of ssca2, please see ssca2/COPYRIGHT
+ * ------------------------------------------------------------------------ For
+ * the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the header of
+ * the files.
+ * ------------------------------------------------------------------------ For
+ * the license of lib/rbtree.h and lib/rbtree.c, please see
  * lib/LEGALNOTICE.rbtree and lib/LICENSE.rbtree
- * 
  * ------------------------------------------------------------------------
- * 
  * Unless otherwise noted, the following license applies to STAMP files:
- * 
- * Copyright (c) 2007, Stanford University
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- * 
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- * 
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in
- *       the documentation and/or other materials provided with the
- *       distribution.
- * 
- *     * Neither the name of Stanford University nor the names of its
- *       contributors may be used to endorse or promote products derived
- *       from this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY STANFORD UNIVERSITY ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL STANFORD UNIVERSITY BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
- * THE POSSIBILITY OF SUCH DAMAGE.
- *
+ * Copyright (c) 2007, Stanford University All rights reserved. Redistribution
+ * and use in source and binary forms, with or without modification, are
+ * permitted provided that the following conditions are met: * Redistributions
+ * of source code must retain the above copyright notice, this list of
+ * conditions and the following disclaimer. * Redistributions in binary form
+ * must reproduce the above copyright notice, this list of conditions and the
+ * following disclaimer in the documentation and/or other materials provided
+ * with the distribution. * Neither the name of Stanford University nor the
+ * names of its contributors may be used to endorse or promote products derived
+ * from this software without specific prior written permission. THIS SOFTWARE
+ * IS PROVIDED BY STANFORD UNIVERSITY ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL STANFORD UNIVERSITY BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * =============================================================================
  */
 
-/* =============================================================================
+/*
+ * =============================================================================
  * DECLARATION OF TM_CALLABLE FUNCTIONS
  * =============================================================================
  */
-public class Manager {
+public class Manager
+{
 	RBTree carTablePtr;
 	RBTree roomTablePtr;
 	RBTree flightTablePtr;
@@ -87,7 +62,8 @@ public class Manager {
 	 * ========================================================
 	 * =====================
 	 */
-	public Manager() {
+	public Manager()
+	{
 		carTablePtr = new RBTree();
 		roomTablePtr = new RBTree();
 		flightTablePtr = new RBTree();
@@ -102,26 +78,35 @@ public class Manager {
 	 * ====================================
 	 * =========================================
 	 */
-	boolean addReservation(RBTree tablePtr, int id, int num, int price) {
+	boolean addReservation(RBTree tablePtr, int id, int num, int price)
+	{
 		Reservation reservationPtr;
 
 		reservationPtr = (Reservation) tablePtr.find(id);
-		if (reservationPtr == null) {
+		if (reservationPtr == null)
+		{
 			/* Create new reservation */
-			if (num < 1 || price < 0) {
+			if (num < 1 || price < 0)
+			{
 				return false;
 			}
 			reservationPtr = new Reservation(id, num, price);
 			// assert(reservationPtr != NULL);
 			tablePtr.insert(id, reservationPtr);
-		} else {
+		}
+		else
+		{
 			/* Update existing reservation */
-			if (!reservationPtr.reservation_addToTotal(num)) {
+			if (!reservationPtr.reservation_addToTotal(num))
+			{
 				return false;
 			}
-			if (reservationPtr.numTotal == 0) {
+			if (reservationPtr.numTotal == 0)
+			{
 				boolean status = tablePtr.remove(id);
-			} else {
+			}
+			else
+			{
 				reservationPtr.reservation_updatePrice(price);
 			}
 		}
@@ -137,7 +122,8 @@ public class Manager {
 	 * ====================================================================
 	 * =========
 	 */
-	boolean manager_addCar(int carId, int numCars, int price) {
+	boolean manager_addCar(int carId, int numCars, int price)
+	{
 		return addReservation(carTablePtr, carId, numCars, price);
 	}
 
@@ -150,7 +136,8 @@ public class Manager {
 	 * ======================================
 	 * =======================================
 	 */
-	boolean manager_deleteCar(int carId, int numCar) {
+	boolean manager_deleteCar(int carId, int numCar)
+	{
 		/* -1 keeps old price */
 		return addReservation(carTablePtr, carId, -numCar, -1);
 	}
@@ -163,7 +150,8 @@ public class Manager {
 	 * ====================================================================
 	 * =========
 	 */
-	boolean manager_addRoom(int roomId, int numRoom, int price) {
+	boolean manager_addRoom(int roomId, int numRoom, int price)
+	{
 		return addReservation(roomTablePtr, roomId, numRoom, price);
 	}
 
@@ -176,7 +164,8 @@ public class Manager {
 	 * ====================================
 	 * =========================================
 	 */
-	boolean manager_deleteRoom(int roomId, int numRoom) {
+	boolean manager_deleteRoom(int roomId, int numRoom)
+	{
 		/* -1 keeps old price */
 		return addReservation(roomTablePtr, roomId, -numRoom, -1);
 	}
@@ -189,7 +178,8 @@ public class Manager {
 	 * ==========================================================
 	 * ===================
 	 */
-	boolean manager_addFlight(int flightId, int numSeat, int price) {
+	boolean manager_addFlight(int flightId, int numSeat, int price)
+	{
 		return addReservation(flightTablePtr, flightId, numSeat, price);
 	}
 
@@ -200,14 +190,17 @@ public class Manager {
 	 * ====
 	 * =========================================================================
 	 */
-	boolean manager_deleteFlight(int flightId) {
+	boolean manager_deleteFlight(int flightId)
+	{
 		Reservation reservationPtr = (Reservation) flightTablePtr
 				.find(flightId);
-		if (reservationPtr == null) {
+		if (reservationPtr == null)
+		{
 			return false;
 		}
 
-		if (reservationPtr.numUsed > 0) {
+		if (reservationPtr.numUsed > 0)
+		{
 			return false; /* somebody has a reservation */
 		}
 
@@ -222,11 +215,13 @@ public class Manager {
 	 * ======================================
 	 * =======================================
 	 */
-	boolean manager_addCustomer(int customerId) {
+	boolean manager_addCustomer(int customerId)
+	{
 		Customer customerPtr;
 		boolean status;
 
-		if (customerTablePtr.contains(customerId)) {
+		if (customerTablePtr.contains(customerId))
+		{
 			return false;
 		}
 
@@ -245,7 +240,8 @@ public class Manager {
 	 * ==============================================
 	 * ===============================
 	 */
-	boolean manager_deleteCustomer(int customerId) {
+	boolean manager_deleteCustomer(int customerId)
+	{
 		Customer customerPtr;
 		RBTree reservationTables[] = new RBTree[Defines.NUM_RESERVATION_TYPE];
 		List_t reservationInfoListPtr;
@@ -253,7 +249,8 @@ public class Manager {
 		boolean status;
 
 		customerPtr = (Customer) customerTablePtr.find(customerId);
-		if (customerPtr == null) {
+		if (customerPtr == null)
+		{
 			return false;
 		}
 
@@ -264,7 +261,8 @@ public class Manager {
 		/* Cancel this customer's reservations */
 		reservationInfoListPtr = customerPtr.reservationInfoListPtr;
 		it = reservationInfoListPtr.head;
-		while (it.nextPtr != null) {
+		while (it.nextPtr != null)
+		{
 			Reservation_Info reservationInfoPtr;
 			Reservation reservationPtr;
 			it = it.nextPtr;
@@ -291,10 +289,12 @@ public class Manager {
 	 * ========
 	 * =====================================================================
 	 */
-	int queryNumFree(RBTree tablePtr, int id) {
+	int queryNumFree(RBTree tablePtr, int id)
+	{
 		int numFree = -1;
 		Reservation reservationPtr = (Reservation) tablePtr.find(id);
-		if (reservationPtr != null) {
+		if (reservationPtr != null)
+		{
 			numFree = reservationPtr.numFree;
 		}
 
@@ -307,10 +307,12 @@ public class Manager {
 	 * ============
 	 * =================================================================
 	 */
-	int queryPrice(RBTree tablePtr, int id) {
+	int queryPrice(RBTree tablePtr, int id)
+	{
 		int price = -1;
 		Reservation reservationPtr = (Reservation) tablePtr.find(id);
-		if (reservationPtr != null) {
+		if (reservationPtr != null)
+		{
 			price = reservationPtr.price;
 		}
 
@@ -324,7 +326,8 @@ public class Manager {
 	 * ======================================
 	 * =======================================
 	 */
-	int manager_queryCar(int carId) {
+	int manager_queryCar(int carId)
+	{
 		return queryNumFree(carTablePtr, carId);
 	}
 
@@ -335,7 +338,8 @@ public class Manager {
 	 * ====================================================
 	 * =========================
 	 */
-	int manager_queryCarPrice(int carId) {
+	int manager_queryCarPrice(int carId)
+	{
 		return queryPrice(carTablePtr, carId);
 	}
 
@@ -346,7 +350,8 @@ public class Manager {
 	 * ====================================
 	 * =========================================
 	 */
-	int manager_queryRoom(int roomId) {
+	int manager_queryRoom(int roomId)
+	{
 		return queryNumFree(roomTablePtr, roomId);
 	}
 
@@ -357,7 +362,8 @@ public class Manager {
 	 * ================================================
 	 * =============================
 	 */
-	int manager_queryRoomPrice(int roomId) {
+	int manager_queryRoomPrice(int roomId)
+	{
 		return queryPrice(roomTablePtr, roomId);
 	}
 
@@ -368,7 +374,8 @@ public class Manager {
 	 * ================================
 	 * =============================================
 	 */
-	int manager_queryFlight(int flightId) {
+	int manager_queryFlight(int flightId)
+	{
 		return queryNumFree(flightTablePtr, flightId);
 	}
 
@@ -379,7 +386,8 @@ public class Manager {
 	 * ==========================================
 	 * ===================================
 	 */
-	int manager_queryFlightPrice(int flightId) {
+	int manager_queryFlightPrice(int flightId)
+	{
 		return queryPrice(flightTablePtr, flightId);
 	}
 
@@ -391,13 +399,15 @@ public class Manager {
 	 * ====================================================================
 	 * =========
 	 */
-	int manager_queryCustomerBill(int customerId) {
+	int manager_queryCustomerBill(int customerId)
+	{
 		int bill = -1;
 		Customer customerPtr;
 
 		customerPtr = (Customer) customerTablePtr.find(customerId);
 
-		if (customerPtr != null) {
+		if (customerPtr != null)
+		{
 			bill = customerPtr.customer_getBill();
 		}
 
@@ -419,27 +429,32 @@ public class Manager {
 	 * =========================================================
 	 */
 	static boolean reserve(RBTree tablePtr, RBTree customerTablePtr,
-			int customerId, int id, int type) {
+			int customerId, int id, int type)
+	{
 		Customer customerPtr;
 		Reservation reservationPtr;
 
 		customerPtr = (Customer) customerTablePtr.find(customerId);
 
-		if (customerPtr == null) {
+		if (customerPtr == null)
+		{
 			return false;
 		}
 
 		reservationPtr = (Reservation) tablePtr.find(id);
-		if (reservationPtr == null) {
+		if (reservationPtr == null)
+		{
 			return false;
 		}
 
-		if (!reservationPtr.reservation_make()) {
+		if (!reservationPtr.reservation_make())
+		{
 			return false;
 		}
 
 		if (!customerPtr.customer_addReservationInfo(type, id,
-				reservationPtr.price)) {
+				reservationPtr.price))
+		{
 			/* Undo previous successful reservation */
 			boolean status = reservationPtr.reservation_cancel();
 			return false;
@@ -455,7 +470,8 @@ public class Manager {
 	 * ==============================
 	 * ===============================================
 	 */
-	boolean manager_reserveCar(int customerId, int carId) {
+	boolean manager_reserveCar(int customerId, int carId)
+	{
 		return reserve(carTablePtr, customerTablePtr, customerId, carId,
 				Defines.RESERVATION_CAR);
 	}
@@ -467,7 +483,8 @@ public class Manager {
 	 * ==========================
 	 * ===================================================
 	 */
-	boolean manager_reserveRoom(int customerId, int roomId) {
+	boolean manager_reserveRoom(int customerId, int roomId)
+	{
 		return reserve(roomTablePtr, customerTablePtr, customerId, roomId,
 				Defines.RESERVATION_ROOM);
 	}
@@ -479,7 +496,8 @@ public class Manager {
 	 * ====================
 	 * =========================================================
 	 */
-	boolean manager_reserveFlight(int customerId, int flightId) {
+	boolean manager_reserveFlight(int customerId, int flightId)
+	{
 		return reserve(flightTablePtr, customerTablePtr, customerId, flightId,
 				Defines.RESERVATION_FLIGHT);
 	}
@@ -492,25 +510,30 @@ public class Manager {
 	 * ===============================
 	 */
 	static boolean cancel(RBTree tablePtr, RBTree customerTablePtr,
-			int customerId, int id, int type) {
+			int customerId, int id, int type)
+	{
 		Customer customerPtr;
 		Reservation reservationPtr;
 
 		customerPtr = (Customer) customerTablePtr.find(customerId);
-		if (customerPtr == null) {
+		if (customerPtr == null)
+		{
 			return false;
 		}
 
 		reservationPtr = (Reservation) tablePtr.find(id);
-		if (reservationPtr == null) {
+		if (reservationPtr == null)
+		{
 			return false;
 		}
 
-		if (!reservationPtr.reservation_cancel()) {
+		if (!reservationPtr.reservation_cancel())
+		{
 			return false;
 		}
 
-		if (!customerPtr.customer_removeReservationInfo(type, id)) {
+		if (!customerPtr.customer_removeReservationInfo(type, id))
+		{
 			/* Undo previous successful cancellation */
 			boolean status = reservationPtr.reservation_make();
 			return false;
@@ -526,7 +549,8 @@ public class Manager {
 	 * ============
 	 * =================================================================
 	 */
-	boolean manager_cancelCar(int customerId, int carId) {
+	boolean manager_cancelCar(int customerId, int carId)
+	{
 		return cancel(carTablePtr, customerTablePtr, customerId, carId,
 				Defines.RESERVATION_CAR);
 	}
@@ -538,7 +562,8 @@ public class Manager {
 	 * ============
 	 * =================================================================
 	 */
-	boolean manager_cancelRoom(int customerId, int roomId) {
+	boolean manager_cancelRoom(int customerId, int roomId)
+	{
 		return cancel(roomTablePtr, customerTablePtr, customerId, roomId,
 				Defines.RESERVATION_ROOM);
 	}
@@ -550,7 +575,8 @@ public class Manager {
 	 * ========
 	 * =====================================================================
 	 */
-	boolean manager_cancelFlight(int customerId, int flightId) {
+	boolean manager_cancelFlight(int customerId, int flightId)
+	{
 		return cancel(flightTablePtr, customerTablePtr, customerId, flightId,
 				Defines.RESERVATION_FLIGHT);
 	}

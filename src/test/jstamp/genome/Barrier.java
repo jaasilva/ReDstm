@@ -5,22 +5,30 @@ import java.util.concurrent.CyclicBarrier;
 
 import org.deuce.transform.ExcludeTM;
 
-public class Barrier {
+public class Barrier
+{
 
-private static CyclicBarrier barrier;
-public static void enterBarrier() {
-	try {
-		barrier.await();
-	} catch (InterruptedException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (BrokenBarrierException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+	private static CyclicBarrier barrier;
+
+	public static void enterBarrier()
+	{
+		try
+		{
+			barrier.await();
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+		catch (BrokenBarrierException e)
+		{
+			e.printStackTrace();
+		}
 	}
-  }
-  public static void setBarrier(int x) {
-	  barrier = new CyclicBarrier(x);
-  }
+
+	public static void setBarrier(int x)
+	{
+		barrier = new CyclicBarrier(x);
+	}
 
 }

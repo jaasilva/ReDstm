@@ -4,13 +4,16 @@ package org.deuce.benchmark.bank;
  * @author Pascal Felber
  * @since 0.1
  */
-public class OverdraftException extends Exception {
+public class OverdraftException extends Exception
+{
 
-	public OverdraftException() {
+	public OverdraftException()
+	{
 		super();
 	}
 
-	public OverdraftException(String reason) {
+	public OverdraftException(String reason)
+	{
 		super(reason);
 	}
 }

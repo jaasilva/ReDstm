@@ -1,11 +1,11 @@
 package org.deuce.benchmark;
 
-
 /**
  * @author Pascal Felber
  * @since 0.1
  */
-public interface Benchmark {
+public interface Benchmark
+{
 
 	public static final int WARMUP_PHASE = 1;
 	public static final int TEST_PHASE = 2;

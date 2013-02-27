@@ -1,9 +1,11 @@
 package jstamp.intruder;
 
-public class Decoded {
+public class Decoded
+{
 	int flowId;
 	byte[] data;
 
-	public Decoded() {
+	public Decoded()
+	{
 	}
 }

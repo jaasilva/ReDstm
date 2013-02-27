@@ -9,22 +9,27 @@ import org.deuce.benchmark.stmbench7.annotations.ThreadLocal;
  */
 @Immutable
 @ThreadLocal
-public class RuntimeError extends Error {
+public class RuntimeError extends Error
+{
 
 	private static final long serialVersionUID = -5671909838938354776L;
 
-	public RuntimeError() {
+	public RuntimeError()
+	{
 	}
 
-	public RuntimeError(String message) {
+	public RuntimeError(String message)
+	{
 		super(message);
 	}
 
-	public RuntimeError(Throwable cause) {
+	public RuntimeError(Throwable cause)
+	{
 		super(cause);
 	}
 
-	public RuntimeError(String message, Throwable cause) {
+	public RuntimeError(String message, Throwable cause)
+	{
 		super(message, cause);
 	}
 

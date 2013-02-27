@@ -13,32 +13,46 @@ import org.deuce.benchmark.stmbench7.core.Module;
  */
 @Immutable
 @ThreadLocal
-public class ComplexAssemblyTest extends InvariantTest {
+public class ComplexAssemblyTest extends InvariantTest
+{
 
-	public static void checkInvariants(ComplexAssembly assembly, boolean initial, ComplexAssembly parentAssembly,
-			Module module, TraversedObjects traversedObjects) {
+	public static void checkInvariants(ComplexAssembly assembly,
+			boolean initial, ComplexAssembly parentAssembly, Module module,
+			TraversedObjects traversedObjects)
+	{
 
 		traversedObjects.complexAssemblies.add(assembly);
-		
-		AssemblyTest.checkInvariants(assembly, initial, Parameters.MaxComplexAssemblies, parentAssembly, module);
-		
+
+		AssemblyTest.checkInvariants(assembly, initial,
+				Parameters.MaxComplexAssemblies, parentAssembly, module);
+
 		int id = assembly.getId(), level = assembly.getLevel();
-		if(level <= 1 || level > Parameters.NumAssmLevels)
-			reportError(assembly, id, "level", 1, Parameters.NumAssmLevels, level);
-		
-		for(Assembly subAssembly : assembly.getSubAssemblies()) {
-			if(level > 2) {
-				if(! (subAssembly instanceof ComplexAssembly))
-					reportError(assembly, id, "subAssembly not of type ComplexAssembly at level = " + level);
-				ComplexAssemblyTest.checkInvariants((ComplexAssembly)subAssembly, initial, assembly, module, traversedObjects);
+		if (level <= 1 || level > Parameters.NumAssmLevels)
+			reportError(assembly, id, "level", 1, Parameters.NumAssmLevels,
+					level);
+
+		for (Assembly subAssembly : assembly.getSubAssemblies())
+		{
+			if (level > 2)
+			{
+				if (!(subAssembly instanceof ComplexAssembly))
+					reportError(assembly, id,
+							"subAssembly not of type ComplexAssembly at level = "
+									+ level);
+				ComplexAssemblyTest.checkInvariants(
+						(ComplexAssembly) subAssembly, initial, assembly,
+						module, traversedObjects);
 			}
-			else {
-				if(! (subAssembly instanceof BaseAssembly))
-					reportError(assembly, id, "subAssembly not of type BaseAssembly at level = 2");
-				BaseAssemblyTest.checkInvariants((BaseAssembly)subAssembly, initial, assembly, module, traversedObjects);
+			else
+			{
+				if (!(subAssembly instanceof BaseAssembly))
+					reportError(assembly, id,
+							"subAssembly not of type BaseAssembly at level = 2");
+				BaseAssemblyTest.checkInvariants((BaseAssembly) subAssembly,
+						initial, assembly, module, traversedObjects);
 			}
 		}
-			
+
 	}
 
 }

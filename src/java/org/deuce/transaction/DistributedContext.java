@@ -196,7 +196,6 @@ public abstract class DistributedContext implements ContextMetadata
 		}
 		catch (InterruptedException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

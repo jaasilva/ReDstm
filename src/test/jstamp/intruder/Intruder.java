@@ -1,71 +1,44 @@
-
-/* =============================================================================
- *
+/*
+ * =============================================================================
  * intruder.java
- *
  * =============================================================================
- *
- * Copyright (C) Stanford University, 2006.  All Rights Reserved.
- * Author: Chi Cao Minh
- *
+ * Copyright (C) Stanford University, 2006. All Rights Reserved. Author: Chi Cao
+ * Minh
  * =============================================================================
- *
- * For the license of bayes/sort.h and bayes/sort.c, please see the header
- * of the files.
- * 
- * ------------------------------------------------------------------------
- * 
- * For the license of kmeans, please see kmeans/LICENSE.kmeans
- * 
- * ------------------------------------------------------------------------
- * 
- * For the license of ssca2, please see ssca2/COPYRIGHT
- * 
- * ------------------------------------------------------------------------
- * 
- * For the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the
- * header of the files.
- * 
- * ------------------------------------------------------------------------
- * 
- * For the license of lib/rbtree.h and lib/rbtree.c, please see
+ * For the license of bayes/sort.h and bayes/sort.c, please see the header of
+ * the files.
+ * ------------------------------------------------------------------------ For
+ * the license of kmeans, please see kmeans/LICENSE.kmeans
+ * ------------------------------------------------------------------------ For
+ * the license of ssca2, please see ssca2/COPYRIGHT
+ * ------------------------------------------------------------------------ For
+ * the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the header of
+ * the files.
+ * ------------------------------------------------------------------------ For
+ * the license of lib/rbtree.h and lib/rbtree.c, please see
  * lib/LEGALNOTICE.rbtree and lib/LICENSE.rbtree
- * 
  * ------------------------------------------------------------------------
- * 
  * Unless otherwise noted, the following license applies to STAMP files:
- * 
- * Copyright (c) 2007, Stanford University
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- * 
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- * 
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in
- *       the documentation and/or other materials provided with the
- *       distribution.
- * 
- *     * Neither the name of Stanford University nor the names of its
- *       contributors may be used to endorse or promote products derived
- *       from this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY STANFORD UNIVERSITY ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL STANFORD UNIVERSITY BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
- * THE POSSIBILITY OF SUCH DAMAGE.
- *
+ * Copyright (c) 2007, Stanford University All rights reserved. Redistribution
+ * and use in source and binary forms, with or without modification, are
+ * permitted provided that the following conditions are met: * Redistributions
+ * of source code must retain the above copyright notice, this list of
+ * conditions and the following disclaimer. * Redistributions in binary form
+ * must reproduce the above copyright notice, this list of conditions and the
+ * following disclaimer in the documentation and/or other materials provided
+ * with the distribution. * Neither the name of Stanford University nor the
+ * names of its contributors may be used to endorse or promote products derived
+ * from this software without specific prior written permission. THIS SOFTWARE
+ * IS PROVIDED BY STANFORD UNIVERSITY ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL STANFORD UNIVERSITY BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+ * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * =============================================================================
  */
 
@@ -73,9 +46,11 @@ package jstamp.intruder;
 
 import org.deuce.Atomic;
 import org.deuce.distribution.replication.full.Bootstrap;
-//import org.deuce.profiling.Profiler;
 
-public class Intruder extends Thread {
+// import org.deuce.profiling.Profiler;
+
+public class Intruder extends Thread
+{
 
 	char PARAM_ATTACK = 'a';
 	char PARAM_LENGTH = 'l';
@@ -98,16 +73,19 @@ public class Intruder extends Thread {
 	int threadID;
 	Arg argument;
 
-	public Intruder(String[] argv) {
+	public Intruder(String[] argv)
+	{
 		parseArg(argv);
 	}
 
-	public Intruder(int myID, Arg a) {
+	public Intruder(int myID, Arg a)
+	{
 		argument = a;
 		threadID = myID;
 	}
 
-	private void setDefaultParams() {
+	private void setDefaultParams()
+	{
 		percentAttack = PARAM_DEFAULT_ATTACK;
 		maxDataLength = PARAM_DEFAULT_LENGTH;
 		numFlow = PARAM_DEFAULT_NUM;
@@ -121,7 +99,8 @@ public class Intruder extends Thread {
 	 * ==========================================================
 	 * ===================
 	 */
-	private void displayUsage() {
+	private void displayUsage()
+	{
 		System.out.print("Usage: Intruder [options]\n");
 		System.out
 				.println("\nOptions:                            (defaults)\n");
@@ -139,35 +118,50 @@ public class Intruder extends Thread {
 	 * ============================================================
 	 * =================
 	 */
-	private void parseArg(String[] argv) {
+	private void parseArg(String[] argv)
+	{
 		int i = 0;
 		String arg;
 		boolean opterr = false;
 
 		setDefaultParams();
 
-		while (i < argv.length) {
+		while (i < argv.length)
+		{
 
-			if (argv[i].charAt(0) == '-') {
+			if (argv[i].charAt(0) == '-')
+			{
 				arg = argv[i++];
 				// check options
-				if (arg.equals("-a")) {
+				if (arg.equals("-a"))
+				{
 					percentAttack = Integer.parseInt(argv[i++]);
-				} else if (arg.equals("-l")) {
+				}
+				else if (arg.equals("-l"))
+				{
 					maxDataLength = Integer.parseInt(argv[i++]);
-				} else if (arg.equals("-n")) {
+				}
+				else if (arg.equals("-n"))
+				{
 					numFlow = Integer.parseInt(argv[i++]);
-				} else if (arg.equals("-s")) {
+				}
+				else if (arg.equals("-s"))
+				{
 					randomSeed = Integer.parseInt(argv[i++]);
-				} else if (arg.equals("-t")) {
+				}
+				else if (arg.equals("-t"))
+				{
 					numThread = Integer.parseInt(argv[i++]);
-				} else {
+				}
+				else
+				{
 					System.out.println("Non-option argument: " + argv[i]);
 					opterr = true;
 				}
 			}
 		}
-		if (opterr) {
+		if (opterr)
+		{
 			displayUsage();
 		}
 	}
@@ -178,7 +172,8 @@ public class Intruder extends Thread {
 	 * ========================================================
 	 * =====================
 	 */
-	public void processPackets(Arg argPtr) {
+	public void processPackets(Arg argPtr)
+	{
 		// TM_THREAD_ENTER();
 
 		Stream streamPtr = argPtr.streamPtr;
@@ -190,12 +185,14 @@ public class Intruder extends Thread {
 
 		Vector_t errorVectorPtr = errorVectors[threadID];
 
-		while (true) {
+		while (true)
+		{
 			Packet packetPtr;
 
 			packetPtr = atomicGetPacket(streamPtr);
 
-			if (packetPtr == null) {
+			if (packetPtr == null)
+			{
 				break;
 			}
 			int flowId = packetPtr.flowId;
@@ -208,13 +205,16 @@ public class Intruder extends Thread {
 
 			data = atomicGetComplete(decoderPtr, decodedFlowId);
 
-			if (data != null) {
+			if (data != null)
+			{
 				int err = detectorPtr.process(data);
 
-				if (err != 0) {
-//					boolean status = errorVectorPtr
-//							.vector_pushBack(new Integer(decodedFlowId[0]));
-					atomicNotifyDetection(errorVectorPtr, new Integer(decodedFlowId[0]));
+				if (err != 0)
+				{
+					// boolean status = errorVectorPtr
+					// .vector_pushBack(new Integer(decodedFlowId[0]));
+					atomicNotifyDetection(errorVectorPtr, new Integer(
+							decodedFlowId[0]));
 				}
 			}
 		}
@@ -222,38 +222,43 @@ public class Intruder extends Thread {
 		// TM_THREAD_EXIT();
 
 	}
-	
+
 	@Atomic
-	private void atomicNotifyDetection(Vector_t errorVectorPtr, Integer id) {
+	private void atomicNotifyDetection(Vector_t errorVectorPtr, Integer id)
+	{
 		errorVectorPtr.vector_pushBack(id);
 	}
 
 	@Atomic
-	private byte[] atomicGetComplete(Decoder decoderPtr, int[] decodedFlowId) {
+	private byte[] atomicGetComplete(Decoder decoderPtr, int[] decodedFlowId)
+	{
 		byte[] data;
 		data = decoderPtr.getComplete(decodedFlowId);
 		return data;
 	}
 
 	@Atomic
-	private void atomicProcess(Decoder decoderPtr, Packet packetPtr) {
+	private void atomicProcess(Decoder decoderPtr, Packet packetPtr)
+	{
 		int error;
 		error = decoderPtr.process(packetPtr, (packetPtr.length));
 	}
 
 	@Atomic
-	private Packet atomicGetPacket(Stream streamPtr) {
+	private Packet atomicGetPacket(Stream streamPtr)
+	{
 		Packet packetPtr;
 		packetPtr = streamPtr.getPacket();
 		return packetPtr;
 	}
 
 	@Override
-	public void run() {
+	public void run()
+	{
 		benchBarrier.join();
-//		Profiler.enabled = true;
+		// Profiler.enabled = true;
 		Barrier.enterBarrier();
-//		System.out.println("Begin.");
+		// System.out.println("Begin.");
 		processPackets(argument);
 		Barrier.enterBarrier();
 	}
@@ -273,29 +278,39 @@ public class Intruder extends Thread {
 	static int numAttack;
 	@Bootstrap(id = 4)
 	static Arg arg;
-	
+
 	@Atomic
-	public static void initBarriers() {
+	public static void initBarriers()
+	{
 		if (setupBarrier == null)
-			setupBarrier = new org.deuce.benchmark.Barrier(Integer.getInteger("tribu.replicas"));
+			setupBarrier = new org.deuce.benchmark.Barrier(
+					Integer.getInteger("tribu.replicas"));
 	}
+
 	@Atomic
-	public static void initBenchBarriers(int numThreads) {
+	public static void initBenchBarriers(int numThreads)
+	{
 		benchBarrier = new org.deuce.benchmark.Barrier(numThreads);
 	}
+
 	@Atomic
-	public static void initAttacks(int na) {
+	public static void initAttacks(int na)
+	{
 		numAttack = na;
 	}
+
 	@Atomic
-	public static void initArg(Stream streamPtr, Decoder decoderPtr, Vector_t[] errorVectors) {
+	public static void initArg(Stream streamPtr, Decoder decoderPtr,
+			Vector_t[] errorVectors)
+	{
 		arg = new Arg();
 		arg.streamPtr = streamPtr;
 		arg.decoderPtr = decoderPtr;
 		arg.errorVectors = errorVectors;
 	}
-	
-	public static void main(String[] argv) {
+
+	public static void main(String[] argv)
+	{
 		/*
 		 * Initialization
 		 */
@@ -305,8 +320,9 @@ public class Intruder extends Thread {
 		Intruder in = new Intruder(argv); // parsing argv
 
 		Barrier.setBarrier(in.numThread + 1);
-		
-		if (Integer.getInteger("tribu.site") == 1) {
+
+		if (Integer.getInteger("tribu.site") == 1)
+		{
 			System.out.println("Percent attack  =   " + in.percentAttack);
 			System.out.println("Max data length =   " + in.maxDataLength);
 			System.out.println("Num flow        =   " + in.numFlow);
@@ -322,25 +338,27 @@ public class Intruder extends Thread {
 			System.out.println("Num Attack      =   " + numAttack);
 
 			Decoder decoderPtr = new Decoder();
-			
-			int totalThreads = in.numThread * Integer.getInteger("tribu.replicas");
+
+			int totalThreads = in.numThread
+					* Integer.getInteger("tribu.replicas");
 			Vector_t[] errorVectors = new Vector_t[totalThreads];
 
 			int i;
 
-			for (i = 0; i < totalThreads; i++) {
+			for (i = 0; i < totalThreads; i++)
+			{
 				errorVectors[i] = new Vector_t(in.numFlow);
 			}
 
-//			Arg arg = new Arg();
+			// Arg arg = new Arg();
 
-//			arg.streamPtr = streamPtr;
-//			arg.decoderPtr = decoderPtr;
-//			arg.errorVectors = errorVectors;
+			// arg.streamPtr = streamPtr;
+			// arg.decoderPtr = decoderPtr;
+			// arg.errorVectors = errorVectors;
 			initArg(streamPtr, decoderPtr, errorVectors);
 			initBenchBarriers(totalThreads);
 		}
-		
+
 		initBarriers();
 		setupBarrier.join();
 
@@ -351,12 +369,15 @@ public class Intruder extends Thread {
 		Intruder[] intruders = new Intruder[in.numThread];
 
 		int i;
-		for (i = 0; i < in.numThread; i++) {
-			intruders[i] = new Intruder((Integer.getInteger("tribu.site") - 1) * in.numThread + i, arg);
+		for (i = 0; i < in.numThread; i++)
+		{
+			intruders[i] = new Intruder((Integer.getInteger("tribu.site") - 1)
+					* in.numThread + i, arg);
 		}
 		in.threadID = 0;
 
-		for (i = 0; i < in.numThread; i++) {
+		for (i = 0; i < in.numThread; i++)
+		{
 			intruders[i].start();
 		}
 
@@ -370,9 +391,9 @@ public class Intruder extends Thread {
 		long elapsed = finish - start;
 
 		System.out.println("TIME=" + elapsed);
-		
+
 		setupBarrier.join();
-//		Profiler.enabled = true;
+		// Profiler.enabled = true;
 
 		finish = System.currentTimeMillis();
 		elapsed = finish - start;
@@ -387,22 +408,24 @@ public class Intruder extends Thread {
 
 		int numFound = 0;
 
-		for (i = 0; i < in.numThread * Integer.getInteger("tribu.replicas"); i++) {
+		for (i = 0; i < in.numThread * Integer.getInteger("tribu.replicas"); i++)
+		{
 			Vector_t errorVectorPtr = arg.errorVectors[i];
 			int e;
 			int numError = errorVectorPtr.vector_getSize();
 			// System.out.println("numError = " + numError);
 			numFound += numError;
-			for (e = 0; e < numError; e++) {
+			for (e = 0; e < numError; e++)
+			{
 				int flowId = ((Integer) errorVectorPtr.vector_at(e)).intValue();
 				boolean status = arg.streamPtr.isAttack(flowId);
 
-				if (status == false) {
+				if (status == false)
+				{
 					System.out.println("Assertion in check solution");
 					System.out
 							.println(String
-									.format(
-											"Problem at flowId = %d, status is false there. It's in errorVectorPtr position %d.",
+									.format("Problem at flowId = %d, status is false there. It's in errorVectorPtr position %d.",
 											flowId, e));
 					System.exit(1);
 				}
@@ -411,27 +434,25 @@ public class Intruder extends Thread {
 
 		System.out.println("Num found       = " + numFound);
 
-		if (numFound != numAttack) {
+		if (numFound != numAttack)
+		{
 			System.out.println("Assertion in check solution");
 			System.out
 					.println(String
-							.format(
-									"Problem is that numFound (%d) is not equal to numAttack (%d).",
+							.format("Problem is that numFound (%d) is not equal to numAttack (%d).",
 									numFound, numAttack));
 			System.exit(1);
 		}
 
 		System.out.println("Finished");
-		
-//		Profiler.print();
+
+		// Profiler.print();
 	}
 
 }
 
 /*
  * =============================================================================
- * 
  * End of intruder.java
- * 
  * =============================================================================
  */

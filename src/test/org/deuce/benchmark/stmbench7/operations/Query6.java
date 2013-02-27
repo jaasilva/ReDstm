@@ -12,11 +12,13 @@ import org.deuce.benchmark.stmbench7.core.Module;
 /**
  * Query Q6 (see the specification). Read-only, long traversal.
  */
-public class Query6 extends Query5 {
+public class Query6 extends Query5
+{
 
 	protected Module module;
 
-	public Query6(Setup oo7setup) {
+	public Query6(Setup oo7setup)
+	{
 		super(oo7setup);
 		this.module = oo7setup.getModule();
 	}
@@ -24,18 +26,21 @@ public class Query6 extends Query5 {
 	@Override
 	@Transactional
 	@ReadOnly
-	public int performOperation() {
+	public int performOperation()
+	{
 		return checkComplexAssembly(module.getDesignRoot());
 	}
 
-	protected int checkAssembly(Assembly assembly) {
+	protected int checkAssembly(Assembly assembly)
+	{
 		if (assembly instanceof BaseAssembly)
 			return checkBaseAssembly((BaseAssembly) assembly);
 		else
 			return checkComplexAssembly((ComplexAssembly) assembly);
 	}
 
-	protected int checkComplexAssembly(ComplexAssembly assembly) {
+	protected int checkComplexAssembly(ComplexAssembly assembly)
+	{
 		int result = 0;
 
 		for (Assembly subAssembly : assembly.getSubAssemblies())
@@ -49,7 +54,8 @@ public class Query6 extends Query5 {
 	}
 
 	@Override
-	public OperationId getOperationId() {
+	public OperationId getOperationId()
+	{
 		return OperationId.Q6;
 	}
 }

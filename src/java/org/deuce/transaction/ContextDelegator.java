@@ -225,7 +225,7 @@ public class ContextDelegator
 	// inDistributedContext = DistributedContext.class
 	// .isAssignableFrom(contextClass);
 	// } catch (Exception e) {
-	// e.printStackTrace(); // TODO add logger
+	// e.printStackTrace(); 
 	// contextClass = tribu.transaction.tl2.Context.class;
 	// }
 	// } else {
@@ -403,7 +403,8 @@ public class ContextDelegator
 				}
 				catch (Exception e)
 				{
-					e.printStackTrace(); // TODO add logger
+					e.printStackTrace();
+					System.exit(-1);
 				}
 			}
 			this.contextClass = org.deuce.transaction.tl2.Context.class;

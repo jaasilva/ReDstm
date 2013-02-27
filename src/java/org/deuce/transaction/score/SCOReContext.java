@@ -183,7 +183,7 @@ public class SCOReContext extends DistributedContext
 	 * org.deuce.transform.localmetadata.type.TxField)
 	 */
 	@Override
-	public void  onWriteAccess(Object value, TxField field)
+	public void onWriteAccess(Object value, TxField field)
 	{
 		// TODO onWriteAccess SCOReContext
 	}

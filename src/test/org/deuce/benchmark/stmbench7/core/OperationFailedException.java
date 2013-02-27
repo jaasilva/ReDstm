@@ -10,22 +10,27 @@ import org.deuce.benchmark.stmbench7.annotations.ThreadLocal;
  */
 @Immutable
 @ThreadLocal
-public class OperationFailedException extends Exception {
+public class OperationFailedException extends Exception
+{
 
 	private static final long serialVersionUID = -4829600105999291994L;
 
-	public OperationFailedException(String message, Object reportingObject) {
+	public OperationFailedException(String message, Object reportingObject)
+	{
 		super(message + " [" + reportingObject.toString() + "]");
 	}
 
-	public OperationFailedException(String message) {
+	public OperationFailedException(String message)
+	{
 		super(message);
 	}
 
-	public OperationFailedException(String message, Throwable cause) {
+	public OperationFailedException(String message, Throwable cause)
+	{
 		super(message, cause);
 	}
 
-	public OperationFailedException() {
+	public OperationFailedException()
+	{
 	}
 }

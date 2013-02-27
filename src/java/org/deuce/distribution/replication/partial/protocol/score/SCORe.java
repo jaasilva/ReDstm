@@ -24,7 +24,7 @@ public class SCORe extends PartialReplicationProtocol implements
 	@Override
 	public void init()
 	{
-		// TODO SCORe
+		// TODO init SCORe
 	}
 
 	/*
@@ -36,7 +36,7 @@ public class SCORe extends PartialReplicationProtocol implements
 	@Override
 	public void onTxContextCreation(DistributedContext ctx)
 	{
-		// TODO SCORe
+		// TODO onTxContextCreation SCORe
 	}
 
 	/*
@@ -48,7 +48,7 @@ public class SCORe extends PartialReplicationProtocol implements
 	@Override
 	public void onTxBegin(DistributedContext ctx)
 	{
-		// TODO SCORe
+		// TODO onTxBegin SCORe
 	}
 
 	/*
@@ -60,7 +60,7 @@ public class SCORe extends PartialReplicationProtocol implements
 	@Override
 	public void onTxCommit(DistributedContext ctx)
 	{
-		// TODO SCORe
+		// TODO onTxCommit SCORe
 	}
 
 	/*
@@ -72,7 +72,7 @@ public class SCORe extends PartialReplicationProtocol implements
 	@Override
 	public void onTxFinished(DistributedContext ctx, boolean committed)
 	{
-		// TODO SCORe
+		// TODO onTxFinished SCORe
 	}
 
 	/*
@@ -84,7 +84,7 @@ public class SCORe extends PartialReplicationProtocol implements
 	@Override
 	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata)
 	{
-		// TODO SCORe
+		// TODO onTxRead SCORe
 		return null;
 	}
 
@@ -99,7 +99,7 @@ public class SCORe extends PartialReplicationProtocol implements
 	public void onTxWrite(DistributedContext ctx, ObjectMetadata metadata,
 			UniqueObject obj)
 	{
-		// TODO SCORe
+		// TODO onTxWrite SCORe
 	}
 
 	/*
@@ -111,7 +111,7 @@ public class SCORe extends PartialReplicationProtocol implements
 	@Override
 	public void onDelivery(Object obj, Address src, int size)
 	{
-		// TODO SCORe
+		// TODO onDelivery SCORe
 	}
 
 }

@@ -14,7 +14,8 @@ import org.deuce.benchmark.stmbench7.core.OperationFailedException;
  * expected ratios of operations' counts.
  */
 @NonAtomic
-public class BenchThread implements Runnable {
+public class BenchThread implements Runnable
+{
 
 	protected volatile boolean stop = false;
 	protected double[] operationCDF;
@@ -24,14 +25,16 @@ public class BenchThread implements Runnable {
 	public int[] successfulOperations, failedOperations;
 	public int[][] operationsTTC, operationsHighTTCLog;
 
-	public class ReplayLogEntry implements Comparable<ReplayLogEntry> {
+	public class ReplayLogEntry implements Comparable<ReplayLogEntry>
+	{
 		public final short threadNum;
 		public final int timestamp, result;
 		public final boolean failed;
 		public final int opNum;
 
 		public ReplayLogEntry(int timestamp, int result, boolean failed,
-				int opNum) {
+				int opNum)
+		{
 			this.threadNum = myThreadNum;
 			this.timestamp = timestamp;
 			this.result = result;
@@ -39,14 +42,16 @@ public class BenchThread implements Runnable {
 			this.opNum = opNum;
 		}
 
-		public int compareTo(ReplayLogEntry entry) {
+		public int compareTo(ReplayLogEntry entry)
+		{
 			return timestamp - entry.timestamp;
 		}
 	}
 
 	public ArrayList<ReplayLogEntry> replayLog;
 
-	public BenchThread(Setup setup, double[] operationCDF, short myThreadNum) {
+	public BenchThread(Setup setup, double[] operationCDF, short myThreadNum)
+	{
 		this.operationCDF = operationCDF;
 
 		int numOfOperations = OperationId.values().length;
@@ -63,45 +68,51 @@ public class BenchThread implements Runnable {
 			replayLog = new ArrayList<ReplayLogEntry>();
 	}
 
-	protected BenchThread(Setup setup, double[] operationCDF) {
+	protected BenchThread(Setup setup, double[] operationCDF)
+	{
 		this.operationCDF = operationCDF;
 		operations = new OperationExecutor[OperationId.values().length];
 		createOperations(setup);
 		myThreadNum = 0;
 	}
 
-	public void run() {
+	public void run()
+	{
 		int i = 0;
-		while (!stop) {
-			//if (i++ > 55) continue;
+		while (!stop)
+		{
+			// if (i++ > 55) continue;
 			int operationNumber = getNextOperationNumber();
 
-			OperationType type = OperationId.values()[operationNumber].getType();
-			//if( (type != OperationType.SHORT_TRAVERSAL) ) continue;
-			//		(type != OperationType.SHORT_TRAVERSAL_RO) &&
-			//		(type != OperationType.OPERATION) )
-			//	continue;
+			OperationType type = OperationId.values()[operationNumber]
+					.getType();
+			// if( (type != OperationType.SHORT_TRAVERSAL) ) continue;
+			// (type != OperationType.SHORT_TRAVERSAL_RO) &&
+			// (type != OperationType.OPERATION) )
+			// continue;
 
-			//System.out.println(i + " > "
-			//		+ OperationId.values()[operationNumber]);
+			// System.out.println(i + " > "
+			// + OperationId.values()[operationNumber]);
 
 			OperationExecutor currentExecutor = operations[operationNumber];
 			int result = 0;
 			boolean failed = false;
 
-			try {
+			try
+			{
 				long startTime = System.currentTimeMillis();
 
 				result = currentExecutor.execute();
 
 				long endTime = System.currentTimeMillis();
-				//System.out.println("success");
+				// System.out.println("success");
 
 				successfulOperations[operationNumber]++;
 				int ttc = (int) (endTime - startTime);
 				if (ttc <= Parameters.MAX_LOW_TTC)
 					operationsTTC[operationNumber][ttc]++;
-				else {
+				else
+				{
 					double logHighTtc = (Math.log(ttc) - Math
 							.log(Parameters.MAX_LOW_TTC + 1))
 							/ Math.log(Parameters.HIGH_TTC_LOG_BASE);
@@ -109,38 +120,45 @@ public class BenchThread implements Runnable {
 							Parameters.HIGH_TTC_ENTRIES - 1);
 					operationsHighTTCLog[operationNumber][intLogHighTtc]++;
 				}
-			} catch (OperationFailedException e) {
-				//System.out.println("failed");
+			}
+			catch (OperationFailedException e)
+			{
+				// System.out.println("failed");
 				failedOperations[operationNumber]++;
 				failed = true;
 			}
 
-			if (Parameters.sequentialReplayEnabled) {
+			if (Parameters.sequentialReplayEnabled)
+			{
 				ReplayLogEntry newEntry = new ReplayLogEntry(
-						currentExecutor.getLastOperationTimestamp(), result, failed,
-						operationNumber);
+						currentExecutor.getLastOperationTimestamp(), result,
+						failed, operationNumber);
 				replayLog.add(newEntry);
-				//System.out.println("ts: " + newEntry.timestamp);
+				// System.out.println("ts: " + newEntry.timestamp);
 			}
 		}
 		System.err.println("Thread #" + myThreadNum + " finished.");
-		//i = 0;
-		//for (ReplayLogEntry entry : replayLog)
-		//	System.out.println(i++ + " % " + OperationId.values()[entry.opNum]
-		//			+ " -- " + entry.timestamp);
+		// i = 0;
+		// for (ReplayLogEntry entry : replayLog)
+		// System.out.println(i++ + " % " + OperationId.values()[entry.opNum]
+		// + " -- " + entry.timestamp);
 	}
 
-	public void stopThread() {
+	public void stopThread()
+	{
 		stop = true;
 	}
 
-	protected void createOperations(Setup setup) {
-		for (OperationId operationDescr : OperationId.values()) {
+	protected void createOperations(Setup setup)
+	{
+		for (OperationId operationDescr : OperationId.values())
+		{
 			Class<? extends Operation> operationClass = operationDescr
 					.getOperationClass();
 			int operationIndex = operationDescr.ordinal();
 
-			try {
+			try
+			{
 				Constructor<? extends Operation> operationConstructor = operationClass
 						.getConstructor(Setup.class);
 				Operation operation = operationConstructor.newInstance(setup);
@@ -149,14 +167,17 @@ public class BenchThread implements Runnable {
 						.createOperationExecutor(operation);
 				assert (operation.getOperationId().getOperationClass()
 						.equals(operationClass));
-			} catch (Exception e) {
+			}
+			catch (Exception e)
+			{
 				throw new RuntimeError("Error while creating operation "
 						+ operationDescr, e);
 			}
 		}
 	}
 
-	protected int getNextOperationNumber() {
+	protected int getNextOperationNumber()
+	{
 		double whichOperation = ThreadRandom.nextDouble();
 		int operationNumber = 0;
 		while (whichOperation >= operationCDF[operationNumber])

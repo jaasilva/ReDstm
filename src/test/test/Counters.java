@@ -2,32 +2,32 @@ package test;
 
 import org.deuce.Atomic;
 
-public class Counters {
+public class Counters
+{
 
 	static final double MULT_FACTOR = 3.5;
 	static final double ADD_FACTOR = 5;
 
-	//counterOne == -counterTwo
+	// counterOne == -counterTwo
 	private int counterOne = 0;
 	private int counterTwo = 0;
 
-	//coutnerFour = counterThree*MULT_FACTOR + ADD_FACTOR
+	// coutnerFour = counterThree*MULT_FACTOR + ADD_FACTOR
 	private double counterThree = 0;
 	private double counterFour = ADD_FACTOR;
 
 	public int failuresCounter = 0;
 
-
 	@Atomic
 	public void incrementFirstPair()
 	{
 		counterThree++;
-		counterFour = ADD_FACTOR +  counterThree * MULT_FACTOR;
+		counterFour = ADD_FACTOR + counterThree * MULT_FACTOR;
 	}
 
 	@Atomic
 	public void decrementFirstPair()
-	{  		
+	{
 		counterThree--;
 		counterFour = ADD_FACTOR + counterThree * MULT_FACTOR;
 
@@ -50,12 +50,16 @@ public class Counters {
 	@Atomic
 	public void test()
 	{
-		if(counterOne  != -counterTwo){
-			//if transaction aborts failuresCounter will return to previous value
+		if (counterOne != -counterTwo)
+		{
+			// if transaction aborts failuresCounter will return to previous
+			// value
 			failuresCounter++;
 		}
-		if(counterFour != counterThree*MULT_FACTOR + ADD_FACTOR){
-			//if transaction aborts failuresCounter will return to previous value
+		if (counterFour != counterThree * MULT_FACTOR + ADD_FACTOR)
+		{
+			// if transaction aborts failuresCounter will return to previous
+			// value
 			failuresCounter++;
 		}
 	}

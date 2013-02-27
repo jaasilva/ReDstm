@@ -9,7 +9,8 @@ import org.deuce.benchmark.stmbench7.annotations.Update;
  * For a default implementation, see stmbench7.impl.core.DesignObjImpl.
  */
 @Atomic
-public interface DesignObj {
+public interface DesignObj
+{
 
 	@ReadOnly
 	int getId();

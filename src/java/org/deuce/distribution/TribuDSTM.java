@@ -67,7 +67,8 @@ public class TribuDSTM
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace(); // TODO add logger
+				e.printStackTrace();
+				System.exit(-1);
 			}
 		}
 		else
@@ -90,7 +91,8 @@ public class TribuDSTM
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace(); // TODO add logger
+				e.printStackTrace();
+				System.exit(-1);
 			}
 		}
 		else
@@ -114,7 +116,8 @@ public class TribuDSTM
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace(); // TODO add logger
+				e.printStackTrace();
+				System.exit(-1);
 			}
 		}
 		else
