@@ -1,7 +1,7 @@
 package org.deuce.distribution.location;
 
 import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -20,7 +20,7 @@ public class SimpleLocator implements Locator
 
 	public void put(ObjectMetadata metadata, UniqueObject obj)
 	{
-		map.put(metadata, new SoftReference<UniqueObject>(obj));
+		map.put(metadata, new WeakReference<UniqueObject>(obj));
 	}
 
 	public UniqueObject get(ObjectMetadata metadata)
