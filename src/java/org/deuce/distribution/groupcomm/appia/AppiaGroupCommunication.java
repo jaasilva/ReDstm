@@ -3,6 +3,7 @@ package org.deuce.distribution.groupcomm.appia;
 import java.io.IOException;
 
 import org.deuce.distribution.ObjectSerializer;
+import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.serialization.GCPayloadException;
@@ -159,6 +160,8 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		try
 		{
 			membership = controlSession.getMembership();
+			TribuDSTM.debug(String.format("New group view: %s",
+					membership.toString()));
 			if (membership.getMembershipList().size() == Integer.getInteger(
 					"tribu.replicas").intValue())
 				membersArrived();

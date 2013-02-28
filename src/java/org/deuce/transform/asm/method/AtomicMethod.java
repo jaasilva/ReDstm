@@ -3,6 +3,7 @@ package org.deuce.transform.asm.method;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.deuce.Atomic;
+import org.deuce.distribution.TribuDSTM;
 import org.deuce.objectweb.asm.AnnotationVisitor;
 import org.deuce.objectweb.asm.Label;
 import org.deuce.objectweb.asm.MethodAdapter;
@@ -177,7 +178,10 @@ public class AtomicMethod extends MethodAdapter implements Opcodes
 		Label l11 = new Label(); // context.init(atomicBlockId, metainf);
 		mv.visitLabel(l11);
 		mv.visitVarInsn(ALOAD, contextIndex);
-		mv.visitLdcInsn(ATOMIC_BLOCK_COUNTER.getAndIncrement());
+		int atomicBlockId = ATOMIC_BLOCK_COUNTER.getAndIncrement();
+		TribuDSTM.debug(String.format("Atomic block %d: %s.%s", atomicBlockId,
+				className, methodName));
+		mv.visitLdcInsn(atomicBlockId);
 		mv.visitLdcInsn(metainf);
 		mv.visitMethodInsn(INVOKEINTERFACE, Context.CONTEXT_INTERNAL, "init",
 				"(ILjava/lang/String;)V");

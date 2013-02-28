@@ -846,16 +846,16 @@ public class RBTree implements IntSet
 		}
 	}
 
-	public String toString()
-	{
-		StringBuilder sb = new StringBuilder();
-		MyIterator it = new MyIterator();
-		while (it.hasNext())
-		{
-			sb.append(it.next());
-			if (it.hasNext())
-				sb.append(' ');
-		}
-		return sb.toString();
-	}
+//	public String toString()
+//	{
+//		StringBuilder sb = new StringBuilder();
+//		MyIterator it = new MyIterator();
+//		while (it.hasNext())
+//		{
+//			sb.append(it.next());
+//			if (it.hasNext())
+//				sb.append(' ');
+//		}
+//		return sb.toString();
+//	}
 }

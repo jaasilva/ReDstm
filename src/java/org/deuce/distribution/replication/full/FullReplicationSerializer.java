@@ -42,11 +42,16 @@ public class FullReplicationSerializer extends ObjectSerializer
 			oid = factory.generateOID();
 			obj.setMetadata(oid);
 			TribuDSTM.putObject(oid, obj);
-			// System.out.println("Sending OID="+oid.toString()+" for the 1st time.");
+			TribuDSTM.trace(String.format("Published %s with OID(%s)",
+					obj.toString(), oid.toString()));
 			return obj;
 		}
-
-		return new OID2Object(oid);
+		else
+		{
+			TribuDSTM.trace(String.format("%s already published with OID(%s)",
+					obj.toString(), oid.toString()));
+			return new OID2Object(oid);
+		}
 	}
 
 	/**
@@ -63,13 +68,18 @@ public class FullReplicationSerializer extends ObjectSerializer
 		UniqueObject object = TribuDSTM.getObject(oid);
 		if (object != null)
 		{
-			// System.out.println("Received Object with existing OID="+oid.toString());
+			TribuDSTM.trace(String.format(
+					"Replaced %s with OID(%s) by local replica %s",
+					obj.toString(), oid.toString(), object.toString()));
 			return object;
 		}
-
-		// System.out.println("Received OID="+oid.toString()+" for the 1st time.");
-		TribuDSTM.putObject(oid, obj);
-		return obj;
+		else
+		{
+			TribuDSTM.putObject(oid, obj);
+			TribuDSTM.trace(String.format("Published %s with OID(%s)",
+					obj.toString(), oid.toString()));
+			return obj;
+		}
 	}
 
 	public ObjectMetadata createMetadata()

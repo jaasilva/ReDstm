@@ -51,15 +51,15 @@ public class NonVoting extends FullReplicationProtocol implements
 			ctx.applyWriteSet();
 			ctx.processed(true);
 
-			// if (log.isTraceEnabled())
-			// log.trace(src+":"+ctxState.ctxID+":"+ctxState.atomicBlockId+" committed.");
+			TribuDSTM.debug(src + ":" + ctxState.ctxID + ":"
+					+ ctxState.atomicBlockId + " committed.");
 		}
 		else
 		{
 			ctx.processed(false);
 
-			// if (log.isTraceEnabled())
-			// log.trace(src+":"+ctxState.ctxID+":"+ctxState.atomicBlockId+" aborted.");
+			TribuDSTM.debug(src + ":" + ctxState.ctxID + ":"
+					+ ctxState.atomicBlockId + " aborted.");
 		}
 	}
 

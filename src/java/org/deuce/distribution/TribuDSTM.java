@@ -1,5 +1,10 @@
 package org.deuce.distribution;
 
+import java.io.IOException;
+
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.SimpleLayout;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.appia.AppiaGroupCommunication;
@@ -12,8 +17,38 @@ import org.deuce.transaction.DistributedContext;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
-public class TribuDSTM
+public final class TribuDSTM
 {
+	// LOGGING =================================================================
+	// logging is controlled by etc/log4j.properties by
+	//
+	// log4j.logger.org.deuce.distribution.TribuDSTM=<LEVEL>
+	//
+	// where if <LEVEL> is
+	//
+	// - OFF: disables logging entirely;
+	// - DEBUG: produces a trace of the distributed transactions processing; and
+	// - TRACE: produces a detailed trace of object (de)serialisation, in
+	// addition to DEBUG.
+	private static final Logger LOGGER = Logger.getLogger(TribuDSTM.class);
+
+	public static final void trace(String message)
+	{
+		LOGGER.trace(message);
+	}
+
+	public static final void debug(String message)
+	{
+		LOGGER.debug(message);
+	}
+
+	public static final void fatal(String message)
+	{
+		LOGGER.fatal(message);
+	}
+
+	// ================================================================= LOGGING
+
 	public static final String DESC = Type.getDescriptor(TribuDSTM.class);
 	public static final String NAME = Type.getInternalName(TribuDSTM.class);
 
@@ -27,6 +62,22 @@ public class TribuDSTM
 	{
 		initReplicationProtocol();
 		initTransactionContext();
+		// logging
+		LOGGER.removeAllAppenders();
+		LOGGER.setAdditivity(false);
+		try
+		{
+			String logFilename = String.format("%s_id%s.trace", System
+					.getProperty("tribu.groupcommunication.group", "tvale"),
+					Integer.getInteger("tribu.site"));
+			LOGGER.addAppender(new FileAppender(new SimpleLayout(),
+					logFilename, false));
+		}
+		catch (IOException e)
+		{
+			// Should not happen
+			e.printStackTrace();
+		}
 	}
 
 	/*
@@ -218,5 +269,4 @@ public class TribuDSTM
 	{
 		return groupComm.getAddress();
 	}
-
 }
