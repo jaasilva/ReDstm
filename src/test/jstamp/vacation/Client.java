@@ -121,10 +121,10 @@ public class Client extends Thread
 		int queryRange = this.queryRange;
 		int percentUser = this.percentUser;
 
-		int types[] = new int[numQueryPerTransaction];
-		int ids[] = new int[numQueryPerTransaction];
-		int ops[] = new int[numQueryPerTransaction];
-		int prices[] = new int[numQueryPerTransaction];
+//		int types[] = new int[numQueryPerTransaction];
+//		int ids[] = new int[numQueryPerTransaction];
+//		int ops[] = new int[numQueryPerTransaction];
+//		int prices[] = new int[numQueryPerTransaction];
 
 		Vacation.benchBarrier.join();
 		Profiler.enabled = true;
@@ -133,6 +133,11 @@ public class Client extends Thread
 		{
 			int r = randomPtr.posrandom_generate() % 100;
 			int action = selectAction(r, percentUser);
+			
+			int types[] = new int[numQueryPerTransaction];
+			int ids[] = new int[numQueryPerTransaction];
+			int ops[] = new int[numQueryPerTransaction];
+			int prices[] = new int[numQueryPerTransaction];
 
 			if (action == Defines.ACTION_MAKE_RESERVATION)
 			{

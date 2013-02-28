@@ -1,7 +1,5 @@
 package jstamp.vacation;
 
-import java.util.Iterator;
-
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.full.Bootstrap;
@@ -168,11 +166,39 @@ public class Vacation
 	 * ====================================================
 	 * =========================
 	 */
+	// the array must be shared to initialise the manager
+	@Bootstrap(id = 5)
+	static int[] ids;
+
 	@Atomic
 	public void initializeManager()
 	{
 		System.out.println("Initializing manager... ");
 		managerPtr = new Manager();
+		ids = new int[RELATIONS];
+	}
+
+	@Atomic
+	public final void initIds(int begin, int end)
+	{
+		for (int i = begin; i < end; i++)
+		{
+			ids[i] = i + 1;
+		}
+	}
+
+	@Atomic
+	public final void shuffleIds(int begin, int end, Random randomPtr,
+			int numRelations)
+	{
+		for (int i = begin; i < end; i++)
+		{
+			int x = randomPtr.posrandom_generate() % numRelations;
+			int y = randomPtr.posrandom_generate() % numRelations;
+			int tmp = ids[x];
+			ids[x] = ids[y];
+			ids[y] = tmp;
+		}
 	}
 
 	// @Atomic
@@ -186,48 +212,33 @@ public class Vacation
 		randomPtr.random_alloc();
 
 		int numRelation = RELATIONS;
-		int ids[] = new int[numRelation];
-		for (i = 0; i < numRelation; i++)
+		int chunk = numRelation / 16;
+		for (i = 0; i < numRelation; i += chunk + 1)
 		{
-			ids[i] = i + 1;
+			int end = i + chunk;
+			end = (end > numRelation ? numRelation : end);
+			initIds(i, end);
 		}
 
 		for (t = 0; t < 4; t++)
 		{
 
 			/* Shuffle ids */
-			for (i = 0; i < numRelation; i++)
+			chunk = numRelation / 16;
+			for (i = 0; i < numRelation; i += chunk + 1)
 			{
-				int x = randomPtr.posrandom_generate() % numRelation;
-				int y = randomPtr.posrandom_generate() % numRelation;
-				int tmp = ids[x];
-				ids[x] = ids[y];
-				ids[y] = tmp;
+				int end = i + chunk;
+				end = (end > numRelation ? numRelation : end);
+				shuffleIds(i, end, randomPtr, numRelation);
 			}
 
 			/* Populate table */
-			// for (i = 0; i < numRelation; i++) {
-			// boolean status;
-			// int id = ids[i];
-			// int num = ((randomPtr.posrandom_generate() % 5) + 1) * 100;
-			// int price = ((randomPtr.posrandom_generate() % 5) * 10) + 50;
-			// if (t==0) {
-			// status=managerPtr.manager_addCar(id, num, price);
-			// } else if (t==1) {
-			// status=managerPtr.manager_addFlight(id, num, price);
-			// } else if (t==2) {
-			// status=managerPtr.manager_addRoom(id, num, price);
-			// } else if (t==3) {
-			// status=managerPtr.manager_addCustomer(id);
-			// }
-			// //assert(status);
-			// }
-			int chunk = numRelation / 10;
-			for (i = 0; i < numRelation; i += chunk)
+			chunk = numRelation / 32;
+			for (i = 0; i < numRelation; i += chunk + 1)
 			{
-				int stop = i + chunk;
-				populateTable(i, (stop > numRelation ? numRelation : stop),
-						randomPtr, ids, t);
+				int end = i + chunk;
+				end = (end > numRelation ? numRelation : end);
+				populateTable(i, end, randomPtr, t);
 			}
 
 		} /* for t */
@@ -237,11 +248,10 @@ public class Vacation
 	}
 
 	@Atomic
-	public void populateTable(int i, int numRelation, Random randomPtr,
-			int[] ids, int t)
+	public void populateTable(int begin, int end, Random randomPtr, int t)
 	{
 		/* Populate table */
-		for (i = 0; i < numRelation; i++)
+		for (int i = begin; i < end; i++)
 		{
 			boolean status;
 			int id = ids[i];
