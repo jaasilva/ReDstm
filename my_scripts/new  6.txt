@@ -1,1 +1,1 @@
-python .\my_scripts/runParams.py rbtree appia.Appia 1 1 1 1 tl2.Context full.protocol.nonvoting.NonVoting 10000 0 131072 32768 10
+python .\my_scripts/runParams.py 1 rbtree appia.Appia 1 1 1 1 tl2.Context full.protocol.nonvoting.NonVoting 10000 0 131072 32768 10
