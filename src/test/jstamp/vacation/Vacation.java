@@ -3,6 +3,7 @@ package jstamp.vacation;
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.full.Bootstrap;
+import org.deuce.profiling.Profiler;
 
 // import org.deuce.profiling.Profiler;
 
@@ -169,13 +170,17 @@ public class Vacation
 	// the array must be shared to initialise the manager
 	@Bootstrap(id = 5)
 	static int[] ids;
+	@Bootstrap(id = 6)
+	static Random randomPtr;
 
 	@Atomic
-	public void initializeManager()
+	public void initializeManager(int numRelations)
 	{
 		System.out.println("Initializing manager... ");
 		managerPtr = new Manager();
-		ids = new int[RELATIONS];
+		ids = new int[numRelations];
+		randomPtr = new Random();
+		randomPtr.random_alloc();
 	}
 
 	@Atomic
@@ -188,8 +193,7 @@ public class Vacation
 	}
 
 	@Atomic
-	public final void shuffleIds(int begin, int end, Random randomPtr,
-			int numRelations)
+	public final void shuffleIds(int begin, int end, int numRelations)
 	{
 		for (int i = begin; i < end; i++)
 		{
@@ -207,9 +211,6 @@ public class Vacation
 		int i;
 		int t;
 		System.out.println("Populating manager... ");
-
-		Random randomPtr = new Random();
-		randomPtr.random_alloc();
 
 		int numRelation = RELATIONS;
 		int chunk = numRelation / 16;
@@ -229,7 +230,7 @@ public class Vacation
 			{
 				int end = i + chunk;
 				end = (end > numRelation ? numRelation : end);
-				shuffleIds(i, end, randomPtr, numRelation);
+				shuffleIds(i, end, numRelation);
 			}
 
 			/* Populate table */
@@ -238,7 +239,7 @@ public class Vacation
 			{
 				int end = i + chunk;
 				end = (end > numRelation ? numRelation : end);
-				populateTable(i, end, randomPtr, t);
+				populateTable(i, end, t);
 			}
 
 		} /* for t */
@@ -248,7 +249,7 @@ public class Vacation
 	}
 
 	@Atomic
-	public void populateTable(int begin, int end, Random randomPtr, int t)
+	public void populateTable(int begin, int end, int t)
 	{
 		/* Populate table */
 		for (int i = begin; i < end; i++)
@@ -376,13 +377,14 @@ public class Vacation
 
 		if (Integer.getInteger("tribu.site") == 1)
 		{
-			vac.initializeManager();
+			vac.initializeManager(vac.RELATIONS);
 			vac.populateManager();
 			initBenchBarrier(vac.CLIENTS * Integer.getInteger("tribu.replicas"));
 		}
 
 		initBarriers();
 		setupBarrier.join();
+		Profiler.enabled = true;
 
 		clients = vac.initializeClients(managerPtr);
 		int numThread = vac.CLIENTS;
@@ -409,10 +411,13 @@ public class Vacation
 		System.out.println("TIME=" + diff);
 
 		finishBarrier.join();
+		Profiler.enabled = false;
 		stop = System.currentTimeMillis();
 		diff = stop - start;
 		System.out.println("TIME2=" + diff);
 		// Profiler.enabled = false;
+
+		Profiler.print();
 
 		vac.checkTables(managerPtr);
 
@@ -422,8 +427,6 @@ public class Vacation
 		 * TODO: The contents of the manager's table need to be deallocated.
 		 */
 		System.out.println("done.");
-
-		// Profiler.print();
 
 		// Thread.sleep(5000);
 

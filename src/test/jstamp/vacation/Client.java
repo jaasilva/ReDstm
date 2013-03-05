@@ -162,7 +162,7 @@ public class Client extends Thread
 				}
 				boolean isFound = false;
 
-				n = atomicMethodOne(managerPtr, types, ids, maxPrices, maxIds,
+				n = makeReservation(managerPtr, types, ids, maxPrices, maxIds,
 						numQuery, customerId, isFound);
 
 			}
@@ -170,7 +170,7 @@ public class Client extends Thread
 			{
 				int customerId = randomPtr.posrandom_generate() % queryRange
 						+ 1;
-				atomicMethodTwo(managerPtr, customerId);
+				deleteCustomer(managerPtr, customerId);
 			}
 			else if (action == Defines.ACTION_UPDATE_TABLES)
 			{
@@ -188,7 +188,7 @@ public class Client extends Thread
 						prices[n] = ((randomPtr.posrandom_generate() % 5) * 10) + 50;
 					}
 				}
-				n = atomicMethodThree(managerPtr, types, ids, ops, prices,
+				n = updateTables(managerPtr, types, ids, ops, prices,
 						numUpdate);
 			}
 		} /* for i */
@@ -196,7 +196,7 @@ public class Client extends Thread
 	}
 
 	@Atomic
-	private int atomicMethodThree(Manager managerPtr, int[] types, int[] ids,
+	private int updateTables(Manager managerPtr, int[] types, int[] ids,
 			int[] ops, int[] prices, int numUpdate)
 	{
 		int n;
@@ -241,7 +241,7 @@ public class Client extends Thread
 	}
 
 	@Atomic
-	private void atomicMethodTwo(Manager managerPtr, int customerId)
+	private void deleteCustomer(Manager managerPtr, int customerId)
 	{
 		int bill = managerPtr.manager_queryCustomerBill(customerId);
 		if (bill >= 0)
@@ -251,7 +251,7 @@ public class Client extends Thread
 	}
 
 	@Atomic
-	private int atomicMethodOne(Manager managerPtr, int[] types, int[] ids,
+	private int makeReservation(Manager managerPtr, int[] types, int[] ids,
 			int[] maxPrices, int[] maxIds, int numQuery, int customerId,
 			boolean isFound)
 	{
