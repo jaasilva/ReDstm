@@ -2,7 +2,6 @@ package org.deuce.transform.asm.method;
 
 import java.util.HashMap;
 
-import org.deuce.Atomic;
 import org.deuce.Unsafe;
 import org.deuce.objectweb.asm.AnnotationVisitor;
 import org.deuce.objectweb.asm.Attribute;
@@ -16,7 +15,6 @@ import org.deuce.transform.asm.FieldsHolder;
 
 public class MethodTransformer implements MethodVisitor
 {
-
 	final static private String UNSAFE_DESCRIPTOR = Type
 			.getDescriptor(Unsafe.class);
 
@@ -37,7 +35,6 @@ public class MethodTransformer implements MethodVisitor
 			String methodName, String descriptor, Method newMethod,
 			FieldsHolder fieldsHolder)
 	{
-
 		this.originalMethod = originalMethod;
 		this.newMethod = newMethod;
 		this.isStatic = (access & Opcodes.ACC_STATIC) != 0;
@@ -66,7 +63,6 @@ public class MethodTransformer implements MethodVisitor
 
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible)
 	{
-
 		// FIXME we might saw other annotations before and we need to put it on
 		// the new AtomicMethod
 		// need to create an atomic method from the original method
@@ -226,7 +222,6 @@ public class MethodTransformer implements MethodVisitor
 	{
 		originalMethod.visitTypeInsn(opcode, type);
 		copyMethod.visitTypeInsn(opcode, type);
-
 	}
 
 	public void visitVarInsn(int opcode, int var)

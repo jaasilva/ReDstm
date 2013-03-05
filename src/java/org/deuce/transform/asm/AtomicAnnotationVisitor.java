@@ -5,7 +5,6 @@ import org.deuce.transform.asm.method.AtomicMethod;
 
 public class AtomicAnnotationVisitor implements AnnotationVisitor
 {
-
 	private final AtomicMethod method;
 	private final AnnotationVisitor annotation;
 
@@ -41,5 +40,4 @@ public class AtomicAnnotationVisitor implements AnnotationVisitor
 	{
 		annotation.visitEnum(name, desc, value);
 	}
-
 }

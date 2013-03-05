@@ -10,7 +10,6 @@ import org.deuce.transform.asm.Field;
 
 public class StaticMethodTransformer extends MethodAdapter
 {
-
 	final static public String CLASS_BASE = "__CLASS_BASE__";
 
 	private final List<Field> fields;

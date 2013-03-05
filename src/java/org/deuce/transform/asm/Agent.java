@@ -51,10 +51,11 @@ public class Agent implements ClassFileTransformer
 	{
 		try
 		{
-			// Don't transform classes from the boot classLoader.
 			if (loader != null)
+			{ // Don't transform classes from the boot classLoader.
 				return transform(className, classfileBuffer, false).get(0)
 						.getBytecode();
+			}
 		}
 		catch (Exception e)
 		{
@@ -62,7 +63,7 @@ public class Agent implements ClassFileTransformer
 		}
 		return classfileBuffer;
 	}
-
+	public static String AGENT = ""; // CHECKME
 	/**
 	 * @param offline
 	 *            <code>true</code> if this is an offline transform.
@@ -71,10 +72,9 @@ public class Agent implements ClassFileTransformer
 			byte[] classfileBuffer, boolean offline)
 			throws IllegalClassFormatException
 	{
-
 		ArrayList<ClassByteCode> byteCodes = new ArrayList<ClassByteCode>();
 		if (className.startsWith("$") || ExcludeIncludeStore.exclude(className))
-		{
+		{ // CHECKME o que singifica esta condicao?
 			byteCodes.add(new ClassByteCode(className, classfileBuffer));
 			return byteCodes;
 		}
@@ -84,7 +84,7 @@ public class Agent implements ClassFileTransformer
 
 		classfileBuffer = addFrames(className, classfileBuffer);
 
-		if (GLOBAL_TXN)
+		if (GLOBAL_TXN) // CHECKME o que é isto?
 		{
 			// ByteCodeVisitor cv = new
 			// org.deuce.transaction.global.ClassTransformer(
@@ -101,18 +101,14 @@ public class Agent implements ClassFileTransformer
 			}
 			ByteCodeVisitor cv = null;
 
-			if (ContextDelegator.inLocalMetadata())
-			{
-				// if (ContextDelegator.inDistributedContext()) {
+			if (true /* ContextDelegator.inLocalMetadata() */)
+			{ // INPLACE METADATA
+				AGENT+="\n----------- INPLACE: " + className;
 				cv = new org.deuce.transform.localmetadata.ClassTransformer(
 						className, fieldsHolder);
-				// } else {
-				// cv = new tribu.transform.metadata.ClassTransformer(
-				// className, fieldsHolder);
-				// }
 			}
 			else
-			{
+			{ // OUTPLACE METADATA
 				cv = new org.deuce.transform.asm.ClassTransformer(className,
 						fieldsHolder);
 			}
@@ -124,18 +120,14 @@ public class Agent implements ClassFileTransformer
 				byteCodes.add(fieldsHolder.getClassByteCode());
 			}
 		}
-
+		System.out.println(AGENT);
 		if (VERBOSE)
 		{
 			try
 			{
 				verbose(byteCodes);
 			}
-			catch (FileNotFoundException e)
-			{
-				e.printStackTrace();
-			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				e.printStackTrace();
 			}
@@ -155,12 +147,10 @@ public class Agent implements ClassFileTransformer
 	 */
 	private byte[] addFrames(String className, byte[] classfileBuffer)
 	{
-
 		try
-		{
+		{ // avoid adding frames to Java6
 			FramesCodeVisitor frameCompute = new FramesCodeVisitor(className);
-			return frameCompute.visit(classfileBuffer); // avoid adding frames
-														// to Java6
+			return frameCompute.visit(classfileBuffer);
 		}
 		catch (FramesCodeVisitor.VersionException ex)
 		{
@@ -171,8 +161,8 @@ public class Agent implements ClassFileTransformer
 	public static void premain(String agentArgs, Instrumentation inst)
 			throws Exception
 	{
-		UnsafeHolder.getUnsafe();
-		logger.fine("Starting Duece agent");
+		UnsafeHolder.getUnsafe(); // CHECKME o que é que isto faz?
+		logger.fine("Starting Deuce agent");
 		inst.addTransformer(new Agent());
 	}
 
@@ -187,11 +177,10 @@ public class Agent implements ClassFileTransformer
 	public static void main(String[] args) throws Exception
 	{
 		UnsafeHolder.getUnsafe();
-		logger.fine("Starting Duece translator");
+		logger.fine("Starting Deuce translator");
 
-		// TODO check args
 		Agent agent = new Agent();
-		agent.transformJar(args[0], args[1]);
+		agent.transformJar(args[0], args[1]); // TODO check args
 	}
 
 	private void transformJar(String inFileNames, String outFilenames)
@@ -226,7 +215,6 @@ public class Agent implements ClassFileTransformer
 				for (JarEntry nextJarEntry = jarIS.getNextJarEntry(); nextJarEntry != null; nextJarEntry = jarIS
 						.getNextJarEntry())
 				{
-
 					baos.reset();
 					int read;
 					while ((read = jarIS.read(buffer, 0, size)) > 0)

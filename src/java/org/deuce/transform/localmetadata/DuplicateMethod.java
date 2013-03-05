@@ -17,7 +17,6 @@ import org.deuce.transform.util.Util;
 @ExcludeTM
 public class DuplicateMethod extends MethodAdapter
 {
-
 	final static public String LOCAL_VARIBALE_NAME = "__transactionContext__";
 
 	private final int argumentsSize;
@@ -78,7 +77,6 @@ public class DuplicateMethod extends MethodAdapter
 
 	private void duplicateTargeObject(int opcode, String owner, String desc)
 	{
-
 		if (opcode == Opcodes.PUTFIELD)
 		{
 			if (desc.equals("J") || desc.equals("D"))
@@ -102,7 +100,6 @@ public class DuplicateMethod extends MethodAdapter
 
 	private void loadTargeObject(int opcode, String owner, String desc)
 	{
-
 		if (opcode == Opcodes.PUTFIELD)
 		{
 			if (desc.equals("J") || desc.equals("D"))
@@ -125,7 +122,6 @@ public class DuplicateMethod extends MethodAdapter
 	public void visitFieldInsn(int opcode, String owner, String name,
 			String desc)
 	{
-
 		if (ignore)
 		{
 			super.visitFieldInsn(opcode, owner, name, desc);
@@ -420,9 +416,8 @@ public class DuplicateMethod extends MethodAdapter
 
 	@Override
 	public void visitIincInsn(int var, int increment)
-	{
-		super.visitIincInsn(newIndex(var), increment); // increase index due to
-														// context
+	{ // increase index due to context
+		super.visitIincInsn(newIndex(var), increment); 
 	}
 
 	@Override
@@ -439,12 +434,8 @@ public class DuplicateMethod extends MethodAdapter
 			Label start, Label end, int index)
 	{
 		if (this.argumentsSize > index + 1) // argument
-		{
-			super.visitLocalVariable(name, desc, signature, start, end, index); // non
-																				// static
-																				// method
-																				// has
-																				// this
+		{ // non static method has this
+			super.visitLocalVariable(name, desc, signature, start, end, index); 
 			return;
 		}
 		// add context as last argument
@@ -468,8 +459,7 @@ public class DuplicateMethod extends MethodAdapter
 
 	@Override
 	public void visitVarInsn(int opcode, int var)
-	{
-		// increase the local variable index by 1
+	{ // increase the local variable index by 1
 		super.visitVarInsn(opcode, newIndex(var));
 	}
 
@@ -496,5 +486,4 @@ public class DuplicateMethod extends MethodAdapter
 		}
 		return size;
 	}
-
 }

@@ -4,8 +4,8 @@ from subprocess import *
 jagent = '-javaagent:'
 deuceagent = 'bin/deuceAgent.jar'
 
-initheapsize = "-Xms%sg"
-maxheapsize = "-Xmx%sg"
+initheapsize = "-Xms%sg" % 1
+maxheapsize = "-Xmx%sg" % 1
 
 cp = '-cp'
 classpath = 'bin/classes:etc:lib/appia-core-4.1.2.jar:lib/appia-groupcomm-4.1.2.jar:	lib/appia-test-4.1.2.jar:lib/flanagan.jar:lib/jgcs-0.6.1.jar:lib/jgroups-3.1.0.Beta1.jar:lib/junit-4.6.jar:lib/jvstm.jar:lib/log4j-1.2.14.jar:lib/spread-4.2.0.jar'
@@ -118,8 +118,9 @@ def main(argv):
 		replicas = argv[6]
 		run = argv[7]
 		
-		initheapsize = initheapsize % heapsz
-		maxheapsize = maxheapsize % heapsz
+		initheapsize = "-Xms%sg" % heapsz
+		maxheapsize = "-Xmx%sg" % heapsz
+		
 		contextClass = "org.deuce.transaction.%s" % argv[8]
 		commClass = "org.deuce.distribution.groupcomm.%sGroupCommunication" % comm
 		protocolClass = "org.deuce.distribution.replication.%s" % argv[9]

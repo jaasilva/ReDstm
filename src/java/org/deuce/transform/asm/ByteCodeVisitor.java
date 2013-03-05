@@ -14,7 +14,6 @@ import org.deuce.objectweb.asm.commons.JSRInlinerAdapter;
  */
 public class ByteCodeVisitor extends ClassAdapter
 {
-
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String desc,
 			String signature, String[] exceptions)
@@ -31,7 +30,6 @@ public class ByteCodeVisitor extends ClassAdapter
 
 	public ByteCodeVisitor(String className)
 	{
-
 		super(new ClassWriter(ClassWriter.COMPUTE_MAXS));
 		this.className = className;
 	}
@@ -63,5 +61,4 @@ public class ByteCodeVisitor extends ClassAdapter
 		private static final long serialVersionUID = 1L;
 		public static VersionException INSTANCE = new VersionException();
 	}
-
 }

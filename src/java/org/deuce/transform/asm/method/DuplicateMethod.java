@@ -22,7 +22,6 @@ import org.deuce.transform.util.Util;
  */
 public class DuplicateMethod extends MethodAdapter
 {
-
 	final static public String LOCAL_VARIBALE_NAME = "__transactionContext__";
 
 	private final int argumentsSize;
@@ -185,7 +184,6 @@ public class DuplicateMethod extends MethodAdapter
 		String arrayMemeberType = null;
 		switch (opcode)
 		{
-
 			case Opcodes.AALOAD:
 				// handle Object[] arrays type, the type before the last is the
 				// array.
@@ -289,9 +287,8 @@ public class DuplicateMethod extends MethodAdapter
 
 	@Override
 	public void visitIincInsn(int var, int increment)
-	{
-		super.visitIincInsn(newIndex(var), increment); // increase index due to
-														// context
+	{ // increase index due to context
+		super.visitIincInsn(newIndex(var), increment); 
 	}
 
 	@Override
@@ -308,12 +305,8 @@ public class DuplicateMethod extends MethodAdapter
 			Label start, Label end, int index)
 	{
 		if (this.argumentsSize > index + 1) // argument
-		{
-			super.visitLocalVariable(name, desc, signature, start, end, index); // non
-																				// static
-																				// method
-																				// has
-																				// this
+		{ // non static method has this
+			super.visitLocalVariable(name, desc, signature, start, end, index); 
 			return;
 		}
 		// add context as last argument
@@ -337,8 +330,7 @@ public class DuplicateMethod extends MethodAdapter
 
 	@Override
 	public void visitVarInsn(int opcode, int var)
-	{
-		// increase the local variable index by 1
+	{ // increase the local variable index by 1
 		super.visitVarInsn(opcode, newIndex(var));
 	}
 

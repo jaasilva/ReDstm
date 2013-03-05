@@ -20,7 +20,6 @@ import org.deuce.transform.asm.type.TypeCodeResolverFactory;
 
 public class AtomicMethod extends MethodAdapter implements Opcodes
 {
-
 	final static public String ATOMIC_DESCRIPTOR = Type
 			.getDescriptor(Atomic.class);
 	final static private AtomicInteger ATOMIC_BLOCK_COUNTER = new AtomicInteger(
@@ -125,7 +124,6 @@ public class AtomicMethod extends MethodAdapter implements Opcodes
 	@Override
 	public void visitCode()
 	{
-
 		final int indexIndex = variablesSize; // i
 		final int contextIndex = indexIndex + 1; // context
 		final int throwableIndex = contextIndex + 1;

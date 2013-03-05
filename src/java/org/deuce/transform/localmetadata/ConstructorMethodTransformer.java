@@ -45,17 +45,13 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 	protected final String fieldsHolderName;
 	protected boolean callsOtherCtor;
 	protected final String className;
-	// protected boolean isUniqueObject;
 
 	// FIXME @Bootstrap
 	protected final Map<String, Integer> field2OID;
 
 	public ConstructorMethodTransformer(MethodVisitor mv, List<Field> fields,
 			Map<String, Integer> field2OID, String className, int access,
-			String name, String desc, String fieldsHolderName/*
-															 * , boolean
-															 * isUniqueObject
-															 */)
+			String name, String desc, String fieldsHolderName)
 	{
 		super(className, access, name, desc, mv);
 		this.fields = fields;
@@ -63,7 +59,6 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 		this.callsOtherCtor = false;
 		this.className = className;
 		this.field2OID = field2OID;
-		// this.isUniqueObject = isUniqueObject;
 	}
 
 	protected void initMetadataField(Field field)
@@ -97,7 +92,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 					TribuDSTM.GETSERIALIZER_METHOD_DESC);
 			// stack: ..., Object (this), TxField, TxField, ObjectSerializer =>
 			mv.visitTypeInsn(Opcodes.CHECKCAST, FullReplicationSerializer.NAME);
-			// TODO: check replicatio type
+			// TODO: check replication type
 			// ................................................................................
 			// stack: ..., Object (this), TxField, TxField,
 			// FullReplicationSerializer =>
@@ -154,7 +149,6 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 	@Override
 	public void visitEnd()
 	{
-		// ((MethodTransformer)mv).disableDuplicateInstrumentation(false);
 		super.visitEnd();
 	}
 
@@ -169,13 +163,11 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 			 * isUniqueObject) { super.visitMethodInsn(opcode,
 			 * UniqueObject.NAME, name, desc); return; } else
 			 */if (owner.equals(className))
-			{
-				// The method is created merely to know the #params
+			{ // The method is created merely to know the #params
 				int nParams = new Method(name, desc).getArgumentTypes().length;
 
 				// With that number, we go down the stack #params and check
-				// what's
-				// there
+				// what's there
 				Object stackObj = stack.get(stack.size() - nParams - 1);
 
 				// Is it <this>, uninitialized?

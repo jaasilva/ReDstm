@@ -4,7 +4,6 @@ import org.deuce.objectweb.asm.AnnotationVisitor;
 
 public class MethodAnnotationVisitor implements AnnotationVisitor
 {
-
 	private final AnnotationVisitor originalVisitor;
 	private final AnnotationVisitor copyVisitor;
 
