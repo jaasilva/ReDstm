@@ -2,8 +2,8 @@ package org.deuce.transform.asm.method;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.log4j.Logger;
 import org.deuce.Atomic;
-import org.deuce.distribution.TribuDSTM;
 import org.deuce.objectweb.asm.AnnotationVisitor;
 import org.deuce.objectweb.asm.Label;
 import org.deuce.objectweb.asm.MethodAdapter;
@@ -20,6 +20,7 @@ import org.deuce.transform.asm.type.TypeCodeResolverFactory;
 
 public class AtomicMethod extends MethodAdapter implements Opcodes
 {
+	private static final Logger LOGGER = Logger.getLogger(AtomicMethod.class);
 	final static public String ATOMIC_DESCRIPTOR = Type
 			.getDescriptor(Atomic.class);
 	final static private AtomicInteger ATOMIC_BLOCK_COUNTER = new AtomicInteger(
@@ -27,8 +28,7 @@ public class AtomicMethod extends MethodAdapter implements Opcodes
 
 	private Integer retries = Integer.getInteger(
 			"org.deuce.transaction.retries", Integer.MAX_VALUE);
-	private String metainf = "";// Integer.getInteger("org.deuce.transaction.retries",
-								// Integer.MAX_VALUE);
+	private String metainf = "";
 
 	final private String className;
 	final private String methodName;
@@ -177,7 +177,7 @@ public class AtomicMethod extends MethodAdapter implements Opcodes
 		mv.visitLabel(l11);
 		mv.visitVarInsn(ALOAD, contextIndex);
 		int atomicBlockId = ATOMIC_BLOCK_COUNTER.getAndIncrement();
-		TribuDSTM.debug(String.format("Atomic block %d: %s.%s", atomicBlockId,
+		LOGGER.debug(String.format("Atomic block %d: %s.%s", atomicBlockId,
 				className, methodName));
 		mv.visitLdcInsn(atomicBlockId);
 		mv.visitLdcInsn(metainf);

@@ -1,7 +1,7 @@
 package org.deuce.distribution.groupcomm.spread;
 
+import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectSerializer;
-import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.OptimisticDeliveryUnsupportedException;
@@ -19,7 +19,8 @@ import spread.SpreadMessage;
 public class SpreadGroupCommunication extends GroupCommunication implements
 		AdvancedMessageListener
 {
-
+	private static final Logger LOGGER = Logger
+			.getLogger(SpreadGroupCommunication.class);
 	private SpreadConnection connection;
 	private SpreadGroup group;
 
@@ -136,7 +137,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		if (message.isMembership()
 				&& message.getMembershipInfo().isRegularMembership())
 		{
-			TribuDSTM.debug(String.format("New group view: %s", message
+			LOGGER.debug(String.format("New group view: %s", message
 					.getMembershipInfo().toString()));
 			if (message.getMembershipInfo().getMembers().length == Integer
 					.getInteger("tribu.replicas").intValue())

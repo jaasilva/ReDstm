@@ -121,10 +121,10 @@ public class Client extends Thread
 		int queryRange = this.queryRange;
 		int percentUser = this.percentUser;
 
-//		int types[] = new int[numQueryPerTransaction];
-//		int ids[] = new int[numQueryPerTransaction];
-//		int ops[] = new int[numQueryPerTransaction];
-//		int prices[] = new int[numQueryPerTransaction];
+		// int types[] = new int[numQueryPerTransaction];
+		// int ids[] = new int[numQueryPerTransaction];
+		// int ops[] = new int[numQueryPerTransaction];
+		// int prices[] = new int[numQueryPerTransaction];
 
 		Vacation.benchBarrier.join();
 		Profiler.enabled = true;
@@ -133,7 +133,7 @@ public class Client extends Thread
 		{
 			int r = randomPtr.posrandom_generate() % 100;
 			int action = selectAction(r, percentUser);
-			
+
 			int types[] = new int[numQueryPerTransaction];
 			int ids[] = new int[numQueryPerTransaction];
 			int ops[] = new int[numQueryPerTransaction];
@@ -188,8 +188,7 @@ public class Client extends Thread
 						prices[n] = ((randomPtr.posrandom_generate() % 5) * 10) + 50;
 					}
 				}
-				n = updateTables(managerPtr, types, ids, ops, prices,
-						numUpdate);
+				n = updateTables(managerPtr, types, ids, ops, prices, numUpdate);
 			}
 		} /* for i */
 		Barrier.enterBarrier();

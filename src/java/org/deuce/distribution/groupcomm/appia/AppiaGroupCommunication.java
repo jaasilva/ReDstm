@@ -2,8 +2,8 @@ package org.deuce.distribution.groupcomm.appia;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectSerializer;
-import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.serialization.GCPayloadException;
@@ -33,7 +33,8 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		ExceptionListener, MessageListener, ServiceListener, BlockListener,
 		MembershipListener
 {
-
+	private static final Logger LOGGER = Logger
+			.getLogger(AppiaGroupCommunication.class);
 	private Protocol protocol;
 	private AppiaGroup config;
 	private AppiaService sendTOService, sendURBService, recvService;
@@ -160,7 +161,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		try
 		{
 			membership = controlSession.getMembership();
-			TribuDSTM.debug(String.format("New group view: %s",
+			LOGGER.debug(String.format("New group view: %s",
 					membership.toString()));
 			if (membership.getMembershipList().size() == Integer.getInteger(
 					"tribu.replicas").intValue())

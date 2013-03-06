@@ -18,8 +18,9 @@ import org.deuce.benchmark.stmbench7.impl.NoSynchronizationInitializer;
  * STMBench7 benchmark, the main program. Run with argument "-h" or "--help" to
  * see the syntax.
  * 
- * TODO: The class got too large and needs some careful refactoring. TODO: An
- * XML output of the benchmark results would be helpful.
+ * TODO: The class got too large and needs some careful refactoring.
+ * 
+ * TODO: A XML output of the benchmark results would be helpful.
  */
 @NonAtomic
 public class Benchmark
@@ -691,6 +692,8 @@ public class Benchmark
 	{
 		Formatter formatter = new Formatter();
 		formatter.format("%3.2f", number);
-		return formatter.toString();
+		String format = formatter.toString();
+		formatter.close();
+		return format;
 	}
 }

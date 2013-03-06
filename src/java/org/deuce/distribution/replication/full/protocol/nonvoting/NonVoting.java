@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
@@ -20,7 +21,7 @@ import org.deuce.transform.ExcludeTM;
 public class NonVoting extends FullReplicationProtocol implements
 		DeliverySubscriber
 {
-
+	private static final Logger LOGGER = Logger.getLogger(NonVoting.class);
 	private final Map<Integer, DistributedContext> contexts = Collections
 			.synchronizedMap(new HashMap<Integer, DistributedContext>());
 
@@ -51,14 +52,14 @@ public class NonVoting extends FullReplicationProtocol implements
 			ctx.applyWriteSet();
 			ctx.processed(true);
 
-			TribuDSTM.debug(src + ":" + ctxState.ctxID + ":"
+			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
 					+ ctxState.atomicBlockId + " committed.");
 		}
 		else
 		{
 			ctx.processed(false);
 
-			TribuDSTM.debug(src + ":" + ctxState.ctxID + ":"
+			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
 					+ ctxState.atomicBlockId + " aborted.");
 		}
 	}

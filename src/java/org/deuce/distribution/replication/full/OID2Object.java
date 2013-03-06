@@ -3,6 +3,7 @@ package org.deuce.distribution.replication.full;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
+import org.apache.log4j.Logger;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
 import org.deuce.objectweb.asm.Type;
@@ -18,6 +19,7 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public final class OID2Object implements Serializable
 {
+	private static final Logger LOGGER = Logger.getLogger(OID2Object.class);
 	private static final long serialVersionUID = 1L;
 	public static final String DESC = Type.getDescriptor(OID2Object.class);
 	public static final String NAME = Type.getInternalName(OID2Object.class);
@@ -45,14 +47,14 @@ public final class OID2Object implements Serializable
 		UniqueObject object = TribuDSTM.getObject(oid);
 		if (object == null)
 		{
-			TribuDSTM.fatal(String.format(
+			LOGGER.fatal(String.format(
 					"RECEIVED OID(%s) WITHOUT LOCAL REPLICA", oid.toString()));
 		}
 		else
 		{
-			TribuDSTM.trace(String.format(
-					"Replaced OID(%s) with local replica %s",
-					oid.toString(), object.toString()));
+			LOGGER.trace(String.format(
+					"Replaced OID(%s) with local replica %s", oid.toString(),
+					object.toString()));
 		}
 		return object;
 	}

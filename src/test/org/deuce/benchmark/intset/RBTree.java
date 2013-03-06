@@ -39,7 +39,7 @@ public class RBTree implements IntSet
 	/**
 	 * Each node has one of two colors.
 	 */
-	// XXX
+	// XXX Enum problem
 	// public enum Color {BLACK, RED};
 	// 0 is <=> to color = null
 	public static final int BLACK = 1;
@@ -291,7 +291,7 @@ public class RBTree implements IntSet
 			z.setValue(y.getValue());
 		}
 
-		// XXX
+		// XXX Enum problem
 		if (y.getColor() == /* Color. */BLACK)
 			restoreAfterDelete(x);
 	}
@@ -846,16 +846,16 @@ public class RBTree implements IntSet
 		}
 	}
 
-//	public String toString()
-//	{
-//		StringBuilder sb = new StringBuilder();
-//		MyIterator it = new MyIterator();
-//		while (it.hasNext())
-//		{
-//			sb.append(it.next());
-//			if (it.hasNext())
-//				sb.append(' ');
-//		}
-//		return sb.toString();
-//	}
+	// public String toString()
+	// {
+	// StringBuilder sb = new StringBuilder();
+	// MyIterator it = new MyIterator();
+	// while (it.hasNext())
+	// {
+	// sb.append(it.next());
+	// if (it.hasNext())
+	// sb.append(' ');
+	// }
+	// return sb.toString();
+	// }
 }

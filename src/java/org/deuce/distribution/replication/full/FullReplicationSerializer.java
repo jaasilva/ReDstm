@@ -2,6 +2,7 @@ package org.deuce.distribution.replication.full;
 
 import java.io.ObjectStreamException;
 
+import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
@@ -13,6 +14,7 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class FullReplicationSerializer extends ObjectSerializer
 {
+	private static final Logger LOGGER = Logger.getLogger(FullReplicationSerializer.class);
 	public final static String NAME = Type
 			.getInternalName(FullReplicationSerializer.class);
 	public final static String DESC = Type
@@ -42,13 +44,13 @@ public class FullReplicationSerializer extends ObjectSerializer
 			oid = factory.generateOID();
 			obj.setMetadata(oid);
 			TribuDSTM.putObject(oid, obj);
-			TribuDSTM.trace(String.format("Published %s with OID(%s)",
+			LOGGER.trace(String.format("Published %s with OID(%s)",
 					obj.toString(), oid.toString()));
 			return obj;
 		}
 		else
 		{
-			TribuDSTM.trace(String.format("%s already published with OID(%s)",
+			LOGGER.trace(String.format("%s already published with OID(%s)",
 					obj.toString(), oid.toString()));
 			return new OID2Object(oid);
 		}
@@ -68,7 +70,7 @@ public class FullReplicationSerializer extends ObjectSerializer
 		UniqueObject object = TribuDSTM.getObject(oid);
 		if (object != null)
 		{
-			TribuDSTM.trace(String.format(
+			LOGGER.trace(String.format(
 					"Replaced %s with OID(%s) by local replica %s",
 					obj.toString(), oid.toString(), object.toString()));
 			return object;
@@ -76,7 +78,7 @@ public class FullReplicationSerializer extends ObjectSerializer
 		else
 		{
 			TribuDSTM.putObject(oid, obj);
-			TribuDSTM.trace(String.format("Published %s with OID(%s)",
+			LOGGER.trace(String.format("Published %s with OID(%s)",
 					obj.toString(), oid.toString()));
 			return obj;
 		}

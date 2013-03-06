@@ -3,8 +3,8 @@ package org.deuce.distribution.groupcomm.jgroups;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectSerializer;
-import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.OptimisticDeliveryUnsupportedException;
@@ -20,7 +20,8 @@ import org.jgroups.View;
 public class JGroupsGroupCommunication extends GroupCommunication implements
 		Receiver
 {
-
+	private static final Logger LOGGER = Logger
+			.getLogger(JGroupsGroupCommunication.class);
 	private JChannel channelTOB;
 
 	// private JChannel channelRB;
@@ -151,8 +152,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 
 	public void viewAccepted(View new_view)
 	{
-		TribuDSTM
-				.debug(String.format("New group view: %s", new_view.toString()));
+		LOGGER.debug(String.format("New group view: %s", new_view.toString()));
 		if (new_view.getMembers().size() == Integer
 				.getInteger("tribu.replicas"))
 			membersArrived();

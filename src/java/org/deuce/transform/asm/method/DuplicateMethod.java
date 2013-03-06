@@ -288,7 +288,7 @@ public class DuplicateMethod extends MethodAdapter
 	@Override
 	public void visitIincInsn(int var, int increment)
 	{ // increase index due to context
-		super.visitIincInsn(newIndex(var), increment); 
+		super.visitIincInsn(newIndex(var), increment);
 	}
 
 	@Override
@@ -306,7 +306,7 @@ public class DuplicateMethod extends MethodAdapter
 	{
 		if (this.argumentsSize > index + 1) // argument
 		{ // non static method has this
-			super.visitLocalVariable(name, desc, signature, start, end, index); 
+			super.visitLocalVariable(name, desc, signature, start, end, index);
 			return;
 		}
 		// add context as last argument

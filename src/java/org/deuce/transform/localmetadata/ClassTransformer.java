@@ -19,12 +19,11 @@ import org.deuce.objectweb.asm.commons.Method;
 import org.deuce.transaction.Context;
 import org.deuce.transform.Exclude;
 import org.deuce.transform.ExcludeTM;
-import org.deuce.transform.asm.Agent;
 import org.deuce.transform.asm.ByteCodeVisitor;
 import org.deuce.transform.asm.FieldsHolder;
 import org.deuce.transform.asm.type.TypeCodeResolver;
 import org.deuce.transform.asm.type.TypeCodeResolverFactory;
-import org.deuce.transform.localmetadata.replication.full.SpecificAnnotationsFieldVisitor;
+import org.deuce.transform.localmetadata.replication.SpecificAnnotationsFieldVisitor;
 import org.deuce.transform.util.Util;
 
 @ExcludeTM
@@ -155,7 +154,7 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 
 	// XXX @Bootstrap
 	public final Map<String, Integer> field2OID = new java.util.HashMap<String, Integer>();
-	
+
 	// XXX @PartialReplication
 	public final Set<String> partialRepFields = new java.util.TreeSet<String>();
 
@@ -170,7 +169,6 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 			final String signature, final String superName,
 			final String[] interfaces)
 	{
-		Agent.AGENT+="\nClassTransformer visit: " + name + " " + superName; // CHECKME
 		fieldsHolder.visit(superName);
 		isInterface = (access & Opcodes.ACC_INTERFACE) != 0;
 		isEnum = ENUM_DESC.equals(superName);
@@ -225,7 +223,6 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 	@Override
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible)
 	{
-		Agent.AGENT+="\nClassTransformer visitAnnotation: " + desc; // CHECKME
 		excludeApp = excludeApp ? excludeApp : EXCLUDE_AP_DESC.equals(desc);
 		excludeSys = excludeSys ? excludeSys : EXCLUDE_DESC.equals(desc);
 		return super.visitAnnotation(desc, visible);
@@ -239,7 +236,6 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 	public FieldVisitor visitField(int access, String name, String desc,
 			String signature, Object value)
 	{
-		Agent.AGENT+="\nClassTransformer visitField: " + name + " " + desc; // CHECKME
 		String origDesc = desc;
 
 		if (Type.getType(desc).getSort() == Type.ARRAY && !excludeSys)
@@ -292,9 +288,9 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 					Type.LONG_TYPE.getDescriptor(), -1L);
 		}
 
-		// XXX @Bootstrap
-		FieldVisitor bootstrapFv = new SpecificAnnotationsFieldVisitor(fv, field2OID,
-				partialRepFields, name);
+		// XXX @Bootstrap @PartialReplication
+		FieldVisitor bootstrapFv = new SpecificAnnotationsFieldVisitor(fv,
+				field2OID, partialRepFields, name);
 
 		return bootstrapFv;
 	}
@@ -303,7 +299,6 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 	public MethodVisitor visitMethod(int access, String name, String desc,
 			String signature, String[] exceptions)
 	{
-		Agent.AGENT+="\nClassTransformer visitMethod: " + name + " " + desc; // CHECKME
 		if (name.matches("000.*"))
 		{
 			return new NonInstrumentedMethodTransformer(super.visitMethod(
@@ -470,7 +465,6 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 	@Override
 	public void visitEnd()
 	{
-		Agent.AGENT+="\nClassTransformer visitEnd"; // CHECKME
 		// Didn't see any static method till now, so creates one.
 		if (!excludeApp && !excludeSys)
 		{

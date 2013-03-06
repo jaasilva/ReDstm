@@ -448,7 +448,7 @@ public class Intruder extends Thread
 		System.out.println("Finished");
 
 		// Profiler.print();
-		
+
 		TribuDSTM.close();
 	}
 

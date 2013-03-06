@@ -63,7 +63,7 @@ public class Agent implements ClassFileTransformer
 		}
 		return classfileBuffer;
 	}
-	public static String AGENT = ""; // CHECKME
+
 	/**
 	 * @param offline
 	 *            <code>true</code> if this is an offline transform.
@@ -74,7 +74,7 @@ public class Agent implements ClassFileTransformer
 	{
 		ArrayList<ClassByteCode> byteCodes = new ArrayList<ClassByteCode>();
 		if (className.startsWith("$") || ExcludeIncludeStore.exclude(className))
-		{ // CHECKME o que singifica esta condicao?
+		{
 			byteCodes.add(new ClassByteCode(className, classfileBuffer));
 			return byteCodes;
 		}
@@ -84,7 +84,7 @@ public class Agent implements ClassFileTransformer
 
 		classfileBuffer = addFrames(className, classfileBuffer);
 
-		if (GLOBAL_TXN) // CHECKME o que é isto?
+		if (GLOBAL_TXN)
 		{
 			// ByteCodeVisitor cv = new
 			// org.deuce.transaction.global.ClassTransformer(
@@ -101,9 +101,8 @@ public class Agent implements ClassFileTransformer
 			}
 			ByteCodeVisitor cv = null;
 
-			if (true /* ContextDelegator.inLocalMetadata() */)
+			if (ContextDelegator.inLocalMetadata())
 			{ // INPLACE METADATA
-				AGENT+="\n----------- INPLACE: " + className;
 				cv = new org.deuce.transform.localmetadata.ClassTransformer(
 						className, fieldsHolder);
 			}
@@ -120,7 +119,7 @@ public class Agent implements ClassFileTransformer
 				byteCodes.add(fieldsHolder.getClassByteCode());
 			}
 		}
-		System.out.println(AGENT);
+
 		if (VERBOSE)
 		{
 			try
@@ -161,7 +160,7 @@ public class Agent implements ClassFileTransformer
 	public static void premain(String agentArgs, Instrumentation inst)
 			throws Exception
 	{
-		UnsafeHolder.getUnsafe(); // CHECKME o que é que isto faz?
+		UnsafeHolder.getUnsafe();
 		logger.fine("Starting Deuce agent");
 		inst.addTransformer(new Agent());
 	}
