@@ -15,14 +15,14 @@ public interface OID extends ObjectMetadata
 	public static final String DESC = Type.getDescriptor(OID.class);
 	public static final String NAME = Type.getInternalName(OID.class);
 
-	public abstract boolean equals(Object obj);
+	public boolean equals(Object obj);
 
-	public abstract int hashCode();
+	public int hashCode();
 
 	/**
 	 * Textual, human-readable representation of the identifier.
 	 * 
 	 * @return Human-readable representation of the identifier.
 	 */
-	public abstract String toString();
+	public String toString();
 }
