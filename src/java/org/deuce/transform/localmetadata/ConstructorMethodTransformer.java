@@ -33,9 +33,7 @@ import org.deuce.transform.localmetadata.type.TxField;
  * the corresponding metadata. That will cause a similar exception to the above
  * to be thrown.
  */
-/*
- * TODO: Try to move @Bootstrap related transformations to other class
- */
+
 @ExcludeTM
 public class ConstructorMethodTransformer extends AnalyzerAdapter
 {
@@ -46,7 +44,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 	protected boolean callsOtherCtor;
 	protected final String className;
 
-	// FIXME @Bootstrap
+	// XXX @Bootstrap
 	protected final Map<String, Integer> field2OID;
 
 	public ConstructorMethodTransformer(MethodVisitor mv, List<Field> fields,
@@ -92,8 +90,6 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 					TribuDSTM.GETSERIALIZER_METHOD_DESC);
 			// stack: ..., Object (this), TxField, TxField, ObjectSerializer =>
 			mv.visitTypeInsn(Opcodes.CHECKCAST, FullReplicationSerializer.NAME);
-			// TODO: check replication type
-			// ................................................................................
 			// stack: ..., Object (this), TxField, TxField,
 			// FullReplicationSerializer =>
 			mv.visitInsn(Opcodes.SWAP);

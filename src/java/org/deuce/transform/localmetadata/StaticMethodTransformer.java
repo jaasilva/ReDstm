@@ -12,9 +12,6 @@ import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
-/*
- * TODO: Try to move @Bootstrap related transformations to other class
- */
 @ExcludeTM
 public class StaticMethodTransformer extends MethodAdapter
 {
@@ -26,7 +23,7 @@ public class StaticMethodTransformer extends MethodAdapter
 	protected final String fieldsHolderName;
 	protected final String staticField;
 
-	// FIXME @Bootstrap
+	// XXX @Bootstrap
 	private final Map<String, Integer> field2OID;
 
 	public StaticMethodTransformer(MethodVisitor mv,
@@ -34,7 +31,6 @@ public class StaticMethodTransformer extends MethodAdapter
 			Map<String, Integer> field2OID, String staticField,
 			String className, String fieldsHolderName)
 	{
-
 		super(mv);
 		this.staticMethod = staticMethod;
 		this.fields = fields;
@@ -58,7 +54,7 @@ public class StaticMethodTransformer extends MethodAdapter
 			for (Field field : fields)
 			{
 				if ((field.getAccess() & Opcodes.ACC_STATIC) != 0)
-				{
+				{ // Initialize bootstrap stuff
 					addField(field);
 				}
 				else
@@ -80,10 +76,8 @@ public class StaticMethodTransformer extends MethodAdapter
 		super.visitMethodInsn(Opcodes.INVOKESTATIC,
 				"org/deuce/reflection/AddressUtil", "getAddress",
 				"(Ljava/lang/reflect/Field;)J");
-
 		super.visitFieldInsn(Opcodes.PUTSTATIC, fieldsHolderName, "__STATIC__"
 				+ field.getFieldNameAddress(), "J");
-
 	}
 
 	protected void addField(Field field)
@@ -117,7 +111,7 @@ public class StaticMethodTransformer extends MethodAdapter
 		// XXX @Bootstrap, assumes FullReplicationSerializer
 		Integer oid = field2OID.get(field.getFieldName());
 		if (oid != null)
-		{
+		{ // Bootstrap field
 			super.visitInsn(Opcodes.DUP);
 			// stack: ..., TxField, TxField =>
 			super.visitMethodInsn(Opcodes.INVOKESTATIC, TribuDSTM.NAME,

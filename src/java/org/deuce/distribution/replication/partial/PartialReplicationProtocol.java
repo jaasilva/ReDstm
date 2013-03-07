@@ -2,7 +2,6 @@ package org.deuce.distribution.replication.partial;
 
 import org.deuce.distribution.DistributedProtocol;
 import org.deuce.distribution.ObjectSerializer;
-import org.deuce.distribution.replication.full.Bootstrap;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 
