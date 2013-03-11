@@ -19,6 +19,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/TribuDSTM/lib/spread-4.2.0-docs.zip!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/jgroupsTOA-3.1.0.Alpha3.jar" sourcepath="lib/jgroupsTOA-src-3.1.0.Alpha3.jar"/>
+	<classpathentry kind="lib" path="lib/jgroups-3.2.7.Final.jar" sourcepath="lib/jgroups-3.2.7.Final-sources.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
