@@ -1,51 +1,53 @@
 package org.deuce.distribution.replication.group;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.deuce.distribution.groupcomm.Address;
+import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
  * 
  */
+@ExcludeTM
 public class PartialReplicationGroup implements Group
-{ // TODO PartialReplicationGroup
-	private Set<Address> nodes;
+{ // TODO verificar se é necessario groupID
+	private Set<Address> addresses;
 
 	public PartialReplicationGroup()
-	{
-		this.nodes = new TreeSet<Address>();
+	{ // TODO verificar este tamanho
+		this.addresses = new HashSet<Address>(50);
 	}
 
-	public PartialReplicationGroup(Collection<? extends Address> nodes)
+	public PartialReplicationGroup(Collection<? extends Address> addresses)
 	{
-		this.nodes = new TreeSet<Address>(nodes);
+		this.addresses = new HashSet<Address>(addresses);
 	}
 
-	public Set<Address> getNodes()
+	public boolean removeAddress(Address addr)
 	{
-		return nodes;
+		return addresses.remove(addr);
 	}
 
-	public void setNodes(Set<Address> nodes)
+	public boolean contains(Address addr)
 	{
-		this.nodes = nodes;
+		return addresses.contains(addr);
 	}
 
-	public boolean removeNode(Address node)
+	public boolean addAddress(Address addr)
 	{
-		return nodes.remove(node);
+		return addresses.add(addr);
 	}
 
-	public boolean contains(Address node)
+	public Collection<Address> getAddresses()
 	{
-		return nodes.contains(node);
+		return addresses;
 	}
 
-	public boolean addNode(Address node)
-	{
-		return nodes.add(node);
+	public String toString()
+	{ // TODO PartialReplicationGroup toString
+		return "GROUP";
 	}
 }

@@ -2,6 +2,7 @@ package org.deuce.distribution.groupcomm.jgroups;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectSerializer;
@@ -9,8 +10,10 @@ import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.OptimisticDeliveryUnsupportedException;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
+import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.serialization.GCPayloadException;
 import org.deuce.transform.ExcludeTM;
+import org.jgroups.AnycastAddress;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.Receiver;
@@ -18,13 +21,11 @@ import org.jgroups.View;
 
 @ExcludeTM
 public class JGroupsGroupCommunication extends GroupCommunication implements
-		Receiver
+		Receiver // TODO check new jar file JGroups 3.2.7.Final
 {
 	private static final Logger LOGGER = Logger
 			.getLogger(JGroupsGroupCommunication.class);
-	private JChannel channelTOB;
-
-	// private JChannel channelRB;
+	private JChannel channel;
 
 	public JGroupsGroupCommunication()
 	{
@@ -34,18 +35,13 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	public void init()
 	{
 		try
-		{
-			channelTOB = new JChannel("etc/jgroups.xml");
-			channelTOB.setReceiver(this);
-			channelTOB.connect(System.getProperty(
+		{ // TODO check config in TOA "toa.xml"
+			channel = new JChannel("etc/jgroups.xml");
+			channel.setReceiver(this);
+			channel.connect(System.getProperty(
 					"tribu.groupcommunication.group", "tvale"));
 
-			// channelRB = new JChannel("etc/jgroups.xml");
-			// channelRB.setReceiver(this);
-			// channelRB.connect(System.getProperty("tribu.groupcommunication.group",
-			// "tvale")+"-rb");
-
-			myAddress = new JGroupsAddress(channelTOB.getAddress());
+			myAddress = new JGroupsAddress(channel.getAddress());
 		}
 		catch (Exception e)
 		{
@@ -57,7 +53,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 
 	public void close()
 	{
-		channelTOB.close();
+		channel.close();
 	}
 
 	@Override
@@ -67,31 +63,11 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		throw new OptimisticDeliveryUnsupportedException();
 	}
 
-	public void sendTo(byte[] payload, Address addr)
-	{
-		final Message msg = new Message();
-		// msg.setDest(addr);
-		// TODO
-		// .........................................................................
-		msg.setBuffer(payload);
-		msg.setFlag(Message.NO_TOTAL_ORDER);
-		try
-		{
-			channelTOB.send(msg);
-		}
-		catch (Exception e)
-		{
-			System.err.println("Couldn't send message.");
-			e.printStackTrace();
-			System.exit(-1);
-		}
-	}
-
 	public void sendTotalOrdered(final byte[] payload)
 	{
 		try
 		{
-			channelTOB.send(null, payload);
+			channel.send(null, payload);
 		}
 		catch (Exception e)
 		{
@@ -107,11 +83,10 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		msg.setDest(null);
 		msg.setBuffer(payload);
 		msg.setFlag(Message.NO_TOTAL_ORDER);
-		// new Thread(new Runnable() {
-		// public void run() {
+
 		try
 		{
-			channelTOB.send(msg);
+			channel.send(msg);
 		}
 		catch (Exception e)
 		{
@@ -119,8 +94,6 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		// }
-		// }).start();
 	}
 
 	public void receive(Message msg)
@@ -171,5 +144,24 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	public void unblock()
 	{
 		// nothing to do
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void sendTotalOrdered(byte[] payload, Group group)
+	{ // TODO test
+		AnycastAddress addr = new AnycastAddress();
+		// TODO verificar melhor solucao
+		addr.addAll((List) group.getAddresses());
+
+		try
+		{
+			channel.send(addr, payload);
+		}
+		catch (Exception e)
+		{
+			System.err.println("Couldn't send message.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
 	}
 }

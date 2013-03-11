@@ -6,6 +6,7 @@ import java.io.Serializable;
 import org.apache.log4j.Logger;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
+import org.deuce.distribution.replication.OID;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 

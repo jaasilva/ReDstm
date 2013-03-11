@@ -8,7 +8,7 @@ initheapsize = "-Xms%sg" % 1
 maxheapsize = "-Xmx%sg" % 1
 
 cp = '-cp'
-classpath = 'bin/classes:etc:lib/appia-core-4.1.2.jar:lib/appia-groupcomm-4.1.2.jar:	lib/appia-test-4.1.2.jar:lib/flanagan.jar:lib/jgcs-0.6.1.jar:lib/jgroups-3.1.0.Beta1.jar:lib/junit-4.6.jar:lib/jvstm.jar:lib/log4j-1.2.14.jar:lib/spread-4.2.0.jar'
+classpath = 'bin/classes:etc:lib/appia-core-4.1.2.jar:lib/appia-groupcomm-4.1.2.jar:lib/appia-test-4.1.2.jar:lib/flanagan.jar:lib/jgcs-0.6.1.jar:lib/jgroups-3.2.7.Final.jar:lib/junit-4.6.jar:lib/jvstm.jar:lib/log4j-1.2.14.jar:lib/spread-4.2.0.jar'
 
 exclude = '-Dorg.deuce.exclude='
 excludes = 'java.*,sun.*,org.eclipse.*,org.junit.*,junit.*,net.sf.appia.*,net.sf.jgcs.*,org.jgroups.*,flanagan.*,org.apache.log4j.*,spread.*,org.deuce.trove.*'

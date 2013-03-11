@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
+import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.serialization.GCPayloadException;
 import org.deuce.transform.ExcludeTM;
 
@@ -91,24 +92,6 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 			e.printStackTrace();
 		}
 		dataSession.close();
-	}
-
-	public void sendTo(byte[] payload, Address addr)
-	{
-		try
-		{
-			Message msg = dataSession.createMessage();
-			msg.setPayload(payload);
-			// dataSession.send(msg, sendURBService, null, addr);
-			// TODO
-			// ..................................................................................
-		}
-		catch (IOException e)
-		{
-			System.err.println("Couldn't send message.");
-			e.printStackTrace();
-			System.exit(-1);
-		}
 	}
 
 	public void sendTotalOrdered(byte[] payload)
@@ -252,5 +235,12 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 			this.addr = addr;
 			this.payloadSize = payloadSize;
 		}
+	}
+
+	@Override
+	public void sendTotalOrdered(byte[] payload, Group group)
+	{
+		System.err.println("Feature not implemented.");
+		System.exit(-1);
 	}
 }

@@ -9,7 +9,7 @@ import org.deuce.transform.ExcludeTM;
 @Target(FIELD)
 @Retention(CLASS)
 @ExcludeTM
-public @interface PartialReplication
+public @interface Partial
 {
 
 }

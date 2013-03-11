@@ -13,7 +13,7 @@ import org.deuce.transform.ExcludeTM;
 public abstract class PartialReplicationProtocol implements DistributedProtocol
 {
 	public static final String PARTIALREP_DESC = Type
-			.getDescriptor(PartialReplication.class);
+			.getDescriptor(Partial.class);
 
 	/*
 	 * (non-Javadoc)

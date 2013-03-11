@@ -4,6 +4,7 @@ import java.util.concurrent.CountDownLatch;
 
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
+import org.deuce.distribution.replication.group.Group;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
@@ -43,11 +44,8 @@ public abstract class GroupCommunication
 	public abstract void sendTotalOrdered(byte[] payload);
 
 	public abstract void sendReliably(byte[] payload);
-
-	public abstract void sendTo(byte[] payload, Address addr);
-
-	// TODO ver se é necessario
-	// ....................................................
+	
+	public abstract void sendTotalOrdered(byte[] payload, Group group);
 
 	public void subscribeDelivery(DeliverySubscriber subscriber)
 	{
@@ -70,7 +68,6 @@ public abstract class GroupCommunication
 	protected Object notifyOptimisticDelivery(Object obj, Address src,
 			int payloadSize)
 	{
-
 		Object appObj = null;
 		if (optSubscriber != null)
 			appObj = optSubscriber.onOptimisticDelivery(obj, src, payloadSize);

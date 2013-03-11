@@ -1,4 +1,3 @@
-<!-- vim:set tabstop=4 shiftwidth=4 expandtab: -->
 <config xmlns="urn:org:jgroups"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/JGroups-3.1.xsd">
@@ -16,6 +15,6 @@
     <MFC/>
     <SEQUENCER/>
     <FRAG2/>
+    <tom.TOA />
     <pbcast.STATE_TRANSFER/>
 </config>
-

@@ -1,4 +1,4 @@
-package org.deuce.distribution.replication.full;
+package org.deuce.distribution.replication;
 
 import org.deuce.distribution.ObjectMetadata;
 import org.deuce.objectweb.asm.Type;

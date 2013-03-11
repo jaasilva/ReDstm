@@ -2,10 +2,10 @@ package org.deuce.distribution.groupcomm.spread;
 
 import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectSerializer;
-import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.OptimisticDeliveryUnsupportedException;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
+import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.serialization.GCPayloadException;
 import org.deuce.transform.ExcludeTM;
 
@@ -69,13 +69,6 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 			OptimisticDeliverySubscriber optSubscriber)
 	{
 		throw new OptimisticDeliveryUnsupportedException();
-	}
-
-	public void sendTo(byte[] payload, Address addr)
-	{
-		// TODO
-		// ............................................................................
-
 	}
 
 	public void sendTotalOrdered(byte[] payload)
@@ -145,5 +138,12 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 				membersArrived();
 			}
 		}
+	}
+
+	@Override
+	public void sendTotalOrdered(byte[] payload, Group group)
+	{
+		System.err.println("Feature not implemented.");
+		System.exit(-1);
 	}
 }

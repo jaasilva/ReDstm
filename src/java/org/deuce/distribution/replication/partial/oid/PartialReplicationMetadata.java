@@ -1,16 +1,20 @@
-package org.deuce.distribution.replication.partial;
+package org.deuce.distribution.replication.partial.oid;
 
 import java.nio.ByteBuffer;
+
+import org.deuce.distribution.replication.group.Group;
+import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
  * 
  */
+@ExcludeTM
 public class PartialReplicationMetadata implements PartialReplicationOID
 {
 	private static final long serialVersionUID = -439466285256483698L;
 	private java.util.UUID id;
-	// private Group group;
+	private Group group;
 
 	protected PartialReplicationMetadata()
 	{
@@ -41,6 +45,6 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	@Override
 	public String toString()
 	{
-		return id.toString(); // TODO adicionar nome do grupo??
+		return id.toString() + ": " + group.toString();
 	}
 }
