@@ -156,7 +156,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 	public final Map<String, Integer> field2OID = new java.util.HashMap<String, Integer>();
 
 	// XXX @PartialReplication
-	public final Set<String> partialRepFields = new java.util.TreeSet<String>();
+	public final Set<String> partialRepFields = new java.util.HashSet<String>(
+			50);
 
 	public ClassTransformer(String className, FieldsHolder fieldsHolder)
 	{
@@ -328,7 +329,7 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 		}
 
 		if (name.equals("<clinit>") && !excludeApp)
-		{
+		{ // Static block
 			staticMethod = originalMethod;
 			visitclinit = true;
 
@@ -354,7 +355,7 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 		}
 
 		if (name.equals("<init>"))
-		{
+		{ // Constructor
 			Method newMethod = createNewMethod(name, nm.getDescriptor());
 			// Create a new duplicate SYNTHETIC method and remove the final
 			// marker if has one.
@@ -377,7 +378,7 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 
 		if (name.equals("main")
 				&& nm.getDescriptor().equals("([Ljava/lang/String;)V"))
-		{
+		{ // Main
 			Method newMethod = createNewMethod(name, nm.getDescriptor());
 			// Create a new duplicate SYNTHETIC method and remove the final
 			// marker if has one.

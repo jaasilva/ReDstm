@@ -1,6 +1,5 @@
 package org.deuce.distribution;
 
-import org.apache.log4j.Logger;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.appia.AppiaGroupCommunication;
