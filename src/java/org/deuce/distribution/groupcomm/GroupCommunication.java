@@ -34,6 +34,7 @@ public abstract class GroupCommunication
 
 	protected void membersArrived()
 	{
+		// TODO partition groups here
 		waitForMembers.countDown();
 	}
 

@@ -51,7 +51,7 @@ public class FullReplicationSerializer extends ObjectSerializer
 			return obj;
 		}
 		else
-		{
+		{ // object already published. Send stub instead
 			LOGGER.trace(String.format("%s already published with OID(%s)",
 					obj.toString(), oid.toString()));
 			return new OID2Object(oid);
@@ -71,14 +71,14 @@ public class FullReplicationSerializer extends ObjectSerializer
 
 		UniqueObject object = TribuDSTM.getObject(oid);
 		if (object != null)
-		{
+		{ // existing local object
 			LOGGER.trace(String.format(
 					"Replaced %s with OID(%s) by local replica %s",
 					obj.toString(), oid.toString(), object.toString()));
 			return object;
 		}
 		else
-		{
+		{ // new object
 			TribuDSTM.putObject(oid, obj);
 			LOGGER.trace(String.format("Published %s with OID(%s)",
 					obj.toString(), oid.toString()));

@@ -89,6 +89,12 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		}
 	}
 
+	public void sendTotalOrdered(byte[] payload, Group group)
+	{
+		System.err.println("Feature not implemented.");
+		System.exit(-1);
+	}
+
 	public void sendReliably(byte[] payload)
 	{
 		SpreadMessage message = new SpreadMessage();
@@ -138,12 +144,5 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 				membersArrived();
 			}
 		}
-	}
-
-	@Override
-	public void sendTotalOrdered(byte[] payload, Group group)
-	{
-		System.err.println("Feature not implemented.");
-		System.exit(-1);
 	}
 }

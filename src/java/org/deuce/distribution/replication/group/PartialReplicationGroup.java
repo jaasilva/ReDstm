@@ -2,8 +2,9 @@ package org.deuce.distribution.replication.group;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
-
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.transform.ExcludeTM;
 
@@ -41,9 +42,9 @@ public class PartialReplicationGroup implements Group
 		return addresses.add(addr);
 	}
 
-	public Collection<Address> getAddresses()
+	public List<Address> getAddresses()
 	{
-		return addresses;
+		return new LinkedList<Address>(addresses);
 	}
 
 	public String toString()

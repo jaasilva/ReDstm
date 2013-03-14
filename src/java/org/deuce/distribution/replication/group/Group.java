@@ -1,7 +1,6 @@
 package org.deuce.distribution.replication.group;
 
-import java.util.Collection;
-
+import java.util.List;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.transform.ExcludeTM;
 
@@ -12,7 +11,7 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public interface Group
 {
-	public Collection<Address> getAddresses();
+	public List<Address> getAddresses();
 
 	public boolean contains(Address addr);
 

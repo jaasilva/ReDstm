@@ -13,7 +13,6 @@ import org.deuce.transform.ExcludeTM;
 import net.sf.appia.jgcs.AppiaGroup;
 import net.sf.appia.jgcs.AppiaProtocolFactory;
 import net.sf.appia.jgcs.AppiaService;
-import net.sf.jgcs.ClosedSessionException;
 import net.sf.jgcs.DataSession;
 import net.sf.jgcs.ExceptionListener;
 import net.sf.jgcs.JGCSException;
@@ -57,7 +56,6 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		{
 			protocol = new AppiaProtocolFactory().createProtocol();
 			sendTOService = new AppiaService("vsc+total+services");
-			// sendURBService = new AppiaService("vsc+fifo+uniform");
 			recvService = new AppiaService("uniform_total_order");
 			dataSession = protocol.openDataSession(config);
 			controlSession = (BlockSession) protocol.openControlSession(config);
@@ -83,11 +81,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		{
 			controlSession.leave();
 		}
-		catch (ClosedSessionException e)
-		{
-			e.printStackTrace();
-		}
-		catch (JGCSException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -102,18 +96,18 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 			msg.setPayload(payload);
 			dataSession.multicast(msg, sendTOService, null);
 		}
-		catch (UnsupportedServiceException e)
+		catch (Exception e)
 		{
 			System.err.println("Couldn't send message.");
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		catch (IOException e)
-		{
-			System.err.println("Couldn't send message.");
-			e.printStackTrace();
-			System.exit(-1);
-		}
+	}
+
+	public void sendTotalOrdered(byte[] payload, Group group)
+	{
+		System.err.println("Feature not implemented.");
+		System.exit(-1);
 	}
 
 	public void sendReliably(byte[] payload)
@@ -124,13 +118,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 			msg.setPayload(payload);
 			dataSession.multicast(msg, sendURBService, null);
 		}
-		catch (UnsupportedServiceException e)
-		{
-			System.err.println("Couldn't send message.");
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			System.err.println("Couldn't send message.");
 			e.printStackTrace();
@@ -167,11 +155,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		{
 			controlSession.blockOk();
 		}
-		catch (NotJoinedException e)
-		{
-			e.printStackTrace();
-		}
-		catch (JGCSException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -235,12 +219,5 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 			this.addr = addr;
 			this.payloadSize = payloadSize;
 		}
-	}
-
-	@Override
-	public void sendTotalOrdered(byte[] payload, Group group)
-	{
-		System.err.println("Feature not implemented.");
-		System.exit(-1);
 	}
 }

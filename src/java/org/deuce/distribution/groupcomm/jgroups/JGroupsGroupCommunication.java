@@ -2,11 +2,10 @@ package org.deuce.distribution.groupcomm.jgroups;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
+import java.util.Collection;
 
 import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectSerializer;
-import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.OptimisticDeliveryUnsupportedException;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
@@ -68,6 +67,25 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		try
 		{
 			channel.send(null, payload);
+		}
+		catch (Exception e)
+		{
+			System.err.println("Couldn't send message.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void sendTotalOrdered(byte[] payload, Group group)
+	{ // TODO ver maneira melhor
+		AnycastAddress addr = new AnycastAddress();
+		addr.addAll((Collection<org.jgroups.Address>) ((Collection<?>) group
+				.getAddresses()));
+
+		try
+		{
+			channel.send(addr, payload);
 		}
 		catch (Exception e)
 		{
@@ -144,24 +162,5 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	public void unblock()
 	{
 		// nothing to do
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void sendTotalOrdered(byte[] payload, Group group)
-	{ // TODO test
-		AnycastAddress addr = new AnycastAddress();
-		// TODO verificar melhor solucao
-		addr.addAll((List) group.getAddresses());
-
-		try
-		{
-			channel.send(addr, payload);
-		}
-		catch (Exception e)
-		{
-			System.err.println("Couldn't send message.");
-			e.printStackTrace();
-			System.exit(-1);
-		}
 	}
 }

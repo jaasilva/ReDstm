@@ -2,11 +2,11 @@ package org.deuce.distribution;
 
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
-import org.deuce.distribution.groupcomm.appia.AppiaGroupCommunication;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
 import org.deuce.distribution.location.SimpleLocator;
-import org.deuce.distribution.replication.full.protocol.nonvoting.NonVoting;
+import org.deuce.distribution.replication.partitioner.DataPartitioner;
+import org.deuce.distribution.replication.partitioner.GroupPartitioner;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transform.ExcludeTM;
@@ -20,6 +20,8 @@ public final class TribuDSTM
 	private static final Locator locator = new SimpleLocator();
 	private static DistributedProtocol distProtocol;
 	private static GroupCommunication groupComm;
+	private static DataPartitioner dataPartitioner;
+	private static GroupPartitioner groupPartitioner;
 
 	private static Class<? extends DistributedContext> ctxClass;
 
@@ -30,7 +32,7 @@ public final class TribuDSTM
 	}
 
 	/*
-	 * Defer the initialisation of group communication until the actual
+	 * Defer the initialization of group communication until the actual
 	 * application is executing. Apparently, explicit class loading during the
 	 * execution of an agent is only supported in JDK 7.
 	 */
@@ -55,74 +57,60 @@ public final class TribuDSTM
 
 	private static void initGroupCommunication()
 	{
-		String className = System.getProperty("tribu.groupcommunication.class");
-		if (className != null)
+		String className = System
+				.getProperty("tribu.groupcommunication.class",
+						"org.deuce.distribution.groupcomm.appia.JGroupsGroupCommunication");
+
+		try
 		{
-			try
-			{
-				@SuppressWarnings("unchecked")
-				Class<? extends GroupCommunication> groupCommClass = (Class<? extends GroupCommunication>) Class
-						.forName(className);
-				groupComm = groupCommClass.newInstance();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-				System.exit(-1);
-			}
+			@SuppressWarnings("unchecked")
+			Class<? extends GroupCommunication> groupCommClass = (Class<? extends GroupCommunication>) Class
+					.forName(className);
+			groupComm = groupCommClass.newInstance();
 		}
-		else
-		{ // default commgroup
-			groupComm = new AppiaGroupCommunication();
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	private static void initTransactionContext()
 	{
-		String className = System
-				.getProperty("org.deuce.transaction.contextClass");
-		if (className != null)
+		String className = System.getProperty(
+				"org.deuce.transaction.contextClass",
+				"org.deuce.transaction.tl2.Context");
+
+		try
 		{
-			try
-			{
-				ctxClass = (Class<? extends DistributedContext>) Class
-						.forName(className);
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-				System.exit(-1);
-			}
+			ctxClass = (Class<? extends DistributedContext>) Class
+					.forName(className);
 		}
-		else
-		{ // default context
-			ctxClass = org.deuce.transaction.tl2.Context.class;
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
 		}
 	}
 
 	private static void initReplicationProtocol()
 	{
 		String className = System
-				.getProperty("tribu.distributed.protocolClass");
-		if (className != null)
+				.getProperty("tribu.distributed.protocolClass",
+						"org.deuce.distribution.replication.full.protocol.nonvoting.NonVoting");
+
+		try
 		{
-			try
-			{
-				@SuppressWarnings("unchecked")
-				Class<? extends DistributedProtocol> distProtocolClass = (Class<? extends DistributedProtocol>) Class
-						.forName(className);
-				distProtocol = distProtocolClass.newInstance();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-				System.exit(-1);
-			}
+			@SuppressWarnings("unchecked")
+			Class<? extends DistributedProtocol> distProtocolClass = (Class<? extends DistributedProtocol>) Class
+					.forName(className);
+			distProtocol = distProtocolClass.newInstance();
 		}
-		else
-		{ // default protocol
-			distProtocol = new NonVoting();
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
 		}
 	}
 
