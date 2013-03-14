@@ -33,4 +33,9 @@ public class AppiaAddress extends Address
 		return addr.toString();
 	}
 
+	public Object getAddress()
+	{
+		return addr;
+	}
+
 }

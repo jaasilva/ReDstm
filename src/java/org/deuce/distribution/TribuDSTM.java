@@ -1,5 +1,7 @@
 package org.deuce.distribution;
 
+import java.util.Collection;
+
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
@@ -29,6 +31,7 @@ public final class TribuDSTM
 	{
 		initReplicationProtocol();
 		initTransactionContext();
+		initPartitioners();
 	}
 
 	/*
@@ -43,6 +46,8 @@ public final class TribuDSTM
 	public static void init()
 	{
 		initGroupCommunication();
+		groupPartitioner.init();
+		dataPartitioner.init();
 		distProtocol.init();
 	}
 
@@ -112,6 +117,40 @@ public final class TribuDSTM
 			e.printStackTrace();
 			System.exit(-1);
 		}
+	}
+
+	private static void initPartitioners()
+	{
+		String groupPartClass = System
+				.getProperty("tribu.distributed.GroupPartitionerClass",
+						"org.deuce.distribution.replication.partitioner.RandomGroupPartitioner");
+		String dataPartClass = System
+				.getProperty("tribu.distributed.DataPartitionerClass",
+						"org.deuce.distribution.replication.partitioner.SimpleGroupPartitioner");
+
+		try
+		{
+			@SuppressWarnings("unchecked")
+			Class<? extends GroupPartitioner> groupPart = (Class<? extends GroupPartitioner>) Class
+					.forName(groupPartClass);
+			groupPartitioner = groupPart.newInstance();
+
+			@SuppressWarnings("unchecked")
+			Class<? extends DataPartitioner> dataPart = (Class<? extends DataPartitioner>) Class
+					.forName(dataPartClass);
+			dataPartitioner = dataPart.newInstance();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+
+	public static void initPartitionersCallback(
+			Collection<? extends Address> addresses)
+	{
+		// TODO
 	}
 
 	public static final Class<? extends DistributedContext> getContextClass()

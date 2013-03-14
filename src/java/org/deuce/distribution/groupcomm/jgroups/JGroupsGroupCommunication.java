@@ -2,10 +2,13 @@ package org.deuce.distribution.groupcomm.jgroups;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectSerializer;
+import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.OptimisticDeliveryUnsupportedException;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
@@ -50,6 +53,19 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		}
 	}
 
+	public List<Address> getMembers()
+	{
+		List<Address> addrs = new ArrayList<Address>(channel.getView()
+				.getMembers().size());
+
+		for (org.jgroups.Address a : channel.getView().getMembers())
+		{
+			addrs.add(new JGroupsAddress(a));
+		}
+
+		return addrs;
+	}
+
 	public void close()
 	{
 		channel.close();
@@ -78,7 +94,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 
 	@SuppressWarnings("unchecked")
 	public void sendTotalOrdered(byte[] payload, Group group)
-	{ // TODO ver maneira melhor
+	{ // TODO ver maneira melhor FIXME esta mal
 		AnycastAddress addr = new AnycastAddress();
 		addr.addAll((Collection<org.jgroups.Address>) ((Collection<?>) group
 				.getAddresses()));

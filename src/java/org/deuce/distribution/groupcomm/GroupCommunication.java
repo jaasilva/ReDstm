@@ -1,7 +1,7 @@
 package org.deuce.distribution.groupcomm;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
-
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
 import org.deuce.distribution.replication.group.Group;
@@ -34,7 +34,6 @@ public abstract class GroupCommunication
 
 	protected void membersArrived()
 	{
-		// TODO partition groups here
 		waitForMembers.countDown();
 	}
 
@@ -44,9 +43,11 @@ public abstract class GroupCommunication
 
 	public abstract void sendTotalOrdered(byte[] payload);
 
-	public abstract void sendReliably(byte[] payload);
-	
 	public abstract void sendTotalOrdered(byte[] payload, Group group);
+
+	public abstract void sendReliably(byte[] payload);
+
+	public abstract List<Address> getMembers();
 
 	public void subscribeDelivery(DeliverySubscriber subscriber)
 	{

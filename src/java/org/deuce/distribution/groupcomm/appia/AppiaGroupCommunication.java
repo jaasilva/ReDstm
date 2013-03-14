@@ -1,6 +1,8 @@
 package org.deuce.distribution.groupcomm.appia;
 
-import java.io.IOException;
+import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectSerializer;
@@ -73,6 +75,29 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 			e.printStackTrace();
 			System.exit(-1);
 		}
+	}
+
+	public List<Address> getMembers()
+	{
+		List<Address> addrs = null;
+
+		try
+		{
+			addrs = new ArrayList<Address>(controlSession.getMembership()
+					.getMembershipList().size());
+
+			for (SocketAddress a : controlSession.getMembership()
+					.getMembershipList())
+			{
+				addrs.add(new AppiaAddress(a));
+			}
+		}
+		catch (NotJoinedException e)
+		{
+			e.printStackTrace();
+		}
+
+		return addrs;
 	}
 
 	public void close()

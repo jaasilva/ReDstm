@@ -1,0 +1,21 @@
+package org.deuce.hashing;
+
+import com.google.common.hash.Hashing;
+
+/**
+ * @author jaasilva
+ * 
+ */
+public class MD5GuavaHashFunction implements org.deuce.hashing.Hashing
+{
+	/*
+	 * (non-Javadoc)
+	 * @see org.deuce.hashing.Hashing#consistentHash(java.lang.String, int)
+	 */
+	@Override
+	public int consistentHash(String str, int buckets)
+	{
+		return Hashing.consistentHash(Hashing.md5().hashString(str), buckets);
+	}
+
+}

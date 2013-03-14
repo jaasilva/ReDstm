@@ -7,12 +7,28 @@ import org.deuce.distribution.replication.group.Group;
  * @author jaasilva
  * 
  */
+/**
+ * @author jaasilva
+ * 
+ */
 public class SimpleDataPartitioner extends Partitioner implements
 		DataPartitioner
 {
 	public SimpleDataPartitioner()
 	{
 		super();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.deuce.distribution.replication.partitioner.DataPartitioner#init()
+	 */
+	@Override
+	public void init()
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 	/*
@@ -26,5 +42,4 @@ public class SimpleDataPartitioner extends Partitioner implements
 	{
 		return myGroup;
 	}
-
 }

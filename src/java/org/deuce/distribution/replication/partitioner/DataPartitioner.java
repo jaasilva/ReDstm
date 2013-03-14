@@ -9,5 +9,7 @@ import org.deuce.distribution.replication.group.Group;
  */
 public interface DataPartitioner
 {
+	public void init();
+
 	public Group publishTo(UniqueObject obj);
 }

@@ -33,4 +33,9 @@ public class SpreadAddress extends Address
 		return addr.toString();
 	}
 
+	public Object getAddress()
+	{
+		return addr;
+	}
+
 }

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.deuce.distribution.replication.partitioner;
 
 import java.util.Collection;
@@ -15,5 +12,7 @@ import org.deuce.distribution.replication.group.Group;
  */
 public interface GroupPartitioner
 {
-	public Set<Group> partitionGroups(Collection<Address> members);
+	public void init();
+// TODO isto nao deve ser void?
+	public Set<Group> partitionGroups(Collection<Address> members, int groups);
 }

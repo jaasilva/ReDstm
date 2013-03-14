@@ -1,7 +1,10 @@
 package org.deuce.distribution.groupcomm.spread;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectSerializer;
+import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.OptimisticDeliveryUnsupportedException;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
@@ -48,6 +51,27 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 			e.printStackTrace();
 			System.exit(-1);
 		}
+	}
+
+	public List<Address> getMembers()
+	{ // TODO arranjar workaround
+		// List<Address> addrs = new ArrayList<Address>(channel.getView()
+		// .getMembers().size());
+		//
+		// for (SpreadGroup a : channel.getView().getMembers())
+		// {
+		// addrs.add(new SpreadAddress(a));
+		// }
+		//
+		// return addrs;
+
+		return null;
+	}
+
+	public void initGroupPartitioner()
+	{
+		System.err.println("Method not implemented.");
+		System.exit(-1);
 	}
 
 	public void close()
@@ -141,6 +165,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 			if (message.getMembershipInfo().getMembers().length == Integer
 					.getInteger("tribu.replicas").intValue())
 			{
+
 				membersArrived();
 			}
 		}
