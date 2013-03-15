@@ -48,11 +48,12 @@
 					<pathelement location="lib/appia-test-4.1.2.jar" />
 					<pathelement location="lib/flanagan.jar" />
 					<pathelement location="lib/jgcs-0.6.1.jar" />
-					<pathelement location="lib/jgroups-3.1.0.Beta1.jar" />
+					<pathelement location="lib/jgroups-3.2.7.Final.jar" />
 					<pathelement location="lib/junit-4.6.jar" />
 					<pathelement location="lib/jvstm.jar" />
 					<pathelement location="lib/log4j-1.2.14.jar" />
 					<pathelement location="lib/spread-4.2.0.jar" />
+					<pathelement location="lib/guava-14.0.jar" />
 				</classpath>
 			</javac>
 	</target>
@@ -66,11 +67,12 @@
 				<pathelement location="lib/appia-test-4.1.2.jar" />
 				<pathelement location="lib/flanagan.jar" />
 				<pathelement location="lib/jgcs-0.6.1.jar" />
-				<pathelement location="lib/jgroups-3.1.0.Beta1.jar" />
+				<pathelement location="lib/jgroups-3.2.7.Final.jar" />
 				<pathelement location="lib/junit-4.6.jar" />
 				<pathelement location="lib/jvstm.jar" />
 				<pathelement location="lib/log4j-1.2.14.jar" />
 				<pathelement location="lib/spread-4.2.0.jar" />
+				<pathelement location="lib/guava-14.0.jar" />
 			</classpath>
 			</javac>
 	</target>
