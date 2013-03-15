@@ -1,7 +1,7 @@
 package org.deuce.partial.toa.perf;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.Random;
 
@@ -23,6 +23,7 @@ public class Receiver implements Runnable, DeliverySubscriber
 	private int received;
 	private GroupCommunication groupComm;
 	private static String f;
+	private static Object lock = 0;
 
 	public static void main(String[] args)
 	{
@@ -55,7 +56,7 @@ public class Receiver implements Runnable, DeliverySubscriber
 			// .println("SENDER: " + id + " - " + groupComm.getAddress());
 			try
 			{
-				Thread.sleep(5000);
+				Thread.sleep(2000);
 				// System.out.println("SENDER READY!!!");
 			}
 			catch (InterruptedException e)
@@ -103,15 +104,16 @@ public class Receiver implements Runnable, DeliverySubscriber
 
 			try
 			{
-				File file = new File("log" + f);
-				PrintWriter pw = new PrintWriter(file);
-				synchronized (file)
+				synchronized (lock)
 				{
-					pw.append(id + ": " + stop / 1000000);
+					PrintWriter pw = new PrintWriter(new FileOutputStream(
+							new File("log" + f), true));
+					pw.write(id + ": " + stop / 1000000 + "\n");
 					pw.flush();
+					pw.close();
 				}
 			}
-			catch (FileNotFoundException e)
+			catch (Exception e)
 			{
 				e.printStackTrace();
 			}
