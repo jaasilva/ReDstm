@@ -17,6 +17,7 @@ public class Receiver implements Runnable, DeliverySubscriber
 	private static int n_msgs = 10000;
 	private Address addr;
 	private int id;
+	private static int msg_size;
 	private static Random rand = new Random();
 	private long start;
 	private int msgs;
@@ -28,6 +29,7 @@ public class Receiver implements Runnable, DeliverySubscriber
 	public static void main(String[] args)
 	{
 		f = args[0];
+		msg_size = Integer.parseInt(args[1]);
 		Thread[] threads = new Thread[n_threads];
 		for (int i = 0; i < n_threads; i++)
 		{
@@ -67,7 +69,8 @@ public class Receiver implements Runnable, DeliverySubscriber
 			for (int i = 0; i < n_msgs; i++)
 			{
 				groupComm.sendTotalOrdered(ObjectSerializer
-						.object2ByteArray(new Byte((byte) 0)));
+						.object2ByteArray(new byte[msg_size - 27]));
+
 				// try
 				// {
 				// Thread.sleep(rand.nextInt(5000));
@@ -90,6 +93,7 @@ public class Receiver implements Runnable, DeliverySubscriber
 	{
 		if (received == 0)
 		{
+			// System.out.println(size);
 			start = System.nanoTime();
 		}
 
@@ -107,7 +111,7 @@ public class Receiver implements Runnable, DeliverySubscriber
 				synchronized (lock)
 				{
 					PrintWriter pw = new PrintWriter(new FileOutputStream(
-							new File("log" + f), true));
+							new File("log_" + f + "_" + msg_size), true));
 					pw.write(id + ": " + stop / 1000000 + "\n");
 					pw.flush();
 					pw.close();
