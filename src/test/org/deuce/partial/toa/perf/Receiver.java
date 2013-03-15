@@ -2,14 +2,17 @@ package org.deuce.partial.toa.perf;
 
 import java.util.Random;
 
+import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.jgroups.JGroupsGroupCommunication;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
+import org.deuce.distribution.replication.full.protocol.nonvoting.NonVoting;
 
 public class Receiver implements Runnable, DeliverySubscriber
 {
+	private static final Logger LOGGER = Logger.getLogger(NonVoting.class);
 	private static int n_threads = 5;
 	private static int n_msgs = 10000;
 	private Address addr;
@@ -51,7 +54,7 @@ public class Receiver implements Runnable, DeliverySubscriber
 			try
 			{
 				Thread.sleep(5000);
-				System.out.println(id + "SENDER READY!!!");
+				System.out.println("SENDER READY!!!");
 			}
 			catch (InterruptedException e)
 			{
@@ -93,8 +96,9 @@ public class Receiver implements Runnable, DeliverySubscriber
 
 		if (received == msgs)
 		{
-			System.out.println(id + ": " + (System.nanoTime() - start)
-					/ 1000000 + "ms");
+			long stop = System.nanoTime() - start;
+			// System.out.println(id + ": " + stop / 1000000 + "ms");
+			LOGGER.fatal(id + ": " + stop / 1000000);
 			groupComm.close();
 		}
 	}
