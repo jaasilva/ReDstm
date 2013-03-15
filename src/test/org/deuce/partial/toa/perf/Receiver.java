@@ -1,5 +1,8 @@
 package org.deuce.partial.toa.perf;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
@@ -9,6 +12,7 @@ import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.jgroups.JGroupsGroupCommunication;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.full.protocol.nonvoting.NonVoting;
+import org.junit.experimental.results.PrintableResult;
 
 public class Receiver implements Runnable, DeliverySubscriber
 {
@@ -22,9 +26,11 @@ public class Receiver implements Runnable, DeliverySubscriber
 	private int msgs;
 	private int received;
 	private GroupCommunication groupComm;
+	private static String f;
 
 	public static void main(String[] args)
 	{
+		f = args[0];
 		Thread[] threads = new Thread[n_threads];
 		for (int i = 0; i < n_threads; i++)
 		{
@@ -54,7 +60,7 @@ public class Receiver implements Runnable, DeliverySubscriber
 			try
 			{
 				Thread.sleep(5000);
-				System.out.println("SENDER READY!!!");
+				// System.out.println("SENDER READY!!!");
 			}
 			catch (InterruptedException e)
 			{
@@ -98,7 +104,20 @@ public class Receiver implements Runnable, DeliverySubscriber
 		{
 			long stop = System.nanoTime() - start;
 			// System.out.println(id + ": " + stop / 1000000 + "ms");
-			LOGGER.fatal(id + ": " + stop / 1000000);
+
+			try
+			{
+				File file = new File("log" + f);
+				PrintWriter pw = new PrintWriter(file);
+				synchronized (file)
+				{
+					pw.append(id + ": " + stop / 1000000);
+				}
+			}
+			catch (FileNotFoundException e)
+			{
+				e.printStackTrace();
+			}
 			groupComm.close();
 		}
 	}
