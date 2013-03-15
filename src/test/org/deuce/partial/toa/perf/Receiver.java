@@ -5,18 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.jgroups.JGroupsGroupCommunication;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
-import org.deuce.distribution.replication.full.protocol.nonvoting.NonVoting;
-import org.junit.experimental.results.PrintableResult;
 
 public class Receiver implements Runnable, DeliverySubscriber
 {
-	private static final Logger LOGGER = Logger.getLogger(NonVoting.class);
 	private static int n_threads = 5;
 	private static int n_msgs = 10000;
 	private Address addr;
@@ -112,6 +108,7 @@ public class Receiver implements Runnable, DeliverySubscriber
 				synchronized (file)
 				{
 					pw.append(id + ": " + stop / 1000000);
+					pw.flush();
 				}
 			}
 			catch (FileNotFoundException e)
