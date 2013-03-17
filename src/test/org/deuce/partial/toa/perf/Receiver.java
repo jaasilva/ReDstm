@@ -13,8 +13,8 @@ import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 
 public class Receiver implements Runnable, DeliverySubscriber
 {
-	private static int n_threads = 5;
-	private static int n_msgs = 10000;
+	private static int n_threads;
+	private static int n_msgs = 100000;
 	private Address addr;
 	private int id;
 	private static int msg_size;
@@ -30,6 +30,7 @@ public class Receiver implements Runnable, DeliverySubscriber
 	{
 		f = args[0];
 		msg_size = Integer.parseInt(args[1]);
+		n_threads = Integer.parseInt(args[2]);
 		Thread[] threads = new Thread[n_threads];
 		for (int i = 0; i < n_threads; i++)
 		{
@@ -41,7 +42,7 @@ public class Receiver implements Runnable, DeliverySubscriber
 	public Receiver(int x)
 	{
 		id = x;
-		msgs = (Integer.getInteger("tribu.replicas") / 5) * n_msgs;
+		msgs = (Integer.getInteger("tribu.replicas") / n_threads) * n_msgs;
 		received = 0;
 	}
 
@@ -111,7 +112,7 @@ public class Receiver implements Runnable, DeliverySubscriber
 				synchronized (lock)
 				{
 					PrintWriter pw = new PrintWriter(new FileOutputStream(
-							new File("log_" + f + "_" + msg_size), true));
+							new File("log_" + f), true));
 					pw.write(id + ": " + stop / 1000000 + "\n");
 					pw.flush();
 					pw.close();
