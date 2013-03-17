@@ -18,7 +18,7 @@ do
 			do
 		
 				echo "            $node"
-				ssh $node "cd ./repos/trxsys-tvale; java -cp .:bin/:bin/classes:etc:lib/jgroups-3.2.7.Final.jar:lib/log4j-1.2.14.jar -Dtribu.groupcommunication.group=jaasilva-$size-$threads -Dtribu.replicas=$((${#nodes[*]}*$threads)) org.deuce.partial.toa.perf.Receiver $node-$size-$threads $size $threads $msgs > /dev/null" & echo $! > $node.pid
+				ssh $node "cd ./repos/trxsys-tvale; java -cp .:bin/:bin/classes:etc:lib/jgroups-3.2.7.Final.jar:lib/log4j-1.2.14.jar -Dtribu.groupcommunication.group=jaasilva-$size-$threads -Dtribu.replicas=$((${#nodes[*]}*$threads)) org.deuce.partial.toa.perf.Receiver $node-$size-$threads-$msgs-1 $size $threads $msgs > /dev/null" & echo $! > $node.pid
 		
 			done
 			wait $(<node1.pid) $(<node2.pid) $(<node3.pid) $(<node4.pid) $(<node5.pid) $(<node6.pid) $(<node7.pid) $(<node8.pid)
@@ -51,7 +51,7 @@ do
 			do
 		
 				echo "            $node"
-				ssh $node "cd ./repos/trxsys-tvale; java -cp .:bin/:bin/classes:etc:lib/jgroups-3.2.7.Final.jar:lib/log4j-1.2.14.jar -Dtribu.groupcommunication.group=jaasilva-$size-$threads -Dtribu.replicas=$((${#nodes[*]}*$threads)) org.deuce.partial.toa.perf.Receiver $node-$size-$threads $size $threads $msgs > /dev/null" & echo $! > $node.pid
+				ssh $node "cd ./repos/trxsys-tvale; java -cp .:bin/:bin/classes:etc:lib/jgroups-3.2.7.Final.jar:lib/log4j-1.2.14.jar -Dtribu.groupcommunication.group=jaasilva-$size-$threads -Dtribu.replicas=$((${#nodes[*]}*$threads)) org.deuce.partial.toa.perf.Receiver $node-$size-$threads-$msgs-2 $size $threads $msgs > /dev/null" & echo $! > $node.pid
 		
 			done
 			wait $(<node1.pid) $(<node2.pid) $(<node3.pid) $(<node4.pid) $(<node5.pid) $(<node6.pid) $(<node7.pid) $(<node8.pid)
@@ -84,7 +84,7 @@ do
 			do
 		
 				echo "            $node"
-				ssh $node "cd ./repos/trxsys-tvale; java -cp .:bin/:bin/classes:etc:lib/jgroups-3.2.7.Final.jar:lib/log4j-1.2.14.jar -Dtribu.groupcommunication.group=jaasilva-$size-$threads -Dtribu.replicas=$((${#nodes[*]}*$threads)) org.deuce.partial.toa.perf.Receiver $node-$size-$threads $size $threads $msgs > /dev/null" & echo $! > $node.pid
+				ssh $node "cd ./repos/trxsys-tvale; java -cp .:bin/:bin/classes:etc:lib/jgroups-3.2.7.Final.jar:lib/log4j-1.2.14.jar -Dtribu.groupcommunication.group=jaasilva-$size-$threads -Dtribu.replicas=$((${#nodes[*]}*$threads)) org.deuce.partial.toa.perf.Receiver $node-$size-$threads-$msgs-4 $size $threads $msgs > /dev/null" & echo $! > $node.pid
 		
 			done
 			wait $(<node1.pid) $(<node2.pid) $(<node3.pid) $(<node4.pid) $(<node5.pid) $(<node6.pid) $(<node7.pid) $(<node8.pid)
@@ -117,7 +117,7 @@ do
 			do
 		
 				echo "            $node"
-				ssh $node "cd ./repos/trxsys-tvale; java -cp .:bin/:bin/classes:etc:lib/jgroups-3.2.7.Final.jar:lib/log4j-1.2.14.jar -Dtribu.groupcommunication.group=jaasilva-$size-$threads -Dtribu.replicas=$((${#nodes[*]}*$threads)) org.deuce.partial.toa.perf.Receiver $node-$size-$threads $size $threads $msgs > /dev/null" & echo $! > $node.pid
+				ssh $node "cd ./repos/trxsys-tvale; java -cp .:bin/:bin/classes:etc:lib/jgroups-3.2.7.Final.jar:lib/log4j-1.2.14.jar -Dtribu.groupcommunication.group=jaasilva-$size-$threads -Dtribu.replicas=$((${#nodes[*]}*$threads)) org.deuce.partial.toa.perf.Receiver $node-$size-$threads-$msgs-8 $size $threads $msgs > /dev/null" & echo $! > $node.pid
 		
 			done
 			wait $(<node1.pid) $(<node2.pid) $(<node3.pid) $(<node4.pid) $(<node5.pid) $(<node6.pid) $(<node7.pid) $(<node8.pid)
