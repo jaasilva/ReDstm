@@ -1,15 +1,21 @@
+#size_=(32 64 128 256 512 1024 8192 16384 32768 65536 131072 262144 524288 1048576)
+size_=(64 128 256 512 1024 8192 16384 32768 65536)
+#msgs_=(1000 5000 10000 50000 100000)
+msgs_=(1000 10000 100000)
+threads_=(1 2 4 8)
+
 echo "USING 1 NODE"
 nodes=(node1)
 
-for size in 32 64 128 256 512 1024 8192 16384 32768 65536 131072 262144 524288 1048576
+for size in ${size_[*]}
 do
 
 	echo "Using msg_size=$size"
-	for msgs in 1000 5000 10000 50000 100000
+	for msgs in ${msgs_[*]}
 	do
 
 		echo "  Using n_msgs=$msgs"
-		for threads in 1 2 4 8
+		for threads in ${threads_[*]}
 		do
 	
 			echo "    Deploying $threads threads"
@@ -35,15 +41,15 @@ echo "###############################################"
 echo "USING 2 NODES"
 nodes=(node1 node2)
 
-for size in 32 64 128 256 512 1024 8192 16384 32768 65536 131072 262144 524288 1048576
+for size in ${size_[*]}
 do
 
 	echo "Using msg_size=$size"
-	for msgs in 1000 5000 10000 50000 100000
+	for msgs in ${msgs_[*]}
 	do
 
 		echo "  Using n_msgs=$msgs"
-		for threads in 1 2 4 8
+		for threads in ${threads_[*]}
 		do
 	
 			echo "    Deploying $threads threads"
@@ -69,15 +75,15 @@ echo "###############################################"
 echo "USING 4 NODES"
 nodes=(node1 node2 node3 node4)
 
-for size in 32 64 128 256 512 1024 8192 16384 32768 65536 131072 262144 524288 1048576
+for size in ${size_[*]}
 do
 
 	echo "Using msg_size=$size"
-	for msgs in 1000 5000 10000 50000 100000
+	for msgs in ${msgs_[*]}
 	do
 
 		echo "  Using n_msgs=$msgs"
-		for threads in 1 2 4 8
+		for threads in ${threads_[*]}
 		do
 	
 			echo "    Deploying $threads threads"
@@ -103,15 +109,15 @@ echo "###############################################"
 echo "USING 8 NODES"
 nodes=(node1 node2 node3 node4 node5 node6 node7 node8)
 
-for size in 32 64 128 256 512 1024 8192 16384 32768 65536 131072 262144 524288 1048576
+for size in ${size_[*]}
 do
 
 	echo "Using msg_size=$size"
-	for msgs in 1000 5000 10000 50000 100000
+	for msgs in ${msgs_[*]}
 	do
 
 		echo "  Using n_msgs=$msgs"
-		for threads in 1 2 4 8
+		for threads in ${threads_[*]}
 		do
 	
 			echo "    Deploying $threads threads"
