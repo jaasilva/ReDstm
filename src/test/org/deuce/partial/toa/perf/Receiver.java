@@ -68,12 +68,13 @@ public class Receiver implements Runnable, DeliverySubscriber
 				e.printStackTrace();
 			}
 
+			byte[] arr = new byte[msg_size - 27];
 			long st = System.nanoTime();
 			for (int i = 0; i < n_msgs; i++)
 			{
 
 				groupComm.sendTotalOrdered(ObjectSerializer
-						.object2ByteArray(new byte[msg_size - 27]));
+						.object2ByteArray(arr));
 
 				// try
 				// {
