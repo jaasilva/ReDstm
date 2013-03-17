@@ -90,7 +90,7 @@ public class Receiver implements Runnable, DeliverySubscriber
 				synchronized (lock)
 				{
 					PrintWriter pw = new PrintWriter(new FileOutputStream(
-							new File("log-" + f), true));
+							new File("logs/log-" + f), true));
 					pw.write(id + ":::: " + sto / 1000000 + "\n");
 					pw.flush();
 					pw.close();
@@ -131,7 +131,7 @@ public class Receiver implements Runnable, DeliverySubscriber
 				synchronized (lock)
 				{
 					PrintWriter pw = new PrintWriter(new FileOutputStream(
-							new File("log-" + f), true));
+							new File("logs/log-" + f), true));
 					pw.write(id + ": " + stop / 1000000 + "\n");
 					pw.flush();
 					pw.close();
