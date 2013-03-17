@@ -67,27 +67,13 @@ public class Receiver implements Runnable, DeliverySubscriber
 				e.printStackTrace();
 			}
 
+			long st = System.nanoTime();
 			for (int i = 0; i < n_msgs; i++)
 			{
-				long st = System.nanoTime();
+
 				groupComm.sendTotalOrdered(ObjectSerializer
 						.object2ByteArray(new byte[msg_size - 27]));
-				long sto = st - System.nanoTime();
-				try
-				{
-					synchronized (lock)
-					{
-						PrintWriter pw = new PrintWriter(new FileOutputStream(
-								new File("log-" + f), true));
-						pw.write(id + ":::: " + sto / 1000000 + "\n");
-						pw.flush();
-						pw.close();
-					}
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
-				}
+
 				// try
 				// {
 				// Thread.sleep(rand.nextInt(5000));
@@ -96,6 +82,22 @@ public class Receiver implements Runnable, DeliverySubscriber
 				// {
 				// e.printStackTrace();
 				// }
+			}
+			long sto = st - System.nanoTime();
+			try
+			{
+				synchronized (lock)
+				{
+					PrintWriter pw = new PrintWriter(new FileOutputStream(
+							new File("log-" + f), true));
+					pw.write(id + ":::: " + sto / 1000000 + "\n");
+					pw.flush();
+					pw.close();
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
 			}
 		}
 		else
