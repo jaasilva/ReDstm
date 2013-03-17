@@ -14,7 +14,7 @@ import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 public class Receiver implements Runnable, DeliverySubscriber
 {
 	private static int n_threads;
-	private static int n_msgs = 10000;
+	private static int n_msgs = 100000;
 	private Address addr;
 	private int id;
 	private static int msg_size;
@@ -83,7 +83,7 @@ public class Receiver implements Runnable, DeliverySubscriber
 				// e.printStackTrace();
 				// }
 			}
-			long sto = st - System.nanoTime();
+			long sto = System.nanoTime() - st;
 			try
 			{
 				synchronized (lock)
@@ -130,7 +130,7 @@ public class Receiver implements Runnable, DeliverySubscriber
 				synchronized (lock)
 				{
 					PrintWriter pw = new PrintWriter(new FileOutputStream(
-							new File("log_" + f), true));
+							new File("log-" + f), true));
 					pw.write(id + ": " + stop / 1000000 + "\n");
 					pw.flush();
 					pw.close();
