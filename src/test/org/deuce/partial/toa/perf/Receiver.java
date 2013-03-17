@@ -14,7 +14,7 @@ import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 public class Receiver implements Runnable, DeliverySubscriber
 {
 	private static int n_threads;
-	private static int n_msgs = 100000;
+	private static int n_msgs = 10000;
 	private Address addr;
 	private int id;
 	private static int msg_size;
