@@ -50,13 +50,14 @@ public class RandomGroupPartitioner extends Partitioner implements
 	 */
 	@Override
 	public void partitionGroups(Collection<Address> members, int groups)
-	{
+	{ // XXX Assumes the correct match between the number of nodes and groups
 		List<Group> g = getGroups();
 		try
 		{
+			Class<? extends Group> gClass = TribuDSTM.getGroupClass();
 			for (int i = 0; i < groups; i++)
 			{
-				g.add(TribuDSTM.getGroupClass().newInstance());
+				g.add(gClass.newInstance());
 			}
 		}
 		catch (Exception e)
@@ -64,11 +65,12 @@ public class RandomGroupPartitioner extends Partitioner implements
 			e.printStackTrace();
 			System.exit(-1);
 		}
-
+		// TODO guardar o mygroup
 		for (Address a : members)
 		{
 			int selected = hash.consistentHash(a.toString(), groups);
 			g.get(selected).addAddress(a);
+			System.out.println(a + " >> " + selected);
 		}
 	}
 
@@ -80,7 +82,7 @@ public class RandomGroupPartitioner extends Partitioner implements
 	@Override
 	public List<Group> getGroups()
 	{
-		return getGroups();
+		return super.getGroups();
 	}
 
 	/*
@@ -91,6 +93,6 @@ public class RandomGroupPartitioner extends Partitioner implements
 	@Override
 	public Group getMyGroup()
 	{
-		return getMyGroup();
+		return super.getMyGroup();
 	}
 }

@@ -9,7 +9,7 @@ import org.deuce.distribution.replication.group.Group;
  * 
  */
 public abstract class Partitioner
-{ // TODO verificar melhor estrutura FIXME preciso mesmo disto?
+{
 	protected static List<Group> groups;
 	protected static Group myGroup;
 

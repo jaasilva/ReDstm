@@ -3,7 +3,6 @@ package org.deuce.distribution.groupcomm.jgroups;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -23,7 +22,7 @@ import org.jgroups.View;
 
 @ExcludeTM
 public class JGroupsGroupCommunication extends GroupCommunication implements
-		Receiver // TODO check new jar file JGroups 3.2.7.Final
+		Receiver
 {
 	private static final Logger LOGGER = Logger
 			.getLogger(JGroupsGroupCommunication.class);
@@ -92,7 +91,6 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public void sendTotalOrdered(byte[] payload, Group group)
 	{ // TODO ver maneira melhor
 		AnycastAddress addr = new AnycastAddress();
@@ -100,8 +98,6 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		{
 			addr.add((org.jgroups.Address) a.getAddress());
 		}
-		// addr.addAll((Collection<org.jgroups.Address>) ((Collection<?>) group
-		// .getAddresses()));
 
 		try
 		{
@@ -152,13 +148,11 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	}
 
 	public void getState(OutputStream output) throws Exception
-	{
-		// nothing to do
+	{ // nothing to do
 	}
 
 	public void setState(InputStream input) throws Exception
-	{
-		// nothing to do
+	{ // nothing to do
 	}
 
 	public void viewAccepted(View new_view)
@@ -170,17 +164,14 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	}
 
 	public void suspect(org.jgroups.Address suspected_mbr)
-	{
-		// nothing to do
+	{ // nothing to do
 	}
 
 	public void block()
-	{
-		// nothing to do
+	{ // nothing to do
 	}
 
 	public void unblock()
-	{
-		// nothing to do
+	{ // nothing to do
 	}
 }

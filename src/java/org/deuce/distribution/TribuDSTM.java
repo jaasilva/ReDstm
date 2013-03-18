@@ -65,7 +65,7 @@ public final class TribuDSTM
 	{
 		String className = System
 				.getProperty("tribu.groupcommunication.class",
-						"org.deuce.distribution.groupcomm.appia.JGroupsGroupCommunication");
+						"org.deuce.distribution.groupcomm.jgroups.JGroupsGroupCommunication");
 
 		try
 		{
@@ -125,10 +125,10 @@ public final class TribuDSTM
 	{
 		String groupPartClass = System
 				.getProperty("tribu.distributed.GroupPartitionerClass",
-						"org.deuce.distribution.replication.partitioner.RandomGroupPartitioner");
+						"org.deuce.distribution.replication.partitioner.group.RandomGroupPartitioner");
 		String dataPartClass = System
 				.getProperty("tribu.distributed.DataPartitionerClass",
-						"org.deuce.distribution.replication.partitioner.SimpleGroupPartitioner");
+						"org.deuce.distribution.replication.partitioner.data.SimpleDataPartitioner");
 		String gClass = System
 				.getProperty("tribu.distributed.GroupClass",
 						"org.deuce.distribution.replication.group.PartialReplicationGroup");

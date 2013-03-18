@@ -38,6 +38,6 @@ public class SimpleDataPartitioner extends Partitioner implements
 	@Override
 	public Group publishTo(UniqueObject obj)
 	{
-		return getMyGroup();
+		return super.getMyGroup();
 	}
 }
