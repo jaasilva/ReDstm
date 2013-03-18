@@ -4,16 +4,18 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.replication.group.Group;
+import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.distribution.replication.partitioner.Partitioner;
 import org.deuce.hashing.Hashing;
+import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
  * 
  */
+@ExcludeTM
 public class RandomGroupPartitioner extends Partitioner implements
 		GroupPartitioner
 {
@@ -56,18 +58,9 @@ public class RandomGroupPartitioner extends Partitioner implements
 	{ // XXX Assumes the correct match between the number of nodes and groups
 		// TODO tenho de verificar se os grupos tem o mesmo tamanho?
 		List<Group> g = getGroups();
-		try
+		for (int i = 0; i < groups; i++)
 		{
-			Class<? extends Group> gClass = TribuDSTM.getGroupClass();
-			for (int i = 0; i < groups; i++)
-			{
-				g.add(gClass.newInstance());
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			System.exit(-1);
+			g.add(new PartialReplicationGroup());
 		}
 
 		for (Address a : members)
@@ -76,7 +69,7 @@ public class RandomGroupPartitioner extends Partitioner implements
 			Group selectedGroup = g.get(selected);
 			selectedGroup.addAddress(a);
 
-			if (TribuDSTM.isLocalAddress(a))
+			if (a.isLocal())
 			{
 				super.setMyGroup(selectedGroup);
 			}

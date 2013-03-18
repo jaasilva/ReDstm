@@ -11,7 +11,7 @@ import org.deuce.transform.ExcludeTM;
  */
 @ExcludeTM
 public class PartialReplicationMetadata implements PartialReplicationOID
-{
+{ // TODO ver melhor a implementação desta classe
 	private static final long serialVersionUID = -439466285256483698L;
 	private java.util.UUID id;
 	private Group group;

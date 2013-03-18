@@ -83,11 +83,11 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 
 		try
 		{
-			addrs = new ArrayList<Address>(controlSession.getMembership()
-					.getMembershipList().size());
+			List<SocketAddress> list = controlSession.getMembership()
+					.getMembershipList();
+			addrs = new ArrayList<Address>(list.size());
 
-			for (SocketAddress a : controlSession.getMembership()
-					.getMembershipList())
+			for (SocketAddress a : list)
 			{
 				addrs.add(new AppiaAddress(a));
 			}

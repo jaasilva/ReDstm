@@ -14,7 +14,6 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class PartialReplicationSerializer extends ObjectSerializer
 {
-
 	/*
 	 * (non-Javadoc)
 	 * @see org.deuce.distribution.ObjectSerializer#writeReplaceHook(org.deuce.

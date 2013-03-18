@@ -54,24 +54,10 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 	}
 
 	public List<Address> getMembers()
-	{ // TODO arranjar workaround
-		// List<Address> addrs = new ArrayList<Address>(channel.getView()
-		// .getMembers().size());
-		//
-		// for (SpreadGroup a : channel.getView().getMembers())
-		// {
-		// addrs.add(new SpreadAddress(a));
-		// }
-		//
-		// return addrs;
-
-		return null;
-	}
-
-	public void initGroupPartitioner()
 	{
-		System.err.println("Method not implemented.");
+		System.err.println("Feature not implemented.");
 		System.exit(-1);
+		return null;
 	}
 
 	public void close()

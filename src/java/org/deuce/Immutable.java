@@ -15,5 +15,4 @@ import java.lang.annotation.Target;
 @Retention(CLASS)
 public @interface Immutable
 {
-
 }

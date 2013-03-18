@@ -1,11 +1,14 @@
 package org.deuce.hashing;
 
+import org.deuce.transform.ExcludeTM;
+
 import com.google.common.hash.Hashing;
 
 /**
  * @author jaasilva
  * 
  */
+@ExcludeTM
 public class SHA1GuavaHashFunction implements org.deuce.hashing.Hashing
 {
 	/*

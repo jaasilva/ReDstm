@@ -1,13 +1,15 @@
 package org.deuce.distribution.replication.partitioner;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import org.deuce.distribution.replication.group.Group;
+import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
  * 
  */
+@ExcludeTM
 public abstract class Partitioner
 {
 	protected static List<Group> groups;
@@ -18,7 +20,7 @@ public abstract class Partitioner
 	 */
 	public Partitioner()
 	{
-		groups = new LinkedList<Group>();
+		groups = new ArrayList<Group>();
 	}
 
 	/**
