@@ -7,4 +7,6 @@ package org.deuce.hashing;
 public interface Hashing
 {
 	public int consistentHash(String str, int buckets);
+
+	public int consistentHash(byte[] arr, int buckets);
 }

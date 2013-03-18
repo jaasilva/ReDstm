@@ -55,10 +55,10 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 
 	public List<Address> getMembers()
 	{
-		List<Address> addrs = new ArrayList<Address>(channel.getView()
-				.getMembers().size());
+		List<org.jgroups.Address> members = channel.getView().getMembers();
+		List<Address> addrs = new ArrayList<Address>(members.size());
 
-		for (org.jgroups.Address a : channel.getView().getMembers())
+		for (org.jgroups.Address a : members)
 		{
 			addrs.add(new JGroupsAddress(a));
 		}
@@ -94,10 +94,14 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 
 	@SuppressWarnings("unchecked")
 	public void sendTotalOrdered(byte[] payload, Group group)
-	{ // TODO ver maneira melhor FIXME esta mal
+	{ // TODO ver maneira melhor
 		AnycastAddress addr = new AnycastAddress();
-		addr.addAll((Collection<org.jgroups.Address>) ((Collection<?>) group
-				.getAddresses()));
+		for (Address a : group.getAddresses())
+		{
+			addr.add((org.jgroups.Address) a.getAddress());
+		}
+		// addr.addAll((Collection<org.jgroups.Address>) ((Collection<?>) group
+		// .getAddresses()));
 
 		try
 		{

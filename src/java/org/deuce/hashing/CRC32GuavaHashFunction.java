@@ -18,4 +18,10 @@ public class CRC32GuavaHashFunction implements org.deuce.hashing.Hashing
 		return Hashing.consistentHash(Hashing.crc32().hashString(str), buckets);
 	}
 
+	@Override
+	public int consistentHash(byte[] arr, int buckets)
+	{
+		return Hashing.consistentHash(Hashing.crc32().hashBytes(arr), buckets);
+	}
+
 }

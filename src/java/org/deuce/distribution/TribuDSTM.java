@@ -1,14 +1,13 @@
 package org.deuce.distribution;
 
-import java.util.Collection;
-
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
 import org.deuce.distribution.location.SimpleLocator;
-import org.deuce.distribution.replication.partitioner.DataPartitioner;
-import org.deuce.distribution.replication.partitioner.GroupPartitioner;
+import org.deuce.distribution.replication.group.Group;
+import org.deuce.distribution.replication.partitioner.data.DataPartitioner;
+import org.deuce.distribution.replication.partitioner.group.GroupPartitioner;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transform.ExcludeTM;
@@ -25,6 +24,7 @@ public final class TribuDSTM
 	private static DataPartitioner dataPartitioner;
 	private static GroupPartitioner groupPartitioner;
 
+	private static Class<? extends Group> groupClass;
 	private static Class<? extends DistributedContext> ctxClass;
 
 	static
@@ -46,7 +46,8 @@ public final class TribuDSTM
 	public static void init()
 	{
 		initGroupCommunication();
-		groupPartitioner.init();
+		groupPartitioner.partitionGroups(groupComm.getMembers(),
+				Integer.getInteger("tribu.groups"));
 		dataPartitioner.init();
 		distProtocol.init();
 	}
@@ -119,6 +120,7 @@ public final class TribuDSTM
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void initPartitioners()
 	{
 		String groupPartClass = System
@@ -127,18 +129,22 @@ public final class TribuDSTM
 		String dataPartClass = System
 				.getProperty("tribu.distributed.DataPartitionerClass",
 						"org.deuce.distribution.replication.partitioner.SimpleGroupPartitioner");
+		String gClass = System
+				.getProperty("tribu.distributed.GroupClass",
+						"org.deuce.distribution.replication.group.PartialReplicationGroup");
 
 		try
 		{
-			@SuppressWarnings("unchecked")
+			// TODO check se é extends ou implements
 			Class<? extends GroupPartitioner> groupPart = (Class<? extends GroupPartitioner>) Class
 					.forName(groupPartClass);
 			groupPartitioner = groupPart.newInstance();
 
-			@SuppressWarnings("unchecked")
 			Class<? extends DataPartitioner> dataPart = (Class<? extends DataPartitioner>) Class
 					.forName(dataPartClass);
 			dataPartitioner = dataPart.newInstance();
+
+			groupClass = (Class<? extends Group>) Class.forName(gClass);
 		}
 		catch (Exception e)
 		{
@@ -147,10 +153,9 @@ public final class TribuDSTM
 		}
 	}
 
-	public static void initPartitionersCallback(
-			Collection<? extends Address> addresses)
+	public static final Class<? extends Group> getGroupClass()
 	{
-		// TODO
+		return groupClass;
 	}
 
 	public static final Class<? extends DistributedContext> getContextClass()

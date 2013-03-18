@@ -10,18 +10,28 @@ import org.deuce.distribution.replication.group.Group;
  */
 public abstract class Partitioner
 { // TODO verificar melhor estrutura FIXME preciso mesmo disto?
-	protected static List<Group> groups = new LinkedList<Group>();
-	protected static Group myGroup = null;
+	protected static List<Group> groups;
+	protected static Group myGroup;
 
+	/**
+	 * 
+	 */
 	public Partitioner()
 	{
+		groups = new LinkedList<Group>();
 	}
 
+	/**
+	 * @return
+	 */
 	public List<Group> getGroups()
 	{
 		return groups;
 	}
 
+	/**
+	 * @return
+	 */
 	public Group getMyGroup()
 	{
 		return myGroup;

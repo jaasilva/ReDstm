@@ -1,12 +1,9 @@
-package org.deuce.distribution.replication.partitioner;
+package org.deuce.distribution.replication.partitioner.data;
 
 import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.replication.group.Group;
+import org.deuce.distribution.replication.partitioner.Partitioner;
 
-/**
- * @author jaasilva
- * 
- */
 /**
  * @author jaasilva
  * 
@@ -14,6 +11,9 @@ import org.deuce.distribution.replication.group.Group;
 public class SimpleDataPartitioner extends Partitioner implements
 		DataPartitioner
 {
+	/**
+	 * 
+	 */
 	public SimpleDataPartitioner()
 	{
 		super();
@@ -27,8 +27,6 @@ public class SimpleDataPartitioner extends Partitioner implements
 	@Override
 	public void init()
 	{
-		// TODO Auto-generated method stub
-
 	}
 
 	/*
@@ -40,6 +38,6 @@ public class SimpleDataPartitioner extends Partitioner implements
 	@Override
 	public Group publishTo(UniqueObject obj)
 	{
-		return myGroup;
+		return getMyGroup();
 	}
 }
