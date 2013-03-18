@@ -129,7 +129,7 @@ public class DuplicateMethod extends MethodAdapter
 		}
 
 		if (ExcludeIncludeStore.exclude(owner) || name.contains("$"))
-		{ // Syntactic TODO remove this limitation
+		{ // Syntactic
 			super.visitFieldInsn(opcode, owner, name, desc); // ... = foo( ...
 			return;
 		}

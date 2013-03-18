@@ -3,7 +3,6 @@ package org.deuce.transaction.tl2;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.deuce.LocalMetadata;
-import org.deuce.distribution.TribuDSTM;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.ReadSet;
@@ -225,8 +224,7 @@ public class Context extends DistributedContext
 
 	public boolean onReadAccess(boolean value, TxField field)
 	{
-		// TribuDSTM.onTxRead(this, field.getMetadata()); TODO
-		// .............................................
+		// TODO TribuDSTM.onTxRead(this, field.getMetadata());
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;

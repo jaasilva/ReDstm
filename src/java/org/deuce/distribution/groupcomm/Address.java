@@ -17,5 +17,5 @@ public abstract class Address
 	@Override
 	public abstract String toString();
 	
-	public abstract Object getAddress();
+	public abstract Object getSpecificAddress();
 }

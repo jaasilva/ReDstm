@@ -64,8 +64,6 @@ public class FramesCodeVisitor extends ClassAdapter
 	}
 
 	/**
-	 * FIXME This is a work around and should be fixed better in the future. By
-	 * overriding the getCommonSuperClass we avoid loading
 	 * 
 	 * @author Guy Korland
 	 * 

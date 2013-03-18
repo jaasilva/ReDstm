@@ -11,13 +11,31 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public interface Group
 {
+	/**
+	 * @return
+	 */
 	public List<Address> getAddresses();
 
+	/**
+	 * @param addr
+	 * @return
+	 */
 	public boolean contains(Address addr);
 
+	/**
+	 * @param addr
+	 * @return
+	 */
 	public boolean addAddress(Address addr);
 
+	/**
+	 * @param addr
+	 * @return
+	 */
 	public boolean removeAddress(Address addr);
 
+	/**
+	 * @return
+	 */
 	public String toString();
 }

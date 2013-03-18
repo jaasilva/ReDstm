@@ -45,9 +45,7 @@ final public class SpeculativeContext extends
 			.getBoolean("org.deuce.transaction.distributed.tl2.txload.opt");
 
 	final static public AtomicInteger clock = new AtomicInteger(0);
-	/*
-	 * FIXME: Refactor. Speculative clock.
-	 */
+
 	final static public AtomicInteger speculativeClock = new AtomicInteger(0);
 
 	private ReadFieldAccess currentReadFieldAccess = null;
@@ -69,9 +67,7 @@ final public class SpeculativeContext extends
 		}
 
 	};
-	/*
-	 * FIXME: Refactor. Speculative put procedure.
-	 */
+
 	final private TObjectProcedure<WriteFieldAccess> speculativePutProcedure = new TObjectProcedure<WriteFieldAccess>()
 	{
 		public boolean execute(WriteFieldAccess writeField)

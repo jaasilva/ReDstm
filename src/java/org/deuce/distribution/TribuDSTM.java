@@ -135,7 +135,6 @@ public final class TribuDSTM
 
 		try
 		{
-			// TODO check se é extends ou implements
 			Class<? extends GroupPartitioner> groupPart = (Class<? extends GroupPartitioner>) Class
 					.forName(groupPartClass);
 			groupPartitioner = groupPart.newInstance();
@@ -223,6 +222,11 @@ public final class TribuDSTM
 	public static final void sendTotalOrdered(byte[] payload)
 	{
 		groupComm.sendTotalOrdered(payload);
+	}
+
+	public static final void sendTotalOrdered(byte[] payload, Group group)
+	{
+		groupComm.sendTotalOrdered(payload, group);
 	}
 
 	public static final void sendReliably(byte[] payload)

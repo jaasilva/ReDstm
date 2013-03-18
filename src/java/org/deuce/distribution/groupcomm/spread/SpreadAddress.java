@@ -33,7 +33,7 @@ public class SpreadAddress extends Address
 		return addr.toString();
 	}
 
-	public Object getAddress()
+	public Object getSpecificAddress()
 	{
 		return addr;
 	}

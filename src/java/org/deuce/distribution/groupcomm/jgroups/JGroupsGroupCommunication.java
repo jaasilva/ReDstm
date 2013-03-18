@@ -96,7 +96,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		AnycastAddress addr = new AnycastAddress();
 		for (Address a : group.getAddresses())
 		{
-			addr.add((org.jgroups.Address) a.getAddress());
+			addr.add((org.jgroups.Address) a.getSpecificAddress());
 		}
 
 		try

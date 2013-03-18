@@ -36,4 +36,12 @@ public abstract class Partitioner
 	{
 		return myGroup;
 	}
+
+	/**
+	 * @param group
+	 */
+	public void setMyGroup(Group group)
+	{
+		myGroup = group;
+	}
 }

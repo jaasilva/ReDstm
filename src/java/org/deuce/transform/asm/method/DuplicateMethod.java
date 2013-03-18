@@ -54,9 +54,8 @@ public class DuplicateMethod extends MethodAdapter
 			super.visitMethodInsn(opcode, owner, name, desc); // ... = foo( ...
 		}
 		else
-		{
-			super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
-																	// context
+		{ // load context
+			super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1);
 			Method newMethod = ClassTransformer.createNewMethod(name, desc);
 			super.visitMethodInsn(opcode, owner, name,
 					newMethod.getDescriptor()); // ... = foo( ...
@@ -71,7 +70,7 @@ public class DuplicateMethod extends MethodAdapter
 			String desc)
 	{
 		if (ExcludeIncludeStore.exclude(owner) || name.contains("$"))
-		{ // Syntactic TODO remove this limitation
+		{ // Syntactic
 			super.visitFieldInsn(opcode, owner, name, desc); // ... = foo( ...
 			return;
 		}
@@ -348,10 +347,10 @@ public class DuplicateMethod extends MethodAdapter
 	}
 
 	private String getArrayMemberType(String arrayType)
-	{
-		if (arrayType.charAt(arrayType.length() - 1) == ';' && // primitive
-																// array
-				arrayType.charAt(1) != '[') // array of arrays
+	{ // primitive
+		// array
+		if (arrayType.charAt(arrayType.length() - 1) == ';'
+				&& arrayType.charAt(1) != '[') // array of arrays
 			return arrayType.substring(2, arrayType.length() - 1);
 
 		return arrayType.substring(1, arrayType.length()); // array of Objects

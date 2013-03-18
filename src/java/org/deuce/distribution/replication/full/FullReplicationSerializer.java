@@ -16,14 +16,13 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class FullReplicationSerializer extends ObjectSerializer
 {
-	private static final Logger LOGGER = Logger.getLogger(FullReplicationSerializer.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(FullReplicationSerializer.class);
 	public final static String NAME = Type
 			.getInternalName(FullReplicationSerializer.class);
 	public final static String DESC = Type
 			.getDescriptor(FullReplicationSerializer.class);
 
-	// TODO: Permitir definir qual a implementação de OID a usar.
-	// private OIDFactory factory = new SimpleOIDFactory();
 	private OIDFactory factory = new UUIDFactory();
 
 	/**

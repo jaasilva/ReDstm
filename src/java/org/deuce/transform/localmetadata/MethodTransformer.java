@@ -149,7 +149,6 @@ public class MethodTransformer implements MethodVisitor
 		if (UNSAFE_DESCRIPTOR.equals(desc))
 			copyMethod = originalCopyMethod;
 
-		// TODO find another way
 		if (!desc.contains("org/junit"))
 		{
 			return new MethodAnnotationVisitor(originalMethod.visitAnnotation(

@@ -179,7 +179,7 @@ public class Agent implements ClassFileTransformer
 		logger.fine("Starting Deuce translator");
 
 		Agent agent = new Agent();
-		agent.transformJar(args[0], args[1]); // TODO check args
+		agent.transformJar(args[0], args[1]);
 	}
 
 	private void transformJar(String inFileNames, String outFilenames)

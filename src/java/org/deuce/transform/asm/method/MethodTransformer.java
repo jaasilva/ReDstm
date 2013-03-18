@@ -71,11 +71,11 @@ public class MethodTransformer implements MethodVisitor
 			originalMethod = new AtomicMethod(originalMethod, className,
 					methodName, descriptor, newMethod, isStatic);
 
-		if (UNSAFE_DESCRIPTOR.equals(desc)) // if marked as Unsafe no just
-											// duplicate the method as is.
+		// if marked as Unsafe no just duplicate the method as is.
+		if (UNSAFE_DESCRIPTOR.equals(desc))
 			copyMethod = originalCopyMethod;
 
-		if (!desc.contains("org/junit")) // TODO find another way
+		if (!desc.contains("org/junit"))
 			return new MethodAnnotationVisitor(originalMethod.visitAnnotation(
 					desc, visible), copyMethod.visitAnnotation(desc, visible));
 		else

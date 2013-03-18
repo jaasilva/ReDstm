@@ -56,7 +56,7 @@ import org.deuce.objectweb.asm.tree.TryCatchBlockNode;
  * A {@link org.deuce.objectweb.asm.MethodAdapter} that removes JSR instructions
  * and inlines the referenced subroutines.
  * 
- * <b>Explanation of how it works</b> TODO
+ * <b>Explanation of how it works</b>
  * 
  * @author Niko Matsakis
  */
@@ -224,7 +224,6 @@ public class JSRInlinerAdapter extends MethodNode implements Opcodes
 
 				if (LOGGING)
 				{
-					// TODO use of default toString().
 					log("Scanning try/catch " + trycatch);
 				}
 
@@ -427,7 +426,6 @@ public class JSRInlinerAdapter extends MethodNode implements Opcodes
 				LabelNode remap = instant.rangeLabel(ilbl);
 				if (LOGGING)
 				{
-					// TODO use of default toString().
 					log("Translating lbl #" + i + ':' + ilbl + " to " + remap);
 				}
 				if (remap != duplbl)
@@ -519,7 +517,6 @@ public class JSRInlinerAdapter extends MethodNode implements Opcodes
 
 			if (LOGGING)
 			{
-				// TODO use of default toString().
 				log("try catch block original labels=" + trycatch.start + '-'
 						+ trycatch.end + "->" + trycatch.handler);
 			}
@@ -541,7 +538,6 @@ public class JSRInlinerAdapter extends MethodNode implements Opcodes
 
 			if (LOGGING)
 			{
-				// TODO use of default toString().
 				log(" try catch block new labels=" + start + '-' + end + "->"
 						+ handler);
 			}

@@ -194,7 +194,6 @@ public class SpeculativeNonVoting extends FullReplicationProtocol implements
 					}
 					catch (InterruptedException e1)
 					{
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				}
@@ -307,7 +306,6 @@ public class SpeculativeNonVoting extends FullReplicationProtocol implements
 			}
 			catch (InterruptedException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			finally
