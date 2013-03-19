@@ -122,6 +122,11 @@ public final class TribuDSTM
 		}
 	}
 
+	public static final List<Address> getMembers()
+	{ // XXX remove
+		return groupComm.getMembers();
+	}
+
 	@SuppressWarnings("unchecked")
 	private static void initPartitioners()
 	{
