@@ -14,13 +14,9 @@ public class TestTribuInit
 		TribuDSTM.init();
 		TribuDSTM.subscribeDeliveries(new Receiver());
 
-		Group a = new PartialReplicationGroup();
-		a.addAddress(TribuDSTM.getAddress());
+		
 
-		TribuDSTM.sendTotalOrdered(
-				ObjectSerializer.object2ByteArray("Hello world"), a);
-
-		TribuDSTM.close();
+		
 	}
 }
 
