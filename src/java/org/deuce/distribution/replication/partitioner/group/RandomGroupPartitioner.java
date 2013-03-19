@@ -85,6 +85,7 @@ public class RandomGroupPartitioner extends Partitioner implements
 			}
 		}
 		LOGGER.debug(String.format("NEW GROUPS: %s", toString()));
+		System.out.println(toString());
 	}
 
 	/*
