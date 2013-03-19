@@ -29,11 +29,6 @@ public final class TribuDSTM
 	private static Class<? extends Group> groupClass;
 	private static Class<? extends DistributedContext> ctxClass;
 
-	public static final List<Address> getMembers()
-	{
-		return groupComm.getMembers();
-	}
-	
 	static
 	{
 		initReplicationProtocol();

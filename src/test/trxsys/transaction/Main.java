@@ -3,7 +3,7 @@ package trxsys.transaction;
 import java.util.Scanner;
 
 import org.deuce.Atomic;
-import org.deuce.distribution.replication.full.Bootstrap;
+import org.deuce.distribution.replication.Bootstrap;
 
 public class Main
 {

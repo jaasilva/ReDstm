@@ -1,6 +1,7 @@
 package org.deuce.distribution.replication.partial.oid;
 
 import org.deuce.distribution.replication.OID;
+import org.deuce.distribution.replication.group.Group;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -10,4 +11,5 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public interface PartialReplicationOID extends OID
 {
+	public Group getGroup();
 }

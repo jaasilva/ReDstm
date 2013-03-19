@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import jstamp.vacation.Manager;
 
 import org.deuce.Atomic;
-import org.deuce.distribution.replication.full.Bootstrap;
+import org.deuce.distribution.replication.Bootstrap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

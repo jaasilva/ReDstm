@@ -26,10 +26,10 @@ public class FullReplicationSerializer extends ObjectSerializer
 	private OIDFactory factory = new UUIDFactory();
 
 	/**
-	 * If this object has already been published, we serialise a replacement
+	 * If this object has already been published, we serialize a replacement
 	 * object that, when de-serialised on the target host, returns the target's
-	 * local copy of this object. Otherwise, it initialises this object's OID,
-	 * adds the object to the global table and serialises normally.
+	 * local copy of this object. Otherwise, it initializes this object's OID,
+	 * adds the object to the global table and serializes normally.
 	 * 
 	 * @return UniqueObjectMapper iff this object has already been published,
 	 *         otherwise returns this object.
@@ -70,7 +70,7 @@ public class FullReplicationSerializer extends ObjectSerializer
 
 		UniqueObject object = TribuDSTM.getObject(oid);
 		if (object != null)
-		{ // existing local object
+		{ // exists local object
 			LOGGER.trace(String.format(
 					"Replaced %s with OID(%s) by local replica %s",
 					obj.toString(), oid.toString(), object.toString()));

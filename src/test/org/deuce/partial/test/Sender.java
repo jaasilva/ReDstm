@@ -15,7 +15,7 @@ public class Sender
 	{
 		TribuDSTM.init();
 
-		Group a = new PartialReplicationGroup(TribuDSTM.getMembers());
+		Group a = new PartialReplicationGroup(/*TribuDSTM.getMembers()*/);
 
 		TribuDSTM.sendTotalOrdered(
 				ObjectSerializer.object2ByteArray("Hello world"), a);

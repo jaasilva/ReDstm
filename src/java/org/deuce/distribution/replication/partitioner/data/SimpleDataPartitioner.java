@@ -45,7 +45,7 @@ public class SimpleDataPartitioner extends Partitioner implements
 	public Group publishTo(UniqueObject obj)
 	{
 		Group res = super.getMyGroup();
-		LOGGER.debug(String.format("Publish obj:%s to group:%s", obj, res));
+		LOGGER.debug(String.format("Publish obj(%s) to group(%s)", obj, res));
 		return res;
 	}
 }

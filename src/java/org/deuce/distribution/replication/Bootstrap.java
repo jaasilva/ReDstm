@@ -1,4 +1,4 @@
-package org.deuce.distribution.replication.full;
+package org.deuce.distribution.replication;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.CLASS;
