@@ -1,5 +1,7 @@
 package org.deuce.distribution;
 
+import java.util.List;
+
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
@@ -24,6 +26,7 @@ public final class TribuDSTM
 	private static DataPartitioner dataPartitioner;
 	private static GroupPartitioner groupPartitioner;
 
+	private static Class<? extends Group> groupClass;
 	private static Class<? extends DistributedContext> ctxClass;
 
 	static
@@ -46,7 +49,7 @@ public final class TribuDSTM
 	{
 		initGroupCommunication();
 		groupPartitioner.partitionGroups(groupComm.getMembers(),
-				Integer.getInteger("tribu.groups"));
+				Integer.getInteger("tribu.groups", 1));
 		dataPartitioner.init();
 		distProtocol.init();
 	}
@@ -128,6 +131,9 @@ public final class TribuDSTM
 		String dataPartClass = System
 				.getProperty("tribu.distributed.DataPartitionerClass",
 						"org.deuce.distribution.replication.partitioner.data.SimpleDataPartitioner");
+		String gClass = System
+				.getProperty("tribu.distributed.GroupClass",
+						"org.deuce.distribution.replication.group.PartialReplicationGroup");
 
 		try
 		{
@@ -138,6 +144,8 @@ public final class TribuDSTM
 			Class<? extends DataPartitioner> dataPart = (Class<? extends DataPartitioner>) Class
 					.forName(dataPartClass);
 			dataPartitioner = dataPart.newInstance();
+
+			groupClass = (Class<? extends Group>) Class.forName(gClass);
 		}
 		catch (Exception e)
 		{
@@ -149,6 +157,11 @@ public final class TribuDSTM
 	public static final Class<? extends DistributedContext> getContextClass()
 	{
 		return ctxClass;
+	}
+
+	public static final Class<? extends Group> getGroupClass()
+	{
+		return groupClass;
 	}
 
 	public static final Locator getLocator()
@@ -242,5 +255,20 @@ public final class TribuDSTM
 	public static final Address getAddress()
 	{
 		return groupComm.getAddress();
+	}
+
+	public static final Group getMyGroup()
+	{
+		return groupPartitioner.getMyGroup();
+	}
+
+	public static final List<Group> getAllGroups()
+	{
+		return groupPartitioner.getGroups();
+	}
+
+	public static final Group publishObjectTo(UniqueObject obj)
+	{
+		return dataPartitioner.publishTo(obj);
 	}
 }

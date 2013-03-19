@@ -36,7 +36,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	public void init()
 	{
 		try
-		{ // TODO check config in TOA "toa.xml"
+		{
 			channel = new JChannel("etc/jgroups.xml");
 			channel.setReceiver(this);
 			channel.connect(System.getProperty(
