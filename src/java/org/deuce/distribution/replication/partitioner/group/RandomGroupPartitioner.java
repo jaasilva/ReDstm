@@ -55,8 +55,7 @@ public class RandomGroupPartitioner extends Partitioner implements
 	 */
 	@Override
 	public void partitionGroups(Collection<Address> members, int groups)
-	{ // XXX Assumes the correct match between the number of nodes and groups
-		// TODO tenho de verificar se os grupos tem o mesmo tamanho?
+	{ // TODO tenho de verificar se os grupos tem o mesmo tamanho?
 		List<Group> g = getGroups();
 		try
 		{
@@ -84,7 +83,7 @@ public class RandomGroupPartitioner extends Partitioner implements
 				super.setMyGroup(selectedGroup);
 			}
 		}
-		LOGGER.debug(String.format("NEW GROUPS: %s", toString()));
+		LOGGER.debug(String.format("GROUPS CREATED: %s", toString()));
 	}
 
 	/*
