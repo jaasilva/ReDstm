@@ -35,7 +35,7 @@ RANGE=4096 # SIZE*4
 WRITES=10
 
 _STM=tl2.Context
-_REP=nonvoting.NonVoting
+_REP=nonvoting.$7
 _COMM=$2
 
 STM="org.deuce.transaction.${_STM}"
