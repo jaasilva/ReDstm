@@ -33,7 +33,7 @@ public final class TribuDSTM
 	{
 		initReplicationProtocol();
 		initTransactionContext();
-		initPartitioners();
+//		initPartitioners();
 	}
 
 	/*
@@ -48,9 +48,9 @@ public final class TribuDSTM
 	public static void init()
 	{
 		initGroupCommunication();
-		groupPartitioner.partitionGroups(groupComm.getMembers(),
-				Integer.getInteger("tribu.groups", 1));
-		dataPartitioner.init();
+//		groupPartitioner.partitionGroups(groupComm.getMembers(),
+//				Integer.getInteger("tribu.groups", 1));
+//		dataPartitioner.init();
 		distProtocol.init();
 	}
 
