@@ -7,9 +7,10 @@ CP="${CP}:lib/appia-groupcomm-4.1.2.jar"
 CP="${CP}:lib/appia-test-4.1.2.jar"
 CP="${CP}:lib/flanagan.jar"
 CP="${CP}:lib/jgcs-0.6.1.jar"
-CP="${CP}:lib/jgroups-3.1.0.Beta1.jar"
+CP="${CP}:lib/jgroups-3.2.7.Final.jar"
 CP="${CP}:lib/junit-4.6.jar"
 CP="${CP}:lib/jvstm.jar"
+CP="${CP}:lib/guava-14.0.jar"
 CP="${CP}:lib/log4j-1.2.14.jar"
 CP="${CP}:lib/spread-4.2.0.jar"
 EXCLUDE="java.*,sun.*,org.eclipse.*,org.junit.*,junit.*"
@@ -35,7 +36,7 @@ RANGE=131072 # SIZE*4
 WRITES=10
 
 _STM=tl2.Context
-_REP=nonvoting.NonVoting
+_REP=nonvoting.$7
 _COMM=$2
 
 STM="org.deuce.transaction.${_STM}"
