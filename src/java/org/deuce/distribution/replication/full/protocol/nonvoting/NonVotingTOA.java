@@ -77,7 +77,7 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 		// ctx.profiler.onTOSend();
 		// ctx.profiler.newMsgSent(payload.length);
 
-		Group all = new PartialReplicationGroup(TribuDSTM.getMembers());
+		Group all = new PartialReplicationGroup(TribuDSTM.getAllMembers());
 		TribuDSTM.sendTotalOrdered(payload, all);
 	}
 

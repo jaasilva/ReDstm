@@ -17,6 +17,17 @@ public interface PartialReplicationOIDFactory extends OIDFactory
 	 */
 	public PartialReplicationOID generateOID();
 
+	/**
+	 * @return
+	 */
+	public PartialReplicationOID generateFullReplicationOID();
+
+	/**
+	 * @param oid
+	 * @return
+	 */
+	public PartialReplicationOID generateFullReplicationOID(int oid);
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.deuce.distribution.replication.OIDFactory#generateOID(int)

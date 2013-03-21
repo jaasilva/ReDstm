@@ -1,5 +1,6 @@
 package org.deuce.distribution.replication.partial.oid;
 
+import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.transform.ExcludeTM;
 
@@ -57,4 +58,55 @@ public class PartialReplicationMetadataFactory implements
 		return new PartialReplicationMetadata(oid, group);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.deuce.distribution.replication.partial.oid.PartialReplicationOIDFactory
+	 * #generateFullReplicationOID()
+	 */
+	@Override
+	public PartialReplicationOID generateFullReplicationOID()
+	{
+		Group group;
+		try
+		{
+			group = TribuDSTM.getGroupClass().newInstance();
+			group.addAddresses(TribuDSTM.getAllMembers());
+			return new PartialReplicationMetadata(group);
+		}
+		catch (Exception e)
+		{
+			System.err.println("Couldn't create group class.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.deuce.distribution.replication.partial.oid.PartialReplicationOIDFactory
+	 * #generateFullReplicationOID(int)
+	 */
+	@Override
+	public PartialReplicationOID generateFullReplicationOID(int oid)
+	{
+		Group group;
+		try
+		{
+			group = TribuDSTM.getGroupClass().newInstance();
+			group.addAddresses(TribuDSTM.getAllMembers());
+			return new PartialReplicationMetadata(oid, group);
+		}
+		catch (Exception e)
+		{
+			System.err.println("Couldn't create group class.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
+		return null;
+	}
 }

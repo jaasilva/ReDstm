@@ -22,7 +22,7 @@ public class PartialReplicationGroup implements Group
 	 */
 	public PartialReplicationGroup()
 	{
-		this.addresses = new HashSet<Address>(25);
+		this.addresses = new HashSet<Address>(25); // TODO ver melhor maneira
 	}
 
 	/**
@@ -88,5 +88,11 @@ public class PartialReplicationGroup implements Group
 		sb.insert(sb.length() - 1, "]");
 
 		return sb.toString();
+	}
+
+	@Override
+	public boolean addAddresses(List<Address> addrs)
+	{
+		return addresses.addAll(addrs);
 	}
 }

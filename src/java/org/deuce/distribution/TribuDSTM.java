@@ -60,8 +60,8 @@ public final class TribuDSTM
 
 	public static void close()
 	{
-		groupComm.close();
-		System.exit(0);
+//		groupComm.close();
+		System.exit(0); // XXX remove
 	}
 
 	private static void initGroupCommunication()
@@ -123,11 +123,6 @@ public final class TribuDSTM
 		}
 	}
 
-	public static final List<Address> getMembers()
-	{ // XXX remove
-		return groupComm.getMembers();
-	}
-
 	@SuppressWarnings("unchecked")
 	private static void initPartitioners()
 	{
@@ -158,6 +153,11 @@ public final class TribuDSTM
 			e.printStackTrace();
 			System.exit(-1);
 		}
+	}
+	
+	public static final List<Address> getAllMembers()
+	{
+		return groupComm.getMembers();
 	}
 
 	public static final Class<? extends DistributedContext> getContextClass()

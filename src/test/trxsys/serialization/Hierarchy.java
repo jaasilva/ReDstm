@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.deuce.distribution.replication.OID;
+import org.deuce.distribution.replication.OID2Object;
 import org.deuce.distribution.replication.OIDFactory;
-import org.deuce.distribution.replication.full.OID2Object;
 import org.deuce.distribution.replication.full.oid.SimpleOIDFactory;
 
 public class Hierarchy

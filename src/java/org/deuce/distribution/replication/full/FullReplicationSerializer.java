@@ -8,6 +8,7 @@ import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.replication.OID;
+import org.deuce.distribution.replication.OID2Object;
 import org.deuce.distribution.replication.OIDFactory;
 import org.deuce.distribution.replication.full.oid.UUIDFactory;
 import org.deuce.objectweb.asm.Type;

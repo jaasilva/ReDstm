@@ -29,6 +29,12 @@ public interface Group
 	public boolean addAddress(Address addr);
 
 	/**
+	 * @param addrs
+	 * @return
+	 */
+	public boolean addAddresses(List<Address> addrs);
+
+	/**
 	 * @param addr
 	 * @return
 	 */

@@ -19,7 +19,7 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 
 	/**
 	 * Parameterless constructor creates a fresh OID and assumes that the
-	 * corresponding groups is the group where this node belongs
+	 * corresponding group is the group where this node belongs
 	 */
 	protected PartialReplicationMetadata()
 	{
