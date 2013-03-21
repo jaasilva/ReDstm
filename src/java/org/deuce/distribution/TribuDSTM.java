@@ -61,6 +61,7 @@ public final class TribuDSTM
 	public static void close()
 	{
 		groupComm.close();
+		System.exit(0);
 	}
 
 	private static void initGroupCommunication()
