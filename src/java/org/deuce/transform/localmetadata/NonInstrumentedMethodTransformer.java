@@ -321,10 +321,10 @@ public class NonInstrumentedMethodTransformer extends MethodAdapter
 		// ..., obj, obj, arr =>
 		mv.visitInsn(Opcodes.ICONST_1);
 		// ..., obj, obj, arr, I =>
-		// XXX Is BIPUSH enough?
+		// CHECKME Is BIPUSH enough?
 		mv.visitIntInsn(Opcodes.BIPUSH, ArrayUtil.getArrayDim(originalType));
 		// ..., obj, obj, arr, I, I =>
-		// XXX Is BIPUSH enough?
+		// CHECKME Is BIPUSH enough?
 		mv.visitIntInsn(Opcodes.BIPUSH, ArrayUtil.getArrayDim(originalType));
 		// ..., obj, obj, arr, I, I, I =>
 		mv.visitIntInsn(Opcodes.BIPUSH, ArrayUtil.getArrayType(originalType)

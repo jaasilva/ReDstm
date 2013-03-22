@@ -2,7 +2,6 @@ package org.deuce.distribution.replication.partial.oid;
 
 import java.nio.ByteBuffer;
 
-import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.transform.ExcludeTM;
 
@@ -18,13 +17,11 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	private Group group;
 
 	/**
-	 * Parameterless constructor creates a fresh OID and assumes that the
-	 * corresponding group is the group where this node belongs
+	 * Parameterless constructor creates a fresh OID the group is empty
 	 */
 	protected PartialReplicationMetadata()
 	{
 		id = java.util.UUID.randomUUID();
-		group = TribuDSTM.getMyGroup();
 	}
 
 	/**
@@ -43,7 +40,6 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	{
 		byte[] name = ByteBuffer.allocate(4).putInt(seed).array();
 		id = java.util.UUID.nameUUIDFromBytes(name);
-		group = TribuDSTM.getMyGroup();
 	}
 
 	/**
@@ -98,5 +94,17 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	public Group getGroup()
 	{
 		return group;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.deuce.distribution.replication.partial.oid.PartialReplicationOID#
+	 * setGroup()
+	 */
+	@Override
+	public void setGroup(Group group)
+	{
+		this.group = group;
 	}
 }

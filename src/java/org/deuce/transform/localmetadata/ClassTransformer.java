@@ -152,10 +152,10 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 
 	protected boolean isAbstract;
 
-	// XXX @Bootstrap
+	// CHECKME @Bootstrap
 	public final Map<String, Integer> field2OID = new java.util.HashMap<String, Integer>();
 
-	// XXX @Partial
+	// CHECKME @Partial
 	public final Set<String> partialRepFields = new java.util.HashSet<String>(
 			50);
 
@@ -289,7 +289,7 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 					Type.LONG_TYPE.getDescriptor(), -1L);
 		}
 
-		// XXX @Bootstrap @Partial
+		// CHECKME @Bootstrap @Partial
 		FieldVisitor bootstrapFv = new SpecificAnnotationsFieldVisitor(fv,
 				field2OID, partialRepFields, name);
 

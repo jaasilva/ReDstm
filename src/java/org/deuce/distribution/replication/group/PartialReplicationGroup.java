@@ -14,8 +14,9 @@ import org.deuce.transform.ExcludeTM;
  */
 @ExcludeTM
 public class PartialReplicationGroup implements Group
-{ // TODO verificar se é necessario groupID
+{ // TODO verificar se comprar com UUID chega
 	private Set<Address> addresses;
+	private java.util.UUID id; // should be unique in the entire system
 
 	/**
 	 * 
@@ -94,5 +95,18 @@ public class PartialReplicationGroup implements Group
 	public boolean addAddresses(List<Address> addrs)
 	{
 		return addresses.addAll(addrs);
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		return obj instanceof PartialReplicationGroup
+				&& id.equals(((PartialReplicationGroup) obj).id);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return id.hashCode();
 	}
 }

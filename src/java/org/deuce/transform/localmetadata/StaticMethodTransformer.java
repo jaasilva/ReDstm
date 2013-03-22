@@ -23,7 +23,7 @@ public class StaticMethodTransformer extends MethodAdapter
 	protected final String fieldsHolderName;
 	protected final String staticField;
 
-	// XXX @Bootstrap
+	// CHECKME @Bootstrap
 	private final Map<String, Integer> field2OID;
 
 	public StaticMethodTransformer(MethodVisitor mv,
@@ -108,7 +108,7 @@ public class StaticMethodTransformer extends MethodAdapter
 				.getInternalName(), "<init>", TxField.CTOR_DESC);
 		// stack: ..., TxField =>
 
-		// XXX @Bootstrap, assumes FullReplicationSerializer
+		// CHECKME @Bootstrap, assumes FullReplicationSerializer
 		Integer oid = field2OID.get(field.getFieldName());
 		if (oid != null)
 		{ // Bootstrap field

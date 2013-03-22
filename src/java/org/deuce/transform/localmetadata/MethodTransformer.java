@@ -1110,10 +1110,10 @@ public class MethodTransformer implements MethodVisitor
 			// ..., obj, obj, arr =>
 			originalMethod.visitInsn(Opcodes.ICONST_1);
 			// ..., obj, obj, arr, I =>
-			// XXX Is BIPUSH enough?
+			// CHECKME Is BIPUSH enough?
 			originalMethod.visitIntInsn(Opcodes.BIPUSH, dims);
 			// ..., obj, obj, arr, I, I =>
-			// XXX Is BIPUSH enough?
+			// CHECKME Is BIPUSH enough?
 			originalMethod.visitIntInsn(Opcodes.BIPUSH,
 					ArrayUtil.getArrayDim(desc));
 			// ..., obj, obj, arr, I, I, I =>

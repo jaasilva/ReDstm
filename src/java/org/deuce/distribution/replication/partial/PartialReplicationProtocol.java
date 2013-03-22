@@ -14,6 +14,7 @@ public abstract class PartialReplicationProtocol implements DistributedProtocol
 {
 	public static final String PARTIALREP_DESC = Type
 			.getDescriptor(Partial.class);
+	private PartialReplicationSerializer serializer = new PartialReplicationSerializer();
 
 	/*
 	 * (non-Javadoc)
@@ -22,8 +23,7 @@ public abstract class PartialReplicationProtocol implements DistributedProtocol
 	@Override
 	public ObjectSerializer getObjectSerializer()
 	{
-		// TODO getObjectSerializer PartialReplicationProtocol
-		return null;
+		return serializer;
 	}
 
 }

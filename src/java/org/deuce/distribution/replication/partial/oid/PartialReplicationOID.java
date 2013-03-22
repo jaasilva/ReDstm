@@ -12,4 +12,6 @@ import org.deuce.transform.ExcludeTM;
 public interface PartialReplicationOID extends OID
 {
 	public Group getGroup();
+
+	public void setGroup(Group group);
 }

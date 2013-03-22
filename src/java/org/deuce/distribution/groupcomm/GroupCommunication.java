@@ -47,7 +47,7 @@ public abstract class GroupCommunication
 
 	public abstract void sendReliably(byte[] payload);
 
-	public abstract List<Address> getMembers(); // XXX deve ser private?
+	public abstract List<Address> getMembers(); // CHECKME deve ser private?
 
 	public void subscribeDelivery(DeliverySubscriber subscriber)
 	{

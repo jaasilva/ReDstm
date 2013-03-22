@@ -33,7 +33,7 @@ public final class TribuDSTM
 	{
 		initReplicationProtocol();
 		initTransactionContext();
-//		initPartitioners();
+		// initPartitioners();
 	}
 
 	/*
@@ -48,9 +48,9 @@ public final class TribuDSTM
 	public static void init()
 	{
 		initGroupCommunication();
-//		groupPartitioner.partitionGroups(groupComm.getMembers(),
-//				Integer.getInteger("tribu.groups", 1));
-//		dataPartitioner.init();
+		// groupPartitioner.partitionGroups(groupComm.getMembers(),
+		// Integer.getInteger("tribu.groups", 1));
+		// dataPartitioner.init();
 		distProtocol.init();
 	}
 
@@ -60,8 +60,8 @@ public final class TribuDSTM
 
 	public static void close()
 	{
-//		groupComm.close();
-		System.exit(0); // XXX remove
+		// groupComm.close();
+		System.exit(0); // CHECKME remove
 	}
 
 	private static void initGroupCommunication()
@@ -154,7 +154,7 @@ public final class TribuDSTM
 			System.exit(-1);
 		}
 	}
-	
+
 	public static final List<Address> getAllMembers()
 	{
 		return groupComm.getMembers();
@@ -276,5 +276,10 @@ public final class TribuDSTM
 	public static final Group publishObjectTo(UniqueObject obj)
 	{
 		return dataPartitioner.publishTo(obj);
+	}
+
+	public static final boolean isMyGroup(Group group)
+	{
+		return getMyGroup().equals(group);
 	}
 }

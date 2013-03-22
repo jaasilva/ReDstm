@@ -44,7 +44,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 	protected boolean callsOtherCtor;
 	protected final String className;
 
-	// XXX @Bootstrap
+	// CHECKME @Bootstrap
 	protected final Map<String, Integer> field2OID;
 
 	public ConstructorMethodTransformer(MethodVisitor mv, List<Field> fields,
@@ -79,7 +79,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 				.getInternalName(), "<init>", TxField.CTOR_DESC);
 		// stack: ..., Object (this), TxField =>
 
-		// XXX @Bootstrap, assumes FullReplicationSerializer
+		// CHECKME @Bootstrap, assumes FullReplicationSerializer
 		Integer oid = field2OID.get(field.getFieldName());
 		if (oid != null)
 		{
