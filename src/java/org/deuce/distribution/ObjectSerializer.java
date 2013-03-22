@@ -136,5 +136,5 @@ public abstract class ObjectSerializer
 	public abstract Object readResolveHook(UniqueObject obj)
 			throws ObjectStreamException;
 
-	public abstract ObjectMetadata createMetadata();
+	public abstract ObjectMetadata createMetadata(); // CHECKME para que é isto?
 }

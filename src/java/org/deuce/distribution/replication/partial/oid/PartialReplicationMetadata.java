@@ -17,7 +17,8 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	private Group group;
 
 	/**
-	 * Parameterless constructor creates a fresh OID the group is empty
+	 * Parameterless constructor creates a fresh OID and the group is empty.
+	 * Requires the insertion of the group later.
 	 */
 	protected PartialReplicationMetadata()
 	{
@@ -34,6 +35,9 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	}
 
 	/**
+	 * 
+	 * Requires the insertion of the group later.
+	 * 
 	 * @param seed
 	 */
 	protected PartialReplicationMetadata(int seed)
@@ -59,10 +63,10 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	 */
 	@Override
 	public boolean equals(Object obj)
-	{ // metadata only need to have the same id to be considered equal
+	{ // PRepMetadata only need to have the same id to be considered equal
 		return obj instanceof PartialReplicationMetadata
 				&& id.equals(((PartialReplicationMetadata) obj).id);
-	} // OIDs should unique in the entire system
+	} // ids should unique in the entire system
 
 	/*
 	 * (non-Javadoc)

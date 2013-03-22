@@ -14,7 +14,7 @@ import org.deuce.transform.ExcludeTM;
  */
 @ExcludeTM
 public class PartialReplicationGroup implements Group
-{ // TODO verificar se comprar com UUID chega
+{
 	private Set<Address> addresses;
 	private java.util.UUID id; // should be unique in the entire system
 
@@ -22,8 +22,9 @@ public class PartialReplicationGroup implements Group
 	 * 
 	 */
 	public PartialReplicationGroup()
-	{
-		this.addresses = new HashSet<Address>(25); // TODO ver melhor maneira
+	{ // CHECKME ver melhor maneira
+		this.addresses = new HashSet<Address>(25);
+		id = java.util.UUID.randomUUID();
 	}
 
 	/**
@@ -32,6 +33,7 @@ public class PartialReplicationGroup implements Group
 	public PartialReplicationGroup(Collection<? extends Address> addresses)
 	{
 		this.addresses = new HashSet<Address>(addresses);
+		id = java.util.UUID.randomUUID();
 	}
 
 	/*
@@ -80,7 +82,8 @@ public class PartialReplicationGroup implements Group
 	 */
 	public String toString()
 	{
-		StringBuilder sb = new StringBuilder("[");
+		StringBuilder sb = new StringBuilder(id.toString());
+		sb.append(": [");
 		for (Address a : addresses)
 		{
 			sb.append(a);
@@ -99,10 +102,10 @@ public class PartialReplicationGroup implements Group
 
 	@Override
 	public boolean equals(Object obj)
-	{
+	{ // PRepGroup only need to have the same id to be considered equal
 		return obj instanceof PartialReplicationGroup
 				&& id.equals(((PartialReplicationGroup) obj).id);
-	}
+	} // ids should be unique in the entire system
 
 	@Override
 	public int hashCode()

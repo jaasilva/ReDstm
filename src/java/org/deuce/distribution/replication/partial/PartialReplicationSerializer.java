@@ -40,7 +40,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	@Override
 	public Object writeReplaceHook(UniqueObject obj)
 			throws ObjectStreamException
-	{ // CHECKME check method
+	{
 		PartialReplicationOID oid = (PartialReplicationOID) obj.getMetadata();
 
 		if (oid == null)
@@ -48,12 +48,12 @@ public class PartialReplicationSerializer extends ObjectSerializer
 			// CHECKME se obj for para ser full replicated como é?
 			oid = factory.generateOID(); // creates PRepMetadata with no group
 			Group toPublish = TribuDSTM.publishObjectTo(obj); // chooses group
-			oid.setGroup(toPublish); // assigns obj to group
-			obj.setMetadata(oid); // assigns metadata to obj
+			oid.setGroup(toPublish);
+			obj.setMetadata(oid);
 
 			LOGGER.trace(String.format("Published %s with OID(%s)",
 					obj.toString(), oid.toString()));
-			if (TribuDSTM.isMyGroup(toPublish)) // if this is my group
+			if (TribuDSTM.isLocalGroup(toPublish)) // if this is my group
 			{ // save object in locator table
 				TribuDSTM.putObject(oid, obj);
 			}
@@ -75,7 +75,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	@Override
 	public Object readResolveHook(UniqueObject obj)
 			throws ObjectStreamException
-	{ // CHECKME ver se esta bem
+	{ // CHECKME esta linha só funca se só forem usados PRepMetadata
 		PartialReplicationOID oid = (PartialReplicationOID) obj.getMetadata();
 
 		UniqueObject object = TribuDSTM.getObject(oid);
@@ -101,7 +101,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	 */
 	@Override
 	public ObjectMetadata createMetadata()
-	{ // CHECKME ver se isto chega
+	{ // CHECKME ver se isto chega. este metadado nao tem grupo definido
 		return factory.generateOID();
 	}
 
@@ -112,7 +112,8 @@ public class PartialReplicationSerializer extends ObjectSerializer
 
 	public void createBootstrapOID(UniqueObject obj, int id)
 	{ // CHECKME por agora fica assim. mas preciso de ver melhor isto
-		// CHECKME ISTO FUNCIONA??? acho que sim
+		// se obj for estrutura é para ser replicado totalmente
+		// se obj for dados é para ser replicado parcialmente
 		PartialReplicationOID oid = factory.generateFullReplicationOID(id);
 		obj.setMetadata(oid);
 		TribuDSTM.putObject(oid, obj);

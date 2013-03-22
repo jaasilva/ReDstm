@@ -44,4 +44,15 @@ public interface Group
 	 * @return
 	 */
 	public String toString();
+
+	/**
+	 * @param obj
+	 * @return
+	 */
+	public boolean equals(Object obj);
+
+	/**
+	 * @return
+	 */
+	public int hashCode();
 }

@@ -6,7 +6,6 @@ import java.io.Serializable;
 import org.apache.log4j.Logger;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
-import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -19,15 +18,9 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public final class OID2Object implements Serializable
 {
+	private static final long serialVersionUID = -7408774104738500539L;
 	private static final Logger LOGGER = Logger.getLogger(OID2Object.class);
-	private static final long serialVersionUID = 1L;
-	public static final String DESC = Type.getDescriptor(OID2Object.class);
-	public static final String NAME = Type.getInternalName(OID2Object.class);
-
-	public static final String OID_FIELD_NAME = "oid";
 	public final OID oid;
-
-	public static final String CTOR_DESC = "(" + OID.DESC + ")V";
 
 	public OID2Object(OID oid)
 	{

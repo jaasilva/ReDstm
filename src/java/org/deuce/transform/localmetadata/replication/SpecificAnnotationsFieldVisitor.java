@@ -3,7 +3,7 @@ package org.deuce.transform.localmetadata.replication;
 import java.util.Map;
 import java.util.Set;
 
-import org.deuce.distribution.replication.full.FullReplicationProtocol;
+import org.deuce.distribution.DistributedProtocol;
 import org.deuce.distribution.replication.partial.PartialReplicationProtocol;
 import org.deuce.objectweb.asm.AnnotationVisitor;
 import org.deuce.objectweb.asm.FieldVisitor;
@@ -32,7 +32,7 @@ public class SpecificAnnotationsFieldVisitor extends FieldVisitorAdapter
 	{
 		AnnotationVisitor va = super.visitAnnotation(desc, visible);
 
-		if (desc.equals(FullReplicationProtocol.BOOTSTRAP_DESC))
+		if (desc.equals(DistributedProtocol.BOOTSTRAP_DESC))
 		{ // Bootstrap field
 			return new BootstrapAnnotationVisitor(va, field2OID, field);
 		}

@@ -1,12 +1,10 @@
-/**
- * 
- */
 package org.deuce.transaction.score;
 
 import org.deuce.LocalMetadata;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.ReadSet;
+import org.deuce.transaction.TransactionException;
 import org.deuce.transaction.WriteSet;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.array.ArrayContainer;
@@ -20,6 +18,12 @@ import org.deuce.transform.localmetadata.type.TxField;
 @LocalMetadata(metadataClass = "...")
 public class SCOReContext extends DistributedContext
 {
+
+	public static int MAX_VERSIONS = Integer.getInteger(
+			"org.deuce.transaction.score.versions", 16);
+
+	public static final TransactionException VERSION_UNAVAILABLE_EXCEPTION = new TransactionException(
+			"Fail on retrieveing an older and unexistent version.");
 
 	/**
 	 * 

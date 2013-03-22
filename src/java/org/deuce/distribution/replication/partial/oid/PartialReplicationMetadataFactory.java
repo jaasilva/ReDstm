@@ -67,10 +67,9 @@ public class PartialReplicationMetadataFactory implements
 	@Override
 	public PartialReplicationOID generateFullReplicationOID()
 	{
-		Group group;
 		try
 		{
-			group = TribuDSTM.getGroupClass().newInstance();
+			Group group = TribuDSTM.getGroupClass().newInstance();
 			group.addAddresses(TribuDSTM.getAllMembers());
 			return new PartialReplicationMetadata(group);
 		}
@@ -80,7 +79,6 @@ public class PartialReplicationMetadataFactory implements
 			e.printStackTrace();
 			System.exit(-1);
 		}
-
 		return null;
 	}
 
@@ -93,10 +91,9 @@ public class PartialReplicationMetadataFactory implements
 	@Override
 	public PartialReplicationOID generateFullReplicationOID(int oid)
 	{
-		Group group;
 		try
 		{
-			group = TribuDSTM.getGroupClass().newInstance();
+			Group group = TribuDSTM.getGroupClass().newInstance();
 			group.addAddresses(TribuDSTM.getAllMembers());
 			return new PartialReplicationMetadata(oid, group);
 		}
@@ -106,7 +103,6 @@ public class PartialReplicationMetadataFactory implements
 			e.printStackTrace();
 			System.exit(-1);
 		}
-
 		return null;
 	}
 }

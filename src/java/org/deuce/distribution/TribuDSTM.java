@@ -25,15 +25,20 @@ public final class TribuDSTM
 	private static GroupCommunication groupComm;
 	private static DataPartitioner dataPartitioner;
 	private static GroupPartitioner groupPartitioner;
+	private static boolean partial;
 
 	private static Class<? extends Group> groupClass;
 	private static Class<? extends DistributedContext> ctxClass;
 
 	static
 	{
+		checkRuntimeMode();
 		initReplicationProtocol();
 		initTransactionContext();
+		// if (partial)
+		// {
 		// initPartitioners();
+		// }
 	}
 
 	/*
@@ -48,9 +53,12 @@ public final class TribuDSTM
 	public static void init()
 	{
 		initGroupCommunication();
+		// if (partial)
+		// {
 		// groupPartitioner.partitionGroups(groupComm.getMembers(),
 		// Integer.getInteger("tribu.groups", 1));
 		// dataPartitioner.init();
+		// }
 		distProtocol.init();
 	}
 
@@ -153,6 +161,12 @@ public final class TribuDSTM
 			e.printStackTrace();
 			System.exit(-1);
 		}
+	}
+
+	private static void checkRuntimeMode()
+	{
+		partial = Boolean.parseBoolean(System.getProperty(
+				"tribu.distributed.PartialReplicationMode", "true"));
 	}
 
 	public static final List<Address> getAllMembers()
@@ -258,18 +272,18 @@ public final class TribuDSTM
 		groupComm.subscribeOptimisticDelivery(subscriber);
 	}
 
-	public static final Address getAddress()
-	{
+	public static final Address getLocalAddress()
+	{ // CHECKME é necessário?
 		return groupComm.getAddress();
 	}
 
-	public static final Group getMyGroup()
+	public static final Group getLocalGroup()
 	{
 		return groupPartitioner.getMyGroup();
 	}
 
 	public static final List<Group> getAllGroups()
-	{
+	{ // CHECKME é necessário?
 		return groupPartitioner.getGroups();
 	}
 
@@ -278,8 +292,8 @@ public final class TribuDSTM
 		return dataPartitioner.publishTo(obj);
 	}
 
-	public static final boolean isMyGroup(Group group)
+	public static final boolean isLocalGroup(Group group)
 	{
-		return getMyGroup().equals(group);
+		return getLocalGroup().equals(group);
 	}
 }
