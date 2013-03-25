@@ -99,7 +99,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		}
 	}
 
-	public void sendTotalOrdered(byte[] payload, Group group)
+	public void sendTotalOrdered(byte[] payload, Group... groups)
 	{
 		System.err.println("Feature not implemented.");
 		System.exit(-1);
@@ -121,6 +121,13 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 			e.printStackTrace();
 			System.exit(-1);
 		}
+	}
+
+	@Override
+	public void sendTo(byte[] payload, Address addr)
+	{
+		System.err.println("Feature not implemented.");
+		System.exit(-1);
 	}
 
 	public void regularMessageReceived(SpreadMessage message)

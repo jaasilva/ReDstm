@@ -224,7 +224,6 @@ public class Context extends DistributedContext
 
 	public boolean onReadAccess(boolean value, TxField field)
 	{
-		// TODO TribuDSTM.onTxRead(this, field.getMetadata());
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;

@@ -91,12 +91,15 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		}
 	}
 
-	public void sendTotalOrdered(byte[] payload, Group group)
+	public void sendTotalOrdered(byte[] payload, Group... groups)
 	{ // TODO ver maneira melhor
 		AnycastAddress addr = new AnycastAddress();
-		for (Address a : group.getAddresses())
+		for (Group group : groups)
 		{
-			addr.add((org.jgroups.Address) a.getSpecificAddress());
+			for (Address a : group.getAddresses())
+			{
+				addr.add((org.jgroups.Address) a.getSpecificAddress());
+			}
 		}
 
 		try
@@ -121,6 +124,22 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		try
 		{
 			channel.send(msg);
+		}
+		catch (Exception e)
+		{
+			System.err.println("Couldn't send message.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+
+	@Override
+	public void sendTo(byte[] payload, Address addr)
+	{
+		try
+		{
+			channel.send((org.jgroups.Address) addr.getSpecificAddress(),
+					payload);
 		}
 		catch (Exception e)
 		{

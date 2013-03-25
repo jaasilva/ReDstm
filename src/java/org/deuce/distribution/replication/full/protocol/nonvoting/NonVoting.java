@@ -65,7 +65,7 @@ public class NonVoting extends FullReplicationProtocol implements
 	}
 
 	public void onTxBegin(DistributedContext ctx)
-	{
+	{ // nothing to do
 	}
 
 	public void onTxCommit(DistributedContext ctx)
@@ -79,7 +79,7 @@ public class NonVoting extends FullReplicationProtocol implements
 	}
 
 	public void onTxFinished(DistributedContext ctx, boolean committed)
-	{
+	{ // nothing to do
 	}
 
 	public void onTxContextCreation(DistributedContext ctx)
@@ -90,16 +90,12 @@ public class NonVoting extends FullReplicationProtocol implements
 	@Override
 	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata)
 	{
-		return null;
-		// nothing to do
-
+		return null; // nothing to do
 	}
 
 	@Override
 	public void onTxWrite(DistributedContext ctx, ObjectMetadata metadata,
 			UniqueObject obj)
-	{
-		// nothing to do
-
+	{ // nothing to do
 	}
 }

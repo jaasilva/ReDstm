@@ -32,13 +32,13 @@ public final class TribuDSTM
 
 	static
 	{
-		checkRuntimeMode();
+		checkRuntimeMode("false");
 		initReplicationProtocol();
 		initTransactionContext();
-		// if (partial)
-		// {
-		// initPartitioners();
-		// }
+		if (partial)
+		{
+			initPartitioners();
+		}
 	}
 
 	/*
@@ -53,12 +53,12 @@ public final class TribuDSTM
 	public static void init()
 	{
 		initGroupCommunication();
-		// if (partial)
-		// {
-		// groupPartitioner.partitionGroups(groupComm.getMembers(),
-		// Integer.getInteger("tribu.groups", 1));
-		// dataPartitioner.init();
-		// }
+		if (partial)
+		{
+			groupPartitioner.partitionGroups(groupComm.getMembers(),
+					Integer.getInteger("tribu.groups", 1));
+			dataPartitioner.init();
+		}
 		distProtocol.init();
 	}
 
@@ -163,10 +163,10 @@ public final class TribuDSTM
 		}
 	}
 
-	private static void checkRuntimeMode()
+	private static void checkRuntimeMode(String partialDefault)
 	{
 		partial = Boolean.parseBoolean(System.getProperty(
-				"tribu.distributed.PartialReplicationMode", "true"));
+				"tribu.distributed.PartialReplicationMode", partialDefault));
 	}
 
 	public static final List<Address> getAllMembers()
@@ -246,14 +246,19 @@ public final class TribuDSTM
 		groupComm.sendTotalOrdered(payload);
 	}
 
-	public static final void sendTotalOrdered(byte[] payload, Group group)
+	public static final void sendTotalOrdered(byte[] payload, Group... groups)
 	{
-		groupComm.sendTotalOrdered(payload, group);
+		groupComm.sendTotalOrdered(payload, groups);
 	}
 
 	public static final void sendReliably(byte[] payload)
 	{
 		groupComm.sendReliably(payload);
+	}
+
+	public static final void sendTo(byte[] payload, Address addr)
+	{
+		groupComm.sendTo(payload, addr);
 	}
 
 	public static final boolean isLocalAddress(Address addr)
@@ -273,7 +278,7 @@ public final class TribuDSTM
 	}
 
 	public static final Address getLocalAddress()
-	{ // CHECKME é necessário?
+	{
 		return groupComm.getAddress();
 	}
 
@@ -283,7 +288,7 @@ public final class TribuDSTM
 	}
 
 	public static final List<Group> getAllGroups()
-	{ // CHECKME é necessário?
+	{
 		return groupPartitioner.getGroups();
 	}
 

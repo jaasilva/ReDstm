@@ -121,8 +121,8 @@ public abstract class DistributedContext implements ContextMetadata
 	}
 
 	/**
-	 * Template method that performs the state reset on the concrente instance
-	 * to begin a new transaction.
+	 * Template method that performs the state reset on the concrete instance to
+	 * begin a new transaction.
 	 * 
 	 * @param atomicBlockId
 	 *            unique identifier of the atomic block describing the
@@ -180,8 +180,7 @@ public abstract class DistributedContext implements ContextMetadata
 		// profiler.onTxAppCommit();
 
 		if (writeSet.isEmpty())
-		{
-
+		{ // Read-Only transaction
 			// if (Profiler.enabled)
 			// profiler.txCommitted++;
 

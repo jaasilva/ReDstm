@@ -1,16 +1,34 @@
 package org.deuce.transaction.score;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.deuce.LocalMetadata;
+import org.deuce.distribution.TribuDSTM;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.ReadSet;
 import org.deuce.transaction.TransactionException;
 import org.deuce.transaction.WriteSet;
+import org.deuce.transaction.field.*;
+import org.deuce.transaction.score.pool.*;
+import org.deuce.transaction.tl2.InPlaceLock;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.array.ArrayContainer;
 import org.deuce.transform.localmetadata.type.TxField;
 
 /**
+ * Snapshot visibility for transactions is determined by associating to each
+ * transaction T a scalar timestamp, which we call snapshot identifier (sid).
+ * The sid of a transaction is established upon its first read operation. In
+ * this case, the most recent version of the requested datum is returned, and
+ * the transaction's sid is set to the value of commitId at the transaction's
+ * originating node, if the read can be served locally. Otherwise, if the
+ * requested datum is not maintained locally, T.sid is set equal to the maximum
+ * between commitId at the originating node and commitId at the remote node from
+ * which T read. From that moment on, any subsequent read operation is allowed
+ * to observe the most recent committed version of the requested datum having
+ * timestamp less or equal to T.sid, as in classical MVCC algorithms.
+ * 
  * @author jaasilva
  * 
  */
@@ -18,19 +36,127 @@ import org.deuce.transform.localmetadata.type.TxField;
 @LocalMetadata(metadataClass = "...")
 public class SCOReContext extends DistributedContext
 {
-
 	public static int MAX_VERSIONS = Integer.getInteger(
 			"org.deuce.transaction.score.versions", 16);
-
 	public static final TransactionException VERSION_UNAVAILABLE_EXCEPTION = new TransactionException(
 			"Fail on retrieveing an older and unexistent version.");
+
+	/**
+	 * Maintains the timestamp that was attributed to the last update
+	 * transaction to have committed on this node
+	 */
+	public static final AtomicInteger commitId = new AtomicInteger(0);
+	/**
+	 * Keeps track of the next timestamp that this node will propose when it
+	 * will receive a commit request for a transaction that accessed some of the
+	 * data that it maintains
+	 */
+	public static final AtomicInteger nextId = new AtomicInteger(0);
+
+	private int sid;
 
 	/**
 	 * 
 	 */
 	public SCOReContext()
 	{
-		// TODO SCOReContext
+		// TODO Auto-generated constructor stub
+		super();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.deuce.transaction.DistributedContext#createReadSet()
+	 */
+	@Override
+	protected ReadSet createReadSet()
+	{
+		return new SCOReReadSet();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.deuce.transaction.DistributedContext#createWriteSet()
+	 */
+	@Override
+	protected WriteSet createWriteSet()
+	{
+		return new SCOReWriteSet();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.deuce.transaction.DistributedContext#createState()
+	 */
+	@Override
+	public DistributedContextState createState()
+	{
+		return new SCOReContextState(readSet, writeSet, threadID,
+				atomicBlockId, sid);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.deuce.transaction.DistributedContext#initialise(int,
+	 * java.lang.String)
+	 */
+	@Override
+	protected void initialise(int atomicBlockId, String metainf)
+	{
+		// TODO Auto-generated method stub
+
+		arrayPool.clear();
+		objectPool.clear();
+		booleanPool.clear();
+		bytePool.clear();
+		charPool.clear();
+		shortPool.clear();
+		intPool.clear();
+		longPool.clear();
+		floatPool.clear();
+		doublePool.clear();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.deuce.transaction.DistributedContext#performValidation()
+	 */
+	@Override
+	protected boolean performValidation()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.deuce.transaction.DistributedContext#applyUpdates()
+	 */
+	@Override
+	protected void applyUpdates()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	public void recreateContextFromState(DistributedContextState ctxState)
+	{
+		super.recreateContextFromState(ctxState);
+
+		// TODO Auto-generated method stub
+
+		atomicBlockId = -1;
+
+		arrayPool.clear();
+		objectPool.clear();
+		booleanPool.clear();
+		bytePool.clear();
+		charPool.clear();
+		shortPool.clear();
+		intPool.clear();
+		longPool.clear();
+		floatPool.clear();
+		doublePool.clear();
 	}
 
 	/*
@@ -42,7 +168,17 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void beforeReadAccess(TxField field)
 	{
-		// TODO beforeReadAccess SCOReContext
+		// TODO Auto-generated method stub
+
+	}
+
+	private WriteFieldAccess onReadAccess(TxField field)
+	{
+		// TODO
+		ReadFieldAccess current = readSet.getNext();
+		current.init(field);
+
+		return writeSet.contains(current);
 	}
 
 	/*
@@ -55,8 +191,18 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public ArrayContainer onReadAccess(ArrayContainer value, TxField field)
 	{
-		// TODO onReadAccess SCOReContext
-		return null;
+		return (ArrayContainer) TribuDSTM.onTxRead(this, field.getMetadata());
+	}
+
+	public ArrayContainer onLocalReadAccess(ArrayContainer value, TxField field)
+	{
+		WriteFieldAccess writeAccess = onReadAccess(field);
+		if (writeAccess == null)
+			return value;
+
+		ArrayContainer r = ((ArrayWriteFieldAccess) writeAccess).getValue();
+
+		return r;
 	}
 
 	/*
@@ -67,8 +213,18 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public Object onReadAccess(Object value, TxField field)
 	{
-		// TODO onReadAccess SCOReContext
-		return null;
+		return TribuDSTM.onTxRead(this, field.getMetadata());
+	}
+
+	public Object onLocalReadAccess(Object value, TxField field)
+	{
+		WriteFieldAccess writeAccess = onReadAccess(field);
+		if (writeAccess == null)
+			return value;
+
+		Object r = ((ObjectWriteFieldAccess) writeAccess).getValue();
+
+		return r;
 	}
 
 	/*
@@ -79,8 +235,18 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public boolean onReadAccess(boolean value, TxField field)
 	{
-		// TODO onReadAccess SCOReContext
-		return false;
+		return (Boolean) TribuDSTM.onTxRead(this, field.getMetadata());
+	}
+
+	public boolean onLocalReadAccess(boolean value, TxField field)
+	{
+		WriteFieldAccess writeAccess = onReadAccess(field);
+		if (writeAccess == null)
+			return value;
+
+		boolean r = ((BooleanWriteFieldAccess) writeAccess).getValue();
+
+		return r;
 	}
 
 	/*
@@ -91,8 +257,18 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public byte onReadAccess(byte value, TxField field)
 	{
-		// TODO onReadAccess SCOReContext
-		return 0;
+		return (Byte) TribuDSTM.onTxRead(this, field.getMetadata());
+	}
+
+	public byte onLocalReadAccess(byte value, TxField field)
+	{
+		WriteFieldAccess writeAccess = onReadAccess(field);
+		if (writeAccess == null)
+			return value;
+
+		byte r = ((ByteWriteFieldAccess) writeAccess).getValue();
+
+		return r;
 	}
 
 	/*
@@ -103,8 +279,18 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public char onReadAccess(char value, TxField field)
 	{
-		// TODO onReadAccess SCOReContext
-		return 0;
+		return (Character) TribuDSTM.onTxRead(this, field.getMetadata());
+	}
+
+	public char onLocalReadAccess(char value, TxField field)
+	{
+		WriteFieldAccess writeAccess = onReadAccess(field);
+		if (writeAccess == null)
+			return value;
+
+		char r = ((CharWriteFieldAccess) writeAccess).getValue();
+
+		return r;
 	}
 
 	/*
@@ -115,8 +301,18 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public short onReadAccess(short value, TxField field)
 	{
-		// TODO onReadAccess SCOReContext
-		return 0;
+		return (Short) TribuDSTM.onTxRead(this, field.getMetadata());
+	}
+
+	public short onLocalReadAccess(short value, TxField field)
+	{
+		WriteFieldAccess writeAccess = onReadAccess(field);
+		if (writeAccess == null)
+			return value;
+
+		short r = ((ShortWriteFieldAccess) writeAccess).getValue();
+
+		return r;
 	}
 
 	/*
@@ -127,8 +323,18 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public int onReadAccess(int value, TxField field)
 	{
-		// TODO onReadAccess SCOReContext
-		return 0;
+		return (Integer) TribuDSTM.onTxRead(this, field.getMetadata());
+	}
+
+	public int onLocalReadAccess(int value, TxField field)
+	{
+		WriteFieldAccess writeAccess = onReadAccess(field);
+		if (writeAccess == null)
+			return value;
+
+		int r = ((IntWriteFieldAccess) writeAccess).getValue();
+
+		return r;
 	}
 
 	/*
@@ -139,8 +345,18 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public long onReadAccess(long value, TxField field)
 	{
-		// TODO onReadAccess SCOReContext
-		return 0;
+		return (Long) TribuDSTM.onTxRead(this, field.getMetadata());
+	}
+
+	public long onLocalReadAccess(long value, TxField field)
+	{
+		WriteFieldAccess writeAccess = onReadAccess(field);
+		if (writeAccess == null)
+			return value;
+
+		long r = ((LongWriteFieldAccess) writeAccess).getValue();
+
+		return r;
 	}
 
 	/*
@@ -151,8 +367,18 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public float onReadAccess(float value, TxField field)
 	{
-		// TODO onReadAccess SCOReContext
-		return 0;
+		return (Float) TribuDSTM.onTxRead(this, field.getMetadata());
+	}
+
+	public float onLocalReadAccess(float value, TxField field)
+	{
+		WriteFieldAccess writeAccess = onReadAccess(field);
+		if (writeAccess == null)
+			return value;
+
+		float r = ((FloatWriteFieldAccess) writeAccess).getValue();
+
+		return r;
 	}
 
 	/*
@@ -163,8 +389,23 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public double onReadAccess(double value, TxField field)
 	{
-		// TODO onReadAccess SCOReContext
-		return 0;
+		return (Double) TribuDSTM.onTxRead(this, field.getMetadata());
+	}
+
+	public double onLocalReadAccess(double value, TxField field)
+	{
+		WriteFieldAccess writeAccess = onReadAccess(field);
+		if (writeAccess == null)
+			return value;
+
+		double r = ((DoubleWriteFieldAccess) writeAccess).getValue();
+
+		return r;
+	}
+
+	private void addWriteAccess(WriteFieldAccess write)
+	{ // Add to write set
+		writeSet.put(write);
 	}
 
 	/*
@@ -177,7 +418,9 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(ArrayContainer value, TxField field)
 	{
-		// TODO onWriteAccess SCOReContext
+		ArrayWriteFieldAccess next = arrayPool.getNext();
+		next.set(value, field);
+		addWriteAccess(next);
 	}
 
 	/*
@@ -189,7 +432,9 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(Object value, TxField field)
 	{
-		// TODO onWriteAccess SCOReContext
+		ObjectWriteFieldAccess next = objectPool.getNext();
+		next.set(value, field);
+		addWriteAccess(next);
 	}
 
 	/*
@@ -200,7 +445,9 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(boolean value, TxField field)
 	{
-		// TODO onWriteAccess SCOReContext
+		BooleanWriteFieldAccess next = booleanPool.getNext();
+		next.set(value, field);
+		addWriteAccess(next);
 	}
 
 	/*
@@ -211,7 +458,9 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(byte value, TxField field)
 	{
-		// TODO onWriteAccess SCOReContext
+		ByteWriteFieldAccess next = bytePool.getNext();
+		next.set(value, field);
+		addWriteAccess(next);
 	}
 
 	/*
@@ -222,7 +471,9 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(char value, TxField field)
 	{
-		// TODO onWriteAccess SCOReContext
+		CharWriteFieldAccess next = charPool.getNext();
+		next.set(value, field);
+		addWriteAccess(next);
 	}
 
 	/*
@@ -233,7 +484,9 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(short value, TxField field)
 	{
-		// TODO onWriteAccess SCOReContext
+		ShortWriteFieldAccess next = shortPool.getNext();
+		next.set(value, field);
+		addWriteAccess(next);
 	}
 
 	/*
@@ -244,7 +497,9 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(int value, TxField field)
 	{
-		// TODO onWriteAccess SCOReContext
+		IntWriteFieldAccess next = intPool.getNext();
+		next.set(value, field);
+		addWriteAccess(next);
 	}
 
 	/*
@@ -255,7 +510,9 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(long value, TxField field)
 	{
-		// TODO onWriteAccess SCOReContext
+		LongWriteFieldAccess next = longPool.getNext();
+		next.set(value, field);
+		addWriteAccess(next);
 	}
 
 	/*
@@ -266,7 +523,9 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(float value, TxField field)
 	{
-		// TODO onWriteAccess SCOReContext
+		FloatWriteFieldAccess next = floatPool.getNext();
+		next.set(value, field);
+		addWriteAccess(next);
 	}
 
 	/*
@@ -277,7 +536,9 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(double value, TxField field)
 	{
-		// TODO onWriteAccess SCOReContext
+		DoubleWriteFieldAccess next = doublePool.getNext();
+		next.set(value, field);
+		addWriteAccess(next);
 	}
 
 	/*
@@ -287,72 +548,125 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onIrrevocableAccess()
 	{
-		// TODO onIrrevocableAccess SCOReContext
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.DistributedContext#createReadSet()
-	 */
-	@Override
-	protected ReadSet createReadSet()
+	private static class ArrayResourceFactory implements
+			ResourceFactory<ArrayWriteFieldAccess>
 	{
-		// TODO createReadSet SCOReContext
-		return null;
+		public ArrayWriteFieldAccess newInstance()
+		{
+			return new ArrayWriteFieldAccess();
+		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.DistributedContext#createWriteSet()
-	 */
-	@Override
-	protected WriteSet createWriteSet()
+	final private Pool<ArrayWriteFieldAccess> arrayPool = new Pool<ArrayWriteFieldAccess>(
+			new ArrayResourceFactory());
+
+	private static class ObjectResourceFactory implements
+			ResourceFactory<ObjectWriteFieldAccess>
 	{
-		// TODO createWriteSet SCOReContext
-		return null;
+		public ObjectWriteFieldAccess newInstance()
+		{
+			return new ObjectWriteFieldAccess();
+		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.DistributedContext#createState()
-	 */
-	@Override
-	public DistributedContextState createState()
+	final private Pool<ObjectWriteFieldAccess> objectPool = new Pool<ObjectWriteFieldAccess>(
+			new ObjectResourceFactory());
+
+	private static class BooleanResourceFactory implements
+			ResourceFactory<BooleanWriteFieldAccess>
 	{
-		// TODO createState SCOReContext
-		return null;
+		public BooleanWriteFieldAccess newInstance()
+		{
+			return new BooleanWriteFieldAccess();
+		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.DistributedContext#initialise(int,
-	 * java.lang.String)
-	 */
-	@Override
-	protected void initialise(int atomicBlockId, String metainf)
+	final private Pool<BooleanWriteFieldAccess> booleanPool = new Pool<BooleanWriteFieldAccess>(
+			new BooleanResourceFactory());
+
+	private static class ByteResourceFactory implements
+			ResourceFactory<ByteWriteFieldAccess>
 	{
-		// TODO initialise SCOReContext
+		public ByteWriteFieldAccess newInstance()
+		{
+			return new ByteWriteFieldAccess();
+		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.DistributedContext#performValidation()
-	 */
-	@Override
-	protected boolean performValidation()
+	final private Pool<ByteWriteFieldAccess> bytePool = new Pool<ByteWriteFieldAccess>(
+			new ByteResourceFactory());
+
+	private static class CharResourceFactory implements
+			ResourceFactory<CharWriteFieldAccess>
 	{
-		// TODO performValidation SCOReContext
-		return false;
+		public CharWriteFieldAccess newInstance()
+		{
+			return new CharWriteFieldAccess();
+		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.DistributedContext#applyUpdates()
-	 */
-	@Override
-	protected void applyUpdates()
+	final private Pool<CharWriteFieldAccess> charPool = new Pool<CharWriteFieldAccess>(
+			new CharResourceFactory());
+
+	private static class ShortResourceFactory implements
+			ResourceFactory<ShortWriteFieldAccess>
 	{
-		// TODO applyUpdates SCOReContext
+		public ShortWriteFieldAccess newInstance()
+		{
+			return new ShortWriteFieldAccess();
+		}
 	}
 
+	final private Pool<ShortWriteFieldAccess> shortPool = new Pool<ShortWriteFieldAccess>(
+			new ShortResourceFactory());
+
+	private static class IntResourceFactory implements
+			ResourceFactory<IntWriteFieldAccess>
+	{
+		public IntWriteFieldAccess newInstance()
+		{
+			return new IntWriteFieldAccess();
+		}
+	}
+
+	final private Pool<IntWriteFieldAccess> intPool = new Pool<IntWriteFieldAccess>(
+			new IntResourceFactory());
+
+	private static class LongResourceFactory implements
+			ResourceFactory<LongWriteFieldAccess>
+	{
+		public LongWriteFieldAccess newInstance()
+		{
+			return new LongWriteFieldAccess();
+		}
+	}
+
+	final private Pool<LongWriteFieldAccess> longPool = new Pool<LongWriteFieldAccess>(
+			new LongResourceFactory());
+
+	private static class FloatResourceFactory implements
+			ResourceFactory<FloatWriteFieldAccess>
+	{
+		public FloatWriteFieldAccess newInstance()
+		{
+			return new FloatWriteFieldAccess();
+		}
+	}
+
+	final private Pool<FloatWriteFieldAccess> floatPool = new Pool<FloatWriteFieldAccess>(
+			new FloatResourceFactory());
+
+	private static class DoubleResourceFactory implements
+			ResourceFactory<DoubleWriteFieldAccess>
+	{
+		public DoubleWriteFieldAccess newInstance()
+		{
+			return new DoubleWriteFieldAccess();
+		}
+	}
+
+	final private Pool<DoubleWriteFieldAccess> doublePool = new Pool<DoubleWriteFieldAccess>(
+			new DoubleResourceFactory());
 }

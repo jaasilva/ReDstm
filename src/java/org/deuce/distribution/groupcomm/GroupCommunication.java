@@ -43,9 +43,11 @@ public abstract class GroupCommunication
 
 	public abstract void sendTotalOrdered(byte[] payload);
 
-	public abstract void sendTotalOrdered(byte[] payload, Group group);
+	public abstract void sendTotalOrdered(byte[] payload, Group... groups);
 
 	public abstract void sendReliably(byte[] payload);
+
+	public abstract void sendTo(byte[] payload, Address addr);
 
 	public abstract List<Address> getMembers(); // CHECKME deve ser private?
 

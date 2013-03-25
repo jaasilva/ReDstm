@@ -112,4 +112,10 @@ public class PartialReplicationGroup implements Group
 	{
 		return id.hashCode();
 	}
+
+	@Override
+	public int getSize()
+	{
+		return addresses.size();
+	}
 }

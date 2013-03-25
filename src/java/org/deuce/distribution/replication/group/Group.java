@@ -43,6 +43,11 @@ public interface Group
 	/**
 	 * @return
 	 */
+	public int getSize();
+
+	/**
+	 * @return
+	 */
 	public String toString();
 
 	/**
