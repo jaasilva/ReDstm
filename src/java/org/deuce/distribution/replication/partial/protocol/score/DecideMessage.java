@@ -1,7 +1,5 @@
 package org.deuce.distribution.replication.partial.protocol.score;
 
-import org.deuce.distribution.groupcomm.Address;
-
 /**
  * @author jaasilva
  * 
@@ -9,7 +7,6 @@ import org.deuce.distribution.groupcomm.Address;
 public class DecideMessage
 {
 	public int ctxID;
-	public Address addr;
 	public int finalSid;
 	public boolean result;
 
@@ -18,10 +15,9 @@ public class DecideMessage
 	 * @param finalSid
 	 * @param result
 	 */
-	public DecideMessage(int ctxID, int finalSid, boolean result, Address src)
+	public DecideMessage(int ctxID, int finalSid, boolean result)
 	{
 		this.ctxID = ctxID;
-		this.addr = src;
 		this.finalSid = finalSid;
 		this.result = result;
 	}

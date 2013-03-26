@@ -1,4 +1,4 @@
-package org.deuce.transaction.field;
+package org.deuce.transaction.field.speculative;
 
 import org.deuce.transaction.SpeculativeContext;
 import org.deuce.transform.ExcludeTM;
@@ -6,12 +6,13 @@ import org.deuce.transform.localmetadata.type.TxField;
 import org.deuce.transform.localmetadata.type.speculative.SpeculativeTxField;
 
 @ExcludeTM
-public class SpeculativeIntWriteFieldAccess extends SpeculativeWriteFieldAccess
+public class SpeculativeBooleanWriteFieldAccess extends
+		SpeculativeWriteFieldAccess
 {
 	private static final long serialVersionUID = 1L;
-	private Integer value;
+	private Boolean value;
 
-	public void set(int value, TxField field)
+	public void set(boolean value, TxField field)
 	{
 		super.init(field);
 		this.value = value;
@@ -19,7 +20,7 @@ public class SpeculativeIntWriteFieldAccess extends SpeculativeWriteFieldAccess
 
 	public void put()
 	{
-		((SpeculativeTxField) field).commitInt(value);
+		((SpeculativeTxField) field).commitBoolean(value);
 		// clear();
 		// value = null;
 	}
@@ -34,7 +35,7 @@ public class SpeculativeIntWriteFieldAccess extends SpeculativeWriteFieldAccess
 		((SpeculativeTxField) field).speculativeAbort(value);
 	}
 
-	public Integer getValue()
+	public Boolean getValue()
 	{
 		return value;
 	}

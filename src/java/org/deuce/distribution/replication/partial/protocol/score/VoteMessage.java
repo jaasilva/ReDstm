@@ -1,6 +1,5 @@
 package org.deuce.distribution.replication.partial.protocol.score;
 
-import org.deuce.distribution.groupcomm.Address;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -11,7 +10,6 @@ import org.deuce.transform.ExcludeTM;
 public class VoteMessage
 {
 	public int ctxID;
-	public Address addr;
 	public boolean result;
 	public int proposedTimestamp;
 
@@ -20,10 +18,9 @@ public class VoteMessage
 	 * @param result
 	 * @param proposedTimestamp
 	 */
-	public VoteMessage(int ctxID, boolean result, int proposedTimestamp, Address src)
+	public VoteMessage(int ctxID, boolean result, int proposedTimestamp)
 	{
 		this.ctxID = ctxID;
-		this.addr = src;
 		this.result = result;
 		this.proposedTimestamp = proposedTimestamp;
 	}

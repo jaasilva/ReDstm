@@ -1,6 +1,8 @@
 package org.deuce.distribution.replication.partial.protocol.score;
 
 import org.deuce.distribution.groupcomm.Address;
+import org.deuce.transaction.DistributedContextState;
+import org.deuce.transaction.score.SCOReContextState;
 
 /**
  * @author jaasilva
@@ -8,29 +10,27 @@ import org.deuce.distribution.groupcomm.Address;
  */
 public class PendingTx implements Comparable<PendingTx>
 {
-	public int ctxID;
-	public Address addr;
-	public int sid;
+	public DistributedContextState ctxState;
+	public Address src;
 
 	/**
 	 * @param ctxID
 	 * @param sid
 	 */
-	public PendingTx(int ctxID, int sid, Address src)
+	public PendingTx(DistributedContextState ctxState, Address src)
 	{
-		this.ctxID = ctxID;
-		this.addr = src;
-		this.sid = sid;
+		this.ctxState = ctxState;
+		this.src = src;
 	}
 
 	@Override
 	public int compareTo(PendingTx tx)
 	{
-		if (this.sid > tx.sid)
+		if (((SCOReContextState) this.ctxState).sid > ((SCOReContextState) tx.ctxState).sid)
 		{
 			return 1;
 		}
-		else if (this.sid < tx.sid)
+		else if (((SCOReContextState) this.ctxState).sid < ((SCOReContextState) tx.ctxState).sid)
 		{
 			return -1;
 		}
@@ -44,6 +44,6 @@ public class PendingTx implements Comparable<PendingTx>
 	public boolean equals(Object obj)
 	{
 		return (obj instanceof PendingTx)
-				&& (this.addr.equals(((PendingTx) obj).addr) && this.ctxID == ((PendingTx) obj).ctxID);
+				&& (this.src.equals(((PendingTx) obj).src) && this.ctxState.ctxID == ((PendingTx) obj).ctxState.ctxID);
 	}
 }

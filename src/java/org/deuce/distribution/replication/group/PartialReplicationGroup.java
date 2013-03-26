@@ -100,7 +100,7 @@ public class PartialReplicationGroup implements Group
 		return addresses.addAll(addrs);
 	}
 
-	@Override
+	@Override // CHECKME ver e isto chega!!!!!!!!!
 	public boolean equals(Object obj)
 	{ // PRepGroup only need to have the same id to be considered equal
 		return obj instanceof PartialReplicationGroup

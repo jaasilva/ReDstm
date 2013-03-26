@@ -53,7 +53,7 @@ public class SCOReContext extends DistributedContext
 	 */
 	public static final AtomicInteger nextId = new AtomicInteger(0);
 
-	private int sid;
+	public int sid;
 
 	/**
 	 * 
