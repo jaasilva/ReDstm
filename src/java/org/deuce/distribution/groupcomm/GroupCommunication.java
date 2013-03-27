@@ -20,7 +20,7 @@ public abstract class GroupCommunication
 	public GroupCommunication()
 	{
 		init();
-		System.out.println("-- Waiting for members...");
+		System.err.println("-- Waiting for members...");
 		try
 		{
 			waitForMembers.await();
@@ -29,7 +29,7 @@ public abstract class GroupCommunication
 		{
 			e.printStackTrace();
 		}
-		System.out.println("-- Members arrived!");
+		System.err.println("-- Members arrived!");
 	}
 
 	protected void membersArrived()
