@@ -68,8 +68,7 @@ public final class TribuDSTM
 
 	public static void close()
 	{
-		// groupComm.close();
-		System.exit(0); // CHECKME remove
+		groupComm.close();
 	}
 
 	private static void initGroupCommunication()
