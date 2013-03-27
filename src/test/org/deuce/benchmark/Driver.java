@@ -100,7 +100,6 @@ public class Driver
 		// new Scanner(System.in).nextLine();
 		initBarriers();
 		setupBarrier.join();
-		System.err.println("-- Starting threads.");
 
 		// Profiler.enabled = true;
 
@@ -112,7 +111,7 @@ public class Driver
 		for (int i = 0; i < t.length; i++)
 			t[i] = new Thread(bt[i]);
 
-		// System.out.print("Starting threads...");
+		System.out.print("Starting threads...");
 		for (int i = 0; i < t.length; i++)
 		{
 			// System.out.print(" " + i);
