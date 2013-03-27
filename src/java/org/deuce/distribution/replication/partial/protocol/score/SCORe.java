@@ -133,16 +133,16 @@ public class SCORe extends PartialReplicationProtocol implements
 		{
 			public void run()
 			{
-				if (proposedSn.size() != expectedVotes)
-				{ // timeout occurs. abort transaction
-					SCOReContext ctx = (SCOReContext) contexts
-							.get(currentCommittingCtxID);
-
-					DecideMessage decide = new DecideMessage(ctx.threadID,
-							ctx.sid, false);
+//				if (proposedSn.size() != expectedVotes)
+//				{ // timeout occurs. abort transaction
+//					SCOReContext ctx = (SCOReContext) contexts
+//							.get(currentCommittingCtxID);
+//
+//					DecideMessage decide = new DecideMessage(ctx.threadID,
+//							ctx.sid, false);
 
 					// TODO send decide messages
-				}
+//				}
 			}
 		};
 	}
@@ -243,11 +243,11 @@ public class SCORe extends PartialReplicationProtocol implements
 		VoteMessage vote = (VoteMessage) obj;
 		boolean outcome = true;
 
-		if (vote.ctxID != currentCommittingCtxID) // CHECKME isto nao
-													// funciona!!!!!!!!
-		{ // discard timed out vote message
-			return;
-		}
+//		if (vote.ctxID != currentCommittingCtxID) // CHECKME isto nao
+//													// funciona!!!!!!!!
+//		{ // discard timed out vote message
+//			return;
+//		}
 
 		if (!vote.result) // voted NO
 		{
@@ -256,23 +256,23 @@ public class SCORe extends PartialReplicationProtocol implements
 		}
 		else
 		{ // voted YES. save proposed timestamp
-			proposedSn.add(vote.proposedTimestamp);
-
-			if (proposedSn.size() == expectedVotes)
-			{ // last vote. every vote was YES. send decide message
-				task.cancel(); // cancel timeout
-				finalizeVoteStep(outcome);
-			}
+//			proposedSn.add(vote.proposedTimestamp);
+//
+//			if (proposedSn.size() == expectedVotes)
+//			{ // last vote. every vote was YES. send decide message
+//				task.cancel(); // cancel timeout
+//				finalizeVoteStep(outcome);
+//			}
 		}
 	}
 
 	private void finalizeVoteStep(boolean outcome)
 	{
-		int finalSid = Collections.max(proposedSn);
-		SCOReContext ctx = (SCOReContext) contexts.get(currentCommittingCtxID);
-		ctx.sid = finalSid;
-		DecideMessage decide = new DecideMessage(currentCommittingCtxID,
-				finalSid, outcome);
+//		int finalSid = Collections.max(proposedSn);
+//		SCOReContext ctx = (SCOReContext) contexts.get(currentCommittingCtxID);
+//		ctx.sid = finalSid;
+//		DecideMessage decide = new DecideMessage(currentCommittingCtxID,
+//				finalSid, outcome);
 
 		// TODO send decide message
 	}
@@ -285,10 +285,10 @@ public class SCORe extends PartialReplicationProtocol implements
 		{
 			SCOReContext.nextId.set(Math.max(SCOReContext.nextId.get(),
 					decide.finalSid));
-			stableQ.add(new PendingTx(decide.ctxID, decide.finalSid, src));
+//			stableQ.add(new PendingTx(decide.ctxID, decide.finalSid, src));
 		}
 
-		pendQ.remove(new PendingTx(decide.ctxID, 0, src));
+//		pendQ.remove(new PendingTx(decide.ctxID, 0, src));
 
 		if (!decide.result)
 		{
@@ -316,10 +316,10 @@ public class SCORe extends PartialReplicationProtocol implements
 			PendingTx sTx = stableQ.peek();
 			PendingTx pTx = pendQ.peek();
 
-			if (pTx.sid < sTx.sid)
-			{
-				return;
-			}
+//			if (pTx.sid < sTx.sid)
+//			{
+//				return;
+//			}
 
 			// TODO fazer isto tudo atomicamente
 

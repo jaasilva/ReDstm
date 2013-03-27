@@ -23,7 +23,7 @@ public class VBoxArrO extends TxField implements VBoxO
 
 	public VBoxArrO(Object[] arr, int idx, Object dummy)
 	{
-		super(arr, idx, dummy); // XXX check
+//		super(arr, idx, dummy); // XXX check
 		version = new VersionO(0, readObject(), null);
 	}
 
