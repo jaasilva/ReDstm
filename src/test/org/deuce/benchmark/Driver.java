@@ -99,7 +99,6 @@ public class Driver
 		// System.err.println("-- Set created. Press enter to start threads.");
 		// new Scanner(System.in).nextLine();
 		initBarriers();
-		System.err.println("-- Set created.");
 		setupBarrier.join();
 
 		// Profiler.enabled = true;
