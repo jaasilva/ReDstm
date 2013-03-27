@@ -100,6 +100,7 @@ public class Driver
 		// new Scanner(System.in).nextLine();
 		initBarriers();
 		setupBarrier.join();
+		System.err.println("-- Starting threads.");
 
 		// Profiler.enabled = true;
 
