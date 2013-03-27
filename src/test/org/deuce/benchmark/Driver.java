@@ -111,7 +111,7 @@ public class Driver
 		for (int i = 0; i < t.length; i++)
 			t[i] = new Thread(bt[i]);
 
-		System.out.print("Starting threads...");
+		// System.out.print("Starting threads...");
 		for (int i = 0; i < t.length; i++)
 		{
 			// System.out.print(" " + i);
@@ -186,7 +186,6 @@ public class Driver
 		// System.err.println("-- Benchmark finished. Press enter to exit.");
 		// new Scanner(System.in).nextLine();
 
-		System.err.println("-- Benchmark finished.");
 		finishBarrier.join();
 		System.err.println("-- BYE.");
 		// Profiler.enabled = false;
