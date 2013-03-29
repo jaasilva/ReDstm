@@ -15,7 +15,6 @@ import org.deuce.trove.TObjectProcedure;
 @ExcludeTM
 public class WriteSet
 {
-
 	final private THashSet<WriteFieldAccess> writeSet = new THashSet<WriteFieldAccess>(
 			16);
 
@@ -35,15 +34,13 @@ public class WriteSet
 	}
 
 	public void put(WriteFieldAccess write)
-	{
-		// Add to write set
+	{ // Add to write set
 		if (!writeSet.add(write))
 			writeSet.replace(write);
 	}
 
 	public WriteFieldAccess contains(ReadFieldAccess read)
-	{
-		// Check if it is already included in the write set
+	{ // Check if it is already included in the write set
 		return writeSet.get(read);
 	}
 
@@ -51,5 +48,4 @@ public class WriteSet
 	{
 		return writeSet.size();
 	}
-
 }

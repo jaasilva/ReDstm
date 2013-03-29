@@ -8,22 +8,33 @@ import org.deuce.transform.localmetadata.type.TxField;
 
 /**
  * 
- * @author Ricardo Dias <ricardo.dias@campus.fct.unl.pt>
+ * @author Ricardo Dias <ricardo.dias@campus.fct.unl.pt>, jaasilva
  */
 @ExcludeTM
-public class VBoxFieldO extends TxField implements VBoxO
+public class VBoxField extends TxField implements VBox
 {
-	public volatile VersionO version;
+	public Version version;
+	final private Type type;
 
-	public VBoxFieldO(Object ref, long address)
+	public VBoxField(Object ref, long address, Type type)
 	{
 		super(ref, address);
-		version = new VersionO(0, readObject(), null);
+		this.type = type;
+		version = new Version(0, read(type), null);
 	}
+
+	public VBoxField(Object[] arr, int idx, Type type)
+	{ // used for unidimensional arrays
+		super(arr, idx, null); // XXX o que meter no backend?
+		this.type = type;
+		version = new Version(0, read(type), null);
+	}
+
+	// XXX multiarrays como é?
 
 	public boolean validate(Version version, int owner)
 	{
-		VersionO tmp = this.version;
+		Version tmp = this.version;
 		int l = lock;
 		if ((l & LockTable.LOCK) != 0)
 		{
@@ -37,10 +48,10 @@ public class VBoxFieldO extends TxField implements VBoxO
 
 	public void commit(Object newValue, int txNumber)
 	{
-		VersionO ver = new VersionO(Integer.MAX_VALUE, newValue, version);
-		this.version.value = readObject();
+		Version ver = new Version(Integer.MAX_VALUE, newValue, version);
+		this.version.value = read(type);
 		this.version = ver;
-		writeObject(ver.value);
+		write(ver.value, type);
 		this.version.version = txNumber;
 	}
 
@@ -59,7 +70,7 @@ public class VBoxFieldO extends TxField implements VBoxO
 	{
 		try
 		{
-			__LOCK_FIELD__ = AddressUtil.getAddress(VBoxFieldO.class
+			__LOCK_FIELD__ = AddressUtil.getAddress(VBoxField.class
 					.getDeclaredField("lock"));
 		}
 		catch (SecurityException e)

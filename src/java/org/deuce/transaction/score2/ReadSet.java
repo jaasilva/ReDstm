@@ -13,7 +13,6 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class ReadSet
 {
-
 	private static final int DEFAULT_CAPACITY = 1024;
 	private ReadFieldAccess[] readSet = new ReadFieldAccess[DEFAULT_CAPACITY];
 	private int nextAvaliable = 0;

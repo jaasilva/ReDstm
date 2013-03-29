@@ -10,9 +10,17 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public interface VBox extends InPlaceLock
 {
+	@ExcludeTM
+	static public enum Type
+	{ // XXX array será assim?
+		BYTE, BOOLEAN, CHAR, SHORT, INT, LONG, FLOAT, DOUBLE, OBJECT, ARRAY
+	}
+
 	boolean validate(Version version, int owner);
 
 	Version get(int version);
 
 	Version getTop();
+
+	void commit(Object value, int txNumber);
 }

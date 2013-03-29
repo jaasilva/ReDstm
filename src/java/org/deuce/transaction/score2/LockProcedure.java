@@ -11,7 +11,6 @@ import org.deuce.trove.TObjectProcedure;
  */
 public class LockProcedure implements TObjectProcedure<WriteFieldAccess>
 {
-
 	public int i = 0;
 	public int owner;
 
@@ -46,5 +45,4 @@ public class LockProcedure implements TObjectProcedure<WriteFieldAccess>
 	{
 		this.i = 0;
 	}
-
 }

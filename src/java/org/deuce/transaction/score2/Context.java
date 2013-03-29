@@ -5,29 +5,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.deuce.LocalMetadata;
 import org.deuce.transaction.ContextMetadata;
 import org.deuce.transaction.TransactionException;
-import org.deuce.transaction.score2.field.BooleanWriteFieldAccess;
-import org.deuce.transaction.score2.field.ByteWriteFieldAccess;
-import org.deuce.transaction.score2.field.CharWriteFieldAccess;
-import org.deuce.transaction.score2.field.DoubleWriteFieldAccess;
-import org.deuce.transaction.score2.field.FloatWriteFieldAccess;
-import org.deuce.transaction.score2.field.IntWriteFieldAccess;
-import org.deuce.transaction.score2.field.LongWriteFieldAccess;
-import org.deuce.transaction.score2.field.ObjectWriteFieldAccess;
-import org.deuce.transaction.score2.field.ReadFieldAccess;
-import org.deuce.transaction.score2.field.ShortWriteFieldAccess;
-import org.deuce.transaction.score2.field.VBox;
-import org.deuce.transaction.score2.field.VersionB;
-import org.deuce.transaction.score2.field.VersionC;
-import org.deuce.transaction.score2.field.VersionD;
-import org.deuce.transaction.score2.field.VersionF;
-import org.deuce.transaction.score2.field.VersionI;
-import org.deuce.transaction.score2.field.VersionL;
-import org.deuce.transaction.score2.field.VersionO;
-import org.deuce.transaction.score2.field.VersionS;
-import org.deuce.transaction.score2.field.VersionZ;
-import org.deuce.transaction.score2.field.WriteFieldAccess;
-import org.deuce.transaction.score2.pool.Pool;
-import org.deuce.transaction.score2.pool.ResourceFactory;
+import org.deuce.transaction.score2.field.*;
+import org.deuce.transaction.score.pool.*;
 import org.deuce.transaction.util.BooleanArrayList;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.array.ArrayContainer;
@@ -177,7 +156,6 @@ public final class Context implements ContextMetadata
 
 	public void beforeReadAccess(TxField field)
 	{
-
 	}
 
 	private ReadFieldAccess dummy = new ReadFieldAccess();
@@ -191,21 +169,21 @@ public final class Context implements ContextMetadata
 	public Object onReadAccess(Object value, TxField field)
 	{
 		VBox box = (VBox) field;
-		VersionO ver = null;
+		Version ver = null;
 
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return ((ObjectWriteFieldAccess) res).value;
+				return ((WriteFieldAccess) res).value;
 			}
-			ver = (VersionO) box.get(localClock);
+			ver = (Version) box.get(localClock);
 			readSet.getNext().init(box, ver);
 		}
 		else
 		{
-			ver = (VersionO) box.get(localClock);
+			ver = (Version) box.get(localClock);
 		}
 
 		return ver == box.getTop() ? value : ver.value;
@@ -215,185 +193,185 @@ public final class Context implements ContextMetadata
 	{
 		VBox box = (VBox) field;
 
-		VersionZ ver = null;
+		Version ver = null;
 
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return ((BooleanWriteFieldAccess) res).value;
+				return (Boolean) ((WriteFieldAccess) res).value;
 			}
-			ver = (VersionZ) box.get(localClock);
+			ver = (Version) box.get(localClock);
 			readSet.getNext().init(box, ver);
 		}
 		else
 		{
-			ver = (VersionZ) box.get(localClock);
+			ver = (Version) box.get(localClock);
 		}
 
-		return ver == box.getTop() ? value : ver.value;
+		return (Boolean) (ver == box.getTop() ? value : ver.value);
 	}
 
 	public byte onReadAccess(byte value, TxField field)
 	{
 		VBox box = (VBox) field;
-		VersionB ver = null;
+		Version ver = null;
 
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return ((ByteWriteFieldAccess) res).value;
+				return (Byte) ((WriteFieldAccess) res).value;
 			}
-			ver = (VersionB) box.get(localClock);
+			ver = (Version) box.get(localClock);
 			readSet.getNext().init(box, ver);
 		}
 		else
 		{
-			ver = (VersionB) box.get(localClock);
+			ver = (Version) box.get(localClock);
 		}
 
-		return ver == box.getTop() ? value : ver.value;
+		return (Byte) (ver == box.getTop() ? value : ver.value);
 	}
 
 	public char onReadAccess(char value, TxField field)
 	{
 		VBox box = (VBox) field;
-		VersionC ver = null;
+		Version ver = null;
 
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return ((CharWriteFieldAccess) res).value;
+				return (Character) ((WriteFieldAccess) res).value;
 			}
-			ver = (VersionC) box.get(localClock);
+			ver = (Version) box.get(localClock);
 			readSet.getNext().init(box, ver);
 		}
 		else
 		{
-			ver = (VersionC) box.get(localClock);
+			ver = (Version) box.get(localClock);
 		}
 
-		return ver == box.getTop() ? value : ver.value;
+		return (Character) (ver == box.getTop() ? value : ver.value);
 	}
 
 	public short onReadAccess(short value, TxField field)
 	{
 		VBox box = (VBox) field;
-		VersionS ver = null;
+		Version ver = null;
 
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return ((ShortWriteFieldAccess) res).value;
+				return (Short) ((WriteFieldAccess) res).value;
 			}
-			ver = (VersionS) box.get(localClock);
+			ver = (Version) box.get(localClock);
 			readSet.getNext().init(box, ver);
 		}
 		else
 		{
-			ver = (VersionS) box.get(localClock);
+			ver = (Version) box.get(localClock);
 		}
 
-		return ver == box.getTop() ? value : ver.value;
+		return (Short) (ver == box.getTop() ? value : ver.value);
 	}
 
 	public int onReadAccess(int value, TxField field)
 	{
 		VBox box = (VBox) field;
-		VersionI ver = null;
+		Version ver = null;
 
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return ((IntWriteFieldAccess) res).value;
+				return (Integer) ((WriteFieldAccess) res).value;
 			}
-			ver = (VersionI) box.get(localClock);
+			ver = (Version) box.get(localClock);
 			readSet.getNext().init(box, ver);
 		}
 		else
 		{
-			ver = (VersionI) box.get(localClock);
+			ver = (Version) box.get(localClock);
 		}
 
-		return ver == box.getTop() ? value : ver.value;
+		return (Integer) (ver == box.getTop() ? value : ver.value);
 	}
 
 	public long onReadAccess(long value, TxField field)
 	{
 		VBox box = (VBox) field;
-		VersionL ver = null;
+		Version ver = null;
 
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return ((LongWriteFieldAccess) res).value;
+				return (Long) ((WriteFieldAccess) res).value;
 			}
-			ver = (VersionL) box.get(localClock);
+			ver = (Version) box.get(localClock);
 			readSet.getNext().init(box, ver);
 		}
 		else
 		{
-			ver = (VersionL) box.get(localClock);
+			ver = (Version) box.get(localClock);
 		}
 
-		return ver == box.getTop() ? value : ver.value;
+		return (Long) (ver == box.getTop() ? value : ver.value);
 	}
 
 	public float onReadAccess(float value, TxField field)
 	{
 		VBox box = (VBox) field;
-		VersionF ver = null;
+		Version ver = null;
 
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return ((FloatWriteFieldAccess) res).value;
+				return (Float) ((WriteFieldAccess) res).value;
 			}
-			ver = (VersionF) box.get(localClock);
+			ver = (Version) box.get(localClock);
 			readSet.getNext().init(box, ver);
 		}
 		else
 		{
-			ver = (VersionF) box.get(localClock);
+			ver = (Version) box.get(localClock);
 		}
 
-		return ver == box.getTop() ? value : ver.value;
+		return (Float) (ver == box.getTop() ? value : ver.value);
 	}
 
 	public double onReadAccess(double value, TxField field)
 	{
 		VBox box = (VBox) field;
-		VersionD ver = null;
+		Version ver = null;
 
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return ((DoubleWriteFieldAccess) res).value;
+				return (Double) ((WriteFieldAccess) res).value;
 			}
-			ver = (VersionD) box.get(localClock);
+			ver = (Version) box.get(localClock);
 			readSet.getNext().init(box, ver);
 		}
 		else
 		{
-			ver = (VersionD) box.get(localClock);
+			ver = (Version) box.get(localClock);
 		}
 
-		return ver == box.getTop() ? value : ver.value;
+		return (Double) (ver == box.getTop() ? value : ver.value);
 	}
 
 	public void onWriteAccess(Object value, TxField field)
@@ -404,7 +382,7 @@ public final class Context implements ContextMetadata
 			throw READ_ONLY_FAILURE_EXCEPTION;
 		}
 
-		ObjectWriteFieldAccess write = objectPool.getNext();
+		WriteFieldAccess write = objectPool.getNext();
 		write.init((VBox) field);
 		write.value = value;
 		writeSet.put(write);
@@ -418,7 +396,7 @@ public final class Context implements ContextMetadata
 			throw READ_ONLY_FAILURE_EXCEPTION;
 		}
 
-		BooleanWriteFieldAccess write = booleanPool.getNext();
+		WriteFieldAccess write = booleanPool.getNext();
 		write.init((VBox) field);
 		write.value = value;
 		writeSet.put(write);
@@ -432,7 +410,7 @@ public final class Context implements ContextMetadata
 			throw READ_ONLY_FAILURE_EXCEPTION;
 		}
 
-		ByteWriteFieldAccess write = bytePool.getNext();
+		WriteFieldAccess write = bytePool.getNext();
 		write.init((VBox) field);
 		write.value = value;
 		writeSet.put(write);
@@ -446,7 +424,7 @@ public final class Context implements ContextMetadata
 			throw READ_ONLY_FAILURE_EXCEPTION;
 		}
 
-		CharWriteFieldAccess write = charPool.getNext();
+		WriteFieldAccess write = charPool.getNext();
 		write.init((VBox) field);
 		write.value = value;
 		writeSet.put(write);
@@ -460,7 +438,7 @@ public final class Context implements ContextMetadata
 			throw READ_ONLY_FAILURE_EXCEPTION;
 		}
 
-		ShortWriteFieldAccess write = shortPool.getNext();
+		WriteFieldAccess write = shortPool.getNext();
 		write.init((VBox) field);
 		write.value = value;
 		writeSet.put(write);
@@ -474,7 +452,7 @@ public final class Context implements ContextMetadata
 			throw READ_ONLY_FAILURE_EXCEPTION;
 		}
 
-		IntWriteFieldAccess write = intPool.getNext();
+		WriteFieldAccess write = intPool.getNext();
 		write.init((VBox) field);
 		write.value = value;
 		writeSet.put(write);
@@ -488,7 +466,7 @@ public final class Context implements ContextMetadata
 			throw READ_ONLY_FAILURE_EXCEPTION;
 		}
 
-		LongWriteFieldAccess write = longPool.getNext();
+		WriteFieldAccess write = longPool.getNext();
 		write.init((VBox) field);
 		write.value = value;
 		writeSet.put(write);
@@ -502,7 +480,7 @@ public final class Context implements ContextMetadata
 			throw READ_ONLY_FAILURE_EXCEPTION;
 		}
 
-		FloatWriteFieldAccess write = floatPool.getNext();
+		WriteFieldAccess write = floatPool.getNext();
 		write.init((VBox) field);
 		write.value = value;
 		writeSet.put(write);
@@ -516,133 +494,132 @@ public final class Context implements ContextMetadata
 			throw READ_ONLY_FAILURE_EXCEPTION;
 		}
 
-		DoubleWriteFieldAccess write = doublePool.getNext();
+		WriteFieldAccess write = doublePool.getNext();
 		write.init((VBox) field);
 		write.value = value;
 		writeSet.put(write);
 	}
 
 	private static class ObjectResourceFactory implements
-			ResourceFactory<ObjectWriteFieldAccess>
+			ResourceFactory<WriteFieldAccess>
 	{
 		@Override
-		public ObjectWriteFieldAccess newInstance()
+		public WriteFieldAccess newInstance()
 		{
-			return new ObjectWriteFieldAccess();
+			return new WriteFieldAccess();
 		}
 	}
 
-	final private Pool<ObjectWriteFieldAccess> objectPool = new Pool<ObjectWriteFieldAccess>(
+	final private Pool<WriteFieldAccess> objectPool = new Pool<WriteFieldAccess>(
 			new ObjectResourceFactory());
 
 	private static class BooleanResourceFactory implements
-			ResourceFactory<BooleanWriteFieldAccess>
+			ResourceFactory<WriteFieldAccess>
 	{
 		@Override
-		public BooleanWriteFieldAccess newInstance()
+		public WriteFieldAccess newInstance()
 		{
-			return new BooleanWriteFieldAccess();
+			return new WriteFieldAccess();
 		}
 	}
 
-	final private Pool<BooleanWriteFieldAccess> booleanPool = new Pool<BooleanWriteFieldAccess>(
+	final private Pool<WriteFieldAccess> booleanPool = new Pool<WriteFieldAccess>(
 			new BooleanResourceFactory());
 
 	private static class ByteResourceFactory implements
-			ResourceFactory<ByteWriteFieldAccess>
+			ResourceFactory<WriteFieldAccess>
 	{
 		@Override
-		public ByteWriteFieldAccess newInstance()
+		public WriteFieldAccess newInstance()
 		{
-			return new ByteWriteFieldAccess();
+			return new WriteFieldAccess();
 		}
 	}
 
-	final private Pool<ByteWriteFieldAccess> bytePool = new Pool<ByteWriteFieldAccess>(
+	final private Pool<WriteFieldAccess> bytePool = new Pool<WriteFieldAccess>(
 			new ByteResourceFactory());
 
 	private static class CharResourceFactory implements
-			ResourceFactory<CharWriteFieldAccess>
+			ResourceFactory<WriteFieldAccess>
 	{
 		@Override
-		public CharWriteFieldAccess newInstance()
+		public WriteFieldAccess newInstance()
 		{
-			return new CharWriteFieldAccess();
+			return new WriteFieldAccess();
 		}
 	}
 
-	final private Pool<CharWriteFieldAccess> charPool = new Pool<CharWriteFieldAccess>(
+	final private Pool<WriteFieldAccess> charPool = new Pool<WriteFieldAccess>(
 			new CharResourceFactory());
 
 	private static class ShortResourceFactory implements
-			ResourceFactory<ShortWriteFieldAccess>
+			ResourceFactory<WriteFieldAccess>
 	{
 		@Override
-		public ShortWriteFieldAccess newInstance()
+		public WriteFieldAccess newInstance()
 		{
-			return new ShortWriteFieldAccess();
+			return new WriteFieldAccess();
 		}
 	}
 
-	final private Pool<ShortWriteFieldAccess> shortPool = new Pool<ShortWriteFieldAccess>(
+	final private Pool<WriteFieldAccess> shortPool = new Pool<WriteFieldAccess>(
 			new ShortResourceFactory());
 
 	private static class IntResourceFactory implements
-			ResourceFactory<IntWriteFieldAccess>
+			ResourceFactory<WriteFieldAccess>
 	{
 		@Override
-		public IntWriteFieldAccess newInstance()
+		public WriteFieldAccess newInstance()
 		{
-			return new IntWriteFieldAccess();
+			return new WriteFieldAccess();
 		}
 	}
 
-	final private Pool<IntWriteFieldAccess> intPool = new Pool<IntWriteFieldAccess>(
+	final private Pool<WriteFieldAccess> intPool = new Pool<WriteFieldAccess>(
 			new IntResourceFactory());
 
 	private static class LongResourceFactory implements
-			ResourceFactory<LongWriteFieldAccess>
+			ResourceFactory<WriteFieldAccess>
 	{
 		@Override
-		public LongWriteFieldAccess newInstance()
+		public WriteFieldAccess newInstance()
 		{
-			return new LongWriteFieldAccess();
+			return new WriteFieldAccess();
 		}
 	}
 
-	final private Pool<LongWriteFieldAccess> longPool = new Pool<LongWriteFieldAccess>(
+	final private Pool<WriteFieldAccess> longPool = new Pool<WriteFieldAccess>(
 			new LongResourceFactory());
 
 	private static class FloatResourceFactory implements
-			ResourceFactory<FloatWriteFieldAccess>
+			ResourceFactory<WriteFieldAccess>
 	{
 		@Override
-		public FloatWriteFieldAccess newInstance()
+		public WriteFieldAccess newInstance()
 		{
-			return new FloatWriteFieldAccess();
+			return new WriteFieldAccess();
 		}
 	}
 
-	final private Pool<FloatWriteFieldAccess> floatPool = new Pool<FloatWriteFieldAccess>(
+	final private Pool<WriteFieldAccess> floatPool = new Pool<WriteFieldAccess>(
 			new FloatResourceFactory());
 
 	private static class DoubleResourceFactory implements
-			ResourceFactory<DoubleWriteFieldAccess>
+			ResourceFactory<WriteFieldAccess>
 	{
 		@Override
-		public DoubleWriteFieldAccess newInstance()
+		public WriteFieldAccess newInstance()
 		{
-			return new DoubleWriteFieldAccess();
+			return new WriteFieldAccess();
 		}
 	}
 
-	final private Pool<DoubleWriteFieldAccess> doublePool = new Pool<DoubleWriteFieldAccess>(
+	final private Pool<WriteFieldAccess> doublePool = new Pool<WriteFieldAccess>(
 			new DoubleResourceFactory());
 
 	@Override
 	public void onIrrevocableAccess()
 	{
-
 	}
 
 	@Override
@@ -656,7 +633,6 @@ public final class Context implements ContextMetadata
 	public void onWriteAccess(ArrayContainer value, TxField field)
 	{
 		// TODO FAZER
-		
-	}
 
+	}
 }

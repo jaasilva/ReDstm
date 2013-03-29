@@ -71,6 +71,71 @@ public class TxField implements UniqueObject
 		index = idx;
 	}
 
+	public void write(Object value,
+			org.deuce.transaction.score2.field.VBox.Type type)
+	{
+		switch (type)
+		{
+			case BYTE:
+				writeByte((Byte) value);
+				break;
+			case BOOLEAN:
+				writeBoolean((Boolean) value);
+				break;
+			case CHAR:
+				writeChar((Character) value);
+				break;
+			case SHORT:
+				writeShort((Short) value);
+				break;
+			case INT:
+				writeInt((Integer) value);
+				break;
+			case LONG:
+				writeLong((Long) value);
+				break;
+			case FLOAT:
+				writeFloat((Float) value);
+				break;
+			case DOUBLE:
+				writeDouble((Double) value);
+				break;
+			case OBJECT:
+				writeObject(value);
+				break;
+			case ARRAY:
+				writeArray((ArrayContainer) value);
+		}
+	}
+
+	public Object read(org.deuce.transaction.score2.field.VBox.Type type)
+	{
+		switch (type)
+		{
+			case BYTE:
+				return readByte();
+			case BOOLEAN:
+				return readBoolean();
+			case CHAR:
+				return readChar();
+			case SHORT:
+				return readShort();
+			case INT:
+				return readInt();
+			case LONG:
+				return readLong();
+			case FLOAT:
+				return readFloat();
+			case DOUBLE:
+				return readDouble();
+			case OBJECT:
+				return readObject();
+			case ARRAY:
+				return readArray();
+		}
+		return null;
+	}
+
 	public void writeBoolean(boolean value)
 	{
 		UnsafeHolder.getUnsafe().putBoolean(ref, address, value);

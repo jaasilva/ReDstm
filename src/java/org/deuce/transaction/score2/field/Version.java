@@ -5,7 +5,7 @@ import org.deuce.transform.ExcludeTM;
 
 /**
  * 
- * @author Ricardo Dias <ricardo.dias@campus.fct.unl.pt>
+ * @author Ricardo Dias <ricardo.dias@campus.fct.unl.pt>, jaasilva
  */
 @ExcludeTM
 public class Version
@@ -13,24 +13,24 @@ public class Version
 	public volatile int version;
 	public Version next;
 	public int size;
+	public Object value;
 
-	public Version(int version, Version next)
+	public Version(int version, Object value, Version next)
 	{
 		this.version = version;
 		this.next = next;
+		this.value = value;
 		this.size = next != null ? next.size + 1 : 1;
 		if (size == Context.MAX_VERSIONS)
 		{
 			cleanVersions();
-			// divide by 2
-			size = Context.MAX_VERSIONS >>> 1;
+			size = Context.MAX_VERSIONS >>> 1; // divide by 2
 		}
 	}
 
 	private void cleanVersions()
 	{
-		// divide by 2
-		int c = Context.MAX_VERSIONS >>> 1;
+		int c = Context.MAX_VERSIONS >>> 1; // divide by 2
 		Version v = this;
 		while (c > 1)
 		{
