@@ -220,9 +220,9 @@ public final class TribuDSTM
 	}
 
 	public static final Object onTxRead(DistributedContext ctx,
-			ObjectMetadata metadata)
+			ObjectMetadata metadata, Object value)
 	{
-		return distProtocol.onTxRead(ctx, metadata);
+		return distProtocol.onTxRead(ctx, metadata, value);
 	}
 
 	public static final void onTxWrite(DistributedContext ctx,
@@ -245,7 +245,7 @@ public final class TribuDSTM
 		groupComm.sendTotalOrdered(payload);
 	}
 
-	public static final void sendTotalOrdered(byte[] payload, Group... groups)
+	public static final void sendTotalOrdered(byte[] payload, Group groups)
 	{
 		groupComm.sendTotalOrdered(payload, groups);
 	}

@@ -151,14 +151,14 @@ public abstract class DistributedContext implements ContextMetadata
 	public boolean commit()
 	{
 		if (writeSet.isEmpty())
-		{ // read-only transaction
+		{ // read-only transaction // XXX isto é sempre assim?
 			TribuDSTM.onTxFinished(this, true);
 			return true;
 		}
 
 		TribuDSTM.onTxCommit(this);
 		try
-		{
+		{ // blocked awaiting distributed validation
 			trxProcessed.acquire();
 		}
 		catch (InterruptedException e)
@@ -181,7 +181,7 @@ public abstract class DistributedContext implements ContextMetadata
 	public void processed(boolean committed)
 	{
 		this.committed = committed;
-		trxProcessed.release();
+		trxProcessed.release(); // distributed validation finished
 	}
 
 	public void rollback()

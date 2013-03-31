@@ -43,7 +43,7 @@ public abstract class GroupCommunication
 
 	public abstract void sendTotalOrdered(byte[] payload);
 
-	public abstract void sendTotalOrdered(byte[] payload, Group... groups);
+	public abstract void sendTotalOrdered(byte[] payload, Group groups);
 
 	public abstract void sendReliably(byte[] payload);
 

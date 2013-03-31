@@ -129,7 +129,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		}
 	}
 
-	public void sendTotalOrdered(byte[] payload, Group... groups)
+	public void sendTotalOrdered(byte[] payload, Group groups)
 	{
 		System.err.println("Feature not implemented.");
 		System.exit(-1);

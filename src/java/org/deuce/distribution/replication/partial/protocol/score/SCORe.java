@@ -18,6 +18,7 @@ import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.group.Group;
+import org.deuce.distribution.replication.group.GroupUtils;
 import org.deuce.distribution.replication.partial.PartialReplicationProtocol;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
@@ -109,30 +110,39 @@ public class SCORe extends PartialReplicationProtocol implements
 	@Override
 	public void onTxCommit(DistributedContext ctx)
 	{
+		int id = ctx.threadID;
 		DistributedContextState ctxState = ctx.createState();
 		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
 
 		Group group1 = ((SCOReReadSet) ctxState.rs).getInvolvedNodes();
 		Group group2 = ((SCOReWriteSet) ctxState.ws).getInvolvedNodes();
-		int expectedVotes = group1.getSize() + group2.getSize();
+		Group resGroup = GroupUtils.unionGroups(group1, group2);
+		int expVotes = resGroup.getSize();
 
-		votes.put(ctx.threadID, new ArrayList<Integer>(expectedVotes));
-		this.expectedVotes.put(ctx.threadID, expectedVotes);
+		votes.put(id, new ArrayList<Integer>(expVotes));
+		expectedVotes.put(id, expVotes);
 
 		// send prepare message
-		TribuDSTM.sendTotalOrdered(payload, group1, group2);
+		TribuDSTM.sendTotalOrdered(payload, resGroup);
 
-		TimerTask task = voteTimeoutHandler(); // set timeout handler
-		timeoutTasks.put(ctx.threadID, task);
+		TimerTask task = voteTimeoutHandler(id); // set timeout handler
+		timeoutTasks.put(id, task);
 		timeoutTimer.schedule(task, timeout);
 	}
 
-	private TimerTask voteTimeoutHandler()
+	private TimerTask voteTimeoutHandler(final int id)
 	{
 		return new TimerTask()
 		{
+			private final int ctxID = id;
+
 			public void run()
-			{
+			{ // XXX ver se este if é necessario...
+				if (votes.get(id).size() != expectedVotes.get(id))
+				{ // timeout occurs. abort transaction
+					// TODO
+				}
+
 				if (proposedSn.size() != expectedVotes)
 				{ // timeout occurs. abort transaction
 					SCOReContext ctx = (SCOReContext) contexts
@@ -166,10 +176,10 @@ public class SCORe extends PartialReplicationProtocol implements
 	 * .DistributedContext, org.deuce.distribution.ObjectMetadata)
 	 */
 	@Override
-	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata)
+	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata,
+			Object value)
 	{
-		// TODO onTxRead SCORe
-		return null;
+		return null; // TODO onTxRead SCORe
 	}
 
 	/*
@@ -199,8 +209,8 @@ public class SCORe extends PartialReplicationProtocol implements
 		{
 			prepareMessage(obj, src);
 		}
-		else if (obj instanceof VoteMessage) // VoteMessage
-		{ // this is the coordinator
+		else if (obj instanceof VoteMessage) // Vote Message
+		{ // I am the coordinator of this commit
 			voteMessage(obj);
 		}
 		else if (obj instanceof DecideMessage) // Decide Message
@@ -208,12 +218,12 @@ public class SCORe extends PartialReplicationProtocol implements
 			decideMessage(obj, src);
 		}
 		else if (obj instanceof ReadRequest) // Read Requested
-		{
-			// TODO stuff
+		{ // I have the requested object
+			// TODO implementar readRequest
 		}
 		else if (obj instanceof ReadReturn) // Read Returned
-		{
-			// TODO stuff
+		{ // I requested this object
+			// TODO implementar readReturn
 		}
 		processTx();
 	}
@@ -225,15 +235,21 @@ public class SCORe extends PartialReplicationProtocol implements
 
 		// TODO get locks and validate rs. save result in outcome
 
-		if (outcome)
-		{ // valid
-			SCOReContext.nextId.incrementAndGet();
+		if (outcome) // valid transaction
+		{
+			ctxState.sid = SCOReContext.nextId.incrementAndGet();
+
+			if (src.isLocal())
+			{ // XXX é mesmo necessario?
+				((SCOReContext) contexts.get(ctxState.ctxID)).sid = ctxState.sid;
+			}
+
 			PendingTx pend = new PendingTx(ctxState, src);
 			pendQ.add(pend);
 		}
 
 		VoteMessage vote = new VoteMessage(ctxState.ctxID, outcome,
-				SCOReContext.nextId.get());
+				ctxState.sid);
 		byte[] payload = ObjectSerializer.object2ByteArray(vote);
 		TribuDSTM.sendTo(payload, src); // send vote message
 	}
@@ -243,36 +259,32 @@ public class SCORe extends PartialReplicationProtocol implements
 		VoteMessage vote = (VoteMessage) obj;
 		boolean outcome = true;
 
-		if (vote.ctxID != currentCommittingCtxID) // CHECKME isto nao
-													// funciona!!!!!!!!
-		{ // discard timed out vote message
-			return;
-		}
+		// CHECKME verificar votos para transacoes já abortadas... votos
+		// atrasados
 
 		if (!vote.result) // voted NO
 		{
 			outcome = false;
-			finalizeVoteStep(outcome);
+			finalizeVoteStep(vote.ctxID, outcome);
 		}
 		else
 		{ // voted YES. save proposed timestamp
-			proposedSn.add(vote.proposedTimestamp);
+			votes.get(vote.ctxID).add(vote.proposedTimestamp);
 
-			if (proposedSn.size() == expectedVotes)
+			if (votes.get(vote.ctxID).size() == expectedVotes.get(vote.ctxID))
 			{ // last vote. every vote was YES. send decide message
-				task.cancel(); // cancel timeout
-				finalizeVoteStep(outcome);
+				finalizeVoteStep(vote.ctxID, outcome);
 			}
 		}
 	}
 
-	private void finalizeVoteStep(boolean outcome)
+	private void finalizeVoteStep(int ctxID, boolean outcome)
 	{
-		int finalSid = Collections.max(proposedSn);
-		SCOReContext ctx = (SCOReContext) contexts.get(currentCommittingCtxID);
-		ctx.sid = finalSid;
-		DecideMessage decide = new DecideMessage(currentCommittingCtxID,
-				finalSid, outcome);
+		timeoutTasks.get(ctxID).cancel(); // cancel timeout
+		int finalSid = Collections.max(votes.get(ctxID));
+		((SCOReContext) contexts.get(ctxID)).sid = finalSid;
+
+		DecideMessage decide = new DecideMessage(ctxID, finalSid, outcome);
 
 		// TODO send decide message
 	}
@@ -283,8 +295,9 @@ public class SCORe extends PartialReplicationProtocol implements
 
 		if (decide.result)
 		{
-			SCOReContext.nextId.set(Math.max(SCOReContext.nextId.get(),
-					decide.finalSid));
+			int max = Math.max(SCOReContext.nextId.get(), decide.finalSid);
+			SCOReContext.nextId.set(max);
+			
 			stableQ.add(new PendingTx(decide.ctxID, decide.finalSid, src));
 		}
 

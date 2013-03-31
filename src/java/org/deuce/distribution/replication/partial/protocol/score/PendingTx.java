@@ -26,18 +26,8 @@ public class PendingTx implements Comparable<PendingTx>
 	@Override
 	public int compareTo(PendingTx tx)
 	{
-		if (((SCOReContextState) this.ctxState).sid > ((SCOReContextState) tx.ctxState).sid)
-		{
-			return 1;
-		}
-		else if (((SCOReContextState) this.ctxState).sid < ((SCOReContextState) tx.ctxState).sid)
-		{
-			return -1;
-		}
-		else
-		{
-			return 0;
-		}
+		return ((SCOReContextState) this.ctxState).sid
+				- ((SCOReContextState) tx.ctxState).sid;
 	}
 
 	@Override

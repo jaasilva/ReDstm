@@ -11,7 +11,6 @@ import org.deuce.transaction.TransactionException;
 import org.deuce.transaction.WriteSet;
 import org.deuce.transaction.field.*;
 import org.deuce.transaction.score.pool.*;
-import org.deuce.transaction.tl2.InPlaceLock;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.array.ArrayContainer;
 import org.deuce.transform.localmetadata.type.TxField;
@@ -191,7 +190,8 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public ArrayContainer onReadAccess(ArrayContainer value, TxField field)
 	{
-		return (ArrayContainer) TribuDSTM.onTxRead(this, field.getMetadata());
+		return (ArrayContainer) TribuDSTM.onTxRead(this, field.getMetadata(),
+				value);
 	}
 
 	public ArrayContainer onLocalReadAccess(ArrayContainer value, TxField field)
@@ -213,7 +213,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public Object onReadAccess(Object value, TxField field)
 	{
-		return TribuDSTM.onTxRead(this, field.getMetadata());
+		return TribuDSTM.onTxRead(this, field.getMetadata(), value);
 	}
 
 	public Object onLocalReadAccess(Object value, TxField field)
@@ -235,7 +235,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public boolean onReadAccess(boolean value, TxField field)
 	{
-		return (Boolean) TribuDSTM.onTxRead(this, field.getMetadata());
+		return (Boolean) TribuDSTM.onTxRead(this, field.getMetadata(), value);
 	}
 
 	public boolean onLocalReadAccess(boolean value, TxField field)
@@ -257,7 +257,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public byte onReadAccess(byte value, TxField field)
 	{
-		return (Byte) TribuDSTM.onTxRead(this, field.getMetadata());
+		return (Byte) TribuDSTM.onTxRead(this, field.getMetadata(), value);
 	}
 
 	public byte onLocalReadAccess(byte value, TxField field)
@@ -279,7 +279,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public char onReadAccess(char value, TxField field)
 	{
-		return (Character) TribuDSTM.onTxRead(this, field.getMetadata());
+		return (Character) TribuDSTM.onTxRead(this, field.getMetadata(), value);
 	}
 
 	public char onLocalReadAccess(char value, TxField field)
@@ -301,7 +301,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public short onReadAccess(short value, TxField field)
 	{
-		return (Short) TribuDSTM.onTxRead(this, field.getMetadata());
+		return (Short) TribuDSTM.onTxRead(this, field.getMetadata(), value);
 	}
 
 	public short onLocalReadAccess(short value, TxField field)
@@ -323,7 +323,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public int onReadAccess(int value, TxField field)
 	{
-		return (Integer) TribuDSTM.onTxRead(this, field.getMetadata());
+		return (Integer) TribuDSTM.onTxRead(this, field.getMetadata(), value);
 	}
 
 	public int onLocalReadAccess(int value, TxField field)
@@ -345,7 +345,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public long onReadAccess(long value, TxField field)
 	{
-		return (Long) TribuDSTM.onTxRead(this, field.getMetadata());
+		return (Long) TribuDSTM.onTxRead(this, field.getMetadata(), value);
 	}
 
 	public long onLocalReadAccess(long value, TxField field)
@@ -367,7 +367,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public float onReadAccess(float value, TxField field)
 	{
-		return (Float) TribuDSTM.onTxRead(this, field.getMetadata());
+		return (Float) TribuDSTM.onTxRead(this, field.getMetadata(), value);
 	}
 
 	public float onLocalReadAccess(float value, TxField field)
@@ -389,7 +389,7 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public double onReadAccess(double value, TxField field)
 	{
-		return (Double) TribuDSTM.onTxRead(this, field.getMetadata());
+		return (Double) TribuDSTM.onTxRead(this, field.getMetadata(), value);
 	}
 
 	public double onLocalReadAccess(double value, TxField field)

@@ -88,7 +88,8 @@ public class NonVoting extends FullReplicationProtocol implements
 	}
 
 	@Override
-	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata)
+	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata,
+			Object value)
 	{
 		return null; // nothing to do
 	}

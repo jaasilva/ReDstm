@@ -13,7 +13,7 @@ import org.deuce.transform.ExcludeTM;
 public class SCOReContextState extends DistributedContextState
 {
 	private static final long serialVersionUID = 399279683341037953L;
-	public final int sid;
+	public int sid;
 
 	/**
 	 * @param rs

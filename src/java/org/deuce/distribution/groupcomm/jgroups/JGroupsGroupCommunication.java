@@ -91,15 +91,12 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		}
 	}
 
-	public void sendTotalOrdered(byte[] payload, Group... groups)
+	public void sendTotalOrdered(byte[] payload, Group groups)
 	{ // TODO ver maneira melhor
 		AnycastAddress addr = new AnycastAddress();
-		for (Group group : groups)
+		for (Address a : groups.getAddresses())
 		{
-			for (Address a : group.getAddresses())
-			{
-				addr.add((org.jgroups.Address) a.getSpecificAddress());
-			}
+			addr.add((org.jgroups.Address) a.getSpecificAddress());
 		}
 
 		try
