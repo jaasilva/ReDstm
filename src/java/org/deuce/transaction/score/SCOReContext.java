@@ -2,7 +2,6 @@ package org.deuce.transaction.score;
 
 import org.deuce.LocalMetadata;
 import org.deuce.distribution.TribuDSTM;
-import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.GroupUtils;
 import org.deuce.transaction.DistributedContext;
@@ -35,7 +34,14 @@ import org.deuce.transform.localmetadata.type.TxField;
 @LocalMetadata(metadataClass = "...")
 public class SCOReContext extends DistributedContext
 {
+	/**
+	 * Snapshot id for the transactions of this context
+	 */
 	public int sid;
+	/**
+	 * Transaction id that uniquely identifies a transaction in the entire
+	 * system
+	 */
 	public String trxID;
 
 	/**
@@ -43,9 +49,8 @@ public class SCOReContext extends DistributedContext
 	 */
 	public SCOReContext()
 	{
-		// TODO Auto-generated constructor stub
 		super();
-		trxID = java.util.UUID.randomUUID().toString(); // XXX é muito pesado?
+		trxID = java.util.UUID.randomUUID().toString();
 	}
 
 	/*

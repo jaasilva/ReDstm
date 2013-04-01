@@ -184,21 +184,7 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 			}
 		}
 
-		// FIXME Para fazer o que quero, tem que ser com a tree API. Ou com duas
-		// passagens?
-		// If it is an application class directly extending Object, then we make
-		// it extend UniqueObject
-		// if (!excludeApp && !excludeSys && !isInterface
-		// && superName.equals(Type.getInternalName(Object.class))) {
-		// super.visit(version, access, name, signature, UniqueObject.NAME,
-		// interfaces);
-		// isUniqueObject = true;
-		// } else {
-		// super.visit(version, access, name, signature, superName, interfaces);
-		// isUniqueObject = false;
-		// }
-
-		// TODO FIXME This should be done in a clever way. For example, only the
+		// FIXME This should be done in a clever way. For example, only the
 		// roots from the application's class hierarchies should be
 		// instrumented. Will the serialisation technique work?
 		isAbstract = (access & Opcodes.ACC_ABSTRACT) != 0;

@@ -159,6 +159,11 @@ public class SCORe extends PartialReplicationProtocol implements
 		TimerTask task = voteTimeoutHandler(ctxID, ((SCOReContext) ctx).trxID);
 		timeoutTasks.put(ctxID, task); // set timeout handler
 		timeoutTimer.schedule(task, timeout);
+
+		LOGGER.trace(((SCOReContextState) ctxState).origin
+				+ " trying to commit " + ctx.threadID + ":" + ctx.atomicBlockId
+				+ ":" + ((SCOReContext) ctx).trxID
+				+ " --- sending prepare msg to " + resGroup);
 	}
 
 	private TimerTask voteTimeoutHandler(final int id, final String trxid)
@@ -187,7 +192,6 @@ public class SCORe extends PartialReplicationProtocol implements
 	@Override
 	public void onTxFinished(DistributedContext ctx, boolean committed)
 	{
-		// TODO onTxFinished SCORe
 	}
 
 	/*
@@ -263,6 +267,10 @@ public class SCORe extends PartialReplicationProtocol implements
 			next = nextId.incrementAndGet();
 			pendQ.add(new Pair<String, Integer>(ctxState.trxID, next));
 		}
+
+		LOGGER.trace("Received prepare msg from " + ctxState.origin
+				+ " for trx " + ctxState.ctxID + ":" + ctxState.atomicBlockId
+				+ ":" + ctxState.trxID);
 
 		VoteMessage vote = new VoteMessage(ctxState.ctxID, outcome, next,
 				ctxState.trxID);

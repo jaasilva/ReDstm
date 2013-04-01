@@ -151,7 +151,7 @@ public abstract class DistributedContext implements ContextMetadata
 	public boolean commit()
 	{
 		if (writeSet.isEmpty())
-		{ // read-only transaction // XXX isto é sempre assim?
+		{ // read-only transaction
 			TribuDSTM.onTxFinished(this, true);
 			return true;
 		}
