@@ -1,13 +1,13 @@
 package org.deuce.transaction.score;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.deuce.LocalMetadata;
 import org.deuce.distribution.TribuDSTM;
+import org.deuce.distribution.groupcomm.Address;
+import org.deuce.distribution.replication.group.Group;
+import org.deuce.distribution.replication.group.GroupUtils;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.ReadSet;
-import org.deuce.transaction.TransactionException;
 import org.deuce.transaction.WriteSet;
 import org.deuce.transaction.field.*;
 import org.deuce.transaction.score.pool.*;
@@ -35,24 +35,8 @@ import org.deuce.transform.localmetadata.type.TxField;
 @LocalMetadata(metadataClass = "...")
 public class SCOReContext extends DistributedContext
 {
-	public static int MAX_VERSIONS = Integer.getInteger(
-			"org.deuce.transaction.score.versions", 16);
-	public static final TransactionException VERSION_UNAVAILABLE_EXCEPTION = new TransactionException(
-			"Fail on retrieveing an older and unexistent version.");
-
-	/**
-	 * Maintains the timestamp that was attributed to the last update
-	 * transaction to have committed on this node
-	 */
-	public static final AtomicInteger commitId = new AtomicInteger(0);
-	/**
-	 * Keeps track of the next timestamp that this node will propose when it
-	 * will receive a commit request for a transaction that accessed some of the
-	 * data that it maintains
-	 */
-	public static final AtomicInteger nextId = new AtomicInteger(0);
-
 	public int sid;
+	public String trxID;
 
 	/**
 	 * 
@@ -61,6 +45,7 @@ public class SCOReContext extends DistributedContext
 	{
 		// TODO Auto-generated constructor stub
 		super();
+		trxID = java.util.UUID.randomUUID().toString(); // XXX é muito pesado?
 	}
 
 	/*
@@ -91,7 +76,18 @@ public class SCOReContext extends DistributedContext
 	public DistributedContextState createState()
 	{
 		return new SCOReContextState(readSet, writeSet, threadID,
-				atomicBlockId, sid);
+				atomicBlockId, sid, trxID);
+	}
+
+	/**
+	 * @return
+	 */
+	public Group getInvolvedNodes()
+	{
+		Group group1 = ((SCOReReadSet) readSet).getInvolvedNodes();
+		Group group2 = ((SCOReWriteSet) writeSet).getInvolvedNodes();
+		Group resGroup = GroupUtils.unionGroups(group1, group2);
+		return resGroup;
 	}
 
 	/*
@@ -103,6 +99,7 @@ public class SCOReContext extends DistributedContext
 	protected void initialise(int atomicBlockId, String metainf)
 	{
 		// TODO Auto-generated method stub
+		trxID = java.util.UUID.randomUUID().toString();
 
 		arrayPool.clear();
 		objectPool.clear();
@@ -168,7 +165,6 @@ public class SCOReContext extends DistributedContext
 	public void beforeReadAccess(TxField field)
 	{
 		// TODO Auto-generated method stub
-
 	}
 
 	private WriteFieldAccess onReadAccess(TxField field)

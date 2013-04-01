@@ -7,6 +7,7 @@ package org.deuce.distribution.replication.partial.protocol.score;
 public class DecideMessage
 {
 	public int ctxID;
+	public String trxID;
 	public int finalSid;
 	public boolean result;
 
@@ -15,9 +16,10 @@ public class DecideMessage
 	 * @param finalSid
 	 * @param result
 	 */
-	public DecideMessage(int ctxID, int finalSid, boolean result)
+	public DecideMessage(int ctxID, String trxID, int finalSid, boolean result)
 	{
 		this.ctxID = ctxID;
+		this.trxID = trxID;
 		this.finalSid = finalSid;
 		this.result = result;
 	}

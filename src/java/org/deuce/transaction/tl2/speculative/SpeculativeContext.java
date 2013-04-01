@@ -1,4 +1,4 @@
-package org.deuce.transaction.tl2;
+package org.deuce.transaction.tl2.speculative;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,6 +21,7 @@ import org.deuce.transaction.field.speculative.SpeculativeLongWriteFieldAccess;
 import org.deuce.transaction.field.speculative.SpeculativeObjectWriteFieldAccess;
 import org.deuce.transaction.field.speculative.SpeculativeShortWriteFieldAccess;
 import org.deuce.transaction.field.speculative.SpeculativeWriteFieldAccess;
+import org.deuce.transaction.tl2.InPlaceLock;
 import org.deuce.transaction.tl2.pool.Pool;
 import org.deuce.transaction.tl2.pool.ResourceFactory;
 import org.deuce.transform.ExcludeTM;

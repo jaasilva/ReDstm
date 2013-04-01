@@ -1,4 +1,4 @@
-package org.deuce.transaction.tl2;
+package org.deuce.transaction.tl2.speculative;
 
 import java.util.NoSuchElementException;
 
@@ -6,6 +6,7 @@ import org.deuce.transaction.ReadSet;
 import org.deuce.transaction.SpeculativeContext;
 import org.deuce.transaction.TransactionException;
 import org.deuce.transaction.field.ReadFieldAccess;
+import org.deuce.transaction.tl2.InPlaceLock;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.speculative.SpeculativeTxField;
 

@@ -2,6 +2,7 @@ package org.deuce.distribution.replication.partial.protocol.score;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectMetadata;
@@ -18,8 +20,8 @@ import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.group.Group;
-import org.deuce.distribution.replication.group.GroupUtils;
 import org.deuce.distribution.replication.partial.PartialReplicationProtocol;
+import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.score.*;
@@ -34,6 +36,28 @@ public class SCORe extends PartialReplicationProtocol implements
 		DeliverySubscriber
 {
 	private static final Logger LOGGER = Logger.getLogger(SCORe.class);
+
+	private Comparator<Pair<String, Integer>> comp = new Comparator<Pair<String, Integer>>()
+	{
+		@Override
+		public int compare(Pair<String, Integer> o1, Pair<String, Integer> o2)
+		{
+			return o1.second - o2.second;
+		}
+	};
+
+	// CHECKME verificar se precisam de ser atomic...
+	/**
+	 * Maintains the timestamp that was attributed to the last update
+	 * transaction to have committed on this node
+	 */
+	private final AtomicInteger commitId = new AtomicInteger(0);
+	/**
+	 * Keeps track of the next timestamp that this node will propose when it
+	 * will receive a commit request for a transaction that accessed some of the
+	 * data that it maintains
+	 */
+	private final AtomicInteger nextId = new AtomicInteger(0);
 	/**
 	 * Map<ctxID, ctx> Keeps track of existing distributed contexts
 	 */
@@ -41,28 +65,37 @@ public class SCORe extends PartialReplicationProtocol implements
 			.synchronizedMap(new HashMap<Integer, DistributedContext>());
 	/**
 	 * Map<ctxID, List<proposedSn>> Keeps track of proposed sid's for each
-	 * context
+	 * context, during vote phase
 	 */
 	private final Map<Integer, List<Integer>> votes = Collections
 			.synchronizedMap(new HashMap<Integer, List<Integer>>());
 	/**
-	 * Map<ctxID, expectedVotes>
+	 * Map<ctxID, expectedVotes> Keeps track of the expected number of votes to
+	 * receive by this coordinator, in the vote phase
 	 */
 	private final Map<Integer, Integer> expectedVotes = Collections
 			.synchronizedMap(new HashMap<Integer, Integer>());
 	/**
-	 * Map<ctxID, TimerTask>
+	 * Map<ctxID, TimerTask> Keeps track of each context timer task, to be able
+	 * to cancel the task if the expected number of votes is reached
 	 */
 	private final Map<Integer, TimerTask> timeoutTasks = Collections
 			.synchronizedMap(new HashMap<Integer, TimerTask>());
 	/**
 	 * Queue of pending committing transactions ordered by SnapshotId
 	 */
-	private final Queue<PendingTx> pendQ = new PriorityQueue<PendingTx>();
+	private final Queue<Pair<String, Integer>> pendQ = new PriorityQueue<Pair<String, Integer>>(
+			11, comp);
 	/**
 	 * 
 	 */
-	private final Queue<PendingTx> stableQ = new PriorityQueue<PendingTx>();
+	private final Queue<Pair<String, Integer>> stableQ = new PriorityQueue<Pair<String, Integer>>(
+			11, comp);
+	/**
+	 * 
+	 */
+	private final Map<String, DistributedContextState> receivedTrxs = Collections
+			.synchronizedMap(new HashMap<String, DistributedContextState>());
 
 	private final int timeout = Integer.getInteger(
 			"tribu.distributed.protocol.score.timeout", 5000);
@@ -110,48 +143,36 @@ public class SCORe extends PartialReplicationProtocol implements
 	@Override
 	public void onTxCommit(DistributedContext ctx)
 	{
-		int id = ctx.threadID;
+		int ctxID = ctx.threadID;
 		DistributedContextState ctxState = ctx.createState();
 		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
 
-		Group group1 = ((SCOReReadSet) ctxState.rs).getInvolvedNodes();
-		Group group2 = ((SCOReWriteSet) ctxState.ws).getInvolvedNodes();
-		Group resGroup = GroupUtils.unionGroups(group1, group2);
+		Group resGroup = ((SCOReContext) ctx).getInvolvedNodes();
 		int expVotes = resGroup.getSize();
 
-		votes.put(id, new ArrayList<Integer>(expVotes));
-		expectedVotes.put(id, expVotes);
+		votes.put(ctxID, new ArrayList<Integer>(expVotes));
+		expectedVotes.put(ctxID, expVotes);
 
 		// send prepare message
 		TribuDSTM.sendTotalOrdered(payload, resGroup);
 
-		TimerTask task = voteTimeoutHandler(id); // set timeout handler
-		timeoutTasks.put(id, task);
+		TimerTask task = voteTimeoutHandler(ctxID, ((SCOReContext) ctx).trxID);
+		timeoutTasks.put(ctxID, task); // set timeout handler
 		timeoutTimer.schedule(task, timeout);
 	}
 
-	private TimerTask voteTimeoutHandler(final int id)
+	private TimerTask voteTimeoutHandler(final int id, final String trxid)
 	{
 		return new TimerTask()
 		{
 			private final int ctxID = id;
+			private final String trxID = trxid;
 
 			public void run()
-			{ // XXX ver se este if é necessario...
-				if (votes.get(id).size() != expectedVotes.get(id))
+			{ // just to double check if it is really necessary to run this
+				if (votes.get(ctxID).size() != expectedVotes.get(ctxID))
 				{ // timeout occurs. abort transaction
-					// TODO
-				}
-
-				if (proposedSn.size() != expectedVotes)
-				{ // timeout occurs. abort transaction
-					SCOReContext ctx = (SCOReContext) contexts
-							.get(currentCommittingCtxID);
-
-					DecideMessage decide = new DecideMessage(ctx.threadID,
-							ctx.sid, false);
-
-					// TODO send decide messages
+					finalizeVoteStep(ctxID, trxID, false);
 				}
 			}
 		};
@@ -219,11 +240,11 @@ public class SCORe extends PartialReplicationProtocol implements
 		}
 		else if (obj instanceof ReadRequest) // Read Requested
 		{ // I have the requested object
-			// TODO implementar readRequest
+			readRequest(obj);
 		}
 		else if (obj instanceof ReadReturn) // Read Returned
 		{ // I requested this object
-			// TODO implementar readReturn
+			readReturn(obj);
 		}
 		processTx();
 	}
@@ -231,25 +252,20 @@ public class SCORe extends PartialReplicationProtocol implements
 	private void prepareMessage(Object obj, Address src)
 	{
 		SCOReContextState ctxState = (SCOReContextState) obj;
-		boolean outcome = false;
+		receivedTrxs.put(ctxState.trxID, ctxState);
 
 		// TODO get locks and validate rs. save result in outcome
+		boolean outcome = false;
 
-		if (outcome) // valid transaction
+		int next = 0;
+		if (outcome) // valid trx
 		{
-			ctxState.sid = SCOReContext.nextId.incrementAndGet();
-
-			if (src.isLocal())
-			{ // XXX é mesmo necessario?
-				((SCOReContext) contexts.get(ctxState.ctxID)).sid = ctxState.sid;
-			}
-
-			PendingTx pend = new PendingTx(ctxState, src);
-			pendQ.add(pend);
+			next = nextId.incrementAndGet();
+			pendQ.add(new Pair<String, Integer>(ctxState.trxID, next));
 		}
 
-		VoteMessage vote = new VoteMessage(ctxState.ctxID, outcome,
-				ctxState.sid);
+		VoteMessage vote = new VoteMessage(ctxState.ctxID, outcome, next,
+				ctxState.trxID);
 		byte[] payload = ObjectSerializer.object2ByteArray(vote);
 		TribuDSTM.sendTo(payload, src); // send vote message
 	}
@@ -257,36 +273,42 @@ public class SCORe extends PartialReplicationProtocol implements
 	private void voteMessage(Object obj)
 	{
 		VoteMessage vote = (VoteMessage) obj;
-		boolean outcome = true;
+		int ctxID = vote.ctxID;
+		String trxID = vote.trxID;
 
-		// CHECKME verificar votos para transacoes já abortadas... votos
-		// atrasados
+		if (!receivedTrxs.containsKey(trxID))
+		{ // late vote. trx already aborted and finished
+			return;
+		}
 
 		if (!vote.result) // voted NO
-		{
-			outcome = false;
-			finalizeVoteStep(vote.ctxID, outcome);
+		{ // do not wait for more votes. abort trx
+			timeoutTasks.get(ctxID).cancel(); // cancel timeout
+			finalizeVoteStep(ctxID, trxID, false);
 		}
 		else
 		{ // voted YES. save proposed timestamp
-			votes.get(vote.ctxID).add(vote.proposedTimestamp);
+			votes.get(ctxID).add(vote.proposedTimestamp);
 
-			if (votes.get(vote.ctxID).size() == expectedVotes.get(vote.ctxID))
+			if (votes.get(ctxID).size() == expectedVotes.get(ctxID))
 			{ // last vote. every vote was YES. send decide message
-				finalizeVoteStep(vote.ctxID, outcome);
+				timeoutTasks.get(ctxID).cancel(); // cancel timeout
+				finalizeVoteStep(ctxID, trxID, true);
 			}
 		}
 	}
 
-	private void finalizeVoteStep(int ctxID, boolean outcome)
+	private void finalizeVoteStep(int ctxID, String trxID, boolean outcome)
 	{
-		timeoutTasks.get(ctxID).cancel(); // cancel timeout
 		int finalSid = Collections.max(votes.get(ctxID));
 		((SCOReContext) contexts.get(ctxID)).sid = finalSid;
 
-		DecideMessage decide = new DecideMessage(ctxID, finalSid, outcome);
+		DecideMessage decide = new DecideMessage(ctxID, trxID, finalSid,
+				outcome);
+		Group group = ((SCOReContext) contexts.get(ctxID)).getInvolvedNodes();
 
-		// TODO send decide message
+		byte[] payload = ObjectSerializer.object2ByteArray(decide);
+		TribuDSTM.sendTotalOrdered(payload, group); // send decide message
 	}
 
 	private void decideMessage(Object obj, Address src)
@@ -295,13 +317,13 @@ public class SCORe extends PartialReplicationProtocol implements
 
 		if (decide.result)
 		{
-			int max = Math.max(SCOReContext.nextId.get(), decide.finalSid);
-			SCOReContext.nextId.set(max);
-			
-			stableQ.add(new PendingTx(decide.ctxID, decide.finalSid, src));
+			int max = Math.max(nextId.get(), decide.finalSid);
+			nextId.set(max);
+
+			stableQ.add(new Pair<String, Integer>(decide.trxID, decide.finalSid));
 		}
 
-		pendQ.remove(new PendingTx(decide.ctxID, 0, src));
+		pendQ.remove(new Pair<String, Integer>(decide.trxID, 0));
 
 		if (!decide.result)
 		{
@@ -309,43 +331,62 @@ public class SCORe extends PartialReplicationProtocol implements
 
 			if (src.isLocal())
 			{
-				SCOReContext ctx = (SCOReContext) contexts.get(decide.ctxID);
+				DistributedContext ctx = contexts.get(decide.ctxID);
 				ctx.processed(false);
 			}
+			receivedTrxs.remove(decide.trxID);
 		}
+	}
+
+	private void readRequest(Object obj)
+	{
+		// TODO implementar readRequest
+	}
+
+	private void readReturn(Object obj)
+	{
+		// TODO implementar readReturn
 	}
 
 	private void processTx()
 	{
-		boolean keepProcessing = true;
-		while (keepProcessing)
+		while (true)
 		{
-			keepProcessing = false;
 			if (stableQ.isEmpty())
-			{
+			{ // nothing to do
 				return;
 			}
 
-			PendingTx sTx = stableQ.peek();
-			PendingTx pTx = pendQ.peek();
+			Pair<String, Integer> sTx = stableQ.peek();
+			Pair<String, Integer> pTx = pendQ.peek();
 
-			if (pTx.sid < sTx.sid)
-			{
+			if (pTx != null && pTx.second < sTx.second)
+			{ // there are still some trxs that can be serialized before sTx
 				return;
 			}
 
-			// TODO fazer isto tudo atomicamente
+			DistributedContext ctx = null;
+			SCOReContextState tx = (SCOReContextState) receivedTrxs
+					.get(sTx.first);
 
-			// TODO apply(sTx.ws, sTx.sid)
-			// SCOReContext ctx = (SCOReContext) sTx.
+			if (tx.origin.isLocal())
+			{
+				ctx = contexts.get(tx.ctxID);
+			}
+			else
+			{
+				ctx = (DistributedContext) ContextDelegator.getInstance();
+				ctx.recreateContextFromState(tx);
+			}
+
+			ctx.applyWriteSet();
+
 			// TODO release locks
 
 			stableQ.poll(); // remove sTx
+			receivedTrxs.remove(sTx.first);
 
-			if (sTx.src.isLocal())
-			{
-				// TODO stuff
-			}
+			ctx.processed(true);
 		}
 	}
 }

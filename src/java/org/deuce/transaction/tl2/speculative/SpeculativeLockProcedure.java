@@ -1,6 +1,7 @@
-package org.deuce.transaction.tl2;
+package org.deuce.transaction.tl2.speculative;
 
 import org.deuce.transaction.field.WriteFieldAccess;
+import org.deuce.transaction.tl2.InPlaceLock;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.trove.TObjectProcedure;
 

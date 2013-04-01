@@ -1,8 +1,11 @@
-package org.deuce.transaction.tl2;
+package org.deuce.transaction.tl2.speculative;
 
 import org.deuce.reflection.AddressUtil;
 import org.deuce.reflection.UnsafeHolder;
 import org.deuce.transaction.DistributedContext;
+import org.deuce.transaction.tl2.InPlaceLock;
+import org.deuce.transaction.tl2.LockTable;
+import org.deuce.transaction.tl2.TL2Field;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.speculative.SpeculativeTxField;
 
