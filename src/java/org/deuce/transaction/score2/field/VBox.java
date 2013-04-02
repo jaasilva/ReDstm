@@ -12,8 +12,8 @@ public interface VBox extends InPlaceLock
 {
 	@ExcludeTM
 	static public enum Type
-	{ // XXX array será assim?
-		BYTE, BOOLEAN, CHAR, SHORT, INT, LONG, FLOAT, DOUBLE, OBJECT, ARRAY
+	{
+		BYTE, BOOLEAN, CHAR, SHORT, INT, LONG, FLOAT, DOUBLE, OBJECT
 	}
 
 	boolean validate(Version version, int owner);

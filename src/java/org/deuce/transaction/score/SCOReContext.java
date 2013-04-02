@@ -44,39 +44,24 @@ public class SCOReContext extends DistributedContext
 	 */
 	public String trxID;
 
-	/**
-	 * 
-	 */
 	public SCOReContext()
 	{
 		super();
 		trxID = java.util.UUID.randomUUID().toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.DistributedContext#createReadSet()
-	 */
 	@Override
 	protected ReadSet createReadSet()
 	{
 		return new SCOReReadSet();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.DistributedContext#createWriteSet()
-	 */
 	@Override
 	protected WriteSet createWriteSet()
 	{
 		return new SCOReWriteSet();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.DistributedContext#createState()
-	 */
 	@Override
 	public DistributedContextState createState()
 	{
@@ -95,11 +80,6 @@ public class SCOReContext extends DistributedContext
 		return resGroup;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.DistributedContext#initialise(int,
-	 * java.lang.String)
-	 */
 	@Override
 	protected void initialise(int atomicBlockId, String metainf)
 	{
@@ -118,10 +98,6 @@ public class SCOReContext extends DistributedContext
 		doublePool.clear();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.DistributedContext#performValidation()
-	 */
 	@Override
 	protected boolean performValidation()
 	{
@@ -129,10 +105,6 @@ public class SCOReContext extends DistributedContext
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.DistributedContext#applyUpdates()
-	 */
 	@Override
 	protected void applyUpdates()
 	{
@@ -160,12 +132,6 @@ public class SCOReContext extends DistributedContext
 		doublePool.clear();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.deuce.transaction.ContextMetadata#beforeReadAccess(org.deuce.transform
-	 * .localmetadata.type.TxField)
-	 */
 	@Override
 	public void beforeReadAccess(TxField field)
 	{
@@ -181,13 +147,6 @@ public class SCOReContext extends DistributedContext
 		return writeSet.contains(current);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.deuce.transaction.ContextMetadata#onReadAccess(org.deuce.transform
-	 * .localmetadata.array.ArrayContainer,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public ArrayContainer onReadAccess(ArrayContainer value, TxField field)
 	{
@@ -206,11 +165,6 @@ public class SCOReContext extends DistributedContext
 		return r;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onReadAccess(java.lang.Object,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public Object onReadAccess(Object value, TxField field)
 	{
@@ -228,11 +182,6 @@ public class SCOReContext extends DistributedContext
 		return r;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onReadAccess(boolean,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public boolean onReadAccess(boolean value, TxField field)
 	{
@@ -250,11 +199,6 @@ public class SCOReContext extends DistributedContext
 		return r;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onReadAccess(byte,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public byte onReadAccess(byte value, TxField field)
 	{
@@ -272,11 +216,6 @@ public class SCOReContext extends DistributedContext
 		return r;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onReadAccess(char,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public char onReadAccess(char value, TxField field)
 	{
@@ -294,11 +233,6 @@ public class SCOReContext extends DistributedContext
 		return r;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onReadAccess(short,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public short onReadAccess(short value, TxField field)
 	{
@@ -316,11 +250,6 @@ public class SCOReContext extends DistributedContext
 		return r;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onReadAccess(int,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public int onReadAccess(int value, TxField field)
 	{
@@ -338,11 +267,6 @@ public class SCOReContext extends DistributedContext
 		return r;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onReadAccess(long,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public long onReadAccess(long value, TxField field)
 	{
@@ -360,11 +284,6 @@ public class SCOReContext extends DistributedContext
 		return r;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onReadAccess(float,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public float onReadAccess(float value, TxField field)
 	{
@@ -382,11 +301,6 @@ public class SCOReContext extends DistributedContext
 		return r;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onReadAccess(double,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public double onReadAccess(double value, TxField field)
 	{
@@ -409,13 +323,6 @@ public class SCOReContext extends DistributedContext
 		writeSet.put(write);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.deuce.transaction.ContextMetadata#onWriteAccess(org.deuce.transform
-	 * .localmetadata.array.ArrayContainer,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public void onWriteAccess(ArrayContainer value, TxField field)
 	{
@@ -424,12 +331,6 @@ public class SCOReContext extends DistributedContext
 		addWriteAccess(next);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.deuce.transaction.ContextMetadata#onWriteAccess(java.lang.Object,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public void onWriteAccess(Object value, TxField field)
 	{
@@ -438,11 +339,6 @@ public class SCOReContext extends DistributedContext
 		addWriteAccess(next);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onWriteAccess(boolean,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public void onWriteAccess(boolean value, TxField field)
 	{
@@ -451,11 +347,6 @@ public class SCOReContext extends DistributedContext
 		addWriteAccess(next);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onWriteAccess(byte,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public void onWriteAccess(byte value, TxField field)
 	{
@@ -464,11 +355,6 @@ public class SCOReContext extends DistributedContext
 		addWriteAccess(next);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onWriteAccess(char,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public void onWriteAccess(char value, TxField field)
 	{
@@ -477,11 +363,6 @@ public class SCOReContext extends DistributedContext
 		addWriteAccess(next);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onWriteAccess(short,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public void onWriteAccess(short value, TxField field)
 	{
@@ -490,11 +371,6 @@ public class SCOReContext extends DistributedContext
 		addWriteAccess(next);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onWriteAccess(int,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public void onWriteAccess(int value, TxField field)
 	{
@@ -503,11 +379,6 @@ public class SCOReContext extends DistributedContext
 		addWriteAccess(next);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onWriteAccess(long,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public void onWriteAccess(long value, TxField field)
 	{
@@ -516,11 +387,6 @@ public class SCOReContext extends DistributedContext
 		addWriteAccess(next);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onWriteAccess(float,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public void onWriteAccess(float value, TxField field)
 	{
@@ -529,11 +395,6 @@ public class SCOReContext extends DistributedContext
 		addWriteAccess(next);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.ContextMetadata#onWriteAccess(double,
-	 * org.deuce.transform.localmetadata.type.TxField)
-	 */
 	@Override
 	public void onWriteAccess(double value, TxField field)
 	{
@@ -542,10 +403,6 @@ public class SCOReContext extends DistributedContext
 		addWriteAccess(next);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deuce.transaction.IContext#onIrrevocableAccess()
-	 */
 	@Override
 	public void onIrrevocableAccess()
 	{

@@ -36,7 +36,7 @@ public class ReadFieldAccess implements java.io.Serializable
 	}
 
 	@Override
-	final public int hashCode()
+	public int hashCode()
 	{
 		return field.hashCode();
 	}

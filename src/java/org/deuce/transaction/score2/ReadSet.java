@@ -5,7 +5,7 @@ import org.deuce.transform.ExcludeTM;
 
 /**
  * Represents the transaction read set. And acts as a recycle pool of the
- * {@link ReadFieldAccess}.
+ * {@link SCOReReadFieldAccess}.
  * 
  * @author Guy Korland, Ricardo Dias <ricardo.dias@campus.fct.unl.pt>
  * @since 0.7
