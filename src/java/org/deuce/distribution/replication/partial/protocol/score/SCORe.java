@@ -176,8 +176,7 @@ public class SCORe extends PartialReplicationProtocol implements
 	@Override
 	public void onTxWrite(DistributedContext ctx, ObjectMetadata metadata,
 			UniqueObject obj)
-	{
-		// TODO onTxWrite SCORe
+	{ // nothing to do
 	}
 
 	@Override

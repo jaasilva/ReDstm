@@ -103,8 +103,6 @@ public class TxField implements UniqueObject
 			case OBJECT:
 				writeObject(value);
 				break;
-			case ARRAY:
-				writeArray((ArrayContainer) value);
 		}
 	}
 
@@ -130,8 +128,6 @@ public class TxField implements UniqueObject
 				return readDouble();
 			case OBJECT:
 				return readObject();
-			case ARRAY:
-				return readArray();
 		}
 		return null;
 	}

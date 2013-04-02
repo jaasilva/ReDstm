@@ -43,11 +43,16 @@ public class SCOReContext extends DistributedContext
 	 * system
 	 */
 	public String trxID;
+	/**
+	 * 
+	 */
+	public boolean firstReadDone;
 
 	public SCOReContext()
 	{
 		super();
 		trxID = java.util.UUID.randomUUID().toString();
+		firstReadDone = false;
 	}
 
 	@Override
@@ -85,6 +90,7 @@ public class SCOReContext extends DistributedContext
 	{
 		// TODO Auto-generated method stub
 		trxID = java.util.UUID.randomUUID().toString();
+		firstReadDone = false;
 
 		arrayPool.clear();
 		objectPool.clear();
