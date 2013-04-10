@@ -236,14 +236,14 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 			if (!visitclinit && fields.size() > 0)
 			{ // creates a new <clinit> in case we didn't see one already.
 
-				// TODO avoid creating new static method in case of external
+				// TODOs avoid creating new static method in case of external
 				// fields holder
 				visitclinit = true;
 				MethodVisitor method = visitMethod(Opcodes.ACC_STATIC,
 						"<clinit>", "()V", null, null);
 				method.visitCode();
 				method.visitInsn(Opcodes.RETURN);
-				method.visitMaxs(100, 100); // TODO set the right value
+				method.visitMaxs(100, 100); // TODOs set the right value
 				method.visitEnd();
 
 			}

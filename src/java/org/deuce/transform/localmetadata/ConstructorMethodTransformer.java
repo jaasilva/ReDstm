@@ -14,7 +14,7 @@ import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
 /*
- * TODO Class fields should not be instrumented inside the constructor We need
+ * TODOs Class fields should not be instrumented inside the constructor We need
  * to implement this optimization! I believe that implementing this optimization
  * will fix the following issue. Consider the following class, in bytecode:
  * public class asmconstructortest.Test2 extends java.lang.Object { public int
@@ -44,7 +44,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 	protected boolean callsOtherCtor;
 	protected final String className;
 
-	// CHECKME @Bootstrap
+	// XXX @Bootstrap
 	protected final Map<String, Integer> field2OID;
 
 	public ConstructorMethodTransformer(MethodVisitor mv, List<Field> fields,
@@ -79,7 +79,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 				.getInternalName(), "<init>", TxField.CTOR_DESC);
 		// stack: ..., Object (this), TxField =>
 
-		// CHECKME @Bootstrap, assumes FullReplicationSerializer
+		// XXX @Bootstrap, assumes FullReplicationSerializer
 		Integer oid = field2OID.get(field.getFieldName());
 		if (oid != null)
 		{

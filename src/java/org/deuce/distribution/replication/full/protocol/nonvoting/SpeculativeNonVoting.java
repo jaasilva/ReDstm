@@ -31,8 +31,8 @@ public class SpeculativeNonVoting extends FullReplicationProtocol implements
 {
 
 	/*
-	 * TODO Ter um conhecimento mais fino: saber quais os que estão a executar e
-	 * quais os que estão pendentes. TODO É necessário distinguir entre tx
+	 * TODOs Ter um conhecimento mais fino: saber quais os que estão a executar e
+	 * quais os que estão pendentes. TODOs É necessário distinguir entre tx
 	 * read-only e restantes no caso
 	 */
 	private final Map<Integer, SpeculativeContext> contexts = Collections
@@ -173,12 +173,12 @@ public class SpeculativeNonVoting extends FullReplicationProtocol implements
 			try
 			{
 				/*
-				 * TODO bloquear transações no onTxBegin aqui e abortar todos os
+				 * TODOs bloquear transações no onTxBegin aqui e abortar todos os
 				 * Contexts em execução (ver topo deste ficheiro) Utilizar
 				 * condições em vez do lock?
 				 */
 				/*
-				 * FIXME abortar mesmo, não é só chamar processed(false), quero
+				 * FIXMEs abortar mesmo, não é só chamar processed(false), quero
 				 * mesmo que a transação recomece.
 				 */
 				// for (Context c : executingContexts)

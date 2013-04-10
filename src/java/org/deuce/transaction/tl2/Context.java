@@ -37,7 +37,6 @@ import org.deuce.trove.TObjectProcedure;
 @LocalMetadata(metadataClass = "org.deuce.transaction.tl2.TL2Field")
 public class Context extends DistributedContext
 {
-
 	private static final boolean TX_LOAD_OPT = Boolean
 			.getBoolean("org.deuce.transaction.tl2.txload.opt");
 
@@ -53,13 +52,11 @@ public class Context extends DistributedContext
 
 	final private TObjectProcedure<WriteFieldAccess> putProcedure = new TObjectProcedure<WriteFieldAccess>()
 	{
-
 		public boolean execute(WriteFieldAccess writeField)
 		{
 			writeField.put();
 			return true;
 		}
-
 	};
 
 	public Context()
@@ -524,6 +521,5 @@ public class Context extends DistributedContext
 	@Override
 	public void onIrrevocableAccess()
 	{
-
 	}
 }

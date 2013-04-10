@@ -63,7 +63,7 @@ public class MethodTransformer implements MethodVisitor
 
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible)
 	{
-		// FIXME we might saw other annotations before and we need to put it on
+		// FIXMEs we might saw other annotations before and we need to put it on
 		// the new AtomicMethod
 		// need to create an atomic method from the original method
 		if (AtomicMethod.ATOMIC_DESCRIPTOR.equals(desc)

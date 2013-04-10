@@ -35,7 +35,7 @@ import org.deuce.transform.localmetadata.type.TxField;
  * 
  */
 @ExcludeTM
-@LocalMetadata(metadataClass = "...")
+@LocalMetadata(metadataClass = "org.deuce.transaction.score.field.VBoxField")
 public class SCOReContext extends DistributedContext
 {
 	private SCOReReadSet readSet = (SCOReReadSet) super.readSet;

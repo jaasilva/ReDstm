@@ -23,7 +23,7 @@ public class StaticMethodTransformer extends MethodAdapter
 	protected final String fieldsHolderName;
 	protected final String staticField;
 
-	// CHECKME @Bootstrap
+	// XXX @Bootstrap
 	private final Map<String, Integer> field2OID;
 
 	public StaticMethodTransformer(MethodVisitor mv,
@@ -108,7 +108,7 @@ public class StaticMethodTransformer extends MethodAdapter
 				.getInternalName(), "<init>", TxField.CTOR_DESC);
 		// stack: ..., TxField =>
 
-		// CHECKME @Bootstrap, assumes FullReplicationSerializer
+		// XXX @Bootstrap, assumes FullReplicationSerializer
 		Integer oid = field2OID.get(field.getFieldName());
 		if (oid != null)
 		{ // Bootstrap field
@@ -159,7 +159,7 @@ public class StaticMethodTransformer extends MethodAdapter
 	public void visitEnd()
 	{
 		super.visitEnd();
-		// TODO can we do it cleaner?
+		// TODOs can we do it cleaner?
 		if (staticMethod != null && super.mv != staticMethod)
 			staticMethod.visitEnd();
 	}

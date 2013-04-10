@@ -152,10 +152,10 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 
 	protected boolean isAbstract;
 
-	// CHECKME @Bootstrap
+	// XXX @Bootstrap
 	public final Map<String, Integer> field2OID = new java.util.HashMap<String, Integer>();
 
-	// CHECKME @Partial
+	// XXX @Partial
 	public final Set<String> partialRepFields = new java.util.HashSet<String>(
 			50);
 
@@ -184,7 +184,7 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 			}
 		}
 
-		// FIXME This should be done in a clever way. For example, only the
+		// FIXMEs This should be done in a clever way. For example, only the
 		// roots from the application's class hierarchies should be
 		// instrumented. Will the serialisation technique work?
 		isAbstract = (access & Opcodes.ACC_ABSTRACT) != 0;
@@ -275,7 +275,7 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 					Type.LONG_TYPE.getDescriptor(), -1L);
 		}
 
-		// CHECKME @Bootstrap @Partial
+		// XXX @Bootstrap @Partial
 		FieldVisitor bootstrapFv = new SpecificAnnotationsFieldVisitor(fv,
 				field2OID, partialRepFields, name);
 
@@ -459,14 +459,14 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 			if (!visitclinit && fields.size() > 0)
 			{
 				// creates a new <clinit> in case we didn't see one already.
-				// TODO avoid creating new static method in case of external
+				// TODOs avoid creating new static method in case of external
 				// fields holder
 				visitclinit = true;
 				MethodVisitor method = visitMethod(Opcodes.ACC_STATIC,
 						"<clinit>", "()V", null, null);
 				method.visitCode();
 				method.visitInsn(Opcodes.RETURN);
-				method.visitMaxs(100, 100); // TODO set the right value
+				method.visitMaxs(100, 100); // TODOs set the right value
 				method.visitEnd();
 			}
 
@@ -488,7 +488,7 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 			if (!isInterface && !isAbstract)
 			{
 				/*
-				 * FIXME: Refactor. Add the synthetic metadata field to the
+				 * FIXMEs: Refactor. Add the synthetic metadata field to the
 				 * user's class, plus the getters/setters and the
 				 * writeReplace/readResolve methods. Basically, implement the
 				 * UniqueObject interface.

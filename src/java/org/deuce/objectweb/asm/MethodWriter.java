@@ -2735,7 +2735,7 @@ class MethodWriter implements MethodVisitor
 					if ((l.status & Label.STORE) != 0 || (u >= 0 && resize[u]))
 					{
 						getNewOffset(allIndexes, allSizes, l);
-						// TODO update offsets in UNINITIALIZED values
+						// TODOs update offsets in UNINITIALIZED values
 						visitFrame(l.frame);
 					}
 					l = l.successor;

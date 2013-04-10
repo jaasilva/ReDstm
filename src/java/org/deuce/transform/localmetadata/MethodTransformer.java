@@ -134,7 +134,7 @@ public class MethodTransformer implements MethodVisitor
 
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible)
 	{
-		// FIXME we might saw other annotations before and we need to put it on
+		// FIXMEs we might saw other annotations before and we need to put it on
 		// the new AtomicMethod need to create an atomic method from the
 		// original method
 		if (AtomicMethod.ATOMIC_DESCRIPTOR.equals(desc)
@@ -1110,10 +1110,10 @@ public class MethodTransformer implements MethodVisitor
 			// ..., obj, obj, arr =>
 			originalMethod.visitInsn(Opcodes.ICONST_1);
 			// ..., obj, obj, arr, I =>
-			// CHECKME Is BIPUSH enough?
+			// CHECKMEs Is BIPUSH enough?
 			originalMethod.visitIntInsn(Opcodes.BIPUSH, dims);
 			// ..., obj, obj, arr, I, I =>
-			// CHECKME Is BIPUSH enough?
+			// CHECKMEs Is BIPUSH enough?
 			originalMethod.visitIntInsn(Opcodes.BIPUSH,
 					ArrayUtil.getArrayDim(desc));
 			// ..., obj, obj, arr, I, I, I =>

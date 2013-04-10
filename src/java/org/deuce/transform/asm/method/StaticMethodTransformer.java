@@ -72,7 +72,7 @@ public class StaticMethodTransformer extends MethodAdapter
 	public void visitEnd()
 	{
 		super.visitEnd();
-		// TODO can we do it cleaner?
+		// TODOs can we do it cleaner?
 		if (super.mv != staticMethod)
 			staticMethod.visitEnd();
 	}

@@ -20,9 +20,13 @@ public class VBoxField extends TxField implements InPlaceRWLock
 	}
 
 	public Version version;
-	final private __Type type;
+	private __Type type;
 	private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
 
+	public VBoxField()
+	{
+	}
+	
 	public VBoxField(Object ref, long address, __Type type)
 	{
 		super(ref, address);
