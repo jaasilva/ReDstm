@@ -1,6 +1,6 @@
 package org.deuce.transaction.field.speculative;
 
-import org.deuce.transaction.SpeculativeContext;
+import org.deuce.transaction.speculative.SpeculativeContext;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 import org.deuce.transform.localmetadata.type.speculative.SpeculativeTxField;
@@ -10,7 +10,7 @@ public class SpeculativeCharWriteFieldAccess extends
 		SpeculativeWriteFieldAccess
 {
 	private static final long serialVersionUID = 1L;
-	private Character value;
+	private char value;
 
 	public void set(char value, TxField field)
 	{
@@ -21,8 +21,6 @@ public class SpeculativeCharWriteFieldAccess extends
 	public void put()
 	{
 		((SpeculativeTxField) field).commitChar(value);
-		// clear();
-		// value = null;
 	}
 
 	public void speculativePut(SpeculativeContext ctx)
@@ -35,7 +33,7 @@ public class SpeculativeCharWriteFieldAccess extends
 		((SpeculativeTxField) field).speculativeAbort(value);
 	}
 
-	public Character getValue()
+	public char getValue()
 	{
 		return value;
 	}

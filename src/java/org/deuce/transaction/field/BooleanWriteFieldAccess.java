@@ -18,10 +18,7 @@ public class BooleanWriteFieldAccess extends WriteFieldAccess
 	@Override
 	public void put()
 	{
-		// UnsafeHolder.getUnsafe().putBoolean(field.ref, field.address,
-		// getValue());
 		field.writeBoolean(value);
-		// clear();
 	}
 
 	public boolean getValue()

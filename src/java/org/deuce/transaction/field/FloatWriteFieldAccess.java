@@ -18,14 +18,11 @@ public class FloatWriteFieldAccess extends WriteFieldAccess
 	@Override
 	public void put()
 	{
-		// UnsafeHolder.getUnsafe().putFloat(field.ref, field.address, value);
 		field.writeFloat(value);
-		// clear();
 	}
 
 	public float getValue()
 	{
 		return value;
 	}
-
 }

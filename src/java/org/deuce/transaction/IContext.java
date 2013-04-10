@@ -4,7 +4,6 @@ import org.deuce.objectweb.asm.Type;
 
 public interface IContext
 {
-
 	final static public Type CONTEXT_TYPE = Type.getType(IContext.class);
 	final static public String CONTEXT_INTERNAL = Type
 			.getInternalName(IContext.class);
@@ -37,5 +36,4 @@ public interface IContext
 
 	/** Called before entering an irrevocable block */
 	void onIrrevocableAccess();
-
 }

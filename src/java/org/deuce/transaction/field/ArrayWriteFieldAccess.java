@@ -19,9 +19,7 @@ public class ArrayWriteFieldAccess extends WriteFieldAccess
 	@Override
 	public void put()
 	{
-		// UnsafeHolder.getUnsafe().putObject(field.ref, field.address, value);
 		field.writeArray(value);
-		// clear();
 		value = null;
 	}
 

@@ -75,7 +75,7 @@ public final class Context implements ContextMetadata
 	private boolean readWriteHint = true;
 	private int atomicBlockId;
 
-	private final LockProcedure lockProcedure = new LockProcedure();
+	private final SharedLockProcedure lockProcedure = new SharedLockProcedure();
 
 	public Context()
 	{
@@ -160,7 +160,7 @@ public final class Context implements ContextMetadata
 
 	private ReadFieldAccess dummy = new ReadFieldAccess();
 
-	private WriteFieldAccess readLocal(VBox vbox)
+	private WriteFieldAccess readLocal(VBoxField vbox)
 	{
 		dummy.init(vbox);
 		return writeSet.contains(dummy);
@@ -168,7 +168,7 @@ public final class Context implements ContextMetadata
 
 	public Object onReadAccess(Object value, TxField field)
 	{
-		VBox box = (VBox) field;
+		VBoxField box = (VBoxField) field;
 		Version ver = null;
 
 		if (readWriteHint)
@@ -191,7 +191,7 @@ public final class Context implements ContextMetadata
 
 	public boolean onReadAccess(boolean value, TxField field)
 	{
-		VBox box = (VBox) field;
+		VBoxField box = (VBoxField) field;
 
 		Version ver = null;
 
@@ -215,7 +215,7 @@ public final class Context implements ContextMetadata
 
 	public byte onReadAccess(byte value, TxField field)
 	{
-		VBox box = (VBox) field;
+		VBoxField box = (VBoxField) field;
 		Version ver = null;
 
 		if (readWriteHint)
@@ -238,7 +238,7 @@ public final class Context implements ContextMetadata
 
 	public char onReadAccess(char value, TxField field)
 	{
-		VBox box = (VBox) field;
+		VBoxField box = (VBoxField) field;
 		Version ver = null;
 
 		if (readWriteHint)
@@ -261,7 +261,7 @@ public final class Context implements ContextMetadata
 
 	public short onReadAccess(short value, TxField field)
 	{
-		VBox box = (VBox) field;
+		VBoxField box = (VBoxField) field;
 		Version ver = null;
 
 		if (readWriteHint)
@@ -284,7 +284,7 @@ public final class Context implements ContextMetadata
 
 	public int onReadAccess(int value, TxField field)
 	{
-		VBox box = (VBox) field;
+		VBoxField box = (VBoxField) field;
 		Version ver = null;
 
 		if (readWriteHint)
@@ -307,7 +307,7 @@ public final class Context implements ContextMetadata
 
 	public long onReadAccess(long value, TxField field)
 	{
-		VBox box = (VBox) field;
+		VBoxField box = (VBoxField) field;
 		Version ver = null;
 
 		if (readWriteHint)
@@ -330,7 +330,7 @@ public final class Context implements ContextMetadata
 
 	public float onReadAccess(float value, TxField field)
 	{
-		VBox box = (VBox) field;
+		VBoxField box = (VBoxField) field;
 		Version ver = null;
 
 		if (readWriteHint)
@@ -353,7 +353,7 @@ public final class Context implements ContextMetadata
 
 	public double onReadAccess(double value, TxField field)
 	{
-		VBox box = (VBox) field;
+		VBoxField box = (VBoxField) field;
 		Version ver = null;
 
 		if (readWriteHint)
@@ -383,7 +383,7 @@ public final class Context implements ContextMetadata
 		}
 
 		WriteFieldAccess write = objectPool.getNext();
-		write.init((VBox) field);
+		write.init((VBoxField) field);
 		write.value = value;
 		writeSet.put(write);
 	}
@@ -397,7 +397,7 @@ public final class Context implements ContextMetadata
 		}
 
 		WriteFieldAccess write = booleanPool.getNext();
-		write.init((VBox) field);
+		write.init((VBoxField) field);
 		write.value = value;
 		writeSet.put(write);
 	}
@@ -411,7 +411,7 @@ public final class Context implements ContextMetadata
 		}
 
 		WriteFieldAccess write = bytePool.getNext();
-		write.init((VBox) field);
+		write.init((VBoxField) field);
 		write.value = value;
 		writeSet.put(write);
 	}
@@ -425,7 +425,7 @@ public final class Context implements ContextMetadata
 		}
 
 		WriteFieldAccess write = charPool.getNext();
-		write.init((VBox) field);
+		write.init((VBoxField) field);
 		write.value = value;
 		writeSet.put(write);
 	}
@@ -439,7 +439,7 @@ public final class Context implements ContextMetadata
 		}
 
 		WriteFieldAccess write = shortPool.getNext();
-		write.init((VBox) field);
+		write.init((VBoxField) field);
 		write.value = value;
 		writeSet.put(write);
 	}
@@ -453,7 +453,7 @@ public final class Context implements ContextMetadata
 		}
 
 		WriteFieldAccess write = intPool.getNext();
-		write.init((VBox) field);
+		write.init((VBoxField) field);
 		write.value = value;
 		writeSet.put(write);
 	}
@@ -467,7 +467,7 @@ public final class Context implements ContextMetadata
 		}
 
 		WriteFieldAccess write = longPool.getNext();
-		write.init((VBox) field);
+		write.init((VBoxField) field);
 		write.value = value;
 		writeSet.put(write);
 	}
@@ -481,7 +481,7 @@ public final class Context implements ContextMetadata
 		}
 
 		WriteFieldAccess write = floatPool.getNext();
-		write.init((VBox) field);
+		write.init((VBoxField) field);
 		write.value = value;
 		writeSet.put(write);
 	}
@@ -495,7 +495,7 @@ public final class Context implements ContextMetadata
 		}
 
 		WriteFieldAccess write = doublePool.getNext();
-		write.init((VBox) field);
+		write.init((VBoxField) field);
 		write.value = value;
 		writeSet.put(write);
 	}

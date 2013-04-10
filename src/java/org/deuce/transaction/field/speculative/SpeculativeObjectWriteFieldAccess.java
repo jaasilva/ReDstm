@@ -1,6 +1,6 @@
 package org.deuce.transaction.field.speculative;
 
-import org.deuce.transaction.SpeculativeContext;
+import org.deuce.transaction.speculative.SpeculativeContext;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 import org.deuce.transform.localmetadata.type.speculative.SpeculativeTxField;
@@ -21,8 +21,6 @@ public class SpeculativeObjectWriteFieldAccess extends
 	public void put()
 	{
 		((SpeculativeTxField) field).commitObject(value);
-		// clear();
-		// value = null;
 	}
 
 	public void speculativePut(SpeculativeContext ctx)

@@ -18,14 +18,11 @@ public class IntWriteFieldAccess extends WriteFieldAccess
 	@Override
 	public void put()
 	{
-		// UnsafeHolder.getUnsafe().putInt(field.ref, field.address, value);
 		field.writeInt(value);
-		// clear();
 	}
 
 	public int getValue()
 	{
 		return value;
 	}
-
 }

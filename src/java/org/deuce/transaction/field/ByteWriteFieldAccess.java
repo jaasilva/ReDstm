@@ -18,14 +18,11 @@ public class ByteWriteFieldAccess extends WriteFieldAccess
 	@Override
 	public void put()
 	{
-		// UnsafeHolder.getUnsafe().putByte(field.ref, field.address, value);
 		field.writeByte(value);
-		// clear();
 	}
 
 	public byte getValue()
 	{
 		return value;
 	}
-
 }

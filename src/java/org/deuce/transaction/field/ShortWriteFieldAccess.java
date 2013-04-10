@@ -18,14 +18,11 @@ public class ShortWriteFieldAccess extends WriteFieldAccess
 	@Override
 	public void put()
 	{
-		// UnsafeHolder.getUnsafe().putShort(field.ref, field.address, value);
 		field.writeShort(value);
-		// clear();
 	}
 
-	public short getValue()
+	public Short getValue()
 	{
 		return value;
 	}
-
 }

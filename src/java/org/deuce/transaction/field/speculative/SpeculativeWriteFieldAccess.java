@@ -1,7 +1,7 @@
 package org.deuce.transaction.field.speculative;
 
-import org.deuce.transaction.SpeculativeContext;
 import org.deuce.transaction.field.WriteFieldAccess;
+import org.deuce.transaction.speculative.SpeculativeContext;
 import org.deuce.transform.ExcludeTM;
 
 /**

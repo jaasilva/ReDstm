@@ -72,7 +72,7 @@ public class TxField implements UniqueObject
 	}
 
 	public void write(Object value,
-			org.deuce.transaction.score2.field.VBox.Type type)
+			org.deuce.transaction.score2.field.VBoxField.Type type)
 	{
 		switch (type)
 		{
@@ -106,7 +106,7 @@ public class TxField implements UniqueObject
 		}
 	}
 
-	public Object read(org.deuce.transaction.score2.field.VBox.Type type)
+	public Object read(org.deuce.transaction.score2.field.VBoxField.Type type)
 	{
 		switch (type)
 		{

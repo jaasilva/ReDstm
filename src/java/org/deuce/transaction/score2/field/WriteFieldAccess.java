@@ -20,7 +20,7 @@ public class WriteFieldAccess extends ReadFieldAccess
 		field.commit(value, txNumber);
 	}
 
-	public void set(Object value, VBox field)
+	public void set(Object value, VBoxField field)
 	{
 		super.init(field);
 		this.value = value;

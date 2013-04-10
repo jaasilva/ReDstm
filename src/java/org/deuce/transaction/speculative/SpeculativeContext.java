@@ -1,4 +1,7 @@
-package org.deuce.transaction;
+package org.deuce.transaction.speculative;
+
+import org.deuce.transaction.DistributedContext;
+import org.deuce.transaction.TransactionException;
 
 public abstract class SpeculativeContext extends DistributedContext
 {

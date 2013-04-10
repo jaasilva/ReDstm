@@ -1,8 +1,8 @@
 package org.deuce.transaction.score2.field;
 
-import org.deuce.reflection.AddressUtil;
-import org.deuce.reflection.UnsafeHolder;
-import org.deuce.transaction.score2.LockTable;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.deuce.transaction.score2.InPlaceRWLock;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
@@ -11,10 +11,17 @@ import org.deuce.transform.localmetadata.type.TxField;
  * @author Ricardo Dias <ricardo.dias@campus.fct.unl.pt>, jaasilva
  */
 @ExcludeTM
-public class VBoxField extends TxField implements VBox
+public class VBoxField extends TxField implements InPlaceRWLock
 {
+	@ExcludeTM
+	static public enum Type
+	{
+		BYTE, BOOLEAN, CHAR, SHORT, INT, LONG, FLOAT, DOUBLE, OBJECT
+	}
+
 	public Version version;
 	final private Type type;
+	private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
 
 	public VBoxField(Object ref, long address, Type type)
 	{
@@ -35,14 +42,16 @@ public class VBoxField extends TxField implements VBox
 	public boolean validate(Version version, int owner)
 	{
 		Version tmp = this.version;
-		int l = lock;
-		if ((l & LockTable.LOCK) != 0)
-		{
-			if ((l & LockTable.UNLOCK) != owner)
-			{
-				throw LockTable.LOCKED_VERSION_EXCEPTION;
-			}
-		}
+		// int l = lock;
+		// if ((l & LockTable.LOCK) != 0)
+		// {
+		// if ((l & LockTable.UNLOCK) != owner) // está locked e nao sou eu que
+		// // tenho o lock?????????
+		// {
+		// throw LockTable.LOCKED_VERSION_EXCEPTION;
+		// }
+		// }
+		// TODO
 		return tmp == version;
 	}
 
@@ -55,58 +64,38 @@ public class VBoxField extends TxField implements VBox
 		this.version.version = txNumber;
 	}
 
-	@Override
 	public Version get(int version)
 	{
-		if ((lock & LockTable.LOCK) != 0)
-		{
-			throw LockTable.LOCKED_VERSION_EXCEPTION;
-		}
+		// if ((lock & LockTable.LOCK) != 0) // esta locked????????'
+		// {
+		// throw LockTable.LOCKED_VERSION_EXCEPTION;
+		// }
+		// TODO
 		return this.version.get(version);
 	}
 
-	private static long __LOCK_FIELD__;
-	static
-	{
-		try
-		{
-			__LOCK_FIELD__ = AddressUtil.getAddress(VBoxField.class
-					.getDeclaredField("lock"));
-		}
-		catch (SecurityException e)
-		{
-		}
-		catch (NoSuchFieldException e)
-		{
-		}
-	}
-	public volatile int lock = 0;
-
-	@Override
-	public boolean lock(int owner)
-	{
-		int l = lock;
-		if ((l & LockTable.LOCK) != 0)
-		{
-			throw LockTable.LOCKED_VERSION_EXCEPTION;
-		}
-		if (!UnsafeHolder.getUnsafe().compareAndSwapInt(this, __LOCK_FIELD__,
-				l, l | owner | LockTable.LOCK))
-		{
-			throw LockTable.LOCKED_VERSION_EXCEPTION;
-		}
-		return true;
-	}
-
-	@Override
-	public void unLock()
-	{
-		lock = 0;
-	}
-
-	@Override
 	public Version getTop()
 	{
 		return version;
+	}
+
+	public boolean exlusiveLock()
+	{
+		return rwLock.writeLock().tryLock();
+	}
+
+	public void exclusiveUnlock()
+	{
+		rwLock.writeLock().unlock();
+	}
+
+	public boolean sharedLock()
+	{
+		return rwLock.readLock().tryLock();
+	}
+
+	public void sharedUnlock()
+	{
+		rwLock.readLock().unlock();
 	}
 }

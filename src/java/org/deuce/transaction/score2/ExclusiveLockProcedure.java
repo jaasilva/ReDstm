@@ -9,7 +9,8 @@ import org.deuce.trove.TObjectProcedure;
  * @author Guy, Ricardo Dias <ricardo.dias@campus.fct.unl.pt>
  * @since 1.4
  */
-public class LockProcedure implements TObjectProcedure<WriteFieldAccess>
+public class ExclusiveLockProcedure implements
+		TObjectProcedure<WriteFieldAccess>
 {
 	public int i = 0;
 	public int owner;
@@ -20,7 +21,7 @@ public class LockProcedure implements TObjectProcedure<WriteFieldAccess>
 		{
 			if (i > 0)
 			{
-				((InPlaceLock) field.field).unLock();
+				((InPlaceRWLock) field.field).exclusiveUnlock();
 				i--;
 				return true;
 			}
@@ -28,13 +29,13 @@ public class LockProcedure implements TObjectProcedure<WriteFieldAccess>
 		}
 	};
 
-	public LockProcedure()
+	public ExclusiveLockProcedure()
 	{
 	}
 
 	public boolean execute(WriteFieldAccess writeField)
 	{
-		if (((InPlaceLock) writeField.field).lock(owner))
+		if (((InPlaceRWLock) writeField.field).exlusiveLock())
 		{
 			i++;
 		}

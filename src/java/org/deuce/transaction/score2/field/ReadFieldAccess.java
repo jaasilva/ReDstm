@@ -9,24 +9,24 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class ReadFieldAccess
 {
-	public VBox field;
+	public VBoxField field;
 	public Version version;
 
 	public ReadFieldAccess()
 	{
 	}
 
-	public ReadFieldAccess(VBox field)
+	public ReadFieldAccess(VBoxField field)
 	{
 		init(field);
 	}
 
-	public void init(VBox field)
+	public void init(VBoxField field)
 	{
 		init(field, null);
 	}
 
-	public void init(VBox field, Version version)
+	public void init(VBoxField field, Version version)
 	{
 		this.field = field;
 		this.version = version;

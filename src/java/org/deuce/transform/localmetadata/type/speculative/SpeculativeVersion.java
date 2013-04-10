@@ -1,6 +1,6 @@
 package org.deuce.transform.localmetadata.type.speculative;
 
-import org.deuce.transaction.SpeculativeContext;
+import org.deuce.transaction.speculative.SpeculativeContext;
 
 public class SpeculativeVersion
 {

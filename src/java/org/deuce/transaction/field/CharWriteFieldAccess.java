@@ -18,14 +18,11 @@ public class CharWriteFieldAccess extends WriteFieldAccess
 	@Override
 	public void put()
 	{
-		// UnsafeHolder.getUnsafe().putChar(field.ref, field.address, value);
 		field.writeChar(value);
-		// clear();
 	}
 
 	public char getValue()
 	{
 		return value;
 	}
-
 }
