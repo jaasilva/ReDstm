@@ -1,6 +1,6 @@
-package org.deuce.transaction.score2;
+package org.deuce.transaction.score;
 
-import org.deuce.transaction.score2.field.WriteFieldAccess;
+import org.deuce.transaction.score.field.WriteFieldAccess;
 import org.deuce.trove.TObjectProcedure;
 
 /**

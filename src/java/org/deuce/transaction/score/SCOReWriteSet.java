@@ -2,8 +2,8 @@ package org.deuce.transaction.score;
 
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.transaction.WriteSet;
-import org.deuce.transaction.field.ReadFieldAccess;
-import org.deuce.transaction.field.WriteFieldAccess;
+import org.deuce.transaction.score.field.ReadFieldAccess;
+import org.deuce.transaction.score.field.WriteFieldAccess;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.trove.THashSet;
 import org.deuce.trove.TObjectProcedure;
@@ -29,7 +29,7 @@ public class SCOReWriteSet extends WriteSet
 		return writeSet.isEmpty();
 	}
 
-	public boolean forEach(TObjectProcedure<WriteFieldAccess> procedure)
+	public boolean scoreForEach(TObjectProcedure<WriteFieldAccess> procedure)
 	{
 		return writeSet.forEach(procedure);
 	}

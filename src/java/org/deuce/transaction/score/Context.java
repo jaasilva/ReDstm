@@ -1,11 +1,11 @@
-package org.deuce.transaction.score2;
+package org.deuce.transaction.score;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.deuce.LocalMetadata;
 import org.deuce.transaction.ContextMetadata;
 import org.deuce.transaction.TransactionException;
-import org.deuce.transaction.score2.field.*;
+import org.deuce.transaction.score.field.*;
 import org.deuce.transaction.score.pool.*;
 import org.deuce.transaction.util.BooleanArrayList;
 import org.deuce.transform.ExcludeTM;

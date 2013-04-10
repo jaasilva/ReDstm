@@ -1,6 +1,6 @@
-package org.deuce.transaction.score2;
+package org.deuce.transaction.score;
 
-import org.deuce.transaction.score2.field.ReadFieldAccess;
+import org.deuce.transaction.score.field.ReadFieldAccess;
 import org.deuce.transform.ExcludeTM;
 
 /**

@@ -1,4 +1,6 @@
-package org.deuce.transaction.score2.field;
+package org.deuce.transaction.score.field;
+
+import java.io.Serializable;
 
 import org.deuce.transform.ExcludeTM;
 
@@ -7,9 +9,10 @@ import org.deuce.transform.ExcludeTM;
  * @author Ricardo Dias <ricardo.dias@campus.fct.unl.pt>
  */
 @ExcludeTM
-public class ReadFieldAccess
+public class ReadFieldAccess implements Serializable
 {
-	public VBoxField field;
+	private static final long serialVersionUID = 1L;
+	public VBoxField field; // CHECKME devia ser VBoxField?
 	public Version version;
 
 	public ReadFieldAccess()

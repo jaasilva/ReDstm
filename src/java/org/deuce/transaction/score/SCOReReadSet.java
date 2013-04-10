@@ -2,7 +2,7 @@ package org.deuce.transaction.score;
 
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.transaction.ReadSet;
-import org.deuce.transaction.field.ReadFieldAccess;
+import org.deuce.transaction.score.field.ReadFieldAccess;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -35,7 +35,7 @@ public class SCOReReadSet extends ReadSet
 		}
 	}
 
-	public ReadFieldAccess getNext()
+	public ReadFieldAccess scoreGetNext()
 	{
 		if (nextAvaliable >= readSet.length)
 		{

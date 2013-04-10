@@ -8,8 +8,12 @@ import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.ReadSet;
 import org.deuce.transaction.WriteSet;
-import org.deuce.transaction.field.*;
-import org.deuce.transaction.score.pool.*;
+import org.deuce.transaction.score.field.ReadFieldAccess;
+import org.deuce.transaction.score.field.VBoxField;
+import org.deuce.transaction.score.field.VBoxField.__Type;
+import org.deuce.transaction.score.field.WriteFieldAccess;
+import org.deuce.transaction.score.pool.Pool;
+import org.deuce.transaction.score.pool.ResourceFactory;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.array.ArrayContainer;
 import org.deuce.transform.localmetadata.type.TxField;
@@ -34,6 +38,9 @@ import org.deuce.transform.localmetadata.type.TxField;
 @LocalMetadata(metadataClass = "...")
 public class SCOReContext extends DistributedContext
 {
+	private SCOReReadSet readSet = (SCOReReadSet) super.readSet;
+	private SCOReWriteSet writeSet = (SCOReWriteSet) super.writeSet;
+	
 	/**
 	 * Snapshot id for the transactions of this context
 	 */
@@ -92,16 +99,7 @@ public class SCOReContext extends DistributedContext
 		trxID = java.util.UUID.randomUUID().toString();
 		firstReadDone = false;
 
-		arrayPool.clear();
-		objectPool.clear();
-		booleanPool.clear();
-		bytePool.clear();
-		charPool.clear();
-		shortPool.clear();
-		intPool.clear();
-		longPool.clear();
-		floatPool.clear();
-		doublePool.clear();
+		WFAPool.clear();
 	}
 
 	@Override
@@ -126,16 +124,7 @@ public class SCOReContext extends DistributedContext
 
 		atomicBlockId = -1;
 
-		arrayPool.clear();
-		objectPool.clear();
-		booleanPool.clear();
-		bytePool.clear();
-		charPool.clear();
-		shortPool.clear();
-		intPool.clear();
-		longPool.clear();
-		floatPool.clear();
-		doublePool.clear();
+		WFAPool.clear();
 	}
 
 	@Override
@@ -147,8 +136,8 @@ public class SCOReContext extends DistributedContext
 	private WriteFieldAccess onReadAccess(TxField field)
 	{
 		// TODO
-		ReadFieldAccess current = readSet.getNext();
-		current.init(field);
+		ReadFieldAccess current = readSet.scoreGetNext();
+		current.init((VBoxField) field);
 
 		return writeSet.contains(current);
 	}
@@ -166,7 +155,7 @@ public class SCOReContext extends DistributedContext
 		if (writeAccess == null)
 			return value;
 
-		ArrayContainer r = ((ArrayWriteFieldAccess) writeAccess).getValue();
+		ArrayContainer r = (ArrayContainer) writeAccess.getValue();
 
 		return r;
 	}
@@ -183,7 +172,7 @@ public class SCOReContext extends DistributedContext
 		if (writeAccess == null)
 			return value;
 
-		Object r = ((ObjectWriteFieldAccess) writeAccess).getValue();
+		Object r = (Object) writeAccess.getValue();
 
 		return r;
 	}
@@ -200,7 +189,7 @@ public class SCOReContext extends DistributedContext
 		if (writeAccess == null)
 			return value;
 
-		boolean r = ((BooleanWriteFieldAccess) writeAccess).getValue();
+		boolean r = (Boolean) writeAccess.getValue();
 
 		return r;
 	}
@@ -217,7 +206,7 @@ public class SCOReContext extends DistributedContext
 		if (writeAccess == null)
 			return value;
 
-		byte r = ((ByteWriteFieldAccess) writeAccess).getValue();
+		byte r = (Byte) writeAccess.getValue();
 
 		return r;
 	}
@@ -234,7 +223,7 @@ public class SCOReContext extends DistributedContext
 		if (writeAccess == null)
 			return value;
 
-		char r = ((CharWriteFieldAccess) writeAccess).getValue();
+		char r = (Character) writeAccess.getValue();
 
 		return r;
 	}
@@ -251,7 +240,7 @@ public class SCOReContext extends DistributedContext
 		if (writeAccess == null)
 			return value;
 
-		short r = ((ShortWriteFieldAccess) writeAccess).getValue();
+		short r = (Short) writeAccess.getValue();
 
 		return r;
 	}
@@ -268,7 +257,7 @@ public class SCOReContext extends DistributedContext
 		if (writeAccess == null)
 			return value;
 
-		int r = ((IntWriteFieldAccess) writeAccess).getValue();
+		int r = (Integer) writeAccess.getValue();
 
 		return r;
 	}
@@ -285,7 +274,7 @@ public class SCOReContext extends DistributedContext
 		if (writeAccess == null)
 			return value;
 
-		long r = ((LongWriteFieldAccess) writeAccess).getValue();
+		long r = (Long) writeAccess.getValue();
 
 		return r;
 	}
@@ -302,7 +291,7 @@ public class SCOReContext extends DistributedContext
 		if (writeAccess == null)
 			return value;
 
-		float r = ((FloatWriteFieldAccess) writeAccess).getValue();
+		float r = (Float) writeAccess.getValue();
 
 		return r;
 	}
@@ -319,7 +308,7 @@ public class SCOReContext extends DistributedContext
 		if (writeAccess == null)
 			return value;
 
-		double r = ((DoubleWriteFieldAccess) writeAccess).getValue();
+		double r =  (Double) writeAccess.getValue();
 
 		return r;
 	}
@@ -331,81 +320,81 @@ public class SCOReContext extends DistributedContext
 
 	@Override
 	public void onWriteAccess(ArrayContainer value, TxField field)
-	{
-		ArrayWriteFieldAccess next = arrayPool.getNext();
-		next.set(value, field);
+	{ // CHECKME isto pode ser assim?
+		WriteFieldAccess next = WFAPool.getNext();
+		next.set(value, (VBoxField) field, __Type.OBJECT);
 		addWriteAccess(next);
 	}
 
 	@Override
 	public void onWriteAccess(Object value, TxField field)
 	{
-		ObjectWriteFieldAccess next = objectPool.getNext();
-		next.set(value, field);
+		WriteFieldAccess next = WFAPool.getNext();
+		next.set(value, (VBoxField) field, __Type.OBJECT);
 		addWriteAccess(next);
 	}
 
 	@Override
 	public void onWriteAccess(boolean value, TxField field)
 	{
-		BooleanWriteFieldAccess next = booleanPool.getNext();
-		next.set(value, field);
+		WriteFieldAccess next = WFAPool.getNext();
+		next.set(value, (VBoxField) field, __Type.BOOLEAN);
 		addWriteAccess(next);
 	}
 
 	@Override
 	public void onWriteAccess(byte value, TxField field)
 	{
-		ByteWriteFieldAccess next = bytePool.getNext();
-		next.set(value, field);
+		WriteFieldAccess next = WFAPool.getNext();
+		next.set(value, (VBoxField) field, __Type.BYTE);
 		addWriteAccess(next);
 	}
 
 	@Override
 	public void onWriteAccess(char value, TxField field)
 	{
-		CharWriteFieldAccess next = charPool.getNext();
-		next.set(value, field);
+		WriteFieldAccess next = WFAPool.getNext();
+		next.set(value, (VBoxField) field, __Type.CHAR);
 		addWriteAccess(next);
 	}
 
 	@Override
 	public void onWriteAccess(short value, TxField field)
 	{
-		ShortWriteFieldAccess next = shortPool.getNext();
-		next.set(value, field);
+		WriteFieldAccess next = WFAPool.getNext();
+		next.set(value, (VBoxField) field, __Type.SHORT);
 		addWriteAccess(next);
 	}
 
 	@Override
 	public void onWriteAccess(int value, TxField field)
 	{
-		IntWriteFieldAccess next = intPool.getNext();
-		next.set(value, field);
+		WriteFieldAccess next = WFAPool.getNext();
+		next.set(value, (VBoxField) field, __Type.INT);
 		addWriteAccess(next);
 	}
 
 	@Override
 	public void onWriteAccess(long value, TxField field)
 	{
-		LongWriteFieldAccess next = longPool.getNext();
-		next.set(value, field);
+		WriteFieldAccess next = WFAPool.getNext();
+		next.set(value, (VBoxField) field, __Type.LONG);
 		addWriteAccess(next);
 	}
 
 	@Override
 	public void onWriteAccess(float value, TxField field)
 	{
-		FloatWriteFieldAccess next = floatPool.getNext();
-		next.set(value, field);
+		WriteFieldAccess next = WFAPool.getNext();
+		next.set(value, (VBoxField) field, __Type.FLOAT);
 		addWriteAccess(next);
 	}
 
 	@Override
 	public void onWriteAccess(double value, TxField field)
 	{
-		DoubleWriteFieldAccess next = doublePool.getNext();
-		next.set(value, field);
+		WriteFieldAccess next = WFAPool.getNext();
+		next.set(value, (VBoxField) field, __Type.DOUBLE);
 		addWriteAccess(next);
 	}
 
@@ -414,123 +403,15 @@ public class SCOReContext extends DistributedContext
 	{
 	}
 
-	private static class ArrayResourceFactory implements
-			ResourceFactory<ArrayWriteFieldAccess>
+	private static class WFAResourceFactory implements
+			ResourceFactory<WriteFieldAccess>
 	{
-		public ArrayWriteFieldAccess newInstance()
+		public WriteFieldAccess newInstance()
 		{
-			return new ArrayWriteFieldAccess();
+			return new WriteFieldAccess();
 		}
 	}
 
-	final private Pool<ArrayWriteFieldAccess> arrayPool = new Pool<ArrayWriteFieldAccess>(
-			new ArrayResourceFactory());
-
-	private static class ObjectResourceFactory implements
-			ResourceFactory<ObjectWriteFieldAccess>
-	{
-		public ObjectWriteFieldAccess newInstance()
-		{
-			return new ObjectWriteFieldAccess();
-		}
-	}
-
-	final private Pool<ObjectWriteFieldAccess> objectPool = new Pool<ObjectWriteFieldAccess>(
-			new ObjectResourceFactory());
-
-	private static class BooleanResourceFactory implements
-			ResourceFactory<BooleanWriteFieldAccess>
-	{
-		public BooleanWriteFieldAccess newInstance()
-		{
-			return new BooleanWriteFieldAccess();
-		}
-	}
-
-	final private Pool<BooleanWriteFieldAccess> booleanPool = new Pool<BooleanWriteFieldAccess>(
-			new BooleanResourceFactory());
-
-	private static class ByteResourceFactory implements
-			ResourceFactory<ByteWriteFieldAccess>
-	{
-		public ByteWriteFieldAccess newInstance()
-		{
-			return new ByteWriteFieldAccess();
-		}
-	}
-
-	final private Pool<ByteWriteFieldAccess> bytePool = new Pool<ByteWriteFieldAccess>(
-			new ByteResourceFactory());
-
-	private static class CharResourceFactory implements
-			ResourceFactory<CharWriteFieldAccess>
-	{
-		public CharWriteFieldAccess newInstance()
-		{
-			return new CharWriteFieldAccess();
-		}
-	}
-
-	final private Pool<CharWriteFieldAccess> charPool = new Pool<CharWriteFieldAccess>(
-			new CharResourceFactory());
-
-	private static class ShortResourceFactory implements
-			ResourceFactory<ShortWriteFieldAccess>
-	{
-		public ShortWriteFieldAccess newInstance()
-		{
-			return new ShortWriteFieldAccess();
-		}
-	}
-
-	final private Pool<ShortWriteFieldAccess> shortPool = new Pool<ShortWriteFieldAccess>(
-			new ShortResourceFactory());
-
-	private static class IntResourceFactory implements
-			ResourceFactory<IntWriteFieldAccess>
-	{
-		public IntWriteFieldAccess newInstance()
-		{
-			return new IntWriteFieldAccess();
-		}
-	}
-
-	final private Pool<IntWriteFieldAccess> intPool = new Pool<IntWriteFieldAccess>(
-			new IntResourceFactory());
-
-	private static class LongResourceFactory implements
-			ResourceFactory<LongWriteFieldAccess>
-	{
-		public LongWriteFieldAccess newInstance()
-		{
-			return new LongWriteFieldAccess();
-		}
-	}
-
-	final private Pool<LongWriteFieldAccess> longPool = new Pool<LongWriteFieldAccess>(
-			new LongResourceFactory());
-
-	private static class FloatResourceFactory implements
-			ResourceFactory<FloatWriteFieldAccess>
-	{
-		public FloatWriteFieldAccess newInstance()
-		{
-			return new FloatWriteFieldAccess();
-		}
-	}
-
-	final private Pool<FloatWriteFieldAccess> floatPool = new Pool<FloatWriteFieldAccess>(
-			new FloatResourceFactory());
-
-	private static class DoubleResourceFactory implements
-			ResourceFactory<DoubleWriteFieldAccess>
-	{
-		public DoubleWriteFieldAccess newInstance()
-		{
-			return new DoubleWriteFieldAccess();
-		}
-	}
-
-	final private Pool<DoubleWriteFieldAccess> doublePool = new Pool<DoubleWriteFieldAccess>(
-			new DoubleResourceFactory());
+	final private Pool<WriteFieldAccess> WFAPool = new Pool<WriteFieldAccess>(
+			new WFAResourceFactory());
 }

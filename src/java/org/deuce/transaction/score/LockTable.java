@@ -1,4 +1,4 @@
-package org.deuce.transaction.score2;
+package org.deuce.transaction.score;
 
 import org.deuce.transaction.TransactionException;
 import org.deuce.transform.ExcludeTM;

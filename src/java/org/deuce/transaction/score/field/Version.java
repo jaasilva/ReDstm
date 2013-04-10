@@ -1,6 +1,6 @@
-package org.deuce.transaction.score2.field;
+package org.deuce.transaction.score.field;
 
-import org.deuce.transaction.score2.Context;
+import org.deuce.transaction.score.Context;
 import org.deuce.transform.ExcludeTM;
 
 /**

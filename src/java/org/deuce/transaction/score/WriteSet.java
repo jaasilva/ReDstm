@@ -1,7 +1,7 @@
-package org.deuce.transaction.score2;
+package org.deuce.transaction.score;
 
-import org.deuce.transaction.score2.field.ReadFieldAccess;
-import org.deuce.transaction.score2.field.WriteFieldAccess;
+import org.deuce.transaction.score.field.ReadFieldAccess;
+import org.deuce.transaction.score.field.WriteFieldAccess;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.trove.THashSet;
 import org.deuce.trove.TObjectProcedure;
