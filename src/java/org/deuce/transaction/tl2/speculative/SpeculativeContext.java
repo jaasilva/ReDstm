@@ -3,6 +3,7 @@ package org.deuce.transaction.tl2.speculative;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.deuce.LocalMetadata;
+import org.deuce.distribution.TribuDSTM;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.ReadSet;
 import org.deuce.transaction.TransactionException;
@@ -40,6 +41,15 @@ import org.deuce.trove.TObjectProcedure;
 final public class SpeculativeContext extends
 		org.deuce.transaction.speculative.SpeculativeContext
 {
+	/**
+	 * The transaction's read set.
+	 */
+	protected ReadSet readSet;
+	/**
+	 * The transaction's write set.
+	 */
+	protected WriteSet writeSet;
+	
 	public static final TransactionException RO_WRITE = new TransactionException(
 			"Read-only transaction tried to write");
 	private static final boolean TX_LOAD_OPT = Boolean
@@ -85,12 +95,44 @@ final public class SpeculativeContext extends
 	public SpeculativeContext()
 	{
 		super();
+		readSet = new SpeculativeTL2ReadSet();
+		writeSet = new WriteSet();
+		
 		localClock = speculativeClock.get();
+	}
+	
+	/**
+	 * Triggers the distributed commit, and waits until it is processed.
+	 */
+	public boolean commit()
+	{
+		if (writeSet.isEmpty())
+		{ // read-only transaction
+			TribuDSTM.onTxFinished(this, true);
+			return true;
+		}
+
+		TribuDSTM.onTxCommit(this);
+		try
+		{ // blocked awaiting distributed validation
+			trxProcessed.acquire();
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+
+		TribuDSTM.onTxFinished(this, committed);
+		boolean result = committed;
+		committed = false;
+		return result;
 	}
 
 	public void recreateContextFromState(DistributedContextState ctxState)
 	{
-		super.recreateContextFromState(ctxState);
+		readSet = (ReadSet) ctxState.rs;
+		writeSet = (WriteSet) ctxState.ws;
+		
 		localClock = ((SpeculativeContextState) ctxState).speculativeVersionNumber;
 		readOnly = false;
 
@@ -104,15 +146,15 @@ final public class SpeculativeContext extends
 		// } while (!done);
 	}
 
-	protected ReadSet createReadSet()
-	{
-		return new SpeculativeTL2ReadSet();
-	}
-
-	protected WriteSet createWriteSet()
-	{
-		return new WriteSet();
-	}
+//	protected ReadSet createReadSet()
+//	{
+//		return new SpeculativeTL2ReadSet();
+//	}
+//
+//	protected WriteSet createWriteSet()
+//	{
+//		return new WriteSet();
+//	}
 
 	public DistributedContextState createState()
 	{
@@ -122,6 +164,9 @@ final public class SpeculativeContext extends
 
 	public void initialise(int atomicBlockId, String metainf)
 	{
+		readSet.clear();
+		writeSet.clear();
+		
 		this.currentReadFieldAccess = null;
 		this.localClock = speculativeClock.get();
 		this.arrayPool.clear();

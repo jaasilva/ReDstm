@@ -6,7 +6,7 @@ package org.deuce.transaction.score;
  */
 public interface InPlaceRWLock
 {
-	boolean exlusiveLock();
+	boolean exclusiveLock();
 
 	void exclusiveUnlock();
 

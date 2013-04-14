@@ -1,19 +1,19 @@
 package org.deuce.transaction.score;
 
+import java.io.Serializable;
+
 import org.deuce.distribution.replication.group.Group;
-import org.deuce.transaction.WriteSet;
 import org.deuce.transaction.score.field.ReadFieldAccess;
 import org.deuce.transaction.score.field.WriteFieldAccess;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.trove.THashSet;
-import org.deuce.trove.TObjectProcedure;
 
 /**
  * @author jaasilva
  * 
  */
 @ExcludeTM
-public class SCOReWriteSet extends WriteSet
+public class SCOReWriteSet implements Serializable
 {
 	private static final long serialVersionUID = 3147866584383152424L;
 	final private THashSet<WriteFieldAccess> writeSet = new THashSet<WriteFieldAccess>(
@@ -29,9 +29,15 @@ public class SCOReWriteSet extends WriteSet
 		return writeSet.isEmpty();
 	}
 
-	public boolean scoreForEach(TObjectProcedure<WriteFieldAccess> procedure)
+	public Group getInvolvedNodes()
 	{
-		return writeSet.forEach(procedure);
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public WriteFieldAccess contains(ReadFieldAccess read)
+	{ // Check if it is already included in the write set
+		return writeSet.get(read);
 	}
 
 	public void put(WriteFieldAccess write)
@@ -40,19 +46,38 @@ public class SCOReWriteSet extends WriteSet
 			writeSet.replace(write);
 	}
 
-	public WriteFieldAccess contains(ReadFieldAccess read)
-	{ // Check if it is already included in the write set
-		return writeSet.get(read);
-	}
-
 	public int size()
 	{
 		return writeSet.size();
 	}
 
-	public Group getInvolvedNodes()
-	{
-		// TODO Auto-generated constructor stub
-		return null;
+	public void releaseExclusiveLocks()
+	{ // assumes that these locks are hold
+		for (WriteFieldAccess a : writeSet)
+		{
+			((InPlaceRWLock) a.field).exclusiveUnlock();
+		}
+	}
+
+	public boolean getExclusiveLocks()
+	{ // CHECKME does this work? is there a better way?
+		boolean res = true;
+		int i = 0;
+		WriteFieldAccess[] ws = (WriteFieldAccess[]) writeSet.toArray();
+		while (res)
+		{
+			res = ((InPlaceRWLock) ws[i].field).sharedLock();
+			i++;
+		}
+
+		if (!res)
+		{
+			for (int j = i - 1; j >= 0; j--)
+			{
+				((InPlaceRWLock) ws[i].field).sharedUnlock();
+			}
+		}
+
+		return res;
 	}
 }

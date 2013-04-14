@@ -31,24 +31,24 @@ public abstract class DistributedContext implements ContextMetadata
 	/**
 	 * Semaphore on which a DCtx waits for the distributed commit to take place.
 	 */
-	private Semaphore trxProcessed;
+	protected Semaphore trxProcessed;
 	/**
 	 * Result of the distributed commit.
 	 */
-	private boolean committed;
-	/**
-	 * The transaction's read set.
-	 */
-	protected ReadSet readSet;
-	/**
-	 * The transaction's write set.
-	 */
-	protected WriteSet writeSet;
+	protected boolean committed;
+//	/**
+//	 * The transaction's read set.
+//	 */
+//	protected ReadSet readSet;
+//	/**
+//	 * The transaction's write set.
+//	 */
+//	protected WriteSet writeSet;
 
 	public DistributedContext()
 	{
-		readSet = createReadSet();
-		writeSet = createWriteSet();
+//		readSet = createReadSet();
+//		writeSet = createWriteSet();
 		threadID = threadIDCounter.getAndIncrement();
 		committed = false;
 		trxProcessed = new Semaphore(0);
@@ -60,25 +60,25 @@ public abstract class DistributedContext implements ContextMetadata
 	 * Constructs a local DCtx instance based on a description of the state of a
 	 * remote one.
 	 */
-	public void recreateContextFromState(DistributedContextState ctxState)
-	{
-		readSet = ctxState.rs;
-		writeSet = ctxState.ws;
-	}
+	public abstract void recreateContextFromState(DistributedContextState ctxState);
+//	{
+//		readSet = ctxState.rs;
+//		writeSet = ctxState.ws;
+//	}
 
-	/**
-	 * Factory method that delegates the concrete read set instance creation.
-	 * 
-	 * @return the concrete read set instance
-	 */
-	abstract protected ReadSet createReadSet();
-
-	/**
-	 * Factory method that delegates the concrete write set instance creation.
-	 * 
-	 * @return the concrete write set instance
-	 */
-	abstract protected WriteSet createWriteSet();
+//	/**
+//	 * Factory method that delegates the concrete read set instance creation.
+//	 * 
+//	 * @return the concrete read set instance
+//	 */
+//	abstract protected ReadSet createReadSet();
+//
+//	/**
+//	 * Factory method that delegates the concrete write set instance creation.
+//	 * 
+//	 * @return the concrete write set instance
+//	 */
+//	abstract protected WriteSet createWriteSet();
 
 	/**
 	 * Creates a sort of memento object with this transaction's state, but that
@@ -95,8 +95,8 @@ public abstract class DistributedContext implements ContextMetadata
 	public void init(int atomicBlockId, String metainf)
 	{
 		this.atomicBlockId = atomicBlockId;
-		readSet.clear();
-		writeSet.clear();
+//		readSet.clear();
+//		writeSet.clear();
 
 		initialise(atomicBlockId, metainf);
 		TribuDSTM.onTxBegin(this);
@@ -145,32 +145,32 @@ public abstract class DistributedContext implements ContextMetadata
 	 */
 	abstract protected void applyUpdates();
 
-	/**
-	 * Triggers the distributed commit, and waits until it is processed.
-	 */
-	public boolean commit()
-	{
-		if (writeSet.isEmpty())
-		{ // read-only transaction
-			TribuDSTM.onTxFinished(this, true);
-			return true;
-		}
-
-		TribuDSTM.onTxCommit(this);
-		try
-		{ // blocked awaiting distributed validation
-			trxProcessed.acquire();
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-
-		TribuDSTM.onTxFinished(this, committed);
-		boolean result = committed;
-		committed = false;
-		return result;
-	}
+//	/**
+//	 * Triggers the distributed commit, and waits until it is processed.
+//	 */
+//	public boolean commit()
+//	{
+//		if (writeSet.isEmpty())
+//		{ // read-only transaction
+//			TribuDSTM.onTxFinished(this, true);
+//			return true;
+//		}
+//
+//		TribuDSTM.onTxCommit(this);
+//		try
+//		{ // blocked awaiting distributed validation
+//			trxProcessed.acquire();
+//		}
+//		catch (InterruptedException e)
+//		{
+//			e.printStackTrace();
+//		}
+//
+//		TribuDSTM.onTxFinished(this, committed);
+//		boolean result = committed;
+//		committed = false;
+//		return result;
+//	}
 
 	/**
 	 * Notifies that the distributed commit has finished processing.

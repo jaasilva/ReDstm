@@ -3,6 +3,7 @@ package org.deuce.transaction.tl2;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.deuce.LocalMetadata;
+import org.deuce.distribution.TribuDSTM;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.ReadSet;
@@ -37,6 +38,15 @@ import org.deuce.trove.TObjectProcedure;
 @LocalMetadata(metadataClass = "org.deuce.transaction.tl2.TL2Field")
 public class Context extends DistributedContext
 {
+	/**
+	 * The transaction's read set.
+	 */
+	protected ReadSet readSet;
+	/**
+	 * The transaction's write set.
+	 */
+	protected WriteSet writeSet;
+	
 	private static final boolean TX_LOAD_OPT = Boolean
 			.getBoolean("org.deuce.transaction.tl2.txload.opt");
 
@@ -62,12 +72,43 @@ public class Context extends DistributedContext
 	public Context()
 	{
 		super();
+		readSet = new TL2ReadSet();
+		writeSet = new WriteSet();
+		
 		localClock = clock.get();
+	}
+	
+	/**
+	 * Triggers the distributed commit, and waits until it is processed.
+	 */
+	public boolean commit()
+	{
+		if (writeSet.isEmpty())
+		{ // read-only transaction
+			TribuDSTM.onTxFinished(this, true);
+			return true;
+		}
+
+		TribuDSTM.onTxCommit(this);
+		try
+		{ // blocked awaiting distributed validation
+			super.trxProcessed.acquire();
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+
+		TribuDSTM.onTxFinished(this, committed);
+		boolean result = committed;
+		committed = false;
+		return result;
 	}
 
 	public void recreateContextFromState(DistributedContextState ctxState)
 	{
-		super.recreateContextFromState(ctxState);
+		readSet = (ReadSet) ctxState.rs;
+		writeSet = (WriteSet) ctxState.ws;
 
 		localClock = ((ContextState) ctxState).rv;
 
@@ -84,26 +125,17 @@ public class Context extends DistributedContext
 		longPool.clear();
 		floatPool.clear();
 		doublePool.clear();
-
-		// boolean done = false;
-		// do {
-		// int c = clock.get();
-		// if (localClock > c)
-		// done = clock.compareAndSet(c, localClock);
-		// else
-		// done = true;
-		// } while (!done);
 	}
 
-	protected ReadSet createReadSet()
-	{
-		return new TL2ReadSet();
-	}
-
-	protected WriteSet createWriteSet()
-	{
-		return new WriteSet();
-	}
+//	protected ReadSet createReadSet()
+//	{
+//		return new TL2ReadSet();
+//	}
+//
+//	protected WriteSet createWriteSet()
+//	{
+//		return new WriteSet();
+//	}
 
 	public DistributedContextState createState()
 	{
@@ -113,6 +145,9 @@ public class Context extends DistributedContext
 
 	public void initialise(int atomicBlockId, String metainf)
 	{
+		readSet.clear();
+		writeSet.clear();
+		
 		currentReadFieldAccess = null;
 		localClock = clock.get();
 		arrayPool.clear();

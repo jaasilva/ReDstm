@@ -1,7 +1,8 @@
 package org.deuce.transaction.score;
 
+import java.io.Serializable;
+
 import org.deuce.distribution.replication.group.Group;
-import org.deuce.transaction.ReadSet;
 import org.deuce.transaction.score.field.ReadFieldAccess;
 import org.deuce.transform.ExcludeTM;
 
@@ -10,23 +11,23 @@ import org.deuce.transform.ExcludeTM;
  * 
  */
 @ExcludeTM
-public class SCOReReadSet extends ReadSet
+public class SCOReReadSet implements Serializable
 {
 	private static final long serialVersionUID = -8242797020618563511L;
-	protected static final int DEFAULT_CAPACITY = 1024;
-	protected ReadFieldAccess[] readSet = new ReadFieldAccess[DEFAULT_CAPACITY];
-	protected int nextAvaliable = 0;
+	private static final int DEFAULT_CAPACITY = 1024;
+	private ReadFieldAccess[] readSet = new ReadFieldAccess[DEFAULT_CAPACITY];
+	private int nextAvaliable = 0;
 
 	public SCOReReadSet()
 	{
 		fillArray(0);
 	}
-	
+
 	public void clear()
 	{
 		nextAvaliable = 0;
 	}
-	
+
 	private void fillArray(int offset)
 	{
 		for (int i = offset; i < readSet.length; ++i)
@@ -35,7 +36,7 @@ public class SCOReReadSet extends ReadSet
 		}
 	}
 
-	public ReadFieldAccess scoreGetNext()
+	public ReadFieldAccess getNext()
 	{
 		if (nextAvaliable >= readSet.length)
 		{
@@ -48,14 +49,49 @@ public class SCOReReadSet extends ReadSet
 		return readSet[nextAvaliable++];
 	}
 
-	public int size()
+	public void releaseSharedLocks()
+	{ // assumes that these locks are hold
+		for(ReadFieldAccess a : readSet)
+		{
+			((InPlaceRWLock) a.field).sharedUnlock();
+		}
+	}
+
+	public boolean getSharedLocks()
+	{ // CHECKME is there a better way?
+		boolean res = true;
+		int i= 0;
+		while(res)
+		{
+			res = ((InPlaceRWLock) readSet[i].field).sharedLock();
+			i++;
+		}
+		
+		if (!res)
+		{
+			for (int j = i - 1; j >= 0; j--)
+			{
+				((InPlaceRWLock) readSet[i].field).sharedUnlock();
+			}
+		}
+		
+		return res;
+	}
+
+	public boolean validate(int sid)
 	{
-		return nextAvaliable;
+		// TODO
+		return false;
 	}
 
 	public Group getInvolvedNodes()
 	{
-		// TODO Auto-generated constructor stub
+		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public int size()
+	{
+		return nextAvaliable;
 	}
 }

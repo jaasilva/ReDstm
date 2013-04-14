@@ -9,12 +9,12 @@ public class DistributedContextState implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
-	public ReadSet rs;
-	public WriteSet ws;
+	public Object rs;
+	public Object ws;
 	final public int ctxID;
 	final public int atomicBlockId;
 
-	public DistributedContextState(ReadSet rs, WriteSet ws, int ctxID,
+	public DistributedContextState(Object rs, Object ws, int ctxID,
 			int atomicBlockId)
 	{
 		this.rs = rs;

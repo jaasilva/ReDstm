@@ -29,7 +29,7 @@ public class SCOReContextState extends DistributedContextState
 	 * @param sid
 	 * @param trxID
 	 */
-	public SCOReContextState(ReadSet rs, WriteSet ws, int ctxID,
+	public SCOReContextState(SCOReReadSet rs, SCOReWriteSet ws, int ctxID,
 			int atomicBlockId, int sid, String trxID)
 	{
 		super(rs, ws, ctxID, atomicBlockId);

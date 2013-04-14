@@ -83,7 +83,7 @@ public class VBoxField extends TxField implements InPlaceRWLock
 		return version;
 	}
 
-	public boolean exlusiveLock()
+	public boolean exclusiveLock()
 	{
 		return rwLock.writeLock().tryLock();
 	}

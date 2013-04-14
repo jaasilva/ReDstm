@@ -6,8 +6,6 @@ import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.GroupUtils;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
-import org.deuce.transaction.ReadSet;
-import org.deuce.transaction.WriteSet;
 import org.deuce.transaction.score.field.ReadFieldAccess;
 import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transaction.score.field.VBoxField.__Type;
@@ -38,8 +36,17 @@ import org.deuce.transform.localmetadata.type.TxField;
 @LocalMetadata(metadataClass = "org.deuce.transaction.score.field.VBoxField")
 public class SCOReContext extends DistributedContext
 {
-	private SCOReReadSet readSet = (SCOReReadSet) super.readSet;
-	private SCOReWriteSet writeSet = (SCOReWriteSet) super.writeSet;
+	/**
+	 * The transaction's read set.
+	 */
+	protected SCOReReadSet readSet;
+	/**
+	 * The transaction's write set.
+	 */
+	protected SCOReWriteSet writeSet;
+	
+//	private SCOReReadSet readSet = (SCOReReadSet) super.readSet;
+//	private SCOReWriteSet writeSet = (SCOReWriteSet) super.writeSet;
 	
 	/**
 	 * Snapshot id for the transactions of this context
@@ -58,27 +65,57 @@ public class SCOReContext extends DistributedContext
 	public SCOReContext()
 	{
 		super();
+		readSet = new SCOReReadSet();
+		writeSet = new SCOReWriteSet();
+		
 		trxID = java.util.UUID.randomUUID().toString();
 		firstReadDone = false;
 	}
 
-	@Override
-	protected ReadSet createReadSet()
-	{
-		return new SCOReReadSet();
-	}
-
-	@Override
-	protected WriteSet createWriteSet()
-	{
-		return new SCOReWriteSet();
-	}
+//	@Override
+//	protected ReadSet createReadSet()
+//	{
+//		return new SCOReReadSet();
+//	}
+//
+//	@Override
+//	protected WriteSet createWriteSet()
+//	{
+//		return new SCOReWriteSet();
+//	}
 
 	@Override
 	public DistributedContextState createState()
 	{
 		return new SCOReContextState(readSet, writeSet, threadID,
 				atomicBlockId, sid, trxID);
+	}
+	
+	/**
+	 * Triggers the distributed commit, and waits until it is processed.
+	 */
+	public boolean commit()
+	{
+		if (writeSet.isEmpty())
+		{ // read-only transaction
+			TribuDSTM.onTxFinished(this, true);
+			return true;
+		}
+
+		TribuDSTM.onTxCommit(this);
+		try
+		{ // blocked awaiting distributed validation
+			trxProcessed.acquire();
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+
+		TribuDSTM.onTxFinished(this, committed);
+		boolean result = committed;
+		committed = false;
+		return result;
 	}
 
 	/**
@@ -95,6 +132,9 @@ public class SCOReContext extends DistributedContext
 	@Override
 	protected void initialise(int atomicBlockId, String metainf)
 	{
+		readSet.clear();
+		writeSet.clear();
+		
 		// TODO Auto-generated method stub
 		trxID = java.util.UUID.randomUUID().toString();
 		firstReadDone = false;
@@ -118,7 +158,8 @@ public class SCOReContext extends DistributedContext
 
 	public void recreateContextFromState(DistributedContextState ctxState)
 	{
-		super.recreateContextFromState(ctxState);
+		readSet = (SCOReReadSet) ctxState.rs;
+		writeSet = (SCOReWriteSet) ctxState.ws;
 
 		// TODO Auto-generated method stub
 
@@ -136,7 +177,7 @@ public class SCOReContext extends DistributedContext
 	private WriteFieldAccess onReadAccess(TxField field)
 	{
 		// TODO
-		ReadFieldAccess current = readSet.scoreGetNext();
+		ReadFieldAccess current = readSet.getNext();
 		current.init((VBoxField) field);
 
 		return writeSet.contains(current);

@@ -35,7 +35,7 @@ public class ExclusiveLockProcedure implements
 
 	public boolean execute(WriteFieldAccess writeField)
 	{
-		if (((InPlaceRWLock) writeField.field).exlusiveLock())
+		if (((InPlaceRWLock) writeField.field).exclusiveLock())
 		{
 			i++;
 		}
