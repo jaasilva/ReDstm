@@ -2,11 +2,7 @@ package org.deuce.transaction.score;
 
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
-import org.deuce.distribution.replication.group.Group;
-import org.deuce.distribution.replication.group.GroupUtils;
 import org.deuce.transaction.DistributedContextState;
-import org.deuce.transaction.ReadSet;
-import org.deuce.transaction.WriteSet;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -36,16 +32,5 @@ public class SCOReContextState extends DistributedContextState
 		this.sid = sid;
 		this.trxID = trxID;
 		this.origin = TribuDSTM.getLocalAddress();
-	}
-
-	/**
-	 * @return
-	 */
-	public Group getInvolvedNodes()
-	{
-		Group group1 = ((SCOReReadSet) rs).getInvolvedNodes();
-		Group group2 = ((SCOReWriteSet) ws).getInvolvedNodes();
-		Group resGroup = GroupUtils.unionGroups(group1, group2);
-		return resGroup;
 	}
 }

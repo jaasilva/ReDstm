@@ -1,6 +1,5 @@
 package org.deuce.transaction.score.field;
 
-import org.deuce.transaction.score.field.VBoxField.__Type;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -12,8 +11,7 @@ import org.deuce.transform.ExcludeTM;
 public class WriteFieldAccess extends ReadFieldAccess
 {
 	private static final long serialVersionUID = 1L;
-	public Object value;
-	public __Type type;
+	private Object value;
 
 	/**
 	 * Commits the value in memory.
@@ -23,11 +21,10 @@ public class WriteFieldAccess extends ReadFieldAccess
 		((VBoxField) field).commit(value, txNumber);
 	}
 
-	public void set(Object value, VBoxField field, __Type type)
+	public void set(Object value, VBoxField field)
 	{
 		super.init(field);
 		this.value = value;
-		this.type = type;
 	}
 
 	public Object getValue()

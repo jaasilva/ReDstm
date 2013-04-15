@@ -20,7 +20,7 @@ public class VBoxField extends TxField implements InPlaceRWLock
 	}
 
 	public Version version;
-	private __Type type;
+	public __Type type;
 	private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
 
 	public VBoxField()
@@ -43,26 +43,26 @@ public class VBoxField extends TxField implements InPlaceRWLock
 
 	// XXX multiarrays como é?
 
-	public boolean validate(Version version, int owner)
-	{
-		Version tmp = this.version;
-		// int l = lock;
-		// if ((l & LockTable.LOCK) != 0)
-		// {
-		// if ((l & LockTable.UNLOCK) != owner) // está locked e nao sou eu que
-		// // tenho o lock?????????
-		// {
-		// throw LockTable.LOCKED_VERSION_EXCEPTION;
-		// }
-		// }
-		// TODO
-		return tmp == version;
-	}
+//	public boolean validate(Version version, int owner)
+//	{
+//		Version tmp = this.version;
+//		// int l = lock;
+//		// if ((l & LockTable.LOCK) != 0)
+//		// {
+//		// if ((l & LockTable.UNLOCK) != owner) // está locked e nao sou eu que
+//		// // tenho o lock?????????
+//		// {
+//		// throw LockTable.LOCKED_VERSION_EXCEPTION;
+//		// }
+//		// }
+//		// TODO
+//		return tmp == version;
+//	}
 
 	public void commit(Object newValue, int txNumber)
 	{
 		Version ver = new Version(Integer.MAX_VALUE, newValue, version);
-		this.version.value = read(type);
+		this.version.value = read(type); // CHECKME pq isto?
 		this.version = ver;
 		write(ver.value, type);
 		this.version.version = txNumber;
@@ -78,7 +78,7 @@ public class VBoxField extends TxField implements InPlaceRWLock
 		return this.version.get(version);
 	}
 
-	public Version getTop()
+	public Version getLastVersion()
 	{
 		return version;
 	}

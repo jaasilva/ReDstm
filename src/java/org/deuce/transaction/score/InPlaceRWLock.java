@@ -2,7 +2,7 @@ package org.deuce.transaction.score;
 
 /**
  * 
- * @author Ricardo Dias <ricardo.dias@campus.fct.unl.pt>
+ * @author jaasilva
  */
 public interface InPlaceRWLock
 {

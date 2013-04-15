@@ -1,14 +1,18 @@
 package org.deuce.transaction.score;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TimerTask;
+
 import org.deuce.LocalMetadata;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.GroupUtils;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
+import org.deuce.transaction.TransactionException;
 import org.deuce.transaction.score.field.ReadFieldAccess;
 import org.deuce.transaction.score.field.VBoxField;
-import org.deuce.transaction.score.field.VBoxField.__Type;
 import org.deuce.transaction.score.field.WriteFieldAccess;
 import org.deuce.transaction.score.pool.Pool;
 import org.deuce.transaction.score.pool.ResourceFactory;
@@ -36,53 +40,39 @@ import org.deuce.transform.localmetadata.type.TxField;
 @LocalMetadata(metadataClass = "org.deuce.transaction.score.field.VBoxField")
 public class SCOReContext extends DistributedContext
 {
-	/**
-	 * The transaction's read set.
-	 */
+	public static final TransactionException VERSION_UNAVAILABLE_EXCEPTION = new TransactionException(
+			"Fail on retrieveing an older and unexistent version.");
+
 	protected SCOReReadSet readSet;
-	/**
-	 * The transaction's write set.
-	 */
 	protected SCOReWriteSet writeSet;
-	
-//	private SCOReReadSet readSet = (SCOReReadSet) super.readSet;
-//	private SCOReWriteSet writeSet = (SCOReWriteSet) super.writeSet;
-	
-	/**
-	 * Snapshot id for the transactions of this context
-	 */
+
 	public int sid;
-	/**
-	 * Transaction id that uniquely identifies a transaction in the entire
-	 * system
-	 */
 	public String trxID;
-	/**
-	 * 
-	 */
 	public boolean firstReadDone;
+	public List<Integer> votes;
+	public int expectedVotes;
+	public TimerTask timeoutTask;
+	public int retry;
 
 	public SCOReContext()
 	{
 		super();
 		readSet = new SCOReReadSet();
 		writeSet = new SCOReWriteSet();
-		
+	}
+	
+	@Override
+	protected void initialise(int atomicBlockId, String metainf)
+	{
+		readSet.clear();
+		writeSet.clear();
+
 		trxID = java.util.UUID.randomUUID().toString();
 		firstReadDone = false;
-	}
+		retry++;
 
-//	@Override
-//	protected ReadSet createReadSet()
-//	{
-//		return new SCOReReadSet();
-//	}
-//
-//	@Override
-//	protected WriteSet createWriteSet()
-//	{
-//		return new SCOReWriteSet();
-//	}
+		WFAPool.clear();
+	}
 
 	@Override
 	public DistributedContextState createState()
@@ -90,7 +80,7 @@ public class SCOReContext extends DistributedContext
 		return new SCOReContextState(readSet, writeSet, threadID,
 				atomicBlockId, sid, trxID);
 	}
-	
+
 	/**
 	 * Triggers the distributed commit, and waits until it is processed.
 	 */
@@ -130,30 +120,16 @@ public class SCOReContext extends DistributedContext
 	}
 
 	@Override
-	protected void initialise(int atomicBlockId, String metainf)
-	{
-		readSet.clear();
-		writeSet.clear();
-		
-		// TODO Auto-generated method stub
-		trxID = java.util.UUID.randomUUID().toString();
-		firstReadDone = false;
-
-		WFAPool.clear();
-	}
-
-	@Override
 	protected boolean performValidation()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	protected void applyUpdates()
 	{
-		// TODO Auto-generated method stub
-
+		writeSet.apply(sid);
+		// CHECKME mais alguma coisa?
 	}
 
 	public void recreateContextFromState(DistributedContextState ctxState)
@@ -171,12 +147,10 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void beforeReadAccess(TxField field)
 	{
-		// TODO Auto-generated method stub
 	}
 
 	private WriteFieldAccess onReadAccess(TxField field)
 	{
-		// TODO
 		ReadFieldAccess current = readSet.getNext();
 		current.init((VBoxField) field);
 
@@ -186,172 +160,146 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public ArrayContainer onReadAccess(ArrayContainer value, TxField field)
 	{
-		return (ArrayContainer) TribuDSTM.onTxRead(this, field.getMetadata(),
-				value);
-	}
-
-	public ArrayContainer onLocalReadAccess(ArrayContainer value, TxField field)
-	{
 		WriteFieldAccess writeAccess = onReadAccess(field);
 		if (writeAccess == null)
-			return value;
-
-		ArrayContainer r = (ArrayContainer) writeAccess.getValue();
-
-		return r;
+		{
+			return (ArrayContainer) TribuDSTM.onTxRead(this,
+					field.getMetadata(), value);
+		}
+		else
+		{
+			return (ArrayContainer) writeAccess.getValue();
+		}
 	}
 
 	@Override
 	public Object onReadAccess(Object value, TxField field)
 	{
-		return TribuDSTM.onTxRead(this, field.getMetadata(), value);
-	}
-
-	public Object onLocalReadAccess(Object value, TxField field)
-	{
 		WriteFieldAccess writeAccess = onReadAccess(field);
 		if (writeAccess == null)
-			return value;
-
-		Object r = (Object) writeAccess.getValue();
-
-		return r;
+		{
+			return TribuDSTM.onTxRead(this, field.getMetadata(), value);
+		}
+		else
+		{
+			return writeAccess.getValue();
+		}
 	}
 
 	@Override
 	public boolean onReadAccess(boolean value, TxField field)
 	{
-		return (Boolean) TribuDSTM.onTxRead(this, field.getMetadata(), value);
-	}
-
-	public boolean onLocalReadAccess(boolean value, TxField field)
-	{
 		WriteFieldAccess writeAccess = onReadAccess(field);
 		if (writeAccess == null)
-			return value;
-
-		boolean r = (Boolean) writeAccess.getValue();
-
-		return r;
+		{
+			return (Boolean) TribuDSTM.onTxRead(this, field.getMetadata(),
+					value);
+		}
+		else
+		{
+			return (Boolean) writeAccess.getValue();
+		}
 	}
 
 	@Override
 	public byte onReadAccess(byte value, TxField field)
 	{
-		return (Byte) TribuDSTM.onTxRead(this, field.getMetadata(), value);
-	}
-
-	public byte onLocalReadAccess(byte value, TxField field)
-	{
 		WriteFieldAccess writeAccess = onReadAccess(field);
 		if (writeAccess == null)
-			return value;
-
-		byte r = (Byte) writeAccess.getValue();
-
-		return r;
+		{
+			return (Byte) TribuDSTM.onTxRead(this, field.getMetadata(), value);
+		}
+		else
+		{
+			return (Byte) writeAccess.getValue();
+		}
 	}
 
 	@Override
 	public char onReadAccess(char value, TxField field)
 	{
-		return (Character) TribuDSTM.onTxRead(this, field.getMetadata(), value);
-	}
-
-	public char onLocalReadAccess(char value, TxField field)
-	{
 		WriteFieldAccess writeAccess = onReadAccess(field);
 		if (writeAccess == null)
-			return value;
-
-		char r = (Character) writeAccess.getValue();
-
-		return r;
+		{
+			return (Character) TribuDSTM.onTxRead(this, field.getMetadata(),
+					value);
+		}
+		else
+		{
+			return (Character) writeAccess.getValue();
+		}
 	}
 
 	@Override
 	public short onReadAccess(short value, TxField field)
 	{
-		return (Short) TribuDSTM.onTxRead(this, field.getMetadata(), value);
-	}
-
-	public short onLocalReadAccess(short value, TxField field)
-	{
 		WriteFieldAccess writeAccess = onReadAccess(field);
 		if (writeAccess == null)
-			return value;
-
-		short r = (Short) writeAccess.getValue();
-
-		return r;
+		{
+			return (Short) TribuDSTM.onTxRead(this, field.getMetadata(), value);
+		}
+		else
+		{
+			return (Short) writeAccess.getValue();
+		}
 	}
 
 	@Override
 	public int onReadAccess(int value, TxField field)
 	{
-		return (Integer) TribuDSTM.onTxRead(this, field.getMetadata(), value);
-	}
-
-	public int onLocalReadAccess(int value, TxField field)
-	{
 		WriteFieldAccess writeAccess = onReadAccess(field);
 		if (writeAccess == null)
-			return value;
-
-		int r = (Integer) writeAccess.getValue();
-
-		return r;
+		{
+			return (Integer) TribuDSTM.onTxRead(this, field.getMetadata(),
+					value);
+		}
+		else
+		{
+			return (Integer) writeAccess.getValue();
+		}
 	}
 
 	@Override
 	public long onReadAccess(long value, TxField field)
 	{
-		return (Long) TribuDSTM.onTxRead(this, field.getMetadata(), value);
-	}
-
-	public long onLocalReadAccess(long value, TxField field)
-	{
 		WriteFieldAccess writeAccess = onReadAccess(field);
 		if (writeAccess == null)
-			return value;
-
-		long r = (Long) writeAccess.getValue();
-
-		return r;
+		{
+			return (Long) TribuDSTM.onTxRead(this, field.getMetadata(), value);
+		}
+		else
+		{
+			return (Long) writeAccess.getValue();
+		}
 	}
 
 	@Override
 	public float onReadAccess(float value, TxField field)
 	{
-		return (Float) TribuDSTM.onTxRead(this, field.getMetadata(), value);
-	}
-
-	public float onLocalReadAccess(float value, TxField field)
-	{
 		WriteFieldAccess writeAccess = onReadAccess(field);
 		if (writeAccess == null)
-			return value;
-
-		float r = (Float) writeAccess.getValue();
-
-		return r;
+		{
+			return (Float) TribuDSTM.onTxRead(this, field.getMetadata(), value);
+		}
+		else
+		{
+			return (Float) writeAccess.getValue();
+		}
 	}
 
 	@Override
 	public double onReadAccess(double value, TxField field)
 	{
-		return (Double) TribuDSTM.onTxRead(this, field.getMetadata(), value);
-	}
-
-	public double onLocalReadAccess(double value, TxField field)
-	{
 		WriteFieldAccess writeAccess = onReadAccess(field);
 		if (writeAccess == null)
-			return value;
-
-		double r =  (Double) writeAccess.getValue();
-
-		return r;
+		{
+			return (Double) TribuDSTM
+					.onTxRead(this, field.getMetadata(), value);
+		}
+		else
+		{
+			return (Double) writeAccess.getValue();
+		}
 	}
 
 	private void addWriteAccess(WriteFieldAccess write)
@@ -363,7 +311,7 @@ public class SCOReContext extends DistributedContext
 	public void onWriteAccess(ArrayContainer value, TxField field)
 	{ // CHECKME isto pode ser assim?
 		WriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field, __Type.OBJECT);
+		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
 	}
 
@@ -371,7 +319,7 @@ public class SCOReContext extends DistributedContext
 	public void onWriteAccess(Object value, TxField field)
 	{
 		WriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field, __Type.OBJECT);
+		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
 	}
 
@@ -379,7 +327,7 @@ public class SCOReContext extends DistributedContext
 	public void onWriteAccess(boolean value, TxField field)
 	{
 		WriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field, __Type.BOOLEAN);
+		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
 	}
 
@@ -387,7 +335,7 @@ public class SCOReContext extends DistributedContext
 	public void onWriteAccess(byte value, TxField field)
 	{
 		WriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field, __Type.BYTE);
+		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
 	}
 
@@ -395,7 +343,7 @@ public class SCOReContext extends DistributedContext
 	public void onWriteAccess(char value, TxField field)
 	{
 		WriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field, __Type.CHAR);
+		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
 	}
 
@@ -403,7 +351,7 @@ public class SCOReContext extends DistributedContext
 	public void onWriteAccess(short value, TxField field)
 	{
 		WriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field, __Type.SHORT);
+		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
 	}
 
@@ -411,7 +359,7 @@ public class SCOReContext extends DistributedContext
 	public void onWriteAccess(int value, TxField field)
 	{
 		WriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field, __Type.INT);
+		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
 	}
 
@@ -419,7 +367,7 @@ public class SCOReContext extends DistributedContext
 	public void onWriteAccess(long value, TxField field)
 	{
 		WriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field, __Type.LONG);
+		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
 	}
 
@@ -427,7 +375,7 @@ public class SCOReContext extends DistributedContext
 	public void onWriteAccess(float value, TxField field)
 	{
 		WriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field, __Type.FLOAT);
+		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
 	}
 
@@ -435,7 +383,7 @@ public class SCOReContext extends DistributedContext
 	public void onWriteAccess(double value, TxField field)
 	{
 		WriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field, __Type.DOUBLE);
+		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
 	}
 

@@ -12,7 +12,7 @@ import org.deuce.transform.ExcludeTM;
 public class ReadFieldAccess implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	public VBoxField field; // CHECKME devia ser VBoxField?
+	public VBoxField field;
 	public Version version;
 
 	public ReadFieldAccess()

@@ -51,6 +51,14 @@ public class SCOReWriteSet implements Serializable
 		return writeSet.size();
 	}
 
+	public void apply(int sid)
+	{
+		for (WriteFieldAccess a : writeSet)
+		{
+			a.put(sid);
+		}
+	}
+
 	public void releaseExclusiveLocks()
 	{ // assumes that these locks are hold
 		for (WriteFieldAccess a : writeSet)
@@ -66,7 +74,7 @@ public class SCOReWriteSet implements Serializable
 		WriteFieldAccess[] ws = (WriteFieldAccess[]) writeSet.toArray();
 		while (res)
 		{
-			res = ((InPlaceRWLock) ws[i].field).sharedLock();
+			res = ((InPlaceRWLock) ws[i].field).exclusiveLock();
 			i++;
 		}
 
@@ -74,7 +82,7 @@ public class SCOReWriteSet implements Serializable
 		{
 			for (int j = i - 1; j >= 0; j--)
 			{
-				((InPlaceRWLock) ws[i].field).sharedUnlock();
+				((InPlaceRWLock) ws[j].field).exclusiveUnlock();
 			}
 		}
 

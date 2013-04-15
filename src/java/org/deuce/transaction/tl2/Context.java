@@ -150,6 +150,7 @@ public class Context extends DistributedContext
 		
 		currentReadFieldAccess = null;
 		localClock = clock.get();
+		
 		arrayPool.clear();
 		objectPool.clear();
 		booleanPool.clear();

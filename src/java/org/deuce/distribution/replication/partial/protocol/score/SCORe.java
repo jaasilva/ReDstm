@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -60,24 +59,26 @@ public class SCORe extends PartialReplicationProtocol implements
 	 */
 	private final Map<Integer, DistributedContext> contexts = Collections
 			.synchronizedMap(new HashMap<Integer, DistributedContext>());
-	/**
-	 * Map<ctxID, List<proposedSn>> Keeps track of proposed sid's for each
-	 * context, during vote phase
-	 */
-	private final Map<Integer, List<Integer>> votes = Collections
-			.synchronizedMap(new HashMap<Integer, List<Integer>>());
-	/**
-	 * Map<ctxID, expectedVotes> Keeps track of the expected number of votes to
-	 * receive by this coordinator, in the vote phase
-	 */
-	private final Map<Integer, Integer> expectedVotes = Collections
-			.synchronizedMap(new HashMap<Integer, Integer>());
-	/**
-	 * Map<ctxID, TimerTask> Keeps track of each context timer task, to be able
-	 * to cancel the task if the expected number of votes is reached
-	 */
-	private final Map<Integer, TimerTask> timeoutTasks = Collections
-			.synchronizedMap(new HashMap<Integer, TimerTask>());
+	// /**
+	// * Map<ctxID, List<proposedSn>> Keeps track of proposed sid's for each
+	// * context, during vote phase
+	// */
+	// private final Map<Integer, List<Integer>> votes = Collections
+	// .synchronizedMap(new HashMap<Integer, List<Integer>>());
+	// /**
+	// * Map<ctxID, expectedVotes> Keeps track of the expected number of votes
+	// to
+	// * receive by this coordinator, in the vote phase
+	// */
+	// private final Map<Integer, Integer> expectedVotes = Collections
+	// .synchronizedMap(new HashMap<Integer, Integer>());
+	// /**
+	// * Map<ctxID, TimerTask> Keeps track of each context timer task, to be
+	// able
+	// * to cancel the task if the expected number of votes is reached
+	// */
+	// private final Map<Integer, TimerTask> timeoutTasks = Collections
+	// .synchronizedMap(new HashMap<Integer, TimerTask>());
 	/**
 	 * Queue of pending committing transactions (ordered by SnapshotId)
 	 */
@@ -119,26 +120,27 @@ public class SCORe extends PartialReplicationProtocol implements
 	public void onTxCommit(DistributedContext ctx)
 	{
 		int ctxID = ctx.threadID;
+		SCOReContext sctx = (SCOReContext) ctx;
 		DistributedContextState ctxState = ctx.createState();
 		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
 
 		Group resGroup = ((SCOReContext) ctx).getInvolvedNodes();
 		int expVotes = resGroup.getSize();
 
-		votes.put(ctxID, new ArrayList<Integer>(expVotes));
-		expectedVotes.put(ctxID, expVotes);
+		sctx.votes = new ArrayList<Integer>(expVotes);
+		sctx.expectedVotes = expVotes;
 
 		TribuDSTM.sendTotalOrdered(payload, resGroup); // send prepare message
 
 		TimerTask task = voteTimeoutHandler(ctxID, ((SCOReContext) ctx).trxID);
-		timeoutTasks.put(ctxID, task); // set timeout handler
+		sctx.timeoutTask = task; // set timeout handler
 		timeoutTimer.schedule(task, timeout);
 
 		LOGGER.trace(((SCOReContextState) ctxState).origin
 				+ " trying to commit " + ctxID + ":" + ctx.atomicBlockId + ":"
 				+ ((SCOReContext) ctx).trxID + ". Sending prepare msg to "
-				+ resGroup + ". Setting timeout task(" + task + ") for "
-				+ timeout + "ms.");
+				+ resGroup + ". Setting timeout(" + task + ") for " + timeout
+				+ "ms.");
 	}
 
 	private TimerTask voteTimeoutHandler(final int id, final String trxid)
@@ -147,10 +149,11 @@ public class SCORe extends PartialReplicationProtocol implements
 		{
 			private final int ctxID = id;
 			private final String trxID = trxid;
+			SCOReContext sctx = ((SCOReContext) contexts.get(ctxID));
 
 			public void run()
 			{ // just to double check if it is really necessary to run this
-				if (votes.get(ctxID).size() != expectedVotes.get(ctxID))
+				if (sctx.votes.size() != sctx.expectedVotes)
 				{ // timeout occurs. abort transaction
 					LOGGER.trace("Timeout for trx " + ctxID + ":" + trxID
 							+ " triggered (task(" + this + ")). ABORTING TRX.");
@@ -237,6 +240,7 @@ public class SCORe extends PartialReplicationProtocol implements
 		VoteMessage vote = (VoteMessage) obj;
 		int ctxID = vote.ctxID;
 		String trxID = vote.trxID;
+		SCOReContext sctx = ((SCOReContext) contexts.get(ctxID));
 
 		if (!receivedTrxs.containsKey(trxID))
 		{ // late vote. trx already aborted and finished
@@ -245,16 +249,16 @@ public class SCORe extends PartialReplicationProtocol implements
 
 		if (!vote.result) // voted NO
 		{ // do not wait for more votes. abort trx
-			timeoutTasks.get(ctxID).cancel(); // cancel timeout
+			sctx.timeoutTask.cancel(); // cancel timeout
 			finalizeVoteStep(ctxID, trxID, false);
 		}
 		else
 		{ // voted YES. save proposed timestamp
-			votes.get(ctxID).add(vote.proposedTimestamp);
+			sctx.votes.add(vote.proposedTimestamp);
 
-			if (votes.get(ctxID).size() == expectedVotes.get(ctxID))
+			if (sctx.votes.size() == sctx.expectedVotes)
 			{ // last vote. every vote was YES. send decide message
-				timeoutTasks.get(ctxID).cancel(); // cancel timeout
+				sctx.timeoutTask.cancel(); // cancel timeout
 				finalizeVoteStep(ctxID, trxID, true);
 			}
 		}
@@ -263,14 +267,15 @@ public class SCORe extends PartialReplicationProtocol implements
 				+ " received a vote msg "
 				+ (vote.result ? "(YES) with proposed sid: "
 						+ vote.proposedTimestamp + " [gathered "
-						+ votes.get(ctxID).size() + " votes, expecting "
-						+ expectedVotes.get(ctxID) + "]" : "(NO)") + " from "
-				+ src + " for trx " + ctxID + ":" + trxID + ".");
+						+ sctx.votes.size() + " votes, expecting "
+						+ sctx.expectedVotes + "]" : "(NO)") + " from " + src
+				+ " for trx " + ctxID + ":" + trxID + ".");
 	}
 
 	private void finalizeVoteStep(int ctxID, String trxID, boolean outcome)
 	{
-		int finalSid = Collections.max(votes.get(ctxID));
+		SCOReContext sctx = ((SCOReContext) contexts.get(ctxID));
+		int finalSid = Collections.max(sctx.votes);
 		((SCOReContext) contexts.get(ctxID)).sid = finalSid;
 
 		DecideMessage decide = new DecideMessage(ctxID, trxID, finalSid,

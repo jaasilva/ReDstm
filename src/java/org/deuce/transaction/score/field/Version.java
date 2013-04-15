@@ -1,6 +1,6 @@
 package org.deuce.transaction.score.field;
 
-import org.deuce.transaction.score.Context;
+import org.deuce.transaction.score.SCOReContext;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -21,23 +21,6 @@ public class Version
 		this.next = next;
 		this.value = value;
 		this.size = next != null ? next.size + 1 : 1;
-		if (size == Context.MAX_VERSIONS)
-		{
-			cleanVersions();
-			size = Context.MAX_VERSIONS >>> 1; // divide by 2
-		}
-	}
-
-	private void cleanVersions()
-	{
-		int c = Context.MAX_VERSIONS >>> 1; // divide by 2
-		Version v = this;
-		while (c > 1)
-		{
-			v = v.next;
-			c--;
-		}
-		v.next = null;
 	}
 
 	public Version get(int maxVersion)
@@ -47,8 +30,8 @@ public class Version
 		{
 			res = res.next;
 			if (res == null)
-			{
-				throw Context.VERSION_UNAVAILABLE_EXCEPTION;
+			{ // com tamanho ilimitado isto acontece?
+				throw SCOReContext.VERSION_UNAVAILABLE_EXCEPTION;
 			}
 		}
 		return res;

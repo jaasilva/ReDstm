@@ -51,7 +51,7 @@ public class SCOReReadSet implements Serializable
 
 	public void releaseSharedLocks()
 	{ // assumes that these locks are hold
-		for(ReadFieldAccess a : readSet)
+		for (ReadFieldAccess a : readSet)
 		{
 			((InPlaceRWLock) a.field).sharedUnlock();
 		}
@@ -60,28 +60,35 @@ public class SCOReReadSet implements Serializable
 	public boolean getSharedLocks()
 	{ // CHECKME is there a better way?
 		boolean res = true;
-		int i= 0;
-		while(res)
+		int i = 0;
+		while (res)
 		{
 			res = ((InPlaceRWLock) readSet[i].field).sharedLock();
 			i++;
 		}
-		
+
 		if (!res)
 		{
 			for (int j = i - 1; j >= 0; j--)
 			{
-				((InPlaceRWLock) readSet[i].field).sharedUnlock();
+				((InPlaceRWLock) readSet[j].field).sharedUnlock();
 			}
 		}
-		
+
 		return res;
 	}
 
 	public boolean validate(int sid)
 	{
-		// TODO
-		return false;
+		for (ReadFieldAccess rfa : readSet)
+		{
+			if (rfa.field.getLastVersion().version > sid)
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	public Group getInvolvedNodes()
