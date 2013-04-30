@@ -4,3 +4,10 @@
 #*.jar
 *.war
 *.ear
+/bin
+*.out
+*.log
+*.pdf
+/logs
+intset.sh
+*.pid
