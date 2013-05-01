@@ -19,8 +19,8 @@ import org.deuce.distribution.replication.full.FullReplicationProtocol;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
-import org.deuce.transaction.SpeculativeContext;
-import org.deuce.transaction.SpeculativeContextState;
+import org.deuce.transaction.speculative.SpeculativeContext;
+import org.deuce.transaction.speculative.SpeculativeContextState;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM

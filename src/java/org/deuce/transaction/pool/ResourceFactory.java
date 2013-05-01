@@ -1,4 +1,4 @@
-package org.deuce.transaction.tl2.pool;
+package org.deuce.transaction.pool;
 
 public interface ResourceFactory<T>
 {

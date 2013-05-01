@@ -2,7 +2,7 @@ package org.deuce.benchmark.bank;
 
 import org.deuce.Atomic;
 import org.deuce.benchmark.Driver;
-import org.deuce.distribution.replication.full.Bootstrap;
+import org.deuce.distribution.replication.Bootstrap;
 
 /**
  * @author Pascal Felber

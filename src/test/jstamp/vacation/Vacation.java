@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
-import org.deuce.distribution.replication.full.Bootstrap;
+import org.deuce.distribution.replication.Bootstrap;
 import org.deuce.profiling.Profiler;
 
 /*

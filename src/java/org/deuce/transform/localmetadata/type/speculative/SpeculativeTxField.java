@@ -6,7 +6,7 @@ import java.util.Deque;
 import java.util.NoSuchElementException;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import org.deuce.transaction.SpeculativeContext;
+import org.deuce.transaction.speculative.SpeculativeContext;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.array.ArrayContainer;
 import org.deuce.transform.localmetadata.type.TxField;

@@ -2,7 +2,7 @@ package org.deuce.benchmark;
 
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
-import org.deuce.distribution.replication.full.Bootstrap;
+import org.deuce.distribution.replication.Bootstrap;
 import org.deuce.profiling.Profiler;
 
 // import papi.j.PAPI_J;

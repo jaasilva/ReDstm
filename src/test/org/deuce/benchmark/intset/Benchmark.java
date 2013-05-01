@@ -3,7 +3,7 @@ package org.deuce.benchmark.intset;
 import java.util.Random;
 
 import org.deuce.Atomic;
-import org.deuce.distribution.replication.full.Bootstrap;
+import org.deuce.distribution.replication.Bootstrap;
 
 /**
  * @author Pascal Felber

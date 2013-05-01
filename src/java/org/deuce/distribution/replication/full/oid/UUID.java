@@ -2,7 +2,7 @@ package org.deuce.distribution.replication.full.oid;
 
 import java.nio.ByteBuffer;
 
-import org.deuce.distribution.replication.full.OID;
+import org.deuce.distribution.replication.OID;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM

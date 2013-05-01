@@ -1,6 +1,6 @@
 package trxsys.bootstrap;
 
-import org.deuce.distribution.replication.full.Bootstrap;
+import org.deuce.distribution.replication.Bootstrap;
 
 public class BootstrapAnnotation
 {

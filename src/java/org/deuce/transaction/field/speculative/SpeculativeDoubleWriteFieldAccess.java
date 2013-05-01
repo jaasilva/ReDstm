@@ -1,18 +1,18 @@
-package org.deuce.transaction.field;
+package org.deuce.transaction.field.speculative;
 
-import org.deuce.transaction.SpeculativeContext;
+import org.deuce.transaction.speculative.SpeculativeContext;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 import org.deuce.transform.localmetadata.type.speculative.SpeculativeTxField;
 
 @ExcludeTM
-public class SpeculativeLongWriteFieldAccess extends
+public class SpeculativeDoubleWriteFieldAccess extends
 		SpeculativeWriteFieldAccess
 {
 	private static final long serialVersionUID = 1L;
-	private Long value;
+	private Double value;
 
-	public void set(long value, TxField field)
+	public void set(double value, TxField field)
 	{
 		super.init(field);
 		this.value = value;
@@ -20,7 +20,7 @@ public class SpeculativeLongWriteFieldAccess extends
 
 	public void put()
 	{
-		((SpeculativeTxField) field).commitLong(value);
+		((SpeculativeTxField) field).commitDouble(value);
 		// clear();
 		// value = null;
 	}
@@ -35,7 +35,7 @@ public class SpeculativeLongWriteFieldAccess extends
 		((SpeculativeTxField) field).speculativeAbort(value);
 	}
 
-	public Long getValue()
+	public Double getValue()
 	{
 		return value;
 	}

@@ -1,4 +1,4 @@
-package org.deuce.transform.localmetadata.replication.full;
+package org.deuce.transform.localmetadata.replication;
 
 import java.util.Map;
 
@@ -7,6 +7,7 @@ import org.deuce.objectweb.asm.AnnotationVisitor;
 import org.deuce.objectweb.asm.FieldVisitor;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.FieldVisitorAdapter;
+import org.deuce.transform.localmetadata.replication.full.BootstrapAnnotationVisitor;
 
 @ExcludeTM
 public class BootstrapFieldVisitor extends FieldVisitorAdapter

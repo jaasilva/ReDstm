@@ -1,28 +1,29 @@
-package org.deuce.transaction.tl2;
+package org.deuce.transaction.tl2.speculative;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.deuce.LocalMetadata;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.ReadSet;
-import org.deuce.transaction.SpeculativeContextState;
 import org.deuce.transaction.TransactionException;
 import org.deuce.transaction.WriteSet;
 import org.deuce.transaction.field.ReadFieldAccess;
-import org.deuce.transaction.field.SpeculativeArrayWriteFieldAccess;
-import org.deuce.transaction.field.SpeculativeBooleanWriteFieldAccess;
-import org.deuce.transaction.field.SpeculativeByteWriteFieldAccess;
-import org.deuce.transaction.field.SpeculativeCharWriteFieldAccess;
-import org.deuce.transaction.field.SpeculativeDoubleWriteFieldAccess;
-import org.deuce.transaction.field.SpeculativeFloatWriteFieldAccess;
-import org.deuce.transaction.field.SpeculativeIntWriteFieldAccess;
-import org.deuce.transaction.field.SpeculativeLongWriteFieldAccess;
-import org.deuce.transaction.field.SpeculativeObjectWriteFieldAccess;
-import org.deuce.transaction.field.SpeculativeShortWriteFieldAccess;
-import org.deuce.transaction.field.SpeculativeWriteFieldAccess;
 import org.deuce.transaction.field.WriteFieldAccess;
-import org.deuce.transaction.tl2.pool.Pool;
-import org.deuce.transaction.tl2.pool.ResourceFactory;
+import org.deuce.transaction.field.speculative.SpeculativeArrayWriteFieldAccess;
+import org.deuce.transaction.field.speculative.SpeculativeBooleanWriteFieldAccess;
+import org.deuce.transaction.field.speculative.SpeculativeByteWriteFieldAccess;
+import org.deuce.transaction.field.speculative.SpeculativeCharWriteFieldAccess;
+import org.deuce.transaction.field.speculative.SpeculativeDoubleWriteFieldAccess;
+import org.deuce.transaction.field.speculative.SpeculativeFloatWriteFieldAccess;
+import org.deuce.transaction.field.speculative.SpeculativeIntWriteFieldAccess;
+import org.deuce.transaction.field.speculative.SpeculativeLongWriteFieldAccess;
+import org.deuce.transaction.field.speculative.SpeculativeObjectWriteFieldAccess;
+import org.deuce.transaction.field.speculative.SpeculativeShortWriteFieldAccess;
+import org.deuce.transaction.field.speculative.SpeculativeWriteFieldAccess;
+import org.deuce.transaction.pool.Pool;
+import org.deuce.transaction.pool.ResourceFactory;
+import org.deuce.transaction.speculative.SpeculativeContextState;
+import org.deuce.transaction.tl2.InPlaceLock;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.array.ArrayContainer;
 import org.deuce.transform.localmetadata.type.TxField;
@@ -37,7 +38,7 @@ import org.deuce.trove.TObjectProcedure;
 @ExcludeTM
 @LocalMetadata(metadataClass = "org.deuce.transaction.tl2.SpeculativeTL2Field")
 final public class SpeculativeContext extends
-		org.deuce.transaction.SpeculativeContext
+		org.deuce.transaction.speculative.SpeculativeContext
 {
 	public static final TransactionException RO_WRITE = new TransactionException(
 			"Read-only transaction tried to write");

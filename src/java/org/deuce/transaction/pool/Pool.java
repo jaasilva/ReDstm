@@ -1,4 +1,4 @@
-package org.deuce.transaction.tl2.pool;
+package org.deuce.transaction.pool;
 
 import org.deuce.transaction.field.ReadFieldAccess;
 import org.deuce.transform.ExcludeTM;

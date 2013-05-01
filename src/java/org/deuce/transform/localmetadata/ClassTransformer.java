@@ -22,7 +22,7 @@ import org.deuce.transform.asm.ByteCodeVisitor;
 import org.deuce.transform.asm.FieldsHolder;
 import org.deuce.transform.asm.type.TypeCodeResolver;
 import org.deuce.transform.asm.type.TypeCodeResolverFactory;
-import org.deuce.transform.localmetadata.replication.full.BootstrapFieldVisitor;
+import org.deuce.transform.localmetadata.replication.BootstrapFieldVisitor;
 import org.deuce.transform.util.Util;
 
 @ExcludeTM

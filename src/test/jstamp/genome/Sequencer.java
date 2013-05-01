@@ -7,7 +7,7 @@ import jstamp.intruder.Stream;
 import jstamp.intruder.Vector_t;
 
 import org.deuce.Atomic;
-import org.deuce.distribution.replication.full.Bootstrap;
+import org.deuce.distribution.replication.Bootstrap;
 import org.deuce.profiling.Profiler;
 
 public class Sequencer

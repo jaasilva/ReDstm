@@ -1,4 +1,4 @@
-package org.deuce.distribution.replication.full;
+package org.deuce.distribution.replication;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

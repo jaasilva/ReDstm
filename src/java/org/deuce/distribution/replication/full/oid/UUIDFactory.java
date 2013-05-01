@@ -1,7 +1,7 @@
 package org.deuce.distribution.replication.full.oid;
 
-import org.deuce.distribution.replication.full.OID;
-import org.deuce.distribution.replication.full.OIDFactory;
+import org.deuce.distribution.replication.OID;
+import org.deuce.distribution.replication.OIDFactory;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
