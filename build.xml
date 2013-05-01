@@ -47,6 +47,7 @@
 					<pathelement location="lib/appia-groupcomm-4.1.2.jar" />
 					<pathelement location="lib/appia-test-4.1.2.jar" />
 					<pathelement location="lib/flanagan.jar" />
+					<pathelement location="lib/guava-14.0.jar" />
 					<pathelement location="lib/jgcs-0.6.1.jar" />
 					<pathelement location="lib/jgroups-3.1.0.Beta1.jar" />
 					<pathelement location="lib/junit-4.6.jar" />
@@ -65,6 +66,7 @@
 				<pathelement location="lib/appia-groupcomm-4.1.2.jar" />
 				<pathelement location="lib/appia-test-4.1.2.jar" />
 				<pathelement location="lib/flanagan.jar" />
+				<pathelement location="lib/guava-14.0.jar" />
 				<pathelement location="lib/jgcs-0.6.1.jar" />
 				<pathelement location="lib/jgroups-3.1.0.Beta1.jar" />
 				<pathelement location="lib/junit-4.6.jar" />
