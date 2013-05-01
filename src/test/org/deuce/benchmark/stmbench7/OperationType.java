@@ -6,12 +6,10 @@ import org.deuce.benchmark.stmbench7.annotations.NonAtomic;
  * Types of STMBench7 operations. The "RO" suffix means "read-only".
  */
 @NonAtomic
-public enum OperationType {
-	TRAVERSAL, TRAVERSAL_RO, 
-	SHORT_TRAVERSAL, SHORT_TRAVERSAL_RO,
-	OPERATION, OPERATION_RO,
-	STRUCTURAL_MODIFICATION;
-	
+public enum OperationType
+{
+	TRAVERSAL, TRAVERSAL_RO, SHORT_TRAVERSAL, SHORT_TRAVERSAL_RO, OPERATION, OPERATION_RO, STRUCTURAL_MODIFICATION;
+
 	/**
 	 * Some helper fields to make life easier.
 	 */

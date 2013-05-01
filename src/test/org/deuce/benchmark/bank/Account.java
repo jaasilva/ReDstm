@@ -6,7 +6,8 @@ import org.deuce.*;
  * @author Pascal Felber
  * @since 0.1
  */
-abstract public class Account {
+abstract public class Account
+{
 
 	static volatile boolean s_disjoint = false;
 	static volatile boolean s_yield = false;
@@ -20,35 +21,42 @@ abstract public class Account {
 	abstract public void withdraw(float amount) throws OverdraftException;
 
 	@Atomic
-	static public void addInterest(Account[] accounts, float rate) {
-		for (Account a : accounts) {
+	static public void addInterest(Account[] accounts, float rate)
+	{
+		for (Account a : accounts)
+		{
 			a.deposit(a.getBalance() * rate);
-//			if (s_yield)
-//				Thread.yield();
+			// if (s_yield)
+			// Thread.yield();
 		}
 	}
 
 	@Atomic
-	static public double computeTotal(Account[] accounts) {
+	static public double computeTotal(Account[] accounts)
+	{
 		double total = 0.0;
-		for (Account a : accounts) {
+		for (Account a : accounts)
+		{
 			total += a.getBalance();
-//			if (s_yield)
-//				Thread.yield();
+			// if (s_yield)
+			// Thread.yield();
 		}
 		return total;
 	}
 
 	@Atomic
-	static public void transfer(Account src, Account dst, float amount) throws OverdraftException {
+	static public void transfer(Account src, Account dst, float amount)
+			throws OverdraftException
+	{
 		dst.deposit(amount);
-//		if (s_yield)
-//			Thread.yield();
+		// if (s_yield)
+		// Thread.yield();
 		src.withdraw(amount);
 	}
-	
+
 	@Atomic
-	static public float getBalanceAtomic(Account src) {
+	static public float getBalanceAtomic(Account src)
+	{
 		return src.getBalance();
 	}
 }

@@ -8,15 +8,18 @@ import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.array.ObjectArrayContainer;
 
 @ExcludeTM
-public class MainMethodTransformer extends MethodAdapter {
+public class MainMethodTransformer extends MethodAdapter
+{
 	final static public String CLASS_BASE = "__CLASS_BASE__";
 
-	public MainMethodTransformer(MethodVisitor mv) {
+	public MainMethodTransformer(MethodVisitor mv)
+	{
 		super(mv);
 	}
 
 	@Override
-	public void visitCode() {
+	public void visitCode()
+	{
 		((MethodTransformer) mv).disableMethodInstrumentation(true);
 		((MethodTransformer) mv).disableDuplicateInstrumentation(true);
 
@@ -43,16 +46,17 @@ public class MainMethodTransformer extends MethodAdapter {
 	}
 
 	@Override
-	public void visitEnd() {
+	public void visitEnd()
+	{
 		((MethodTransformer) mv).disableMethodInstrumentation(true);
 		((MethodTransformer) mv).disableDuplicateInstrumentation(true);
-		
+
 		mv.visitMethodInsn(Opcodes.INVOKESTATIC, TribuDSTM.NAME,
 				TribuDSTM.CLOSE_METHOD_NAME, TribuDSTM.CLOSE_METHOD_DESC);
-		
+
 		((MethodTransformer) mv).disableMethodInstrumentation(false);
 		((MethodTransformer) mv).disableDuplicateInstrumentation(false);
-		
+
 		super.visitEnd();
 	}
 }

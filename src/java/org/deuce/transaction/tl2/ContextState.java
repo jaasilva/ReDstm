@@ -6,11 +6,14 @@ import org.deuce.transaction.WriteSet;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
-public class ContextState extends DistributedContextState {
+public class ContextState extends DistributedContextState
+{
 	private static final long serialVersionUID = 1L;
 	final public int rv;
-	
-	public ContextState(ReadSet rs, WriteSet ws, int ctxID, int atomicBlockId, int rv) {
+
+	public ContextState(ReadSet rs, WriteSet ws, int ctxID, int atomicBlockId,
+			int rv)
+	{
 		super(rs, ws, ctxID, atomicBlockId);
 		this.rv = rv;
 	}

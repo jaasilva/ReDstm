@@ -13,10 +13,11 @@ import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
 /*
- * TODO: Try to move @Bootstrap related transformations to other class
+ * TODOs: Try to move @Bootstrap related transformations to other class
  */
 @ExcludeTM
-public class StaticMethodTransformer extends MethodAdapter {
+public class StaticMethodTransformer extends MethodAdapter
+{
 	final static public String CLASS_BASE = "__CLASS_BASE__";
 
 	protected final List<Field> fields;
@@ -31,7 +32,8 @@ public class StaticMethodTransformer extends MethodAdapter {
 	public StaticMethodTransformer(MethodVisitor mv,
 			MethodVisitor staticMethod, List<Field> fields,
 			Map<String, Integer> field2OID, String staticField,
-			String className, String fieldsHolderName) {
+			String className, String fieldsHolderName)
+	{
 
 		super(mv);
 		this.staticMethod = staticMethod;
@@ -43,17 +45,24 @@ public class StaticMethodTransformer extends MethodAdapter {
 	}
 
 	@Override
-	public void visitCode() {
+	public void visitCode()
+	{
 		((MethodTransformer) mv).disableMethodInstrumentation(true);
-		if (staticField != null) {
+		if (staticField != null)
+		{
 			addClassBase(staticField);
 		}
 
-		if (fields.size() > 0) {
-			for (Field field : fields) {
-				if ((field.getAccess() & Opcodes.ACC_STATIC) != 0) {
+		if (fields.size() > 0)
+		{
+			for (Field field : fields)
+			{
+				if ((field.getAccess() & Opcodes.ACC_STATIC) != 0)
+				{
 					addField(field);
-				} else {
+				}
+				else
+				{
 					addField2(field);
 				}
 			}
@@ -61,7 +70,8 @@ public class StaticMethodTransformer extends MethodAdapter {
 		((MethodTransformer) mv).disableMethodInstrumentation(false);
 	}
 
-	protected void addField2(Field field) {
+	protected void addField2(Field field)
+	{
 		super.visitLdcInsn(Type.getObjectType(className));
 		super.visitLdcInsn(field.getFieldName());
 		super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Class",
@@ -76,7 +86,8 @@ public class StaticMethodTransformer extends MethodAdapter {
 
 	}
 
-	protected void addField(Field field) {
+	protected void addField(Field field)
+	{
 		// stack: ... =>
 		super.visitTypeInsn(Opcodes.NEW, field.getType().getInternalName());
 		// stack: ..., TxField =>
@@ -105,7 +116,8 @@ public class StaticMethodTransformer extends MethodAdapter {
 
 		// XXX @Bootstrap, assumes FullReplicationSerializer
 		Integer oid = field2OID.get(field.getFieldName());
-		if (oid != null) {
+		if (oid != null)
+		{
 			super.visitInsn(Opcodes.DUP);
 			// stack: ..., TxField, TxField =>
 			super.visitMethodInsn(Opcodes.INVOKESTATIC, TribuDSTM.NAME,
@@ -132,7 +144,8 @@ public class StaticMethodTransformer extends MethodAdapter {
 		// stack: ... =>
 	}
 
-	protected void addClassBase(String staticFieldBase) {
+	protected void addClassBase(String staticFieldBase)
+	{
 		super.visitLdcInsn(Type.getObjectType(className));
 		super.visitLdcInsn(staticFieldBase);
 		super.visitMethodInsn(Opcodes.INVOKESTATIC,
@@ -143,14 +156,16 @@ public class StaticMethodTransformer extends MethodAdapter {
 	}
 
 	@Override
-	public void visitMaxs(int maxStack, int maxLocals) {
+	public void visitMaxs(int maxStack, int maxLocals)
+	{
 		super.visitMaxs(maxStack, maxLocals);
 	}
 
 	@Override
-	public void visitEnd() {
+	public void visitEnd()
+	{
 		super.visitEnd();
-		// TODO can we do it cleaner?
+		// TODOs can we do it cleaner?
 		if (staticMethod != null && super.mv != staticMethod)
 			staticMethod.visitEnd();
 	}

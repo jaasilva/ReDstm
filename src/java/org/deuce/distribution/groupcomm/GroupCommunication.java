@@ -6,9 +6,9 @@ import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
 import org.deuce.transform.ExcludeTM;
 
-
 @ExcludeTM
-public abstract class GroupCommunication {
+public abstract class GroupCommunication
+{
 	protected DeliverySubscriber subscriber = null;
 	protected OptimisticDeliverySubscriber optSubscriber = null;
 
@@ -16,56 +16,65 @@ public abstract class GroupCommunication {
 
 	protected Address myAddress;
 
-	public GroupCommunication() {
+	public GroupCommunication()
+	{
 		init();
 		System.out.println("-- Waiting for members...");
-		try {
+		try
+		{
 			waitForMembers.await();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		}
+		catch (InterruptedException e)
+		{
 			e.printStackTrace();
 		}
 		System.out.println("-- Members arrived!");
 	}
 
-	protected void membersArrived() {
+	protected void membersArrived()
+	{
 		waitForMembers.countDown();
 	}
 
 	public abstract void init();
-	
+
 	public abstract void close();
 
 	public abstract void sendTotalOrdered(byte[] payload);
 
 	public abstract void sendReliably(byte[] payload);
 
-	public void subscribeDelivery(DeliverySubscriber subscriber) {
+	public void subscribeDelivery(DeliverySubscriber subscriber)
+	{
 		this.subscriber = subscriber;
 	}
 
 	public void subscribeOptimisticDelivery(
-			OptimisticDeliverySubscriber optSubscriber) {
+			OptimisticDeliverySubscriber optSubscriber)
+	{
 		this.optSubscriber = optSubscriber;
 		this.subscriber = optSubscriber;
 	}
 
-	protected void notifyDelivery(Object obj, Address src, int payloadSize) {
+	protected void notifyDelivery(Object obj, Address src, int payloadSize)
+	{
 		if (subscriber != null)
 			subscriber.onDelivery(obj, src, payloadSize);
 	}
 
 	protected Object notifyOptimisticDelivery(Object obj, Address src,
-			int payloadSize) {
-		
+			int payloadSize)
+	{
+
 		Object appObj = null;
 		if (optSubscriber != null)
 			appObj = optSubscriber.onOptimisticDelivery(obj, src, payloadSize);
-		
+
 		return appObj != null ? appObj : obj;
 	}
 
-	public boolean isLocal(Address addr) {
+	public boolean isLocal(Address addr)
+	{
 		return myAddress.equals(addr);
 	}
 }

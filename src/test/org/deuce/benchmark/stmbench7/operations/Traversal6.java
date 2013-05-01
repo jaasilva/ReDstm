@@ -8,34 +8,41 @@ import org.deuce.benchmark.stmbench7.core.AtomicPart;
 import org.deuce.benchmark.stmbench7.core.CompositePart;
 
 /**
- * Traversal T6 (see the specification).
- * Read-only, long.
+ * Traversal T6 (see the specification). Read-only, long.
  */
-public class Traversal6 extends Traversal1 {
+public class Traversal6 extends Traversal1
+{
 
-	public Traversal6(Setup oo7setup) {
+	public Traversal6(Setup oo7setup)
+	{
 		super(oo7setup);
 	}
 
 	@Override
-	protected int traverse(CompositePart component) {
+	protected int traverse(CompositePart component)
+	{
 		AtomicPart rootPart = component.getRootPart();
 		return traverse(rootPart, null);
 	}
 
 	@Override
-	protected int traverse(AtomicPart part, HashSet<AtomicPart> setOfVisitedPartIds) {
+	protected int traverse(AtomicPart part,
+			HashSet<AtomicPart> setOfVisitedPartIds)
+	{
 		return performOperationInAtomicPart(part, null);
 	}
 
 	@Override
-	protected int performOperationInAtomicPart(AtomicPart part, HashSet<AtomicPart> setOfVisitedPartIds) {
+	protected int performOperationInAtomicPart(AtomicPart part,
+			HashSet<AtomicPart> setOfVisitedPartIds)
+	{
 		part.nullOperation();
 		return 1;
 	}
-	
-    @Override
-    public OperationId getOperationId() {
-    	return OperationId.T6;
-    }
+
+	@Override
+	public OperationId getOperationId()
+	{
+		return OperationId.T6;
+	}
 }

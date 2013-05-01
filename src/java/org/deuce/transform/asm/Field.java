@@ -9,20 +9,24 @@ package org.deuce.transform.asm;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
-public class Field{
+public class Field
+{
 	private final String fieldNameAddress;
 	private final String fieldName;
 
-	public Field( String fieldName, String fieldNameAddress) {
+	public Field(String fieldName, String fieldNameAddress)
+	{
 		this.fieldName = fieldName;
 		this.fieldNameAddress = fieldNameAddress;
 	}
 
-	public String getFieldNameAddress() {
+	public String getFieldNameAddress()
+	{
 		return fieldNameAddress;
 	}
 
-	public String getFieldName() {
+	public String getFieldName()
+	{
 		return fieldName;
 	}
 }

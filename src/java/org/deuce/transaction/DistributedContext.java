@@ -7,14 +7,14 @@ import org.deuce.distribution.TribuDSTM;
 import org.deuce.profiling.Profiler;
 import org.deuce.transform.ExcludeTM;
 
-
 /**
  * Distributed Context.
  * 
  * @author Tiago Vale
  */
 @ExcludeTM
-public abstract class DistributedContext implements ContextMetadata {
+public abstract class DistributedContext implements ContextMetadata
+{
 	final public Profiler profiler;
 
 	/**
@@ -28,11 +28,11 @@ public abstract class DistributedContext implements ContextMetadata {
 	 * Uniquely identifies a DCtx instance of a specific site.
 	 */
 	final public int threadID;
-	
+
 	/**
 	 * Uniquely identifies the atomic block being executed.
 	 */
-	public int atomicBlockId; 
+	public int atomicBlockId;
 
 	/**
 	 * Semaphore on which a DCtx waits for the distributed commit to take place.
@@ -54,7 +54,8 @@ public abstract class DistributedContext implements ContextMetadata {
 	 */
 	protected WriteSet writeSet;
 
-	public DistributedContext() {
+	public DistributedContext()
+	{
 		readSet = createReadSet();
 		writeSet = createWriteSet();
 		threadID = threadIDCounter.getAndIncrement();
@@ -70,12 +71,13 @@ public abstract class DistributedContext implements ContextMetadata {
 	 * Constructs a local DCtx instance based on a description of the state of a
 	 * remote one.
 	 */
-	public void recreateContextFromState(DistributedContextState ctxState) {
+	public void recreateContextFromState(DistributedContextState ctxState)
+	{
 		readSet = ctxState.rs;
 		writeSet = ctxState.ws;
-//		threadID = -1;
-//		committed = false;
-//		trxProcessed = new Semaphore(0);
+		// threadID = -1;
+		// committed = false;
+		// trxProcessed = new Semaphore(0);
 
 		profiler.remote = true;
 		Profiler.txRemote++;
@@ -107,11 +109,12 @@ public abstract class DistributedContext implements ContextMetadata {
 	/**
 	 * Resets the state to begin a new transaction.
 	 */
-	public void init(int atomicBlockId, String metainf) {
+	public void init(int atomicBlockId, String metainf)
+	{
 		this.atomicBlockId = atomicBlockId;
 		readSet.clear();
 		writeSet.clear();
-//		committed = false;
+		// committed = false;
 		initialise(atomicBlockId, metainf);
 		TribuDSTM.onTxBegin(this);
 		profiler.txLocal++;
@@ -135,7 +138,8 @@ public abstract class DistributedContext implements ContextMetadata {
 	 * 
 	 * @return if the transaction was successfully validated
 	 */
-	public boolean validate() {
+	public boolean validate()
+	{
 		profiler.onTxValidateBegin();
 
 		boolean valid = performValidation();
@@ -154,7 +158,8 @@ public abstract class DistributedContext implements ContextMetadata {
 	 * Applies the write set to the TM. Must only be called if the transaction
 	 * was successfully validated first.
 	 */
-	public void applyWriteSet() {
+	public void applyWriteSet()
+	{
 		profiler.onTxCommitStart();
 
 		applyUpdates();
@@ -171,10 +176,12 @@ public abstract class DistributedContext implements ContextMetadata {
 	/**
 	 * Triggers the distributed commit, and waits until it is processed.
 	 */
-	public boolean commit() {
+	public boolean commit()
+	{
 		profiler.onTxAppCommit();
 
-		if (writeSet.isEmpty()) {
+		if (writeSet.isEmpty())
+		{
 
 			if (Profiler.enabled)
 				profiler.txCommitted++;
@@ -184,10 +191,12 @@ public abstract class DistributedContext implements ContextMetadata {
 		}
 
 		TribuDSTM.onTxCommit(this);
-		try {
+		try
+		{
 			trxProcessed.acquire();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		}
+		catch (InterruptedException e)
+		{
 			e.printStackTrace();
 		}
 
@@ -203,7 +212,8 @@ public abstract class DistributedContext implements ContextMetadata {
 	 * @param committed
 	 *            if the distributed commit was sucessful
 	 */
-	public void processed(boolean committed) {
+	public void processed(boolean committed)
+	{
 		this.committed = committed;
 
 		if (Profiler.enabled)
@@ -215,26 +225,27 @@ public abstract class DistributedContext implements ContextMetadata {
 		trxProcessed.release();
 	}
 
-	public void rollback() {
+	public void rollback()
+	{
 		if (Profiler.enabled)
 			profiler.txAborted++;
 
 		TribuDSTM.onTxFinished(this, false);
 	}
 
-//	public final static DistributedContext createContextFromState(
-//			DistributedContextState ctxState) {
-//
-//		DistributedContext ctx = null;
-//		try {
-//			ctx = TribuDSTM.getContextClass()
-//					.getConstructor(DistributedContextState.class)
-//					.newInstance(ctxState);
-//		} catch (Exception e) {
-//			System.err.println("Couldn't instantiate proxy context.");
-//			e.printStackTrace();
-//			System.exit(-1);
-//		}
-//		return ctx;
-//	}
+	// public final static DistributedContext createContextFromState(
+	// DistributedContextState ctxState) {
+	//
+	// DistributedContext ctx = null;
+	// try {
+	// ctx = TribuDSTM.getContextClass()
+	// .getConstructor(DistributedContextState.class)
+	// .newInstance(ctxState);
+	// } catch (Exception e) {
+	// System.err.println("Couldn't instantiate proxy context.");
+	// e.printStackTrace();
+	// System.exit(-1);
+	// }
+	// return ctx;
+	// }
 }

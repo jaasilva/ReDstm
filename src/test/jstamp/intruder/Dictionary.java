@@ -1,10 +1,12 @@
 package jstamp.intruder;
 
-public class Dictionary {
+public class Dictionary
+{
 	String global_defaultSignatures[];
 	int global_numDefaultSignature;
 
-	public Dictionary() {
+	public Dictionary()
+	{
 		global_numDefaultSignature = 71;
 		global_defaultSignatures = new String[71];
 
@@ -81,20 +83,28 @@ public class Dictionary {
 		global_defaultSignatures[70] = "your";
 	}
 
-	public String get(int i) {
-		if (i < 0 || i >= global_numDefaultSignature) {
+	public String get(int i)
+	{
+		if (i < 0 || i >= global_numDefaultSignature)
+		{
 			System.out.print("dictionary_get: Index out of bounds");
 		}
 		return global_defaultSignatures[i];
 	}
 
-	public String match(String str) {
+	public String match(String str)
+	{
 		int i;
 
-		//    System.out.println("str= " + str);
-		for (i = 0; i < global_numDefaultSignature; i++) {
-			//       System.out.println("global_numDefaultSignature= " + global_numDefaultSignature + " str= " + str + " global_defaultSignatures[" +i+"]= " + global_defaultSignatures[i]);
-			if (global_defaultSignatures[i].equals(str)) {
+		// System.out.println("str= " + str);
+		for (i = 0; i < global_numDefaultSignature; i++)
+		{
+			// System.out.println("global_numDefaultSignature= " +
+			// global_numDefaultSignature + " str= " + str +
+			// " global_defaultSignatures[" +i+"]= " +
+			// global_defaultSignatures[i]);
+			if (global_defaultSignatures[i].equals(str))
+			{
 				return str;
 			}
 		}

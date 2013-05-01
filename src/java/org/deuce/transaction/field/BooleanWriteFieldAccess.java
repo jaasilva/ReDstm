@@ -4,23 +4,28 @@ import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
 @ExcludeTM
-public class BooleanWriteFieldAccess extends WriteFieldAccess {
+public class BooleanWriteFieldAccess extends WriteFieldAccess
+{
 	private static final long serialVersionUID = 1L;
 	private boolean value;
 
-	public void set(boolean value, TxField field) {
+	public void set(boolean value, TxField field)
+	{
 		super.init(field);
 		this.value = value;
 	}
 
 	@Override
-	public void put() {
-//		UnsafeHolder.getUnsafe().putBoolean(field.ref, field.address, getValue());
+	public void put()
+	{
+		// UnsafeHolder.getUnsafe().putBoolean(field.ref, field.address,
+		// getValue());
 		field.writeBoolean(value);
-//		clear();
+		// clear();
 	}
 
-	public boolean getValue() {
+	public boolean getValue()
+	{
 		return value;
 	}
 }

@@ -14,120 +14,137 @@ import org.jgroups.Message;
 import org.jgroups.Receiver;
 import org.jgroups.View;
 
-
 @ExcludeTM
 public class JGroupsGroupCommunication extends GroupCommunication implements
-		Receiver {
+		Receiver
+{
 
 	private JChannel channelTOB;
-//	private JChannel channelRB;
-	
-	public JGroupsGroupCommunication() {
+
+	// private JChannel channelRB;
+
+	public JGroupsGroupCommunication()
+	{
 		super();
 	}
 
-	public void init() {
-		try {
+	public void init()
+	{
+		try
+		{
 			channelTOB = new JChannel("etc/jgroups.xml");
 			channelTOB.setReceiver(this);
-			channelTOB.connect(System.getProperty("tribu.groupcommunication.group", "tvale"));
-			
-//			channelRB = new JChannel("etc/jgroups.xml");
-//			channelRB.setReceiver(this);
-//			channelRB.connect(System.getProperty("tribu.groupcommunication.group", "tvale")+"-rb");
-			
+			channelTOB.connect(System.getProperty(
+					"tribu.groupcommunication.group", "tvale"));
+
+			// channelRB = new JChannel("etc/jgroups.xml");
+			// channelRB.setReceiver(this);
+			// channelRB.connect(System.getProperty("tribu.groupcommunication.group",
+			// "tvale")+"-rb");
+
 			myAddress = new JGroupsAddress(channelTOB.getAddress());
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			System.err.println("Couldn't initialise JGroups.");
 			e.printStackTrace();
 			System.exit(-1);
 		}
 	}
-	
-	public void close() {
+
+	public void close()
+	{
 		channelTOB.close();
 	}
 
 	@Override
 	public void subscribeOptimisticDelivery(
-			OptimisticDeliverySubscriber optSubscriber) {
+			OptimisticDeliverySubscriber optSubscriber)
+	{
 		throw new OptimisticDeliveryUnsupportedException();
 	}
 
-	public void sendTotalOrdered(final byte[] payload) {
-//		new Thread(new Runnable() {
-//			public void run() {
-				try {
-					channelTOB.send(null, payload);
-				} catch (Exception e) {
-					System.err.println("Couldn't send message.");
-					e.printStackTrace();
-					System.exit(-1);
-				}
-//			}
-//		}).start();
+	public void sendTotalOrdered(final byte[] payload)
+	{
+		// new Thread(new Runnable() {
+		// public void run() {
+		try
+		{
+			channelTOB.send(null, payload);
+		}
+		catch (Exception e)
+		{
+			System.err.println("Couldn't send message.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		// }
+		// }).start();
 	}
 
-	public void sendReliably(byte[] payload) {
+	public void sendReliably(byte[] payload)
+	{
 		final Message msg = new Message();
 		msg.setDest(null);
 		msg.setBuffer(payload);
 		msg.setFlag(Message.NO_TOTAL_ORDER);
-//		new Thread(new Runnable() {
-//			public void run() {
-				try {
-					channelTOB.send(msg);
-				} catch (Exception e) {
-					System.err.println("Couldn't send message.");
-					e.printStackTrace();
-					System.exit(-1);
-				}
-//			}
-//		}).start();
+		// new Thread(new Runnable() {
+		// public void run() {
+		try
+		{
+			channelTOB.send(msg);
+		}
+		catch (Exception e)
+		{
+			System.err.println("Couldn't send message.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		// }
+		// }).start();
 	}
 
-	public void receive(Message msg) {
+	public void receive(Message msg)
+	{
 		byte[] payload = msg.getRawBuffer();
 		Object obj = null;
 
-		try {
+		try
+		{
 			obj = ObjectSerializer.byteArray2Object(payload);
-		} catch (GCPayloadException e) {
+		}
+		catch (GCPayloadException e)
+		{
 			return;
 		}
 
-		notifyDelivery(obj, new JGroupsAddress(msg.getSrc()),
-				payload.length);
+		notifyDelivery(obj, new JGroupsAddress(msg.getSrc()), payload.length);
 	}
 
-	public void getState(OutputStream output) throws Exception {
-		// TODO Auto-generated method stub
-
+	public void getState(OutputStream output) throws Exception
+	{
 	}
 
-	public void setState(InputStream input) throws Exception {
-		// TODO Auto-generated method stub
-
+	public void setState(InputStream input) throws Exception
+	{
 	}
 
-	public void viewAccepted(View new_view) {
+	public void viewAccepted(View new_view)
+	{
 		if (new_view.getMembers().size() == Integer
 				.getInteger("tribu.replicas"))
 			membersArrived();
 	}
 
-	public void suspect(org.jgroups.Address suspected_mbr) {
-		// TODO Auto-generated method stub
-
+	public void suspect(org.jgroups.Address suspected_mbr)
+	{
 	}
 
-	public void block() {
-		// TODO Auto-generated method stub
-
+	public void block()
+	{
 	}
 
-	public void unblock() {
-		// TODO Auto-generated method stub
-
+	public void unblock()
+	{
 	}
 }

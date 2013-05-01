@@ -17,53 +17,66 @@ import org.deuce.transform.localmetadata.array.ObjectArrayContainer;
 import org.deuce.transform.localmetadata.array.ShortArrayContainer;
 
 @ExcludeTM
-public class ArrayUtil {
+public class ArrayUtil
+{
 
-	public static Type getArrayType(String desc) {
+	public static Type getArrayType(String desc)
+	{
 		return Type.getType(desc.substring(desc.lastIndexOf("[") + 1));
 	}
 
-	public static Type getArrayType(Type t) {
+	public static Type getArrayType(Type t)
+	{
 		return getArrayType(t.getDescriptor());
 	}
 
-	public static int getArrayDim(String desc) {
+	public static int getArrayDim(String desc)
+	{
 		int i = 0;
-		while (desc.charAt(i) == '[') {
+		while (desc.charAt(i) == '[')
+		{
 			i++;
 		}
 		return i;
 	}
 
-	public static int getArrayDim(Type t) {
+	public static int getArrayDim(Type t)
+	{
 		return getArrayDim(t.getDescriptor());
 	}
 
-	public static Type getTxType(String desc) {
+	public static Type getTxType(String desc)
+	{
 		return Type.getType(ContextDelegator.getMetadataClass());
 	}
 
-	public static Type getTxArrayType(String desc) {
+	public static Type getTxArrayType(String desc)
+	{
 		return Type.getType(ContextDelegator.getMetadataClass());
 	}
 
-	public static Type getTxArrayType(Type t) {
+	public static Type getTxArrayType(Type t)
+	{
 		return getTxArrayType(t.getDescriptor());
 	}
 
-	public static Type getTxArrayType(int opcode) {
+	public static Type getTxArrayType(int opcode)
+	{
 		return getTxArrayType(getTypeFromNewarrayOpcode(opcode));
 	}
 
-	private static String getArrayDimDesc(int dim) {
+	private static String getArrayDimDesc(int dim)
+	{
 		String res = "";
-		for (int i = 0; i < dim; i++) {
+		for (int i = 0; i < dim; i++)
+		{
 			res += "[";
 		}
 		return res;
 	}
 
-	public static Type getTxArrayArrayType(String desc) {
+	public static Type getTxArrayArrayType(String desc)
+	{
 		Type arrT = getTxArrayType(desc);
 		int dim = getArrayDim(desc);
 		return Type.getType(dim > 1 ? getArrayDimDesc(1)
@@ -71,31 +84,26 @@ public class ArrayUtil {
 				: getArrayDimDesc(dim) + arrT.getDescriptor());
 	}
 
-	public static Type getTxArrayArrayType(Type t) {
+	public static Type getTxArrayArrayType(Type t)
+	{
 		return getTxArrayArrayType(t.getDescriptor());
 	}
 
-	public static Type getArrayContainerType(String desc) {
-		/* For uni-dimensional arrays t[], there is a respective ArrTContainer
-		 * where:
-		 * 	t       => T
-		 * 	-----------------
-		 * 	boolean => Bool
-		 * 	byte    => Byte
-		 * 	char    => Char
-		 * 	double  => Double
-		 * 	float   => Float
-		 * 	int     => Int
-		 *  long    => Long
-		 *  short   => Short
-		 *  *       => Object
-		 * 
-		 * Multi-dimensional arrays are chained with MultiArrContainers.
+	public static Type getArrayContainerType(String desc)
+	{
+		/*
+		 * For uni-dimensional arrays t[], there is a respective ArrTContainer
+		 * where: t => T ----------------- boolean => Bool byte => Byte char =>
+		 * Char double => Double float => Float int => Int long => Long short =>
+		 * Short * => Object Multi-dimensional arrays are chained with
+		 * MultiArrContainers.
 		 */
 		Type t = getArrayType(desc);
 		int dim = getArrayDim(desc);
-		if (dim < 2) {
-			switch (t.getSort()) {
+		if (dim < 2)
+		{
+			switch (t.getSort())
+			{
 				case Type.INT:
 					return Type.getType(IntArrayContainer.class);
 				case Type.SHORT:
@@ -119,25 +127,31 @@ public class ArrayUtil {
 		return Type.getType(MultiArrayContainer.class);
 	}
 
-	public static Type getArrayContainerType(Type t) {
+	public static Type getArrayContainerType(Type t)
+	{
 		return getArrayContainerType(t.getDescriptor());
 	}
 
-	public static Type getArrayContainerType(int operand) {
+	public static Type getArrayContainerType(int operand)
+	{
 		return getArrayContainerType(getTypeFromNewarrayOpcode(operand));
 	}
 
-	public static Type getArrayContainerArrayType(String desc) {
+	public static Type getArrayContainerArrayType(String desc)
+	{
 		return Type.getType(getArrayDimDesc(1)
 				+ getArrayContainerType(desc).getDescriptor());
 	}
 
-	public static Type getArrayContainerArrayType(Type t) {
+	public static Type getArrayContainerArrayType(Type t)
+	{
 		return getArrayContainerArrayType(t.getDescriptor());
 	}
 
-	public static String getArrayContainerCtorDesc(Type t) {
-		switch (t.getSort()) {
+	public static String getArrayContainerCtorDesc(Type t)
+	{
+		switch (t.getSort())
+		{
 			case Type.INT:
 				return IntArrayContainer.CTOR_DESC;
 			case Type.SHORT:
@@ -159,8 +173,10 @@ public class ArrayUtil {
 		}
 	}
 
-	public static Type getTypeFromNewarrayOpcode(int opcode) {
-		switch (opcode) {
+	public static Type getTypeFromNewarrayOpcode(int opcode)
+	{
+		switch (opcode)
+		{
 			case Opcodes.T_BOOLEAN:
 				return Type.BOOLEAN_TYPE;
 			case Opcodes.T_CHAR:
@@ -182,32 +198,39 @@ public class ArrayUtil {
 		}
 	}
 
-	public static Method updateMethodArrayArgumentsAndReturn(Method m) {
+	public static Method updateMethodArrayArgumentsAndReturn(Method m)
+	{
 
 		Type[] arguments = m.getArgumentTypes();
 		Type[] newArguments = new Type[arguments.length];
 		System.arraycopy(arguments, 0, newArguments, 0, arguments.length);
 
-		for (int i = 0; i < newArguments.length; i++) {
-			if (newArguments[i].getSort() == Type.ARRAY) {
+		for (int i = 0; i < newArguments.length; i++)
+		{
+			if (newArguments[i].getSort() == Type.ARRAY)
+			{
 				newArguments[i] = getArrayContainerType(newArguments[i]);
 			}
 		}
 
 		Type newReturn = m.getReturnType();
-		if (newReturn.getSort() == Type.ARRAY) {
+		if (newReturn.getSort() == Type.ARRAY)
+		{
 			newReturn = getArrayContainerType(newReturn);
 		}
 
 		return new Method(m.getName(), newReturn, newArguments);
 	}
 
-	public static Method updateMethodArrayArgumentsAndReturn(String desc) {
+	public static Method updateMethodArrayArgumentsAndReturn(String desc)
+	{
 		return updateMethodArrayArgumentsAndReturn(new Method("<dummy>", desc));
 	}
 
-	public static int getArrayTypeOpcode(Type t) {
-		switch (t.getSort()) {
+	public static int getArrayTypeOpcode(Type t)
+	{
+		switch (t.getSort())
+		{
 			case Type.INT:
 				return Opcodes.T_INT;
 			case Type.SHORT:
@@ -229,7 +252,8 @@ public class ArrayUtil {
 		}
 	}
 
-	public static boolean isArrayContainer(String desc) {
+	public static boolean isArrayContainer(String desc)
+	{
 		if (desc.equals(ContextDelegator.BOOLEAN_ARRAY_CONTAINER_DESC)
 				|| desc.equals(ContextDelegator.BYTE_ARRAY_CONTAINER_DESC)
 				|| desc.equals(ContextDelegator.CHAR_ARRAY_CONTAINER_DESC)
@@ -240,10 +264,10 @@ public class ArrayUtil {
 				|| desc.equals(ContextDelegator.LONG_ARRAY_CONTAINER_DESC)
 				|| desc.equals(ContextDelegator.OBJECT_ARRAY_CONTAINER_DESC)
 				|| desc.equals(ContextDelegator.SHORT_ARRAY_CONTAINER_DESC)
-				|| desc.equals(ContextDelegator.MULTI_ARRAY_CONTAINER_DESC)) {
+				|| desc.equals(ContextDelegator.MULTI_ARRAY_CONTAINER_DESC))
+		{
 			return true;
 		}
 		return false;
 	}
 }
-

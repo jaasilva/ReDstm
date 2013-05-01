@@ -6,7 +6,8 @@ import java.util.Random;
  * @author Pascal Felber
  * @since 0.1
  */
-public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread {
+public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
+{
 	final private IntSet m_set;
 	final private int m_range;
 	int m_nb_add;
@@ -14,10 +15,11 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread {
 	int m_nb_contains;
 	final private int m_rate;
 	boolean m_write;
-//	int m_last;
+	// int m_last;
 	final private Random m_random;
 
-	public BenchmarkThread(IntSet set, int range, int rate) {
+	public BenchmarkThread(IntSet set, int range, int rate)
+	{
 		m_set = set;
 		m_range = range;
 		m_nb_add = m_nb_remove = m_nb_contains = 0;
@@ -26,31 +28,39 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread {
 		m_random = new Random();
 	}
 
-	protected void step(int phase) {
+	protected void step(int phase)
+	{
 		int i = m_random.nextInt(100);
-		if (i < m_rate) {
-			if (m_write) {
-//				m_last = m_random.nextInt(m_range);
-//				if (m_set.add(m_last)) {
-					m_write = false;
-//				} 
+		if (i < m_rate)
+		{
+			if (m_write)
+			{
+				// m_last = m_random.nextInt(m_range);
+				// if (m_set.add(m_last)) {
+				m_write = false;
+				// }
 				m_set.add(m_random.nextInt(m_range));
 				if (phase == Benchmark.TEST_PHASE)
 					m_nb_add++;
-			} else {
+			}
+			else
+			{
 				m_set.remove(m_random.nextInt(m_range));
 				if (phase == Benchmark.TEST_PHASE)
 					m_nb_remove++;
 				m_write = true;
 			}
-		} else {
+		}
+		else
+		{
 			m_set.contains(m_random.nextInt(m_range));
 			if (phase == Benchmark.TEST_PHASE)
 				m_nb_contains++;
 		}
 	}
-	
-	public String getStats() {
+
+	public String getStats()
+	{
 		return "A=" + m_nb_add + ", R=" + m_nb_remove + ", C=" + m_nb_contains;
 	}
 }

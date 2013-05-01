@@ -13,26 +13,31 @@ public class SpeculativeArrayWriteFieldAccess extends
 	private static final long serialVersionUID = 1L;
 	private ArrayContainer value;
 
-	public void set(ArrayContainer value, TxField field) {
+	public void set(ArrayContainer value, TxField field)
+	{
 		super.init(field);
 		this.value = value;
 	}
-	
-	public void put() {
+
+	public void put()
+	{
 		((SpeculativeTxField) field).commitArray(value);
-//		clear();
-//		value = null;
+		// clear();
+		// value = null;
 	}
 
-	public void speculativePut(SpeculativeContext ctx) {
+	public void speculativePut(SpeculativeContext ctx)
+	{
 		((SpeculativeTxField) field).speculativeCommit(value, ctx);
 	}
 
-	public void speculativeRemove() {
+	public void speculativeRemove()
+	{
 		((SpeculativeTxField) field).speculativeAbort(value);
 	}
-	
-	public ArrayContainer getValue() {
+
+	public ArrayContainer getValue()
+	{
 		return value;
 	}
 }

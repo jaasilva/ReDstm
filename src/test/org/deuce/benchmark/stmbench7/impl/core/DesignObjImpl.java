@@ -7,78 +7,93 @@ import org.deuce.benchmark.stmbench7.core.RuntimeError;
  * STMBench7 benchmark Design Object (see the specification). Default
  * implementation.
  */
-public class DesignObjImpl implements DesignObj, Cloneable {
+public class DesignObjImpl implements DesignObj, Cloneable
+{
 
 	protected final int id;
 	protected String type;
 	protected int buildDate;
 
-	public DesignObjImpl(int id, String type, int buildDate) {
+	public DesignObjImpl(int id, String type, int buildDate)
+	{
 		this.id = id;
 		this.type = type;
 		this.buildDate = buildDate;
 	}
 
-	public DesignObjImpl(DesignObjImpl source) {
+	public DesignObjImpl(DesignObjImpl source)
+	{
 		this.id = source.id;
 		this.type = source.type;
 		this.buildDate = source.buildDate;
 	}
 
-	public int getId() {
+	public int getId()
+	{
 		return id;
 	}
 
-	public int getBuildDate() {
+	public int getBuildDate()
+	{
 		return buildDate;
 	}
 
-	public void updateBuildDate() {
+	public void updateBuildDate()
+	{
 		if (buildDate % 2 == 0)
 			buildDate--;
 		else
 			buildDate++;
 	}
 
-	public void nullOperation() {
+	public void nullOperation()
+	{
 	}
 
-	public String getType() {
+	public String getType()
+	{
 		return type;
 	}
-	
+
 	@Override
-	public boolean equals(Object obj) {
-		if(! (obj instanceof DesignObj)) return false;
+	public boolean equals(Object obj)
+	{
+		if (!(obj instanceof DesignObj))
+			return false;
 		return ((DesignObj) obj).getId() == id;
 	}
-	
+
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		return id;
 	}
 
 	@Override
-	public Object clone() {
-		try {
+	public Object clone()
+	{
+		try
+		{
 			return super.clone();
 		}
-		catch(CloneNotSupportedException e) {
+		catch (CloneNotSupportedException e)
+		{
 			throw new RuntimeError(e);
 		}
 	}
-	
+
 	@Override
-	public String toString() {
-		return this.getClass().getName() + 
-			": id=" + id +
-			", type=" + type +
-			", buildDate=" + buildDate; 
+	public String toString()
+	{
+		return this.getClass().getName() + ": id=" + id + ", type=" + type
+				+ ", buildDate=" + buildDate;
 	}
-	
-	protected String sequenceToString(Iterable<?> sequence) {
+
+	protected String sequenceToString(Iterable<?> sequence)
+	{
 		String seqString = "{ ";
-		for(Object element : sequence) seqString += element + " ";
+		for (Object element : sequence)
+			seqString += element + " ";
 		seqString += "}";
 		return seqString;
 	}

@@ -4,23 +4,27 @@ import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
 @ExcludeTM
-public class IntWriteFieldAccess extends WriteFieldAccess {
+public class IntWriteFieldAccess extends WriteFieldAccess
+{
 	private static final long serialVersionUID = 1L;
 	private int value;
 
-	public void set(int value, TxField field) {
+	public void set(int value, TxField field)
+	{
 		super.init(field);
 		this.value = value;
 	}
 
 	@Override
-	public void put() {
-//		UnsafeHolder.getUnsafe().putInt(field.ref, field.address, value);
+	public void put()
+	{
+		// UnsafeHolder.getUnsafe().putInt(field.ref, field.address, value);
 		field.writeInt(value);
-//		clear();
+		// clear();
 	}
 
-	public int getValue() {
+	public int getValue()
+	{
 		return value;
 	}
 

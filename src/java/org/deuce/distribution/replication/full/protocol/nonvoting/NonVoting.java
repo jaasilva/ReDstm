@@ -19,59 +19,72 @@ import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transform.ExcludeTM;
 
-
 @ExcludeTM
-public class NonVoting extends FullReplicationProtocol implements DeliverySubscriber {
-//	public static final Logger log = Logger.getLogger(NonVoting.class);
-//	static {
-//		try {
-//			log.removeAllAppenders();
-//			log.addAppender(new FileAppender(new PatternLayout("%c{1} - %m%n"), System.getProperty("tribu.groupcommunication.group", "tvale")+"id"+Integer.getInteger("tribu.site")+".log", false));
-//			log.setLevel(Level.TRACE);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-			
+public class NonVoting extends FullReplicationProtocol implements
+		DeliverySubscriber
+{
+	// public static final Logger log = Logger.getLogger(NonVoting.class);
+	// static {
+	// try {
+	// log.removeAllAppenders();
+	// log.addAppender(new FileAppender(new PatternLayout("%c{1} - %m%n"),
+	// System.getProperty("tribu.groupcommunication.group",
+	// "tvale")+"id"+Integer.getInteger("tribu.site")+".log", false));
+	// log.setLevel(Level.TRACE);
+	// } catch (IOException e) {
+	// // TODOs Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// }
+
 	private final Map<Integer, DistributedContext> contexts = Collections
 			.synchronizedMap(new HashMap<Integer, DistributedContext>());
 
-	public void init() {
+	public void init()
+	{
 		TribuDSTM.subscribeDeliveries(this);
 	}
 
-	public void onDelivery(Object obj, Address src, int payloadSize) {
+	public void onDelivery(Object obj, Address src, int payloadSize)
+	{
 		DistributedContextState ctxState = (DistributedContextState) obj;
 		DistributedContext ctx = null;
 
-		if (src.isLocal()) {
+		if (src.isLocal())
+		{
 			ctx = contexts.get(ctxState.ctxID);
 			ctx.profiler.onTODelivery();
 			ctx.profiler.newMsgRecv(payloadSize);
-		} else {
+		}
+		else
+		{
 			ctx = (DistributedContext) ContextDelegator.getInstance();
 			ctx.recreateContextFromState(ctxState);
 		}
 
-		if (ctx.validate()) {
+		if (ctx.validate())
+		{
 			ctx.applyWriteSet();
 			ctx.processed(true);
-			
-//			if (log.isTraceEnabled())
-//				log.trace(src+":"+ctxState.ctxID+":"+ctxState.atomicBlockId+" committed.");
-		} else {
+
+			// if (log.isTraceEnabled())
+			// log.trace(src+":"+ctxState.ctxID+":"+ctxState.atomicBlockId+" committed.");
+		}
+		else
+		{
 			ctx.processed(false);
-			
-//			if (log.isTraceEnabled())
-//				log.trace(src+":"+ctxState.ctxID+":"+ctxState.atomicBlockId+" aborted.");
+
+			// if (log.isTraceEnabled())
+			// log.trace(src+":"+ctxState.ctxID+":"+ctxState.atomicBlockId+" aborted.");
 		}
 	}
 
-	public void onTxBegin(DistributedContext ctx) {
+	public void onTxBegin(DistributedContext ctx)
+	{
 	}
 
-	public void onTxCommit(DistributedContext ctx) {
+	public void onTxCommit(DistributedContext ctx)
+	{
 		byte[] payload = ObjectSerializer.object2ByteArray(ctx.createState());
 
 		ctx.profiler.onTOSend();
@@ -80,10 +93,12 @@ public class NonVoting extends FullReplicationProtocol implements DeliverySubscr
 		TribuDSTM.sendTotalOrdered(payload);
 	}
 
-	public void onTxFinished(DistributedContext ctx, boolean committed) {
+	public void onTxFinished(DistributedContext ctx, boolean committed)
+	{
 	}
 
-	public void onTxContextCreation(DistributedContext ctx) {
+	public void onTxContextCreation(DistributedContext ctx)
+	{
 		contexts.put(ctx.threadID, ctx);
 	}
 }

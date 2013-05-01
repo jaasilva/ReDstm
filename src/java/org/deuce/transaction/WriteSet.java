@@ -8,7 +8,6 @@ import org.deuce.transform.ExcludeTM;
 import org.deuce.trove.THashSet;
 import org.deuce.trove.TObjectProcedure;
 
-
 /**
  * Represents the transaction write set.
  * 
@@ -16,35 +15,42 @@ import org.deuce.trove.TObjectProcedure;
  * @since 0.7
  */
 @ExcludeTM
-public class WriteSet implements Serializable {
+public class WriteSet implements Serializable
+{
 	private static final long serialVersionUID = 1L;
-	final private THashSet<WriteFieldAccess> writeSet = 
-			new THashSet<WriteFieldAccess>(16);
+	final private THashSet<WriteFieldAccess> writeSet = new THashSet<WriteFieldAccess>(
+			16);
 
-	public void clear() {
+	public void clear()
+	{
 		writeSet.clear();
 	}
 
-	public boolean isEmpty() {
+	public boolean isEmpty()
+	{
 		return writeSet.isEmpty();
 	}
 
-	public boolean forEach(TObjectProcedure<WriteFieldAccess> procedure) {
+	public boolean forEach(TObjectProcedure<WriteFieldAccess> procedure)
+	{
 		return writeSet.forEach(procedure);
 	}
 
-	public void put(WriteFieldAccess write) {
+	public void put(WriteFieldAccess write)
+	{
 		// Add to write set
 		if (!writeSet.add(write))
 			writeSet.replace(write);
 	}
 
-	public WriteFieldAccess contains(ReadFieldAccess read) {
+	public WriteFieldAccess contains(ReadFieldAccess read)
+	{
 		// Check if it is already included in the write set
 		return writeSet.get(read);
 	}
 
-	public int size() {
+	public int size()
+	{
 		return writeSet.size();
 	}
 

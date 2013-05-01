@@ -27,7 +27,6 @@ import org.deuce.transform.localmetadata.array.ArrayContainer;
 import org.deuce.transform.localmetadata.type.TxField;
 import org.deuce.trove.TObjectProcedure;
 
-
 /**
  * Distributed TL2.
  * 
@@ -36,7 +35,8 @@ import org.deuce.trove.TObjectProcedure;
  */
 @ExcludeTM
 @LocalMetadata(metadataClass = "org.deuce.transaction.tl2.TL2Field")
-public class Context extends DistributedContext {
+public class Context extends DistributedContext
+{
 
 	private static final boolean TX_LOAD_OPT = Boolean
 			.getBoolean("org.deuce.transaction.tl2.txload.opt");
@@ -51,27 +51,31 @@ public class Context extends DistributedContext {
 
 	final private LockProcedure lockProcedure = new LockProcedure(this);
 
-	final private TObjectProcedure<WriteFieldAccess> putProcedure = new TObjectProcedure<WriteFieldAccess>() {
+	final private TObjectProcedure<WriteFieldAccess> putProcedure = new TObjectProcedure<WriteFieldAccess>()
+	{
 
-		public boolean execute(WriteFieldAccess writeField) {
+		public boolean execute(WriteFieldAccess writeField)
+		{
 			writeField.put();
 			return true;
 		}
 
 	};
 
-	public Context() {
+	public Context()
+	{
 		super();
 		localClock = clock.get();
 	}
 
-	public void recreateContextFromState(DistributedContextState ctxState) {
+	public void recreateContextFromState(DistributedContextState ctxState)
+	{
 		super.recreateContextFromState(ctxState);
-		
+
 		localClock = ((ContextState) ctxState).rv;
-		
+
 		atomicBlockId = -1;
-		
+
 		currentReadFieldAccess = null;
 		arrayPool.clear();
 		objectPool.clear();
@@ -83,30 +87,35 @@ public class Context extends DistributedContext {
 		longPool.clear();
 		floatPool.clear();
 		doublePool.clear();
-		
-//		boolean done = false;
-//		do {
-//			int c = clock.get();
-//			if (localClock > c)
-//				done = clock.compareAndSet(c, localClock);
-//			else
-//				done = true;
-//		} while (!done);
+
+		// boolean done = false;
+		// do {
+		// int c = clock.get();
+		// if (localClock > c)
+		// done = clock.compareAndSet(c, localClock);
+		// else
+		// done = true;
+		// } while (!done);
 	}
 
-	protected ReadSet createReadSet() {
+	protected ReadSet createReadSet()
+	{
 		return new TL2ReadSet();
 	}
 
-	protected WriteSet createWriteSet() {
+	protected WriteSet createWriteSet()
+	{
 		return new WriteSet();
 	}
 
-	public DistributedContextState createState() {
-		return new ContextState(readSet, writeSet, threadID, atomicBlockId, localClock);
+	public DistributedContextState createState()
+	{
+		return new ContextState(readSet, writeSet, threadID, atomicBlockId,
+				localClock);
 	}
 
-	public void initialise(int atomicBlockId, String metainf) {
+	public void initialise(int atomicBlockId, String metainf)
+	{
 		currentReadFieldAccess = null;
 		localClock = clock.get();
 		arrayPool.clear();
@@ -121,12 +130,16 @@ public class Context extends DistributedContext {
 		doublePool.clear();
 	}
 
-	protected boolean performValidation() {
-		try {
+	protected boolean performValidation()
+	{
+		try
+		{
 			// pre commit validation phase
 			writeSet.forEach(lockProcedure);
 			((TL2ReadSet) readSet).checkClock(localClock, this);
-		} catch (TransactionException exception) {
+		}
+		catch (TransactionException exception)
+		{
 			writeSet.forEach(lockProcedure.unlockProcedure);
 			return false;
 		}
@@ -134,7 +147,8 @@ public class Context extends DistributedContext {
 		return true;
 	}
 
-	protected void applyUpdates() {
+	protected void applyUpdates()
+	{
 		// commit new values and release locks
 		writeSet.forEach(putProcedure);
 
@@ -144,8 +158,10 @@ public class Context extends DistributedContext {
 		lockProcedure.clear();
 	}
 
-	private WriteFieldAccess onReadAccess0(TxField field) {
-		if (!TX_LOAD_OPT) {
+	private WriteFieldAccess onReadAccess0(TxField field)
+	{
+		if (!TX_LOAD_OPT)
+		{
 			ReadFieldAccess current = currentReadFieldAccess;
 
 			// Check the read is still valid
@@ -153,7 +169,9 @@ public class Context extends DistributedContext {
 
 			// Check if it is already included in the write set
 			return writeSet.contains(current);
-		} else {
+		}
+		else
+		{
 			ReadFieldAccess current = readSet.getNext();
 			current.init(field);
 
@@ -163,13 +181,16 @@ public class Context extends DistributedContext {
 		}
 	}
 
-	private void addWriteAccess0(WriteFieldAccess write) {
+	private void addWriteAccess0(WriteFieldAccess write)
+	{
 		// Add to write set
 		writeSet.put(write);
 	}
 
-	public void beforeReadAccess(TxField field) {
-		if (!TX_LOAD_OPT) {
+	public void beforeReadAccess(TxField field)
+	{
+		if (!TX_LOAD_OPT)
+		{
 			ReadFieldAccess next = readSet.getNext();
 			currentReadFieldAccess = next;
 			next.init(field);
@@ -179,7 +200,8 @@ public class Context extends DistributedContext {
 		}
 	}
 
-	public ArrayContainer onReadAccess(ArrayContainer value, TxField field) {
+	public ArrayContainer onReadAccess(ArrayContainer value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
@@ -188,8 +210,9 @@ public class Context extends DistributedContext {
 
 		return r;
 	}
-	
-	public Object onReadAccess(Object value, TxField field) {
+
+	public Object onReadAccess(Object value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
@@ -199,7 +222,8 @@ public class Context extends DistributedContext {
 		return r;
 	}
 
-	public boolean onReadAccess(boolean value, TxField field) {
+	public boolean onReadAccess(boolean value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
@@ -209,7 +233,8 @@ public class Context extends DistributedContext {
 		return r;
 	}
 
-	public byte onReadAccess(byte value, TxField field) {
+	public byte onReadAccess(byte value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
@@ -219,7 +244,8 @@ public class Context extends DistributedContext {
 		return r;
 	}
 
-	public char onReadAccess(char value, TxField field) {
+	public char onReadAccess(char value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
@@ -229,7 +255,8 @@ public class Context extends DistributedContext {
 		return r;
 	}
 
-	public short onReadAccess(short value, TxField field) {
+	public short onReadAccess(short value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
@@ -240,7 +267,8 @@ public class Context extends DistributedContext {
 
 	}
 
-	public int onReadAccess(int value, TxField field) {
+	public int onReadAccess(int value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
@@ -250,7 +278,8 @@ public class Context extends DistributedContext {
 		return r;
 	}
 
-	public long onReadAccess(long value, TxField field) {
+	public long onReadAccess(long value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
@@ -260,7 +289,8 @@ public class Context extends DistributedContext {
 		return r;
 	}
 
-	public float onReadAccess(float value, TxField field) {
+	public float onReadAccess(float value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
@@ -270,7 +300,8 @@ public class Context extends DistributedContext {
 		return r;
 	}
 
-	public double onReadAccess(double value, TxField field) {
+	public double onReadAccess(double value, TxField field)
+	{
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
@@ -279,8 +310,9 @@ public class Context extends DistributedContext {
 
 		return r;
 	}
-	
-	public void onWriteAccess(ArrayContainer value, TxField field) {
+
+	public void onWriteAccess(ArrayContainer value, TxField field)
+	{
 
 		ArrayWriteFieldAccess next = arrayPool.getNext();
 		next.set(value, field);
@@ -288,7 +320,8 @@ public class Context extends DistributedContext {
 
 	}
 
-	public void onWriteAccess(Object value, TxField field) {
+	public void onWriteAccess(Object value, TxField field)
+	{
 
 		ObjectWriteFieldAccess next = objectPool.getNext();
 		next.set(value, field);
@@ -296,7 +329,8 @@ public class Context extends DistributedContext {
 
 	}
 
-	public void onWriteAccess(boolean value, TxField field) {
+	public void onWriteAccess(boolean value, TxField field)
+	{
 
 		BooleanWriteFieldAccess next = booleanPool.getNext();
 		next.set(value, field);
@@ -304,7 +338,8 @@ public class Context extends DistributedContext {
 
 	}
 
-	public void onWriteAccess(byte value, TxField field) {
+	public void onWriteAccess(byte value, TxField field)
+	{
 
 		ByteWriteFieldAccess next = bytePool.getNext();
 		next.set(value, field);
@@ -312,7 +347,8 @@ public class Context extends DistributedContext {
 
 	}
 
-	public void onWriteAccess(char value, TxField field) {
+	public void onWriteAccess(char value, TxField field)
+	{
 
 		CharWriteFieldAccess next = charPool.getNext();
 		next.set(value, field);
@@ -320,7 +356,8 @@ public class Context extends DistributedContext {
 
 	}
 
-	public void onWriteAccess(short value, TxField field) {
+	public void onWriteAccess(short value, TxField field)
+	{
 
 		ShortWriteFieldAccess next = shortPool.getNext();
 		next.set(value, field);
@@ -328,7 +365,8 @@ public class Context extends DistributedContext {
 
 	}
 
-	public void onWriteAccess(int value, TxField field) {
+	public void onWriteAccess(int value, TxField field)
+	{
 
 		IntWriteFieldAccess next = intPool.getNext();
 		next.set(value, field);
@@ -336,7 +374,8 @@ public class Context extends DistributedContext {
 
 	}
 
-	public void onWriteAccess(long value, TxField field) {
+	public void onWriteAccess(long value, TxField field)
+	{
 
 		LongWriteFieldAccess next = longPool.getNext();
 		next.set(value, field);
@@ -344,7 +383,8 @@ public class Context extends DistributedContext {
 
 	}
 
-	public void onWriteAccess(float value, TxField field) {
+	public void onWriteAccess(float value, TxField field)
+	{
 
 		FloatWriteFieldAccess next = floatPool.getNext();
 		next.set(value, field);
@@ -352,7 +392,8 @@ public class Context extends DistributedContext {
 
 	}
 
-	public void onWriteAccess(double value, TxField field) {
+	public void onWriteAccess(double value, TxField field)
+	{
 
 		DoubleWriteFieldAccess next = doublePool.getNext();
 		next.set(value, field);
@@ -361,18 +402,22 @@ public class Context extends DistributedContext {
 	}
 
 	private static class ArrayResourceFactory implements
-			ResourceFactory<ArrayWriteFieldAccess> {
-		public ArrayWriteFieldAccess newInstance() {
+			ResourceFactory<ArrayWriteFieldAccess>
+	{
+		public ArrayWriteFieldAccess newInstance()
+		{
 			return new ArrayWriteFieldAccess();
 		}
 	}
 
 	final private Pool<ArrayWriteFieldAccess> arrayPool = new Pool<ArrayWriteFieldAccess>(
 			new ArrayResourceFactory());
-	
+
 	private static class ObjectResourceFactory implements
-			ResourceFactory<ObjectWriteFieldAccess> {
-		public ObjectWriteFieldAccess newInstance() {
+			ResourceFactory<ObjectWriteFieldAccess>
+	{
+		public ObjectWriteFieldAccess newInstance()
+		{
 			return new ObjectWriteFieldAccess();
 		}
 	}
@@ -381,8 +426,10 @@ public class Context extends DistributedContext {
 			new ObjectResourceFactory());
 
 	private static class BooleanResourceFactory implements
-			ResourceFactory<BooleanWriteFieldAccess> {
-		public BooleanWriteFieldAccess newInstance() {
+			ResourceFactory<BooleanWriteFieldAccess>
+	{
+		public BooleanWriteFieldAccess newInstance()
+		{
 			return new BooleanWriteFieldAccess();
 		}
 	}
@@ -391,8 +438,10 @@ public class Context extends DistributedContext {
 			new BooleanResourceFactory());
 
 	private static class ByteResourceFactory implements
-			ResourceFactory<ByteWriteFieldAccess> {
-		public ByteWriteFieldAccess newInstance() {
+			ResourceFactory<ByteWriteFieldAccess>
+	{
+		public ByteWriteFieldAccess newInstance()
+		{
 			return new ByteWriteFieldAccess();
 		}
 	}
@@ -401,8 +450,10 @@ public class Context extends DistributedContext {
 			new ByteResourceFactory());
 
 	private static class CharResourceFactory implements
-			ResourceFactory<CharWriteFieldAccess> {
-		public CharWriteFieldAccess newInstance() {
+			ResourceFactory<CharWriteFieldAccess>
+	{
+		public CharWriteFieldAccess newInstance()
+		{
 			return new CharWriteFieldAccess();
 		}
 	}
@@ -411,8 +462,10 @@ public class Context extends DistributedContext {
 			new CharResourceFactory());
 
 	private static class ShortResourceFactory implements
-			ResourceFactory<ShortWriteFieldAccess> {
-		public ShortWriteFieldAccess newInstance() {
+			ResourceFactory<ShortWriteFieldAccess>
+	{
+		public ShortWriteFieldAccess newInstance()
+		{
 			return new ShortWriteFieldAccess();
 		}
 	}
@@ -421,8 +474,10 @@ public class Context extends DistributedContext {
 			new ShortResourceFactory());
 
 	private static class IntResourceFactory implements
-			ResourceFactory<IntWriteFieldAccess> {
-		public IntWriteFieldAccess newInstance() {
+			ResourceFactory<IntWriteFieldAccess>
+	{
+		public IntWriteFieldAccess newInstance()
+		{
 			return new IntWriteFieldAccess();
 		}
 	}
@@ -431,8 +486,10 @@ public class Context extends DistributedContext {
 			new IntResourceFactory());
 
 	private static class LongResourceFactory implements
-			ResourceFactory<LongWriteFieldAccess> {
-		public LongWriteFieldAccess newInstance() {
+			ResourceFactory<LongWriteFieldAccess>
+	{
+		public LongWriteFieldAccess newInstance()
+		{
 			return new LongWriteFieldAccess();
 		}
 	}
@@ -441,8 +498,10 @@ public class Context extends DistributedContext {
 			new LongResourceFactory());
 
 	private static class FloatResourceFactory implements
-			ResourceFactory<FloatWriteFieldAccess> {
-		public FloatWriteFieldAccess newInstance() {
+			ResourceFactory<FloatWriteFieldAccess>
+	{
+		public FloatWriteFieldAccess newInstance()
+		{
 			return new FloatWriteFieldAccess();
 		}
 	}
@@ -451,8 +510,10 @@ public class Context extends DistributedContext {
 			new FloatResourceFactory());
 
 	private static class DoubleResourceFactory implements
-			ResourceFactory<DoubleWriteFieldAccess> {
-		public DoubleWriteFieldAccess newInstance() {
+			ResourceFactory<DoubleWriteFieldAccess>
+	{
+		public DoubleWriteFieldAccess newInstance()
+		{
 			return new DoubleWriteFieldAccess();
 		}
 	}
@@ -461,7 +522,8 @@ public class Context extends DistributedContext {
 			new DoubleResourceFactory());
 
 	@Override
-	public void onIrrevocableAccess() {
+	public void onIrrevocableAccess()
+	{
 
 	}
 }

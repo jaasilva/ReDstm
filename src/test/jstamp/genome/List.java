@@ -1,70 +1,83 @@
 package jstamp.genome;
 
-public class List {
-  ListNode head;
-//  int size;
+public class List
+{
+	ListNode head;
 
-  public List () {
-    head = new ListNode();
-    head.dataPtr = null;
-    head.nextPtr = null;
-//    size = 0;
-  }
+	// int size;
 
-  Pair find (Pair dataPtr) {
-    ListNode nodePtr;
-    ListNode prevPtr = findPrevious(dataPtr);
+	public List()
+	{
+		head = new ListNode();
+		head.dataPtr = null;
+		head.nextPtr = null;
+		// size = 0;
+	}
 
-    nodePtr = prevPtr.nextPtr;
+	Pair find(Pair dataPtr)
+	{
+		ListNode nodePtr;
+		ListNode prevPtr = findPrevious(dataPtr);
 
-    if ((nodePtr == null) || nodePtr.dataPtr.firstPtr.compareTo(dataPtr.firstPtr) !=0 ) {
-      return null;
-    }
+		nodePtr = prevPtr.nextPtr;
 
-    return nodePtr.dataPtr;
-  }
+		if ((nodePtr == null)
+				|| nodePtr.dataPtr.firstPtr.compareTo(dataPtr.firstPtr) != 0)
+		{
+			return null;
+		}
 
-  ListNode findPrevious (Pair dataPtr) {
-    ListNode prevPtr = head;
-    ListNode nodePtr;
-    nodePtr = prevPtr.nextPtr;
+		return nodePtr.dataPtr;
+	}
 
-    for (; nodePtr != null; nodePtr = nodePtr.nextPtr) {
-      if (nodePtr.dataPtr.firstPtr.compareTo(dataPtr.firstPtr) >= 0) {
-        return prevPtr;
-      }
-      prevPtr = nodePtr;
-    }
+	ListNode findPrevious(Pair dataPtr)
+	{
+		ListNode prevPtr = head;
+		ListNode nodePtr;
+		nodePtr = prevPtr.nextPtr;
 
-    return prevPtr;
-  }
+		for (; nodePtr != null; nodePtr = nodePtr.nextPtr)
+		{
+			if (nodePtr.dataPtr.firstPtr.compareTo(dataPtr.firstPtr) >= 0)
+			{
+				return prevPtr;
+			}
+			prevPtr = nodePtr;
+		}
 
-  boolean insert (Pair dataPtr) {
-    ListNode prevPtr;
-    ListNode nodePtr;
-    ListNode currPtr;
+		return prevPtr;
+	}
 
-    prevPtr = findPrevious(dataPtr);
-    currPtr = prevPtr.nextPtr;
+	boolean insert(Pair dataPtr)
+	{
+		ListNode prevPtr;
+		ListNode nodePtr;
+		ListNode currPtr;
 
-    if ((currPtr != null) && (currPtr.dataPtr.firstPtr.compareTo(dataPtr.firstPtr)==0)) {
-      return false;
-    }
+		prevPtr = findPrevious(dataPtr);
+		currPtr = prevPtr.nextPtr;
 
-    nodePtr = new ListNode(dataPtr);
+		if ((currPtr != null)
+				&& (currPtr.dataPtr.firstPtr.compareTo(dataPtr.firstPtr) == 0))
+		{
+			return false;
+		}
 
-    nodePtr.nextPtr = currPtr;
-    prevPtr.nextPtr = nodePtr;
-//    size++;
+		nodePtr = new ListNode(dataPtr);
 
-    return true;
-  }
-  
-  int size() {
-	  int size = 0;
-	  ListNode node = head;
-	  for (; node.nextPtr != null; size++, node = node.nextPtr)
-		  ;
-	  return size;
-  }
+		nodePtr.nextPtr = currPtr;
+		prevPtr.nextPtr = nodePtr;
+		// size++;
+
+		return true;
+	}
+
+	int size()
+	{
+		int size = 0;
+		ListNode node = head;
+		for (; node.nextPtr != null; size++, node = node.nextPtr)
+			;
+		return size;
+	}
 }

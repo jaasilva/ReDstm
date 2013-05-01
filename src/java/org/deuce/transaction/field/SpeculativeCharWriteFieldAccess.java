@@ -7,30 +7,36 @@ import org.deuce.transform.localmetadata.type.speculative.SpeculativeTxField;
 
 @ExcludeTM
 public class SpeculativeCharWriteFieldAccess extends
-		SpeculativeWriteFieldAccess {
+		SpeculativeWriteFieldAccess
+{
 	private static final long serialVersionUID = 1L;
 	private Character value;
 
-	public void set(char value, TxField field) {
+	public void set(char value, TxField field)
+	{
 		super.init(field);
 		this.value = value;
 	}
 
-	public void put() {
+	public void put()
+	{
 		((SpeculativeTxField) field).commitChar(value);
-//		clear();
-//		value = null;
+		// clear();
+		// value = null;
 	}
 
-	public void speculativePut(SpeculativeContext ctx) {
+	public void speculativePut(SpeculativeContext ctx)
+	{
 		((SpeculativeTxField) field).speculativeCommit(value, ctx);
 	}
 
-	public void speculativeRemove() {
+	public void speculativeRemove()
+	{
 		((SpeculativeTxField) field).speculativeAbort(value);
 	}
-	
-	public Character getValue() {
+
+	public Character getValue()
+	{
 		return value;
 	}
 }

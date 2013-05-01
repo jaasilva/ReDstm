@@ -1,6 +1,7 @@
 package jstamp.intruder;
 
-public class Random {
+public class Random
+{
 	int[] mt;
 	int mti;
 	int RANDOM_DEFAULT_SEED;
@@ -12,7 +13,8 @@ public class Random {
 	int LOWER_MASK;
 	int[] mag01;
 
-	public Random() {
+	public Random()
+	{
 		RANDOM_DEFAULT_SEED = 0;
 		N = 624;
 		M = 397;
@@ -27,56 +29,66 @@ public class Random {
 
 	}
 
-	public void random_alloc() {
+	public void random_alloc()
+	{
 		init_genrand(this.RANDOM_DEFAULT_SEED);
 	}
 
 	/* initializes mt[N] with a seed */
-	public void init_genrand(int s) {
+	public void init_genrand(int s)
+	{
 		mt[0] = s & 0xFFFFFFFF;
-		for (int mti = 1; mti < N; mti++) {
+		for (int mti = 1; mti < N; mti++)
+		{
 			mt[mti] = (1812433253 * (mt[mti - 1] ^ (mt[mti - 1] >> 30)) + mti);
 			/* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
-			/* In the previous versions, MSBs of the seed affect   */
-			/* only MSBs of the array mt[].                        */
-			/* 2002/01/09 modified by Makoto Matsumoto             */
+			/* In the previous versions, MSBs of the seed affect */
+			/* only MSBs of the array mt[]. */
+			/* 2002/01/09 modified by Makoto Matsumoto */
 			mt[mti] &= 0xFFFFFFFF;
 			/* for >32 bit machines */
 		}
 		this.mti = mti;
 	}
 
-	public void random_seed(int seed) {
+	public void random_seed(int seed)
+	{
 		init_genrand(seed);
 	}
 
-	public int random_generate() {
+	public int random_generate()
+	{
 		return 0x7fffffff & genrand_int32();
 	}
 
-	public int posrandom_generate() {
+	public int posrandom_generate()
+	{
 		return 0x7fffffff & genrand_int32();
 	}
 
-	public int genrand_int32() {
+	public int genrand_int32()
+	{
 		int y;
 		int mti = this.mti;
 
-		/* mag01[x] = x * MATRIX_A  for x=0,1 */
+		/* mag01[x] = x * MATRIX_A for x=0,1 */
 
-		if (mti >= 624) { /* generate N words at one time */
+		if (mti >= 624)
+		{ /* generate N words at one time */
 			int kk;
 			int[] mt = this.mt;
 
 			if (mti == 624 + 1) /* if init_genrand() has not been called, */
 				init_genrand(5489); /* a default initial seed is used */
 
-			for (kk = 0; kk < (624 - 397); kk++) {
+			for (kk = 0; kk < (624 - 397); kk++)
+			{
 				y = (mt[kk] & 0x80000000) | (mt[kk + 1] & 0x7fffffff);
 				mt[kk] = mt[kk + 397] ^ (y >> 1)
 						^ ((y & 0x1) == 0 ? 0 : 0x9908b0df);
 			}
-			for (; kk < (624 - 1); kk++) {
+			for (; kk < (624 - 1); kk++)
+			{
 				y = (mt[kk] & 0x80000000) | (mt[kk + 1] & 0x7fffffff);
 				mt[kk] = mt[kk + (397 - 624)] ^ (y >> 1)
 						^ ((y & 0x1) == 0 ? 0 : 0x9908b0df);

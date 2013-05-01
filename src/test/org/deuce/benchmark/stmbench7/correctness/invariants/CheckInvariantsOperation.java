@@ -16,27 +16,32 @@ import org.deuce.benchmark.stmbench7.core.OperationFailedException;
  */
 @Immutable
 @ThreadLocal
-public class CheckInvariantsOperation implements Operation {
+public class CheckInvariantsOperation implements Operation
+{
 
 	private final Setup setup;
 	private final boolean initial;
 
-	public CheckInvariantsOperation(Setup setup, boolean initial) {
+	public CheckInvariantsOperation(Setup setup, boolean initial)
+	{
 		this.setup = setup;
 		this.initial = initial;
 	}
 
 	@ReadOnly
-	public int performOperation() throws OperationFailedException {
+	public int performOperation() throws OperationFailedException
+	{
 		TraversedObjects traversedObjects = new TraversedObjects();
-		ModuleTest.checkInvariants(setup.getModule(), initial, traversedObjects);
+		ModuleTest
+				.checkInvariants(setup.getModule(), initial, traversedObjects);
 		System.err.println("\nChecking indexes...");
 		IndexTest.checkInvariants(setup, initial, traversedObjects);
 		System.err.println("\nInvariants OK.");
 		return 0;
 	}
 
-	public OperationId getOperationId() {
+	public OperationId getOperationId()
+	{
 		return null;
 	}
 }

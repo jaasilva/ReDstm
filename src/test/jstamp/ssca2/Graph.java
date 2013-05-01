@@ -1,28 +1,31 @@
 package jstamp.ssca2;
-/* Graph data structure*/
-public class Graph {
-  public int numVertices;
-  public int numEdges;
 
-  public int numDirectedEdges;
-  public int numUndirectedEdges;
+/* Graph data structure */
+public class Graph
+{
+	public int numVertices;
+	public int numEdges;
 
-  public int numIntEdges;
-  public int numStrEdges;
+	public int numDirectedEdges;
+	public int numUndirectedEdges;
 
-  public int[] outDegree;
-  public int[] outVertexIndex;
-  public int[] outVertexList;
-  public int[] paralEdgeIndex;
+	public int numIntEdges;
+	public int numStrEdges;
 
-  public int[] inDegree;
-  public int[] inVertexIndex;
-  public int[] inVertexList;
+	public int[] outDegree;
+	public int[] outVertexIndex;
+	public int[] outVertexList;
+	public int[] paralEdgeIndex;
 
-  public int[]  intWeight;
-  public byte[] strWeight;
+	public int[] inDegree;
+	public int[] inVertexIndex;
+	public int[] inVertexList;
 
-  public Graph() {
+	public int[] intWeight;
+	public byte[] strWeight;
 
-  }
+	public Graph()
+	{
+
+	}
 }

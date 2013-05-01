@@ -12,14 +12,15 @@ import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
 @ExcludeTM
-public class FullReplicationSerializer extends ObjectSerializer {
+public class FullReplicationSerializer extends ObjectSerializer
+{
 	public final static String NAME = Type
 			.getInternalName(FullReplicationSerializer.class);
 	public final static String DESC = Type
 			.getDescriptor(FullReplicationSerializer.class);
 
-	// TODO: Permitir definir qual a implementação de OID a usar.
-//	private OIDFactory factory = new SimpleOIDFactory();
+	// TODOs: Permitir definir qual a implementação de OID a usar.
+	// private OIDFactory factory = new SimpleOIDFactory();
 	private OIDFactory factory = new UUIDFactory();
 
 	/**
@@ -33,14 +34,16 @@ public class FullReplicationSerializer extends ObjectSerializer {
 	 * @throws ObjectStreamException
 	 */
 	public Object writeReplaceHook(UniqueObject obj)
-			throws ObjectStreamException {
+			throws ObjectStreamException
+	{
 		OID oid = (OID) obj.getMetadata();
 
-		if (oid == null) {
+		if (oid == null)
+		{
 			oid = factory.generateOID();
 			obj.setMetadata(oid);
 			TribuDSTM.putObject(oid, obj);
-//			System.out.println("Sending OID="+oid.toString()+" for the 1st time.");
+			// System.out.println("Sending OID="+oid.toString()+" for the 1st time.");
 			return obj;
 		}
 
@@ -54,21 +57,24 @@ public class FullReplicationSerializer extends ObjectSerializer {
 	 * @throws ObjectStreamException
 	 */
 	public Object readResolveHook(UniqueObject obj)
-			throws ObjectStreamException {
+			throws ObjectStreamException
+	{
 		OID oid = (OID) obj.getMetadata();
 
 		UniqueObject object = TribuDSTM.getObject(oid);
-		if (object != null) {
-//			System.out.println("Received Object with existing OID="+oid.toString());
+		if (object != null)
+		{
+			// System.out.println("Received Object with existing OID="+oid.toString());
 			return object;
 		}
 
-//		System.out.println("Received OID="+oid.toString()+" for the 1st time.");
+		// System.out.println("Received OID="+oid.toString()+" for the 1st time.");
 		TribuDSTM.putObject(oid, obj);
 		return obj;
 	}
 
-	public ObjectMetadata createMetadata() {
+	public ObjectMetadata createMetadata()
+	{
 		return factory.generateOID();
 	}
 
@@ -77,7 +83,8 @@ public class FullReplicationSerializer extends ObjectSerializer {
 			+ Type.INT_TYPE.getDescriptor() + ")"
 			+ Type.VOID_TYPE.getDescriptor();
 
-	public void createBootstrapOID(UniqueObject obj, int id) {
+	public void createBootstrapOID(UniqueObject obj, int id)
+	{
 		OID oid = factory.generateOID(id);
 		obj.setMetadata(oid);
 		TribuDSTM.putObject(oid, obj);

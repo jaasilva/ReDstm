@@ -4,14 +4,17 @@ import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
-public class Field{
+public class Field
+{
 	private final String fieldNameAddress;
 	private final String fieldName;
 	private final int access;
 	private final Type type;
 	private final Type origType;
 
-	public Field( String fieldName, String fieldNameAddress, int access, Type type, Type origType) {
+	public Field(String fieldName, String fieldNameAddress, int access,
+			Type type, Type origType)
+	{
 		this.fieldName = fieldName;
 		this.fieldNameAddress = fieldNameAddress;
 		this.access = access;
@@ -19,23 +22,28 @@ public class Field{
 		this.origType = origType;
 	}
 
-	public String getFieldNameAddress() {
+	public String getFieldNameAddress()
+	{
 		return fieldNameAddress;
 	}
 
-	public String getFieldName() {
+	public String getFieldName()
+	{
 		return fieldName;
 	}
-	
-	public int getAccess() {
+
+	public int getAccess()
+	{
 		return access;
 	}
-	
-	public Type getType() {
+
+	public Type getType()
+	{
 		return type;
 	}
-	
-	public Type getOriginalType() {
+
+	public Type getOriginalType()
+	{
 		return origType;
 	}
 }

@@ -22,7 +22,6 @@ import org.deuce.reflection.UnsafeHolder;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transform.ExcludeTM;
 
-
 /**
  * A java agent to dynamically instrument transactional supported classes/
  * 
@@ -30,7 +29,8 @@ import org.deuce.transform.ExcludeTM;
  * @since 1.0
  */
 @ExcludeTM
-public class Agent implements ClassFileTransformer {
+public class Agent implements ClassFileTransformer
+{
 	private static final Logger logger = Logger.getLogger("org.deuce.agent");
 	final private static boolean VERBOSE = Boolean
 			.getBoolean("org.deuce.verbose");
@@ -38,6 +38,7 @@ public class Agent implements ClassFileTransformer {
 			.getBoolean("org.deuce.transaction.global");
 	final public static boolean USE_TXFIELD_POOL = Boolean
 			.getBoolean("org.tribu.pool");
+
 	/*
 	 * @see
 	 * java.lang.instrument.ClassFileTransformer#transform(java.lang.ClassLoader
@@ -46,13 +47,17 @@ public class Agent implements ClassFileTransformer {
 	 */
 	public byte[] transform(ClassLoader loader, String className,
 			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
-			byte[] classfileBuffer) throws IllegalClassFormatException {
-		try {
+			byte[] classfileBuffer) throws IllegalClassFormatException
+	{
+		try
+		{
 			// Don't transform classes from the boot classLoader.
 			if (loader != null)
 				return transform(className, classfileBuffer, false).get(0)
 						.getBytecode();
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			logger.log(Level.SEVERE, "Fail on class transform: " + className, e);
 		}
 		return classfileBuffer;
@@ -64,10 +69,12 @@ public class Agent implements ClassFileTransformer {
 	 */
 	private List<ClassByteCode> transform(String className,
 			byte[] classfileBuffer, boolean offline)
-			throws IllegalClassFormatException {
+			throws IllegalClassFormatException
+	{
 
 		ArrayList<ClassByteCode> byteCodes = new ArrayList<ClassByteCode>();
-		if (className.startsWith("$") || ExcludeIncludeStore.exclude(className)) {
+		if (className.startsWith("$") || ExcludeIncludeStore.exclude(className))
+		{
 			byteCodes.add(new ClassByteCode(className, classfileBuffer));
 			return byteCodes;
 		}
@@ -77,44 +84,59 @@ public class Agent implements ClassFileTransformer {
 
 		classfileBuffer = addFrames(className, classfileBuffer);
 
-		if (GLOBAL_TXN) {
-//			ByteCodeVisitor cv = new org.deuce.transaction.global.ClassTransformer(
-//					className);
-//			byte[] bytecode = cv.visit(classfileBuffer);
-//			byteCodes.add(new ClassByteCode(className, bytecode));
-		} else {
+		if (GLOBAL_TXN)
+		{
+			// ByteCodeVisitor cv = new
+			// org.deuce.transaction.global.ClassTransformer(
+			// className);
+			// byte[] bytecode = cv.visit(classfileBuffer);
+			// byteCodes.add(new ClassByteCode(className, bytecode));
+		}
+		else
+		{
 			ExternalFieldsHolder fieldsHolder = null;
-			if (offline) {
+			if (offline)
+			{
 				fieldsHolder = new ExternalFieldsHolder(className);
 			}
 			ByteCodeVisitor cv = null;
 
-			if (ContextDelegator.inLocalMetadata()) {
-//				if (ContextDelegator.inDistributedContext()) {
-					cv = new org.deuce.transform.localmetadata.ClassTransformer(
-							className, fieldsHolder);
-//				} else {
-//					cv = new tribu.transform.metadata.ClassTransformer(
-//							className, fieldsHolder);
-//				}
-			} else {
+			if (ContextDelegator.inLocalMetadata())
+			{
+				// if (ContextDelegator.inDistributedContext()) {
+				cv = new org.deuce.transform.localmetadata.ClassTransformer(
+						className, fieldsHolder);
+				// } else {
+				// cv = new tribu.transform.metadata.ClassTransformer(
+				// className, fieldsHolder);
+				// }
+			}
+			else
+			{
 				cv = new org.deuce.transform.asm.ClassTransformer(className,
 						fieldsHolder);
 			}
 
 			byte[] bytecode = cv.visit(classfileBuffer);
 			byteCodes.add(new ClassByteCode(className, bytecode));
-			if (offline) {
+			if (offline)
+			{
 				byteCodes.add(fieldsHolder.getClassByteCode());
 			}
 		}
 
-		if (VERBOSE) {
-			try {
+		if (VERBOSE)
+		{
+			try
+			{
 				verbose(byteCodes);
-			} catch (FileNotFoundException e) {
+			}
+			catch (FileNotFoundException e)
+			{
 				e.printStackTrace();
-			} catch (IOException e) {
+			}
+			catch (IOException e)
+			{
 				e.printStackTrace();
 			}
 		}
@@ -131,19 +153,24 @@ public class Agent implements ClassFileTransformer {
 	 * 
 	 * @return bytecode with frames
 	 */
-	private byte[] addFrames(String className, byte[] classfileBuffer) {
+	private byte[] addFrames(String className, byte[] classfileBuffer)
+	{
 
-		try {
+		try
+		{
 			FramesCodeVisitor frameCompute = new FramesCodeVisitor(className);
 			return frameCompute.visit(classfileBuffer); // avoid adding frames
 														// to Java6
-		} catch (FramesCodeVisitor.VersionException ex) {
+		}
+		catch (FramesCodeVisitor.VersionException ex)
+		{
 			return classfileBuffer;
 		}
 	}
 
 	public static void premain(String agentArgs, Instrumentation inst)
-			throws Exception {
+			throws Exception
+	{
 		UnsafeHolder.getUnsafe();
 		logger.fine("Starting Duece agent");
 		inst.addTransformer(new Agent());
@@ -157,17 +184,19 @@ public class Agent implements ClassFileTransformer {
 	 *            "C:\Java\jdk1.5.0_13\jre\lib\rt.jar" "C:\rt.jar"
 	 * @throws Exception
 	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception
+	{
 		UnsafeHolder.getUnsafe();
 		logger.fine("Starting Duece translator");
 
-		// TODO check args
+		// TODOs check args
 		Agent agent = new Agent();
 		agent.transformJar(args[0], args[1]);
 	}
 
 	private void transformJar(String inFileNames, String outFilenames)
-			throws IOException, IllegalClassFormatException {
+			throws IOException, IllegalClassFormatException
+	{
 
 		String[] inFileNamesArr = inFileNames.split(";");
 		String[] outFilenamesArr = outFilenames.split(";");
@@ -175,7 +204,8 @@ public class Agent implements ClassFileTransformer {
 			throw new IllegalArgumentException(
 					"Input files list length doesn't match output files list.");
 
-		for (int i = 0; i < inFileNamesArr.length; ++i) {
+		for (int i = 0; i < inFileNamesArr.length; ++i)
+		{
 			String inFileName = inFileNamesArr[i];
 			String outFilename = outFilenamesArr[i];
 
@@ -191,41 +221,53 @@ public class Agent implements ClassFileTransformer {
 					+ outFilename);
 
 			String nextName = "";
-			try {
+			try
+			{
 				for (JarEntry nextJarEntry = jarIS.getNextJarEntry(); nextJarEntry != null; nextJarEntry = jarIS
-						.getNextJarEntry()) {
+						.getNextJarEntry())
+				{
 
 					baos.reset();
 					int read;
-					while ((read = jarIS.read(buffer, 0, size)) > 0) {
+					while ((read = jarIS.read(buffer, 0, size)) > 0)
+					{
 						baos.write(buffer, 0, read);
 					}
 					byte[] bytecode = baos.toByteArray();
 
 					nextName = nextJarEntry.getName();
-					if (nextName.endsWith(".class")) {
-						if (logger.isLoggable(Level.FINE)) {
+					if (nextName.endsWith(".class"))
+					{
+						if (logger.isLoggable(Level.FINE))
+						{
 							logger.fine("Transalating " + nextName);
 						}
 						String className = nextName.substring(0,
 								nextName.length() - ".class".length());
 						List<ClassByteCode> transformBytecodes = transform(
 								className, bytecode, true);
-						for (ClassByteCode byteCode : transformBytecodes) {
+						for (ClassByteCode byteCode : transformBytecodes)
+						{
 							JarEntry transformedEntry = new JarEntry(
 									byteCode.getClassName() + ".class");
 							jarOS.putNextEntry(transformedEntry);
 							jarOS.write(byteCode.getBytecode());
 						}
-					} else {
+					}
+					else
+					{
 						jarOS.putNextEntry(nextJarEntry);
 						jarOS.write(bytecode);
 					}
 				}
 
-			} catch (Exception e) {
+			}
+			catch (Exception e)
+			{
 				logger.log(Level.SEVERE, "Failed to translate " + nextName, e);
-			} finally {
+			}
+			finally
+			{
 				logger.info("Closing source:" + inFileName + " target:"
 						+ outFilename);
 				jarIS.close();
@@ -235,14 +277,17 @@ public class Agent implements ClassFileTransformer {
 	}
 
 	private void verbose(List<ClassByteCode> byteCodes)
-			throws FileNotFoundException, IOException {
+			throws FileNotFoundException, IOException
+	{
 		File verbose = new File("verbose");
 		verbose.mkdir();
 
-		for (ClassByteCode byteCode : byteCodes) {
+		for (ClassByteCode byteCode : byteCodes)
+		{
 			String[] packages = byteCode.getClassName().split("/");
 			File file = verbose;
-			for (int i = 0; i < packages.length - 1; ++i) {
+			for (int i = 0; i < packages.length - 1; ++i)
+			{
 				file = new File(file, packages[i]);
 				file.mkdir();
 			}
