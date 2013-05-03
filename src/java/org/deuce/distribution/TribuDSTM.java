@@ -8,6 +8,9 @@ import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
 import org.deuce.distribution.location.SimpleLocator;
+import org.deuce.distribution.replication.group.Group;
+import org.deuce.distribution.replication.partitioner.data.DataPartitioner;
+import org.deuce.distribution.replication.partitioner.group.GroupPartitioner;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transform.ExcludeTM;
@@ -19,16 +22,21 @@ public class TribuDSTM
 	public static final String DESC = Type.getDescriptor(TribuDSTM.class);
 	public static final String NAME = Type.getInternalName(TribuDSTM.class);
 
-	public static String partialDefault = "false";
-
 	private static final Locator locator = new SimpleLocator();
 	private static DistributedProtocol distProtocol;
 	private static GroupCommunication groupComm;
+	private static DataPartitioner dataPart;
+	private static GroupPartitioner groupPart;
+	private static boolean PARTIAL;
+
+	public static Group ALL;
+	public static String partialDefault = "false";
 
 	private static Class<? extends DistributedContext> ctxClass;
 
 	static
 	{
+		LOGGER.info("TribuDSTM initializing...");
 		initReplicationProtocol();
 		initTransactionContext();
 	}
@@ -46,6 +54,8 @@ public class TribuDSTM
 	{
 		initGroupCommunication();
 		distProtocol.init();
+
+		LOGGER.info("TribuDSTM initialized");
 	}
 
 	public static final String CLOSE_METHOD_NAME = "close";
@@ -54,7 +64,11 @@ public class TribuDSTM
 
 	public static void close()
 	{
+		LOGGER.info("TribuDSTM closing");
+
 		groupComm.close();
+
+		LOGGER.info("TribuDSTM closing");
 	}
 
 	private static void initGroupCommunication()
@@ -76,7 +90,7 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.debug("Initializing group comunication: " + className);
+		LOGGER.info("Initializing group comunication: " + className);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -97,7 +111,7 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.debug("Initializing transaction context: " + className);
+		LOGGER.info("Initializing transaction context: " + className);
 	}
 
 	private static void initReplicationProtocol()
@@ -119,7 +133,7 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.debug("Initializing replication protocol: " + className);
+		LOGGER.info("Initializing replication protocol: " + className);
 	}
 
 	public static final Class<? extends DistributedContext> getContextClass()
@@ -203,4 +217,28 @@ public class TribuDSTM
 		return groupComm.getMembers();
 	}
 
+	public static final Address getLocalAddress()
+	{
+		return groupComm.getLocalAddress();
+	}
+
+	public static final Group publishObjectTo(UniqueObject obj)
+	{
+		return dataPart.publishTo(obj);
+	}
+
+	public static final Group getLocalGroup()
+	{
+		return groupPart.getLocalGroup();
+	}
+
+	public static final boolean isLocalGroup(Group group)
+	{
+		return group.contains(getLocalAddress());
+	}
+
+	public static final boolean groupIsAll(Group group)
+	{
+		return group.equals(ALL);
+	}
 }

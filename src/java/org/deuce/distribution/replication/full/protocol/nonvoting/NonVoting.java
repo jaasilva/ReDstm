@@ -65,14 +65,14 @@ public class NonVoting extends FullReplicationProtocol implements
 			ctx.applyWriteSet();
 			ctx.processed(true);
 
-			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
+			LOGGER.trace(src + ":" + ctxState.ctxID + ":"
 					+ ctxState.atomicBlockId + " committed.");
 		}
 		else
 		{
 			ctx.processed(false);
 
-			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
+			LOGGER.trace(src + ":" + ctxState.ctxID + ":"
 					+ ctxState.atomicBlockId + " aborted.");
 		}
 	}

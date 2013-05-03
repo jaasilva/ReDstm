@@ -88,7 +88,7 @@ public abstract class GroupCommunication
 		return myAddress.equals(addr);
 	}
 
-	public Address getAddress()
+	public Address getLocalAddress()
 	{
 		return this.myAddress;
 	}
