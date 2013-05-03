@@ -23,6 +23,7 @@ import org.deuce.transform.ExcludeTM;
 public class NonVoting extends FullReplicationProtocol implements
 		DeliverySubscriber
 {
+	private static final Logger LOGGER = Logger.getLogger(NonVoting.class);
 	// public static final Logger log = Logger.getLogger(NonVoting.class);
 	// static {
 	// try {
@@ -67,15 +68,15 @@ public class NonVoting extends FullReplicationProtocol implements
 			ctx.applyWriteSet();
 			ctx.processed(true);
 
-			// if (log.isTraceEnabled())
-			// log.trace(src+":"+ctxState.ctxID+":"+ctxState.atomicBlockId+" committed.");
+			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
+					+ ctxState.atomicBlockId + " committed.");
 		}
 		else
 		{
 			ctx.processed(false);
 
-			// if (log.isTraceEnabled())
-			// log.trace(src+":"+ctxState.ctxID+":"+ctxState.atomicBlockId+" aborted.");
+			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
+					+ ctxState.atomicBlockId + " aborted.");
 		}
 	}
 
