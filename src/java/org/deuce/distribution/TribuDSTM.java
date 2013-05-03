@@ -1,12 +1,11 @@
 package org.deuce.distribution;
 
+import org.apache.log4j.Logger;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
-import org.deuce.distribution.groupcomm.appia.AppiaGroupCommunication;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
 import org.deuce.distribution.location.SimpleLocator;
-import org.deuce.distribution.replication.full.protocol.nonvoting.NonVoting;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transform.ExcludeTM;
@@ -14,8 +13,11 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class TribuDSTM
 {
+	private static final Logger LOGGER = Logger.getLogger(TribuDSTM.class);
 	public static final String DESC = Type.getDescriptor(TribuDSTM.class);
 	public static final String NAME = Type.getInternalName(TribuDSTM.class);
+
+	public static String partialDefault = "false";
 
 	private static final Locator locator = new SimpleLocator();
 	private static DistributedProtocol distProtocol;
@@ -55,91 +57,67 @@ public class TribuDSTM
 
 	private static void initGroupCommunication()
 	{
+		String className = System
+				.getProperty("tribu.groupcommunication.class",
+						"org.deuce.distribution.groupcomm.jgroups.JGroupsGroupCommunication");
+
 		try
 		{
-			String className = System
-					.getProperty("tribu.groupcommunication.class");
-			if (className != null)
-			{
-				try
-				{
-					Class<? extends GroupCommunication> groupCommClass = (Class<? extends GroupCommunication>) Class
-							.forName(className);
-					groupComm = groupCommClass.newInstance();
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace(); // TODOs add logger
-				}
-			}
-			else
-			{
-				groupComm = new AppiaGroupCommunication();
-			}
+			@SuppressWarnings("unchecked")
+			Class<? extends GroupCommunication> groupCommClass = (Class<? extends GroupCommunication>) Class
+					.forName(className);
+			groupComm = groupCommClass.newInstance();
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			System.exit(-1);
 		}
+
+		LOGGER.debug("Initializing group comunication: " + className);
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void initTransactionContext()
 	{
+		String className = System.getProperty(
+				"org.deuce.transaction.contextClass",
+				"org.deuce.transaction.tl2.Context");
+
 		try
 		{
-			String className = System
-					.getProperty("org.deuce.transaction.contextClass");
-			if (className != null)
-			{
-				try
-				{
-					ctxClass = (Class<? extends DistributedContext>) Class
-							.forName(className);
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace(); // TODOs add logger
-				}
-			}
-			else
-			{
-				ctxClass = org.deuce.transaction.tl2.Context.class;
-			}
+			ctxClass = (Class<? extends DistributedContext>) Class
+					.forName(className);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			System.exit(-1);
 		}
+
+		LOGGER.debug("Initializing transaction context: " + className);
 	}
 
 	private static void initReplicationProtocol()
 	{
+		String className = System
+				.getProperty("tribu.distributed.protocolClass",
+						"org.deuce.distribution.replication.full.protocol.nonvoting.NonVoting");
+
 		try
 		{
-			String className = System
-					.getProperty("tribu.distributed.protocolClass");
-			if (className != null)
-			{
-				try
-				{
-					Class<? extends DistributedProtocol> distProtocolClass = (Class<? extends DistributedProtocol>) Class
-							.forName(className);
-					distProtocol = distProtocolClass.newInstance();
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace(); // TODOs add logger
-				}
-			}
-			else
-			{
-				distProtocol = new NonVoting();
-			}
+			@SuppressWarnings("unchecked")
+			Class<? extends DistributedProtocol> distProtocolClass = (Class<? extends DistributedProtocol>) Class
+					.forName(className);
+			distProtocol = distProtocolClass.newInstance();
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			System.exit(-1);
 		}
+
+		LOGGER.debug("Initializing replication protocol: " + className);
 	}
 
 	public static final Class<? extends DistributedContext> getContextClass()
