@@ -37,7 +37,7 @@ RANGE=131072 # SIZE*4
 WRITES=10
 
 _STM=tl2.Context
-_REP=nonvoting.NonVoting
+_REP=nonvoting.$7
 _COMM=$2
 
 STM="org.deuce.transaction.${_STM}"
@@ -58,6 +58,7 @@ echo `date +%H:%M`
 echo "#####"
 
 java -Xmx8g -Xms8g -cp $CP -javaagent:bin/deuceAgent.jar \
+	-Dlog=$8 \
 	-Dorg.deuce.transaction.contextClass=$STM \
 	-Dorg.deuce.exclude=$EXCLUDE \
 	-Dtribu.groupcommunication.class=$COMM \
