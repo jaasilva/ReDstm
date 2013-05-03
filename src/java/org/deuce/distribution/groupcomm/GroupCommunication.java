@@ -1,9 +1,11 @@
 package org.deuce.distribution.groupcomm;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
+import org.deuce.distribution.replication.group.Group;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
@@ -42,7 +44,15 @@ public abstract class GroupCommunication
 
 	public abstract void sendTotalOrdered(byte[] payload);
 
+	public abstract void sendTotalOrdered(byte[] payload, Group group);
+
 	public abstract void sendReliably(byte[] payload);
+
+	public abstract void sendTo(byte[] payload, Address addr);
+
+	public abstract void sendToGroup(byte[] payload, Group group);
+
+	public abstract List<Address> getMembers();
 
 	public void subscribeDelivery(DeliverySubscriber subscriber)
 	{
@@ -76,5 +86,10 @@ public abstract class GroupCommunication
 	public boolean isLocal(Address addr)
 	{
 		return myAddress.equals(addr);
+	}
+
+	public Address getAddress()
+	{
+		return this.myAddress;
 	}
 }

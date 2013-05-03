@@ -6,14 +6,19 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public abstract class Address
 {
-	@Override
-	public abstract boolean equals(Object obj);
-
 	public boolean isLocal()
 	{
 		return TribuDSTM.isLocalAddress(this);
 	}
 
+	public abstract Object getSpecificAddress();
+
 	@Override
 	public abstract String toString();
+
+	@Override
+	public abstract boolean equals(Object obj);
+
+	@Override
+	public abstract int hashCode();
 }

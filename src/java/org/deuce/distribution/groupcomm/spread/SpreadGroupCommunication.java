@@ -1,9 +1,13 @@
 package org.deuce.distribution.groupcomm.spread;
 
+import java.util.List;
+
 import org.deuce.distribution.ObjectSerializer;
+import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.OptimisticDeliveryUnsupportedException;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
+import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.serialization.GCPayloadException;
 import org.deuce.transform.ExcludeTM;
 
@@ -129,5 +133,34 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 				&& message.getMembershipInfo().getMembers().length == Integer
 						.getInteger("tribu.replicas").intValue())
 			membersArrived();
+	}
+
+	@Override
+	public void sendTotalOrdered(byte[] payload, Group group)
+	{
+		System.err.println("Feature not implemented.");
+		System.exit(-1);
+	}
+
+	@Override
+	public void sendTo(byte[] payload, Address addr)
+	{
+		System.err.println("Feature not implemented.");
+		System.exit(-1);
+	}
+
+	@Override
+	public void sendToGroup(byte[] payload, Group group)
+	{
+		System.err.println("Feature not implemented.");
+		System.exit(-1);
+	}
+
+	@Override
+	public List<Address> getMembers()
+	{
+		System.err.println("Feature not implemented.");
+		System.exit(-1);
+		return null;
 	}
 }

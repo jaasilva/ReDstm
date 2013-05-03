@@ -1,10 +1,14 @@
 package org.deuce.distribution.groupcomm.appia;
 
 import java.io.IOException;
+import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
+import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.serialization.GCPayloadException;
 import org.deuce.transform.ExcludeTM;
 
@@ -32,7 +36,6 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		ExceptionListener, MessageListener, ServiceListener, BlockListener,
 		MembershipListener
 {
-
 	private Protocol protocol;
 	private AppiaGroup config;
 	private AppiaService sendTOService, sendURBService, recvService;
@@ -228,5 +231,50 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 			this.addr = addr;
 			this.payloadSize = payloadSize;
 		}
+	}
+
+	@Override
+	public void sendTotalOrdered(byte[] payload, Group group)
+	{
+		System.err.println("Feature not implemented.");
+		System.exit(-1);
+	}
+
+	@Override
+	public void sendTo(byte[] payload, Address addr)
+	{
+		System.err.println("Feature not implemented.");
+		System.exit(-1);
+	}
+
+	@Override
+	public void sendToGroup(byte[] payload, Group group)
+	{
+		System.err.println("Feature not implemented.");
+		System.exit(-1);
+	}
+
+	@Override
+	public List<Address> getMembers()
+	{
+		List<Address> addrs = null;
+
+		try
+		{
+			List<SocketAddress> list = controlSession.getMembership()
+					.getMembershipList();
+			addrs = new ArrayList<Address>(list.size());
+
+			for (SocketAddress a : list)
+			{
+				addrs.add(new AppiaAddress(a));
+			}
+		}
+		catch (NotJoinedException e)
+		{
+			e.printStackTrace();
+		}
+
+		return addrs;
 	}
 }

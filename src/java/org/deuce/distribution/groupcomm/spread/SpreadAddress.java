@@ -33,4 +33,15 @@ public class SpreadAddress extends Address
 		return addr.toString();
 	}
 
+	@Override
+	public Object getSpecificAddress()
+	{
+		return this.addr;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return this.addr.hashCode();
+	}
 }

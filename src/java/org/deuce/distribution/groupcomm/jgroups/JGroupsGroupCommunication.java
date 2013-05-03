@@ -2,13 +2,18 @@ package org.deuce.distribution.groupcomm.jgroups;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.deuce.distribution.ObjectSerializer;
+import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.OptimisticDeliveryUnsupportedException;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
+import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.serialization.GCPayloadException;
 import org.deuce.transform.ExcludeTM;
+import org.jgroups.AnycastAddress;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.Receiver;
@@ -146,5 +151,75 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 
 	public void unblock()
 	{
+	}
+
+	@Override
+	public void sendTotalOrdered(byte[] payload, Group group)
+	{
+		AnycastAddress addr = new AnycastAddress();
+		for (Address a : group.getAll())
+		{ // assumes group has no duplicate addresses
+			addr.add((org.jgroups.Address) a.getSpecificAddress());
+		}
+
+		try
+		{
+			channelTOB.send(addr, payload);
+		}
+		catch (Exception e)
+		{
+			System.err.println("Couldn't send message.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+
+	@Override
+	public void sendTo(byte[] payload, Address addr)
+	{
+		try
+		{
+			channelTOB.send((org.jgroups.Address) addr.getSpecificAddress(),
+					payload);
+		}
+		catch (Exception e)
+		{
+			System.err.println("Couldn't send message.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+
+	@Override
+	public void sendToGroup(byte[] payload, Group group)
+	{
+		for (Address a : group.getAll())
+		{
+			try
+			{
+				channelTOB.send((org.jgroups.Address) a.getSpecificAddress(),
+						payload);
+			}
+			catch (Exception e)
+			{
+				System.err.println("Couldn't send message.");
+				e.printStackTrace();
+				System.exit(-1);
+			}
+		}
+	}
+
+	@Override
+	public List<Address> getMembers()
+	{
+		List<org.jgroups.Address> members = channelTOB.getView().getMembers();
+		List<Address> addrs = new ArrayList<Address>(members.size());
+
+		for (org.jgroups.Address a : members)
+		{
+			addrs.add(new JGroupsAddress(a));
+		}
+
+		return addrs;
 	}
 }
