@@ -101,6 +101,13 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 				// initializeSet(random, initial);
 			}
 		}
+		else if (type.equals("RedBTree"))
+		{ // XXX supposed good red black tree
+			if (m_set == null)
+			{
+				m_set = new RedBTree();
+			}
+		}
 		else if (type.equals("SkipList"))
 		{
 			if (m_set == null)
