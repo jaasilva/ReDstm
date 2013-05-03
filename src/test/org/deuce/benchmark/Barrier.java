@@ -62,8 +62,8 @@ public class Barrier
 
 		increment();
 
-		// System.err.println("Barrier increased to " + counter + " (expected="
-		// + expected + ")");
+		System.err.println("Barrier increased to " + counter + " (expected="
+				+ expected + ")");
 		boolean exit = false;
 		while (!exit)
 		{
@@ -83,8 +83,8 @@ public class Barrier
 			}
 		}
 
-		// System.err.println("Barrier increased to " + counter + " (expected="
-		// + expected + ")");
+		System.err.println("Barrier increased to " + counter + " (expected="
+				+ expected + ")");
 		UnsafeHolder.getUnsafe().putIntVolatile(this, counter_offset, 0);
 	}
 

@@ -2,6 +2,7 @@ package org.deuce.transform.asm.method;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.log4j.Logger;
 import org.deuce.Atomic;
 import org.deuce.objectweb.asm.AnnotationVisitor;
 import org.deuce.objectweb.asm.Label;
@@ -19,7 +20,8 @@ import org.deuce.transform.asm.type.TypeCodeResolverFactory;
 
 public class AtomicMethod extends MethodAdapter implements Opcodes
 {
-
+	private static final Logger LOGGER = Logger.getLogger(AtomicMethod.class);
+	private static String _atomicBlocks = "";
 	final static public String ATOMIC_DESCRIPTOR = Type
 			.getDescriptor(Atomic.class);
 	final static private AtomicInteger ATOMIC_BLOCK_COUNTER = new AtomicInteger(
@@ -177,7 +179,14 @@ public class AtomicMethod extends MethodAdapter implements Opcodes
 		Label l11 = new Label(); // context.init(atomicBlockId, metainf);
 		mv.visitLabel(l11);
 		mv.visitVarInsn(ALOAD, contextIndex);
-		mv.visitLdcInsn(ATOMIC_BLOCK_COUNTER.getAndIncrement());
+
+		int atomic_block = ATOMIC_BLOCK_COUNTER.getAndIncrement();
+		mv.visitLdcInsn(atomic_block);
+
+		// for logging propose
+		_atomicBlocks += String.format("%s %s %d\n", className, methodName,
+				atomic_block);
+
 		mv.visitLdcInsn(metainf);
 		mv.visitMethodInsn(INVOKEINTERFACE, Context.CONTEXT_INTERNAL, "init",
 				"(ILjava/lang/String;)V");
@@ -400,6 +409,7 @@ public class AtomicMethod extends MethodAdapter implements Opcodes
 	@Override
 	public void visitEnd()
 	{
+		LOGGER.info(_atomicBlocks);
 	}
 
 	@Override
