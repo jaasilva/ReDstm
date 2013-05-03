@@ -11,6 +11,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
@@ -368,5 +369,10 @@ public class SpeculativeNonVoting extends FullReplicationProtocol implements
 	public void onTxContextCreation(DistributedContext ctx)
 	{
 		contexts.put(ctx.threadID, (SpeculativeContext) ctx);
+	}
+
+	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata)
+	{
+		return null;
 	}
 }
