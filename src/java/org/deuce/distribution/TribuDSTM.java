@@ -1,5 +1,7 @@
 package org.deuce.distribution;
 
+import java.util.Collection;
+
 import org.apache.log4j.Logger;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
@@ -194,6 +196,11 @@ public class TribuDSTM
 			OptimisticDeliverySubscriber subscriber)
 	{
 		groupComm.subscribeOptimisticDelivery(subscriber);
+	}
+
+	public static final Collection<Address> getAllMembers()
+	{
+		return groupComm.getMembers();
 	}
 
 }

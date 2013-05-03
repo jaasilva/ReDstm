@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.deuce.distribution.replication.group;
 
 import java.util.Collection;
@@ -8,11 +5,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.deuce.distribution.groupcomm.Address;
+import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
  * 
  */
+@ExcludeTM
 public class PartialReplicationGroup implements Group
 {
 	private Set<Address> addrs;

@@ -3,11 +3,13 @@ package org.deuce.distribution.replication.group;
 import java.util.Collection;
 
 import org.deuce.distribution.groupcomm.Address;
+import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
  * 
  */
+@ExcludeTM
 public interface Group
 {
 	public Collection<Address> getAll();
