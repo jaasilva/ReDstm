@@ -28,7 +28,6 @@ import org.deuce.transform.ExcludeTM;
 public class SpeculativeNonVoting extends FullReplicationProtocol implements
 		OptimisticDeliverySubscriber
 {
-
 	/*
 	 * TODOs Ter um conhecimento mais fino: saber quais os que estão a executar
 	 * e quais os que estão pendentes. TODOs É necessário distinguir entre tx

@@ -7,7 +7,6 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class UUIDFactory implements OIDFactory
 {
-
 	public OID generateOID()
 	{
 		return new UUID();
@@ -17,5 +16,4 @@ public class UUIDFactory implements OIDFactory
 	{
 		return new UUID(oid);
 	}
-
 }

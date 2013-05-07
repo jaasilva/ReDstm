@@ -21,19 +21,6 @@ public class NonVoting extends FullReplicationProtocol implements
 		DeliverySubscriber
 {
 	private static final Logger LOGGER = Logger.getLogger(NonVoting.class);
-	// public static final Logger log = Logger.getLogger(NonVoting.class);
-	// static {
-	// try {
-	// log.removeAllAppenders();
-	// log.addAppender(new FileAppender(new PatternLayout("%c{1} - %m%n"),
-	// System.getProperty("tribu.groupcommunication.group",
-	// "tvale")+"id"+Integer.getInteger("tribu.site")+".log", false));
-	// log.setLevel(Level.TRACE);
-	// } catch (IOException e) {
-	// // TODOs Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// }
 
 	private final Map<Integer, DistributedContext> contexts = Collections
 			.synchronizedMap(new HashMap<Integer, DistributedContext>());
@@ -65,14 +52,14 @@ public class NonVoting extends FullReplicationProtocol implements
 			ctx.applyWriteSet();
 			ctx.processed(true);
 
-			LOGGER.trace(src + ":" + ctxState.ctxID + ":"
+			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
 					+ ctxState.atomicBlockId + " committed.");
 		}
 		else
 		{
 			ctx.processed(false);
 
-			LOGGER.trace(src + ":" + ctxState.ctxID + ":"
+			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
 					+ ctxState.atomicBlockId + " aborted.");
 		}
 	}

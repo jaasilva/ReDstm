@@ -9,17 +9,7 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class SimpleOIDFactory implements OIDFactory
 {
-	public static final int SITE_ID = Integer.getInteger("tribu.site"); /*
-																		 * TODOs
-																		 * Move
-																		 * this
-																		 * to a
-																		 * .
-																		 * properties
-																		 * configuration
-																		 * file.
-																		 */
-	// private AtomicInteger localIDCounter = new AtomicInteger(0);
+	public static final int SITE_ID = Integer.getInteger("tribu.site");
 	private AtomicLong localIDCounter = new AtomicLong(0);
 
 	public OID generateOID()
@@ -31,5 +21,4 @@ public class SimpleOIDFactory implements OIDFactory
 	{
 		return new SimpleOID(oid);
 	}
-
 }

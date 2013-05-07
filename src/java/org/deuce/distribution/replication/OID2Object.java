@@ -43,10 +43,6 @@ public final class OID2Object implements Serializable
 	protected Object readResolve() throws ObjectStreamException
 	{
 		UniqueObject object = TribuDSTM.getObject(oid);
-		// if (object == null)
-		// System.out.println("Received OID2Obj without local replica. OID="+oid.toString());
-		// else
-		// System.out.println("Received OID2Obj OID="+oid.toString());
 		return object;
 	}
 }

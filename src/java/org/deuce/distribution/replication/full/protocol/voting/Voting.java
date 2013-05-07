@@ -1,16 +1,12 @@
 package org.deuce.distribution.replication.full.protocol.voting;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
@@ -27,25 +23,7 @@ import org.deuce.transform.ExcludeTM;
 public class Voting extends FullReplicationProtocol implements
 		DeliverySubscriber
 {
-	public static final Logger log = Logger.getLogger(Voting.class);
-	static
-	{
-		try
-		{
-			log.removeAllAppenders();
-			log.addAppender(new FileAppender(new PatternLayout("%c{1} - %m%n"),
-					System.getProperty("tribu.groupcommunication.group",
-							"tvale")
-							+ "id"
-							+ Integer.getInteger("tribu.site")
-							+ ".log", false));
-			log.setLevel(Level.TRACE);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
+	public static final Logger LOGGER = Logger.getLogger(Voting.class);
 
 	private final Map<Integer, DistributedContext> contexts = Collections
 			.synchronizedMap(new HashMap<Integer, DistributedContext>());
@@ -165,17 +143,15 @@ public class Voting extends FullReplicationProtocol implements
 					ctx.applyWriteSet();
 					ctx.processed(true);
 
-					if (log.isTraceEnabled())
-						log.trace(tx.src + ":" + tx.ctxState.ctxID + ":"
-								+ tx.ctxState.atomicBlockId + " committed.");
+					LOGGER.debug(tx.src + ":" + tx.ctxState.ctxID + ":"
+							+ tx.ctxState.atomicBlockId + " committed.");
 				}
 				else
 				{
 					ctx.processed(false);
 
-					if (log.isTraceEnabled())
-						log.trace(tx.src + ":" + tx.ctxState.ctxID + ":"
-								+ tx.ctxState.atomicBlockId + " aborted.");
+					LOGGER.debug(tx.src + ":" + tx.ctxState.ctxID + ":"
+							+ tx.ctxState.atomicBlockId + " aborted.");
 				}
 				keepProcessing = true;
 			}

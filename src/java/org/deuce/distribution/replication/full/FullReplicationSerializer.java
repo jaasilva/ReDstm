@@ -12,7 +12,6 @@ import org.deuce.distribution.replication.OIDFactory;
 import org.deuce.distribution.replication.full.oid.UUIDFactory;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
-import org.deuce.transform.localmetadata.type.TxField;
 
 @ExcludeTM
 public class FullReplicationSerializer extends ObjectSerializer
@@ -46,7 +45,6 @@ public class FullReplicationSerializer extends ObjectSerializer
 			oid = factory.generateOID();
 			obj.setMetadata(oid);
 			TribuDSTM.putObject(oid, obj);
-			// System.out.println("Sending OID="+oid.toString()+" for the 1st time.");
 			return obj;
 		}
 
@@ -67,11 +65,9 @@ public class FullReplicationSerializer extends ObjectSerializer
 		UniqueObject object = TribuDSTM.getObject(oid);
 		if (object != null)
 		{
-			// System.out.println("Received Object with existing OID="+oid.toString());
 			return object;
 		}
 
-		// System.out.println("Received OID="+oid.toString()+" for the 1st time.");
 		TribuDSTM.putObject(oid, obj);
 		return obj;
 	}

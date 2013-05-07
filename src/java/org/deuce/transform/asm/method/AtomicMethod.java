@@ -21,7 +21,6 @@ import org.deuce.transform.asm.type.TypeCodeResolverFactory;
 public class AtomicMethod extends MethodAdapter implements Opcodes
 {
 	private static final Logger LOGGER = Logger.getLogger(AtomicMethod.class);
-	private static String _atomicBlocks = "";
 	final static public String ATOMIC_DESCRIPTOR = Type
 			.getDescriptor(Atomic.class);
 	final static private AtomicInteger ATOMIC_BLOCK_COUNTER = new AtomicInteger(
@@ -183,9 +182,8 @@ public class AtomicMethod extends MethodAdapter implements Opcodes
 		int atomic_block = ATOMIC_BLOCK_COUNTER.getAndIncrement();
 		mv.visitLdcInsn(atomic_block);
 
-		// for logging propose
-		_atomicBlocks += String.format("%s %s %d\n", className, methodName,
-				atomic_block);
+		LOGGER.info(String.format("# %s %s %d", className, methodName,
+				atomic_block));
 
 		mv.visitLdcInsn(metainf);
 		mv.visitMethodInsn(INVOKEINTERFACE, Context.CONTEXT_INTERNAL, "init",
@@ -409,7 +407,6 @@ public class AtomicMethod extends MethodAdapter implements Opcodes
 	@Override
 	public void visitEnd()
 	{
-		LOGGER.info(_atomicBlocks);
 	}
 
 	@Override
