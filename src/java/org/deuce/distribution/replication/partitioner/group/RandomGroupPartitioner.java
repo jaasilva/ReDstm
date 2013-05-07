@@ -69,7 +69,7 @@ public class RandomGroupPartitioner extends Partitioner implements
 			}
 		}
 
-		LOGGER.info(String.format("GROUPS CREATED: %s", toString()));
+		LOGGER.info(String.format("GROUPS:%s", toString()));
 	}
 
 	@Override
@@ -82,6 +82,6 @@ public class RandomGroupPartitioner extends Partitioner implements
 		}
 		sb.insert(sb.length() - 1, "}");
 
-		return sb.toString();
+		return sb.toString().trim();
 	}
 }

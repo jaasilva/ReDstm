@@ -50,7 +50,7 @@ public class RoundRobinGroupPartitioner extends Partitioner implements
 			group++;
 		}
 
-		LOGGER.info(String.format("GROUPS CREATED: %s", toString()));
+		LOGGER.info(String.format("GROUPS:%s", toString()));
 	}
 
 	@Override
@@ -63,6 +63,6 @@ public class RoundRobinGroupPartitioner extends Partitioner implements
 		}
 		sb.insert(sb.length() - 1, "}");
 
-		return sb.toString();
+		return sb.toString().trim();
 	}
 }
