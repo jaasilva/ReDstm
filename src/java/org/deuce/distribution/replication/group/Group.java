@@ -1,5 +1,6 @@
 package org.deuce.distribution.replication.group;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import org.deuce.distribution.groupcomm.Address;
@@ -10,7 +11,7 @@ import org.deuce.transform.ExcludeTM;
  * 
  */
 @ExcludeTM
-public interface Group
+public interface Group extends Serializable
 {
 	public Collection<Address> getAll();
 

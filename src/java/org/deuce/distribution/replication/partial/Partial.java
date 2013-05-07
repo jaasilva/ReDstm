@@ -16,5 +16,4 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public @interface Partial
 {
-
 }

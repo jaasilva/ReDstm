@@ -14,6 +14,7 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class PartialReplicationGroup implements Group
 {
+	private static final long serialVersionUID = 1L;
 	private Set<Address> addrs;
 
 	public PartialReplicationGroup()
@@ -72,15 +73,15 @@ public class PartialReplicationGroup implements Group
 
 	public String toString()
 	{
-		StringBuilder sb = new StringBuilder("GROUP:[");
-		for (Address a : addrs)
+		StringBuilder sb = new StringBuilder("[");
+		for (Address a : this.addrs)
 		{
 			sb.append(a);
 			sb.append(" ");
 		}
 		sb.insert(sb.length() - 1, "]");
 
-		return sb.toString();
+		return sb.toString().trim();
 	}
 
 	public boolean equals(Object obj)
@@ -93,6 +94,6 @@ public class PartialReplicationGroup implements Group
 
 	public int hashCode()
 	{
-		return addrs.hashCode();
+		return this.addrs.hashCode();
 	}
 }

@@ -11,7 +11,7 @@ import org.deuce.transform.ExcludeTM;
  */
 @ExcludeTM
 public class PartialReplicationMetadata implements PartialReplicationOID
-{
+{ // XXX REVIEW EVERYTHING!!!!
 	private static final long serialVersionUID = 1L;
 	private java.util.UUID id;
 	private Group group;
@@ -71,8 +71,8 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 
 	@Override
 	public String toString()
-	{
-		return String.format("%s: (%s)", this.id, this.group);
+	{ // id:[group]
+		return String.format("%s:%s", this.id, this.group);
 	}
 
 	@Override

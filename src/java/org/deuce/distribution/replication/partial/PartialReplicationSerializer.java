@@ -21,7 +21,7 @@ import org.deuce.transform.ExcludeTM;
  */
 @ExcludeTM
 public class PartialReplicationSerializer extends ObjectSerializer
-{
+{ // XXX REVIEW EVERYTHING!!!!
 	private static final Logger LOGGER = Logger
 			.getLogger(PartialReplicationSerializer.class);
 	public final static String NAME = Type
@@ -154,7 +154,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		obj.setMetadata(oid);
 		TribuDSTM.putObject(oid, obj);
 
-		LOGGER.debug(String.format(
+		LOGGER.info(String.format(
 				"Created bootstrapOID for %s with id(%d) = %s", obj, id, oid));
 	}
 }
