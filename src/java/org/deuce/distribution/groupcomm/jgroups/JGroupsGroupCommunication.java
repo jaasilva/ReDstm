@@ -23,10 +23,7 @@ import org.jgroups.View;
 public class JGroupsGroupCommunication extends GroupCommunication implements
 		Receiver
 {
-
-	private JChannel channelTOB;
-
-	// private JChannel channelRB;
+	private JChannel channel;
 
 	public JGroupsGroupCommunication()
 	{
@@ -37,17 +34,12 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	{
 		try
 		{
-			channelTOB = new JChannel("etc/jgroups.xml");
-			channelTOB.setReceiver(this);
-			channelTOB.connect(System.getProperty(
+			channel = new JChannel("etc/jgroups.xml");
+			channel.setReceiver(this);
+			channel.connect(System.getProperty(
 					"tribu.groupcommunication.group", "tvale"));
 
-			// channelRB = new JChannel("etc/jgroups.xml");
-			// channelRB.setReceiver(this);
-			// channelRB.connect(System.getProperty("tribu.groupcommunication.group",
-			// "tvale")+"-rb");
-
-			myAddress = new JGroupsAddress(channelTOB.getAddress());
+			myAddress = new JGroupsAddress(channel.getAddress());
 		}
 		catch (Exception e)
 		{
@@ -59,7 +51,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 
 	public void close()
 	{
-		channelTOB.close();
+		channel.close();
 	}
 
 	@Override
@@ -71,11 +63,9 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 
 	public void sendTotalOrdered(final byte[] payload)
 	{
-		// new Thread(new Runnable() {
-		// public void run() {
 		try
 		{
-			channelTOB.send(null, payload);
+			channel.send(null, payload);
 		}
 		catch (Exception e)
 		{
@@ -83,8 +73,6 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		// }
-		// }).start();
 	}
 
 	public void sendReliably(byte[] payload)
@@ -93,11 +81,10 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		msg.setDest(null);
 		msg.setBuffer(payload);
 		msg.setFlag(Message.NO_TOTAL_ORDER);
-		// new Thread(new Runnable() {
-		// public void run() {
+
 		try
 		{
-			channelTOB.send(msg);
+			channel.send(msg);
 		}
 		catch (Exception e)
 		{
@@ -105,8 +92,6 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		// }
-		// }).start();
 	}
 
 	public void receive(Message msg)
@@ -164,7 +149,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 
 		try
 		{
-			channelTOB.send(addr, payload);
+			channel.send(addr, payload);
 		}
 		catch (Exception e)
 		{
@@ -179,7 +164,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	{
 		try
 		{
-			channelTOB.send((org.jgroups.Address) addr.getSpecificAddress(),
+			channel.send((org.jgroups.Address) addr.getSpecificAddress(),
 					payload);
 		}
 		catch (Exception e)
@@ -197,7 +182,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		{
 			try
 			{
-				channelTOB.send((org.jgroups.Address) a.getSpecificAddress(),
+				channel.send((org.jgroups.Address) a.getSpecificAddress(),
 						payload);
 			}
 			catch (Exception e)
@@ -212,7 +197,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	@Override
 	public List<Address> getMembers()
 	{
-		List<org.jgroups.Address> members = channelTOB.getView().getMembers();
+		List<org.jgroups.Address> members = channel.getView().getMembers();
 		List<Address> addrs = new ArrayList<Address>(members.size());
 
 		for (org.jgroups.Address a : members)

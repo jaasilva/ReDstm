@@ -20,7 +20,7 @@ public class AppiaAddress extends Address
 		if (obj instanceof AppiaAddress)
 		{
 			AppiaAddress other = (AppiaAddress) obj;
-			return addr.equals(other.addr);
+			return this.addr.equals(other.addr);
 		}
 		else
 		{

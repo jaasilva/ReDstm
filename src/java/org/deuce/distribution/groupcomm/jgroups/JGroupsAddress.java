@@ -18,7 +18,7 @@ public class JGroupsAddress extends Address
 		if (obj instanceof JGroupsAddress)
 		{
 			JGroupsAddress other = (JGroupsAddress) obj;
-			return addr.compareTo(other.addr) == 0;
+			return this.addr.compareTo(other.addr) == 0;
 		}
 		else
 		{
@@ -28,7 +28,7 @@ public class JGroupsAddress extends Address
 
 	public String toString()
 	{
-		return addr.toString();
+		return this.addr.toString();
 	}
 
 	@Override

@@ -20,7 +20,7 @@ public class SpreadAddress extends Address
 		if (obj instanceof SpreadAddress)
 		{
 			SpreadAddress other = (SpreadAddress) obj;
-			return addr.equals(other.addr);
+			return this.addr.equals(other.addr);
 		}
 		else
 		{
@@ -30,7 +30,7 @@ public class SpreadAddress extends Address
 
 	public String toString()
 	{
-		return addr.toString();
+		return this.addr.toString();
 	}
 
 	@Override

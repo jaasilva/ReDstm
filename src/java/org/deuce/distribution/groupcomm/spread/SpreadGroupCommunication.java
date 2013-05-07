@@ -21,7 +21,6 @@ import spread.SpreadMessage;
 public class SpreadGroupCommunication extends GroupCommunication implements
 		AdvancedMessageListener
 {
-
 	private SpreadConnection connection;
 	private SpreadGroup group;
 

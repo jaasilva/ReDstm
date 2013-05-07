@@ -57,7 +57,6 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		{
 			protocol = new AppiaProtocolFactory().createProtocol();
 			sendTOService = new AppiaService("vsc+total+services");
-			// sendURBService = new AppiaService("vsc+fifo+uniform");
 			recvService = new AppiaService("uniform_total_order");
 			dataSession = protocol.openDataSession(config);
 			controlSession = (BlockSession) protocol.openControlSession(config);
