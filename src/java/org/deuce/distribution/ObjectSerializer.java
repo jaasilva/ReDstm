@@ -23,8 +23,8 @@ public abstract class ObjectSerializer
 	final static public String DESC = Type
 			.getDescriptor(ObjectSerializer.class);
 
-	final static public boolean COMPRESS = Boolean
-			.getBoolean("tribu.serialization.compress");
+	final static public boolean COMPRESS = Boolean.parseBoolean(System
+			.getProperty("tribu.serialization.compress", "true"));
 
 	public static byte[] object2ByteArray(Object obj)
 	{
@@ -79,7 +79,6 @@ public abstract class ObjectSerializer
 			if (COMPRESS)
 			{
 				gzis = new GZIPInputStream(bais);
-
 				bis = new BufferedInputStream(gzis);
 				ois = new ObjectInputStream(bis);
 			}

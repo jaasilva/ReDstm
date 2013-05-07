@@ -2,7 +2,7 @@ package org.deuce.transform.localmetadata.replication.full;
 
 import java.util.Map;
 
-import org.deuce.distribution.replication.full.FullReplicationProtocol;
+import org.deuce.distribution.DistributedProtocol;
 import org.deuce.objectweb.asm.AnnotationVisitor;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.AnnotationVisitorAdapter;
@@ -23,7 +23,7 @@ public class BootstrapAnnotationVisitor extends AnnotationVisitorAdapter
 
 	public void visit(String name, Object value)
 	{
-		if (name.equals(FullReplicationProtocol.BOOTSTRAP_ID_PARAM_NAME))
+		if (name.equals(DistributedProtocol.BOOTSTRAP_ID_PARAM_NAME))
 			field2OID.put(field, (Integer) value);
 
 		super.visit(name, value);

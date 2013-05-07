@@ -1,11 +1,17 @@
 package org.deuce.distribution;
 
+import org.deuce.distribution.replication.Bootstrap;
+import org.deuce.objectweb.asm.Type;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
 public interface DistributedProtocol
 {
+	public static final String BOOTSTRAP_DESC = Type
+			.getDescriptor(Bootstrap.class);
+	public static final String BOOTSTRAP_ID_PARAM_NAME = "id";
+
 	public void init();
 
 	public void onTxContextCreation(DistributedContext ctx);

@@ -1,8 +1,7 @@
 package org.deuce;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.CLASS;
-
+import java.lang.annotation.ElementType;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -11,8 +10,8 @@ import java.lang.annotation.Target;
  * @author Guy Korland
  * @since 1.0
  */
-@Target(METHOD)
-@Retention(CLASS)
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.CLASS)
 public @interface Atomic
 {
 	int retries() default Integer.MAX_VALUE;
