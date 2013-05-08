@@ -177,6 +177,12 @@ public class TribuDSTM
 		distProtocol.onTxCommit(ctx);
 	}
 
+	public static final Object onTxRead(DistributedContext ctx,
+			ObjectMetadata metadata)
+	{
+		return distProtocol.onTxRead(ctx, metadata);
+	}
+
 	public static final String GETSERIALIZER_METHOD_NAME = "getObjectSerializer";
 	public static final String GETSERIALIZER_METHOD_DESC = "()"
 			+ ObjectSerializer.DESC;
@@ -240,5 +246,20 @@ public class TribuDSTM
 	public static final boolean groupIsAll(Group group)
 	{
 		return group.equals(ALL);
+	}
+
+	public static final void sendTotalOrdered(byte[] payload, Group group)
+	{
+		groupComm.sendTotalOrdered(payload, group);
+	}
+
+	public static final void sendTo(byte[] payload, Address addr)
+	{
+		groupComm.sendTo(payload, addr);
+	}
+
+	public static final void sendToGroup(byte[] payload, Group group)
+	{
+		groupComm.sendToGroup(payload, group);
 	}
 }

@@ -9,7 +9,7 @@ import org.deuce.transaction.WriteSet;
 
 public abstract class SpeculativeContext extends DistributedContext
 {
-	
+
 	/**
 	 * The transaction's read set.
 	 */
@@ -19,7 +19,7 @@ public abstract class SpeculativeContext extends DistributedContext
 	 * The transaction's write set.
 	 */
 	protected WriteSet writeSet;
-	
+
 	final static public TransactionException EARLY_CONFLICT = new TransactionException(
 			"Latest speculative version is fresher than this tx.");
 
@@ -101,7 +101,7 @@ public abstract class SpeculativeContext extends DistributedContext
 	abstract public int getSpeculativeVersionNumber();
 
 	abstract public void resetSpeculativeVersionNumbers();
-	
+
 	/**
 	 * Triggers the distributed commit, and waits until it is processed.
 	 */

@@ -2,13 +2,16 @@ package org.deuce.transform.localmetadata;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.full.FullReplicationSerializer;
+import org.deuce.distribution.replication.partial.PartialReplicationSerializer;
 import org.deuce.objectweb.asm.MethodAdapter;
 import org.deuce.objectweb.asm.MethodVisitor;
 import org.deuce.objectweb.asm.Opcodes;
 import org.deuce.objectweb.asm.Type;
+import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
@@ -26,15 +29,17 @@ public class StaticMethodTransformer extends MethodAdapter
 	protected final String fieldsHolderName;
 	protected final String staticField;
 
-	// FIXME @Bootstrap
-	private final Map<String, Integer> field2OID;
+	// ################################# @Bootstrap @Partial
+	protected final Map<String, Integer> field2OID;
+	protected final Set<String> partialRepFields;
+	protected boolean partial;
 
 	public StaticMethodTransformer(MethodVisitor mv,
 			MethodVisitor staticMethod, List<Field> fields,
-			Map<String, Integer> field2OID, String staticField,
-			String className, String fieldsHolderName)
+			Map<String, Integer> field2OID, Set<String> partialRepFields,
+			boolean partial, String staticField, String className,
+			String fieldsHolderName)
 	{
-
 		super(mv);
 		this.staticMethod = staticMethod;
 		this.fields = fields;
@@ -42,6 +47,8 @@ public class StaticMethodTransformer extends MethodAdapter
 		this.className = className;
 		this.fieldsHolderName = fieldsHolderName;
 		this.field2OID = field2OID;
+		this.partialRepFields = partialRepFields;
+		this.partial = partial;
 	}
 
 	@Override
@@ -114,10 +121,54 @@ public class StaticMethodTransformer extends MethodAdapter
 				.getInternalName(), "<init>", TxField.CTOR_DESC);
 		// stack: ..., TxField =>
 
-		// XXX @Bootstrap, assumes FullReplicationSerializer
 		Integer oid = field2OID.get(field.getFieldName());
-		if (oid != null)
+		boolean partialField = partialRepFields.contains(field.getFieldName());
+		if (partial)
 		{
+			// ##### setType (VBoxField)
+			// stack: ..., TxField =>
+			super.visitInsn(Opcodes.DUP);
+			// stack: ..., TxField, TxField =>
+			super.visitTypeInsn(Opcodes.CHECKCAST, VBoxField.NAME);
+			// stack: ..., TxField, VBoxField =>
+
+			switch (field.getOriginalType().getSort())
+			{
+				case Type.BYTE:
+					super.visitLdcInsn(Type.BYTE);
+					break;
+				case Type.BOOLEAN:
+					super.visitLdcInsn(Type.BOOLEAN);
+					break;
+				case Type.CHAR:
+					super.visitLdcInsn(Type.CHAR);
+					break;
+				case Type.SHORT:
+					super.visitLdcInsn(Type.SHORT);
+					break;
+				case Type.INT:
+					super.visitLdcInsn(Type.INT);
+					break;
+				case Type.LONG:
+					super.visitLdcInsn(Type.LONG);
+					break;
+				case Type.FLOAT:
+					super.visitLdcInsn(Type.FLOAT);
+					break;
+				case Type.DOUBLE:
+					super.visitLdcInsn(Type.DOUBLE);
+					break;
+				case Type.OBJECT:
+					super.visitLdcInsn(Type.OBJECT);
+					break;
+			}
+			// stack: ..., TxField, VBoxField, Type =>
+			super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, VBoxField.NAME,
+					VBoxField.SET_TYPE_METHOD_NAME,
+					VBoxField.SET_TYPE_METHOD_DESC);
+
+			// ##### setMetadata
+			// stack: ..., TxField =>
 			super.visitInsn(Opcodes.DUP);
 			// stack: ..., TxField, TxField =>
 			super.visitMethodInsn(Opcodes.INVOKESTATIC, TribuDSTM.NAME,
@@ -125,17 +176,69 @@ public class StaticMethodTransformer extends MethodAdapter
 					TribuDSTM.GETSERIALIZER_METHOD_DESC);
 			// stack: ..., TxField, TxField, ObjectSerializer =>
 			super.visitTypeInsn(Opcodes.CHECKCAST,
-					FullReplicationSerializer.NAME);
-			// stack: ..., TxField, TxField, FullReplicationSerializer =>
+					PartialReplicationSerializer.NAME);
+			// stack: ..., TxField, TxField, PartialReplicationSerializer =>
 			super.visitInsn(Opcodes.SWAP);
-			// stack: ..., TxField, FullReplicationSerializer, TxField =>
-			super.visitLdcInsn(oid);
-			// stack: ..., TxField, FullReplicationSerializer, TxField, int =>
-			super.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
-					FullReplicationSerializer.NAME,
-					FullReplicationSerializer.BOOTSTRAP_METHOD_NAME,
-					FullReplicationSerializer.BOOTSTRAP_METHOD_DESC);
-			// stack: ..., TxField =>
+			// stack: ..., TxField, PartialReplicationSerializer, TxField =>
+
+			if (oid != null)
+			{ // Bootstrap field -> fullRepOID(oid) [id:rand(oid),group:ALL]
+				// stack: ..., TxField, PartialReplicationSerializer, TxField =>
+				super.visitLdcInsn(oid);
+				// stack: ..., TxField, PartialReplicationSerializer, TxField,
+				// int =>
+				super.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
+						PartialReplicationSerializer.NAME,
+						PartialReplicationSerializer.BOOTSTRAP_METHOD_NAME,
+						PartialReplicationSerializer.BOOTSTRAP_METHOD_DESC);
+				// stack: ..., TxField =>
+			}
+			else if (partialField)
+			{ // Partial field -> partialRepOID() [id:null,group:null]
+				// stack: ..., TxField, PartialReplicationSerializer, TxField =>
+				super.visitMethodInsn(
+						Opcodes.INVOKEVIRTUAL,
+						PartialReplicationSerializer.NAME,
+						PartialReplicationSerializer.CREATE_PARTIAL_METADATA_METHOD_NAME,
+						PartialReplicationSerializer.CREATE_PARTIAL_METADATA_METHOD_DESC);
+				// stack: ..., TxField =>
+			}
+			else
+			{ // Full field -> fullRepOID() [id:null,group:ALL]
+				// stack: ..., TxField, PartialReplicationSerializer, TxField =>
+				super.visitMethodInsn(
+						Opcodes.INVOKEVIRTUAL,
+						PartialReplicationSerializer.NAME,
+						PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_NAME,
+						PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_DESC);
+				// stack: ..., TxField =>
+			}
+		}
+		else
+		{ // @Bootstrap, assumes FullReplicationSerializer
+			if (oid != null)
+			{
+				// stack: ..., TxField =>
+				super.visitInsn(Opcodes.DUP);
+				// stack: ..., TxField, TxField =>
+				super.visitMethodInsn(Opcodes.INVOKESTATIC, TribuDSTM.NAME,
+						TribuDSTM.GETSERIALIZER_METHOD_NAME,
+						TribuDSTM.GETSERIALIZER_METHOD_DESC);
+				// stack: ..., TxField, TxField, ObjectSerializer =>
+				super.visitTypeInsn(Opcodes.CHECKCAST,
+						FullReplicationSerializer.NAME);
+				// stack: ..., TxField, TxField, FullReplicationSerializer =>
+				super.visitInsn(Opcodes.SWAP);
+				// stack: ..., TxField, FullReplicationSerializer, TxField =>
+				super.visitLdcInsn(oid);
+				// stack: ..., TxField, FullReplicationSerializer, TxField, int
+				// =>
+				super.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
+						FullReplicationSerializer.NAME,
+						FullReplicationSerializer.BOOTSTRAP_METHOD_NAME,
+						FullReplicationSerializer.BOOTSTRAP_METHOD_DESC);
+				// stack: ..., TxField =>
+			}
 		}
 
 		// stack: ..., TxField =>

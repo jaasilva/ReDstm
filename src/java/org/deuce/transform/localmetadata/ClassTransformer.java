@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
@@ -22,7 +23,7 @@ import org.deuce.transform.asm.ByteCodeVisitor;
 import org.deuce.transform.asm.FieldsHolder;
 import org.deuce.transform.asm.type.TypeCodeResolver;
 import org.deuce.transform.asm.type.TypeCodeResolverFactory;
-import org.deuce.transform.localmetadata.replication.BootstrapFieldVisitor;
+import org.deuce.transform.localmetadata.replication.SpecificAnnotationsFieldVisitor;
 import org.deuce.transform.util.Util;
 
 @ExcludeTM
@@ -150,10 +151,14 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 	public final LinkedList<NonInsnMethod> nonInsnMethods = new LinkedList<NonInsnMethod>();
 
 	protected boolean isAbstract;
-	// protected boolean isUniqueObject;
 
-	// XXX @Bootstrap
+	// ################################# @Bootstrap @Partial
 	public final Map<String, Integer> field2OID = new java.util.HashMap<String, Integer>();
+	public final Set<String> partialRepFields = new java.util.HashSet<String>(
+			50);
+	public final boolean partial = Boolean.parseBoolean(System.getProperty(
+			"tribu.distributed.PartialReplicationMode",
+			TribuDSTM.partialDefault));
 
 	public ClassTransformer(String className, FieldsHolder fieldsHolder)
 	{
@@ -287,9 +292,9 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 					Type.LONG_TYPE.getDescriptor(), -1L);
 		}
 
-		// XXX @Bootstrap
-		FieldVisitor bootstrapFv = new BootstrapFieldVisitor(fv, field2OID,
-				name);
+		// ################################# @Bootstrap @Partial
+		FieldVisitor bootstrapFv = new SpecificAnnotationsFieldVisitor(fv,
+				field2OID, partialRepFields, name);
 
 		return bootstrapFv;
 	}
@@ -348,7 +353,7 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 					fieldsHolder);
 
 			return new StaticMethodTransformer(mv, null, fields, field2OID,
-					staticField, className,
+					partialRepFields, partial, staticField, className,
 					fieldsHolder.getFieldsHolderName(className));
 		}
 
@@ -370,11 +375,9 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 					desc, newMethod, fieldsHolder);
 
 			return new ConstructorMethodTransformer(mv, fields, field2OID,
-					className, access, name, nm.getDescriptor(),
-					fieldsHolder.getFieldsHolderName(className)/*
-																 * ,
-																 * isUniqueObject
-																 */);
+					partialRepFields, partial, className, access, name,
+					nm.getDescriptor(),
+					fieldsHolder.getFieldsHolderName(className));
 		}
 
 		if (name.equals("main")

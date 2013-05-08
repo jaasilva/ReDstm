@@ -89,20 +89,20 @@ final public class SpeculativeContext extends
 	public SpeculativeContext()
 	{
 		super();
-		
+
 		readSet = new SpeculativeTL2ReadSet();
 		writeSet = new WriteSet();
-		
+
 		localClock = speculativeClock.get();
 	}
 
 	public void recreateContextFromState(DistributedContextState ctxState)
 	{
 		super.recreateContextFromState(ctxState);
-		
+
 		readSet = (ReadSet) ctxState.rs;
 		writeSet = (WriteSet) ctxState.ws;
-		
+
 		localClock = ((SpeculativeContextState) ctxState).speculativeVersionNumber;
 		readOnly = false;
 	}
@@ -117,7 +117,7 @@ final public class SpeculativeContext extends
 	{
 		readSet.clear();
 		writeSet.clear();
-		
+
 		this.currentReadFieldAccess = null;
 		this.localClock = speculativeClock.get();
 		this.arrayPool.clear();

@@ -39,7 +39,7 @@ import org.deuce.trove.TObjectProcedure;
 @LocalMetadata(metadataClass = "org.deuce.transaction.tl2.TL2Field")
 public class Context extends DistributedContext
 {
-	
+
 	/**
 	 * The transaction's read set.
 	 */
@@ -49,7 +49,7 @@ public class Context extends DistributedContext
 	 * The transaction's write set.
 	 */
 	protected WriteSet writeSet;
-	
+
 	private static final boolean TX_LOAD_OPT = Boolean
 			.getBoolean("org.deuce.transaction.tl2.txload.opt");
 
@@ -77,17 +77,17 @@ public class Context extends DistributedContext
 	public Context()
 	{
 		super();
-		
+
 		readSet = new TL2ReadSet();
 		writeSet = new WriteSet();
-		
+
 		localClock = clock.get();
 	}
 
 	public void recreateContextFromState(DistributedContextState ctxState)
 	{
 		super.recreateContextFromState(ctxState);
-		
+
 		readSet = (ReadSet) ctxState.rs;
 		writeSet = (WriteSet) ctxState.ws;
 
@@ -127,7 +127,7 @@ public class Context extends DistributedContext
 	{
 		readSet.clear();
 		writeSet.clear();
-		
+
 		currentReadFieldAccess = null;
 		localClock = clock.get();
 		arrayPool.clear();
@@ -537,7 +537,7 @@ public class Context extends DistributedContext
 	public void onIrrevocableAccess()
 	{
 	}
-	
+
 	/**
 	 * Triggers the distributed commit, and waits until it is processed.
 	 */

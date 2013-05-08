@@ -2,14 +2,17 @@ package org.deuce.transform.localmetadata;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.full.FullReplicationSerializer;
+import org.deuce.distribution.replication.partial.PartialReplicationSerializer;
 import org.deuce.objectweb.asm.MethodVisitor;
 import org.deuce.objectweb.asm.Opcodes;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.objectweb.asm.commons.AnalyzerAdapter;
 import org.deuce.objectweb.asm.commons.Method;
+import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
@@ -45,17 +48,16 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 	protected final String fieldsHolderName;
 	protected boolean callsOtherCtor;
 	protected final String className;
-	// protected boolean isUniqueObject;
 
-	// FIXME @Bootstrap
+	// ################################# @Bootstrap @Partial
 	protected final Map<String, Integer> field2OID;
+	protected final Set<String> partialRepFields;
+	protected boolean partial;
 
 	public ConstructorMethodTransformer(MethodVisitor mv, List<Field> fields,
-			Map<String, Integer> field2OID, String className, int access,
-			String name, String desc, String fieldsHolderName/*
-															 * , boolean
-															 * isUniqueObject
-															 */)
+			Map<String, Integer> field2OID, Set<String> partialRepFields,
+			boolean partial, String className, int access, String name,
+			String desc, String fieldsHolderName)
 	{
 		super(className, access, name, desc, mv);
 		this.fields = fields;
@@ -63,7 +65,8 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 		this.callsOtherCtor = false;
 		this.className = className;
 		this.field2OID = field2OID;
-		// this.isUniqueObject = isUniqueObject;
+		this.partialRepFields = partialRepFields;
+		this.partial = partial;
 	}
 
 	protected void initMetadataField(Field field)
@@ -86,32 +89,136 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 				.getInternalName(), "<init>", TxField.CTOR_DESC);
 		// stack: ..., Object (this), TxField =>
 
-		// XXX @Bootstrap, assumes FullReplicationSerializer
 		Integer oid = field2OID.get(field.getFieldName());
-		if (oid != null)
+		boolean partialField = partialRepFields.contains(field.getFieldName());
+		if (partial)
 		{
+			// ##### setType (VBoxField)
+			// stack: ..., Object (this), TxField =>
+			mv.visitInsn(Opcodes.DUP);
+			// stack: ..., Object (this), TxField, TxField =>
+			mv.visitTypeInsn(Opcodes.CHECKCAST, VBoxField.NAME);
+			// stack: ..., Object (this), TxField, VBoxField =>
+
+			switch (field.getOriginalType().getSort())
+			{
+				case Type.BYTE:
+					super.visitLdcInsn(Type.BYTE);
+					break;
+				case Type.BOOLEAN:
+					super.visitLdcInsn(Type.BOOLEAN);
+					break;
+				case Type.CHAR:
+					super.visitLdcInsn(Type.CHAR);
+					break;
+				case Type.SHORT:
+					super.visitLdcInsn(Type.SHORT);
+					break;
+				case Type.INT:
+					super.visitLdcInsn(Type.INT);
+					break;
+				case Type.LONG:
+					super.visitLdcInsn(Type.LONG);
+					break;
+				case Type.FLOAT:
+					super.visitLdcInsn(Type.FLOAT);
+					break;
+				case Type.DOUBLE:
+					super.visitLdcInsn(Type.DOUBLE);
+					break;
+				case Type.OBJECT:
+					super.visitLdcInsn(Type.OBJECT);
+					break;
+			}
+			// stack: ..., Object (this), TxField, VBoxField, Type =>
+			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, VBoxField.NAME,
+					VBoxField.SET_TYPE_METHOD_NAME,
+					VBoxField.SET_TYPE_METHOD_DESC);
+
+			// ##### setMetadata
+			// stack: ..., Object (this), TxField =>
 			mv.visitInsn(Opcodes.DUP);
 			// stack: ..., Object (this), TxField, TxField =>
 			mv.visitMethodInsn(Opcodes.INVOKESTATIC, TribuDSTM.NAME,
 					TribuDSTM.GETSERIALIZER_METHOD_NAME,
 					TribuDSTM.GETSERIALIZER_METHOD_DESC);
 			// stack: ..., Object (this), TxField, TxField, ObjectSerializer =>
-			mv.visitTypeInsn(Opcodes.CHECKCAST, FullReplicationSerializer.NAME);
+			mv.visitTypeInsn(Opcodes.CHECKCAST,
+					PartialReplicationSerializer.NAME);
 			// stack: ..., Object (this), TxField, TxField,
-			// FullReplicationSerializer =>
+			// PartialReplicationSerializer =>
 			mv.visitInsn(Opcodes.SWAP);
-			// stack: ..., Object (this), TxField, FullReplicationSerializer,
+			// stack: ..., Object (this), TxField, PartialReplicationSerializer,
 			// TxField =>
-			mv.visitLdcInsn(oid);
-			// stack: ..., Object (this), TxField, FullReplicationSerializer,
-			// TxField, int =>
-			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
-					FullReplicationSerializer.NAME,
-					FullReplicationSerializer.BOOTSTRAP_METHOD_NAME,
-					FullReplicationSerializer.BOOTSTRAP_METHOD_DESC);
-			// stack: ..., Object (this), TxField =>
-		}
 
+			if (oid != null)
+			{ // Bootstrap field -> fullRepOID(oid) [id:rand(oid),group:ALL]
+				// stack: ..., Object (this), TxField,
+				// PartialReplicationSerializer, TxField =>
+				mv.visitLdcInsn(oid);
+				// stack: ..., Object (this), TxField,
+				// PartialReplicationSerializer, TxField,
+				// int =>
+				mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
+						PartialReplicationSerializer.NAME,
+						PartialReplicationSerializer.BOOTSTRAP_METHOD_NAME,
+						PartialReplicationSerializer.BOOTSTRAP_METHOD_DESC);
+				// stack: ..., Object (this), TxField =>
+			}
+			else if (partialField)
+			{ // Partial field -> partialRepOID() [id:null,group:null]
+				// stack: ..., Object (this), TxField,
+				// PartialReplicationSerializer, TxField =>
+				mv.visitMethodInsn(
+						Opcodes.INVOKEVIRTUAL,
+						PartialReplicationSerializer.NAME,
+						PartialReplicationSerializer.CREATE_PARTIAL_METADATA_METHOD_NAME,
+						PartialReplicationSerializer.CREATE_PARTIAL_METADATA_METHOD_DESC);
+				// stack: ..., Object (this), TxField =>
+			}
+			else
+			{ // Full field -> fullRepOID() [id:null,group:ALL]
+				// stack: ..., Object (this), TxField,
+				// PartialReplicationSerializer, TxField =>
+				mv.visitMethodInsn(
+						Opcodes.INVOKEVIRTUAL,
+						PartialReplicationSerializer.NAME,
+						PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_NAME,
+						PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_DESC);
+				// stack: ..., Object (this), TxField =>
+			}
+		}
+		else
+		{ // @Bootstrap, assumes FullReplicationSerializer
+			if (oid != null)
+			{
+				// stack: ..., Object (this), TxField =>
+				mv.visitInsn(Opcodes.DUP);
+				// stack: ..., Object (this), TxField, TxField =>
+				mv.visitMethodInsn(Opcodes.INVOKESTATIC, TribuDSTM.NAME,
+						TribuDSTM.GETSERIALIZER_METHOD_NAME,
+						TribuDSTM.GETSERIALIZER_METHOD_DESC);
+				// stack: ..., Object (this), TxField, TxField, ObjectSerializer
+				// =>
+				mv.visitTypeInsn(Opcodes.CHECKCAST,
+						FullReplicationSerializer.NAME);
+				// stack: ..., Object (this), TxField, TxField,
+				// FullReplicationSerializer =>
+				mv.visitInsn(Opcodes.SWAP);
+				// stack: ..., Object (this), TxField,
+				// FullReplicationSerializer,
+				// TxField =>
+				mv.visitLdcInsn(oid);
+				// stack: ..., Object (this), TxField,
+				// FullReplicationSerializer,
+				// TxField, int =>
+				mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
+						FullReplicationSerializer.NAME,
+						FullReplicationSerializer.BOOTSTRAP_METHOD_NAME,
+						FullReplicationSerializer.BOOTSTRAP_METHOD_DESC);
+				// stack: ..., Object (this), TxField =>
+			}
+		}
 		// stack: ..., Object (this), TxField =>
 	}
 
