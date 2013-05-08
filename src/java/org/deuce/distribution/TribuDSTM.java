@@ -9,6 +9,7 @@ import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
 import org.deuce.distribution.location.SimpleLocator;
 import org.deuce.distribution.replication.group.Group;
+import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.distribution.replication.partitioner.data.DataPartitioner;
 import org.deuce.distribution.replication.partitioner.group.GroupPartitioner;
 import org.deuce.objectweb.asm.Type;
@@ -37,8 +38,13 @@ public class TribuDSTM
 	static
 	{
 		LOGGER.info("TribuDSTM initializing...");
+		checkRuntimeMode(partialDefault);
 		initReplicationProtocol();
 		initTransactionContext();
+		if (PARTIAL)
+		{
+			initPartitioners();
+		}
 	}
 
 	/*
@@ -53,6 +59,14 @@ public class TribuDSTM
 	public static void init()
 	{
 		initGroupCommunication();
+		if (PARTIAL)
+		{
+			groupPart.partitionGroups(getAllMembers(),
+					Integer.getInteger("tribu.groups", 1));
+			dataPart.init();
+
+			ALL = new PartialReplicationGroup(getAllMembers());
+		}
 		distProtocol.init();
 
 		LOGGER.info("TribuDSTM initialized");
@@ -69,6 +83,14 @@ public class TribuDSTM
 		groupComm.close();
 
 		LOGGER.info("TribuDSTM closing");
+	}
+
+	private static void checkRuntimeMode(String partialDefault)
+	{
+		PARTIAL = Boolean.parseBoolean(System.getProperty(
+				"tribu.distributed.PartialReplicationMode", partialDefault));
+
+		LOGGER.info("Checking partial replication runtime mode: " + PARTIAL);
 	}
 
 	private static void initGroupCommunication()
@@ -134,6 +156,37 @@ public class TribuDSTM
 		}
 
 		LOGGER.info("Initializing replication protocol: " + className);
+	}
+
+	private static void initPartitioners()
+	{
+		String groupPartClass = System
+				.getProperty("tribu.distributed.GroupPartitionerClass",
+						"org.deuce.distribution.replication.partitioner.group.RandomGroupPartitioner");
+		String dataPartClass = System
+				.getProperty("tribu.distributed.DataPartitionerClass",
+						"org.deuce.distribution.replication.partitioner.data.SimpleDataPartitioner");
+
+		try
+		{
+			@SuppressWarnings("unchecked")
+			Class<? extends GroupPartitioner> groupP = (Class<? extends GroupPartitioner>) Class
+					.forName(groupPartClass);
+			groupPart = groupP.newInstance();
+
+			@SuppressWarnings("unchecked")
+			Class<? extends DataPartitioner> dataP = (Class<? extends DataPartitioner>) Class
+					.forName(dataPartClass);
+			dataPart = dataP.newInstance();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
+		LOGGER.info("Initializing partitioners. GroupPartitioner: "
+				+ groupPartClass + " DataPartitioner: " + dataPartClass);
 	}
 
 	public static final Class<? extends DistributedContext> getContextClass()
