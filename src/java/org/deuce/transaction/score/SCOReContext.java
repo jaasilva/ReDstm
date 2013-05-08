@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
 
+import org.apache.log4j.Logger;
 import org.deuce.LocalMetadata;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
@@ -43,6 +44,7 @@ import org.deuce.transform.localmetadata.type.TxField;
 @LocalMetadata(metadataClass = "org.deuce.transaction.score.field.VBoxField")
 public class SCOReContext extends DistributedContext
 {
+	private static final Logger LOGGER = Logger.getLogger(SCOReContext.class);
 	public static final TransactionException VERSION_UNAVAILABLE_EXCEPTION = new TransactionException(
 			"Fail on retrieveing an older or unexistent version.");
 
@@ -64,23 +66,13 @@ public class SCOReContext extends DistributedContext
 	public SCOReContext()
 	{
 		super();
-		readSet = createReadSet();
-		writeSet = createWriteSet();
+		readSet = new SCOReReadSet();
+		writeSet = new SCOReWriteSet();
 
 		syncMsg = new Semaphore(0);
 		response = null;
 		involvedNodes = null;
 		requestVersion = 0;
-	}
-
-	private SCOReReadSet createReadSet()
-	{
-		return new SCOReReadSet();
-	}
-
-	private SCOReWriteSet createWriteSet()
-	{
-		return new SCOReWriteSet();
 	}
 
 	@Override
@@ -101,15 +93,21 @@ public class SCOReContext extends DistributedContext
 		return writeSet.contains(curr);
 	}
 
-	private Object read(Object value, TxField field)
+	private Object read(TxField field)
 	{
 		SCOReWriteFieldAccess writeAccess = onReadAccess(field);
 		if (writeAccess == null)
 		{ // not in the writeSet. Do distributed read
+			LOGGER.trace("- Read " + trxID + " -> " + field.getMetadata()
+					+ " (not in WS)");
+
 			return TribuDSTM.onTxRead(this, field.getMetadata());
 		}
 		else
 		{ // in the writeSet. Return value
+			LOGGER.trace("- Read " + trxID + " -> " + field.getMetadata()
+					+ " (in WS)");
+
 			return writeAccess.getValue();
 		}
 	}
@@ -117,61 +115,61 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public ArrayContainer onReadAccess(ArrayContainer value, TxField field)
 	{
-		return (ArrayContainer) read(value, field);
+		return (ArrayContainer) read(field);
 	}
 
 	@Override
 	public Object onReadAccess(Object value, TxField field)
 	{
-		return read(value, field);
+		return read(field);
 	}
 
 	@Override
 	public boolean onReadAccess(boolean value, TxField field)
 	{
-		return (Boolean) read(value, field);
+		return (Boolean) read(field);
 	}
 
 	@Override
 	public byte onReadAccess(byte value, TxField field)
 	{
-		return (Byte) read(value, field);
+		return (Byte) read(field);
 	}
 
 	@Override
 	public char onReadAccess(char value, TxField field)
 	{
-		return (Character) read(value, field);
+		return (Character) read(field);
 	}
 
 	@Override
 	public short onReadAccess(short value, TxField field)
 	{
-		return (Short) read(value, field);
+		return (Short) read(field);
 	}
 
 	@Override
 	public int onReadAccess(int value, TxField field)
 	{
-		return (Integer) read(value, field);
+		return (Integer) read(field);
 	}
 
 	@Override
 	public long onReadAccess(long value, TxField field)
 	{
-		return (Long) read(value, field);
+		return (Long) read(field);
 	}
 
 	@Override
 	public float onReadAccess(float value, TxField field)
 	{
-		return (Float) read(value, field);
+		return (Float) read(field);
 	}
 
 	@Override
 	public double onReadAccess(double value, TxField field)
 	{
-		return (Double) read(value, field);
+		return (Double) read(field);
 	}
 
 	private void addWriteAccess(SCOReWriteFieldAccess write)
@@ -220,6 +218,8 @@ public class SCOReContext extends DistributedContext
 		SCOReWriteFieldAccess next = WFAPool.getNext();
 		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
+
+		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
 	}
 
 	@Override
@@ -233,6 +233,8 @@ public class SCOReContext extends DistributedContext
 		SCOReWriteFieldAccess next = WFAPool.getNext();
 		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
+
+		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
 	}
 
 	@Override
@@ -241,6 +243,8 @@ public class SCOReContext extends DistributedContext
 		SCOReWriteFieldAccess next = WFAPool.getNext();
 		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
+
+		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
 	}
 
 	@Override
@@ -249,6 +253,8 @@ public class SCOReContext extends DistributedContext
 		SCOReWriteFieldAccess next = WFAPool.getNext();
 		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
+
+		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
 	}
 
 	@Override
@@ -257,6 +263,8 @@ public class SCOReContext extends DistributedContext
 		SCOReWriteFieldAccess next = WFAPool.getNext();
 		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
+
+		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
 	}
 
 	@Override
@@ -265,6 +273,8 @@ public class SCOReContext extends DistributedContext
 		SCOReWriteFieldAccess next = WFAPool.getNext();
 		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
+
+		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
 	}
 
 	@Override
@@ -273,6 +283,8 @@ public class SCOReContext extends DistributedContext
 		SCOReWriteFieldAccess next = WFAPool.getNext();
 		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
+
+		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
 	}
 
 	@Override
@@ -281,6 +293,8 @@ public class SCOReContext extends DistributedContext
 		SCOReWriteFieldAccess next = WFAPool.getNext();
 		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
+
+		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
 	}
 
 	@Override
@@ -289,6 +303,8 @@ public class SCOReContext extends DistributedContext
 		SCOReWriteFieldAccess next = WFAPool.getNext();
 		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
+
+		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
 	}
 
 	@Override
@@ -297,6 +313,8 @@ public class SCOReContext extends DistributedContext
 		SCOReWriteFieldAccess next = WFAPool.getNext();
 		next.set(value, (VBoxField) field);
 		addWriteAccess(next);
+
+		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
 	}
 
 	@Override

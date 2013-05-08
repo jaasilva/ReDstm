@@ -44,8 +44,7 @@ public class RandomGroupPartitioner extends Partitioner implements
 			System.exit(-1);
 		}
 
-		LOGGER.info("RandomGroupPartitioner initialized (hashClass: "
-				+ className + ")");
+		LOGGER.warn("> Group Partitioner hash class: " + className);
 	}
 
 	@Override
@@ -69,7 +68,7 @@ public class RandomGroupPartitioner extends Partitioner implements
 			}
 		}
 
-		LOGGER.info(String.format("GROUPS:%s", toString()));
+		LOGGER.warn("> GROUPS:" + toString());
 	}
 
 	@Override

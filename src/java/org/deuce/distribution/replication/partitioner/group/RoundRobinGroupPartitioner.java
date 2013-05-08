@@ -24,8 +24,6 @@ public class RoundRobinGroupPartitioner extends Partitioner implements
 	public RoundRobinGroupPartitioner()
 	{
 		super();
-
-		LOGGER.info("RoundRobinGroupPartitioner initialized");
 	}
 
 	@Override
@@ -50,7 +48,7 @@ public class RoundRobinGroupPartitioner extends Partitioner implements
 			group++;
 		}
 
-		LOGGER.info(String.format("GROUPS:%s", toString()));
+		LOGGER.warn("> GROUPS:" + toString());
 	}
 
 	@Override

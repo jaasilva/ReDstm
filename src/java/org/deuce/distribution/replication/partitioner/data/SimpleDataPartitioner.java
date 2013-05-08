@@ -20,14 +20,11 @@ public class SimpleDataPartitioner extends Partitioner implements
 	public SimpleDataPartitioner()
 	{
 		super();
-
-		LOGGER.info("SimpleDataPartitioner created");
 	}
 
 	@Override
 	public void init()
 	{
-		LOGGER.info("SimpleDataPartitioner initialized");
 	}
 
 	@Override
@@ -35,7 +32,8 @@ public class SimpleDataPartitioner extends Partitioner implements
 	{
 		Group res = super.getLocalGroup();
 
-		LOGGER.info(String.format("Publish obj(%s) to group(%s)", obj, res));
+		LOGGER.info(String.format("~ Publish obj(%s) to group(%s)",
+				obj.getMetadata(), res));
 
 		return res;
 	}

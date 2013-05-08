@@ -25,16 +25,12 @@ public class RandomDataPartitioner extends Partitioner implements
 	{
 		super();
 		rand = new Random();
-
-		LOGGER.info("RandomDataPartitioner created");
 	}
 
 	@Override
 	public void init()
 	{
 		groups = super.getGroups().size();
-
-		LOGGER.info("RandomDataPartitioner initialized");
 	}
 
 	@Override
@@ -43,7 +39,8 @@ public class RandomDataPartitioner extends Partitioner implements
 		int r = rand.nextInt(groups + 1);
 		Group res = super.getGroups().get(r);
 
-		LOGGER.info(String.format("Publish obj(%s) to group(%s)", obj, res));
+		LOGGER.info(String.format("~ Publish obj(%s) to group(%s)",
+				obj.getMetadata(), res));
 
 		return res;
 	}

@@ -10,14 +10,10 @@ import org.deuce.transform.ExcludeTM;
  */
 @ExcludeTM
 public interface PartialReplicationOID extends OID
-{ // XXX REVIEW EVERYTHING!!!!
+{
 	public Group getGroup();
 
 	public void setGroup(Group group);
-
-	public void generateId();
-
-	public boolean isIdAssigned();
 
 	public String toString();
 

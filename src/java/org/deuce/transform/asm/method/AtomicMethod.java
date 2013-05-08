@@ -182,7 +182,7 @@ public class AtomicMethod extends MethodAdapter implements Opcodes
 		int atomic_block = ATOMIC_BLOCK_COUNTER.getAndIncrement();
 		mv.visitLdcInsn(atomic_block);
 
-		LOGGER.info(String.format("# %s %s %d", className, methodName,
+		LOGGER.info(String.format("? %s %s %d", className, methodName,
 				atomic_block));
 
 		mv.visitLdcInsn(metainf);

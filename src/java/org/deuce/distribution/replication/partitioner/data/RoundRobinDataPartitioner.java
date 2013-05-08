@@ -25,16 +25,12 @@ public class RoundRobinDataPartitioner extends Partitioner implements
 	{
 		super();
 		round = new AtomicInteger(0);
-
-		LOGGER.info("RoundRobinDataPartitioner created");
 	}
 
 	@Override
 	public void init()
 	{
 		groups = super.getGroups().size();
-
-		LOGGER.info("RoundRobinDataPartitioner initialized");
 	}
 
 	@Override
@@ -43,7 +39,8 @@ public class RoundRobinDataPartitioner extends Partitioner implements
 		Group res = super.getGroups().get(round.get() % groups);
 		round.getAndIncrement();
 
-		LOGGER.info(String.format("Publish obj(%s) to group(%s)", obj, res));
+		LOGGER.info(String.format("~ Publish obj(%s) to group(%s)",
+				obj.getMetadata(), res));
 
 		return res;
 	}

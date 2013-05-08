@@ -37,10 +37,13 @@ public class TribuDSTM
 
 	static
 	{
-		LOGGER.info("TribuDSTM initializing...");
+		LOGGER.warn("#################################");
+		LOGGER.warn("> TribuDSTM initializing...");
+
 		checkRuntimeMode(partialDefault);
 		initReplicationProtocol();
 		initTransactionContext();
+
 		if (PARTIAL)
 		{
 			initPartitioners();
@@ -59,6 +62,7 @@ public class TribuDSTM
 	public static void init()
 	{
 		initGroupCommunication();
+
 		if (PARTIAL)
 		{
 			groupPart.partitionGroups(getAllMembers(),
@@ -67,9 +71,11 @@ public class TribuDSTM
 
 			ALL = new PartialReplicationGroup(getAllMembers());
 		}
+
 		distProtocol.init();
 
-		LOGGER.info("TribuDSTM initialized");
+		LOGGER.warn("> TribuDSTM initialized...");
+		LOGGER.warn("#################################");
 	}
 
 	public static final String CLOSE_METHOD_NAME = "close";
@@ -78,11 +84,11 @@ public class TribuDSTM
 
 	public static void close()
 	{
-		LOGGER.info("TribuDSTM closing");
+		LOGGER.info("> TribuDSTM closing");
 
 		groupComm.close();
 
-		LOGGER.info("TribuDSTM closing");
+		LOGGER.info("> TribuDSTM closing");
 	}
 
 	private static void checkRuntimeMode(String partialDefault)
@@ -90,7 +96,7 @@ public class TribuDSTM
 		PARTIAL = Boolean.parseBoolean(System.getProperty(
 				"tribu.distributed.PartialReplicationMode", partialDefault));
 
-		LOGGER.info("Checking partial replication runtime mode: " + PARTIAL);
+		LOGGER.warn("> Partial replication mode active: " + PARTIAL);
 	}
 
 	private static void initGroupCommunication()
@@ -112,7 +118,7 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.info("Initializing group comunication: " + className);
+		LOGGER.warn("> Group comunication: " + className);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -133,7 +139,7 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.info("Initializing transaction context: " + className);
+		LOGGER.info("> Transaction context: " + className);
 	}
 
 	private static void initReplicationProtocol()
@@ -155,7 +161,7 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.info("Initializing replication protocol: " + className);
+		LOGGER.warn("> Replication protocol: " + className);
 	}
 
 	private static void initPartitioners()
@@ -185,8 +191,8 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.info("Initializing partitioners. GroupPartitioner: "
-				+ groupPartClass + " DataPartitioner: " + dataPartClass);
+		LOGGER.warn("> Group Partitioner: " + groupPartClass);
+		LOGGER.warn("> Data Partitioner: " + dataPartClass);
 	}
 
 	public static final Class<? extends DistributedContext> getContextClass()

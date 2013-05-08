@@ -1,5 +1,6 @@
 package org.deuce.transaction;
 
+import org.apache.log4j.Logger;
 import org.deuce.LocalMetadata;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.reflection.AddressUtil;
@@ -28,7 +29,8 @@ import org.deuce.transform.localmetadata.type.TxField;
  */
 public class ContextDelegator
 {
-
+	private static final Logger LOGGER = Logger
+			.getLogger(ContextDelegator.class);
 	final static public String TXFIELD_DESCRIPTOR = Type
 			.getDescriptor(TxField.class);
 
@@ -193,6 +195,8 @@ public class ContextDelegator
 					metadataClass = TxField.class;
 				}
 			}
+
+			LOGGER.info("# Metadata class: " + metadataClass);
 
 			metadataInitialized = true;
 		}

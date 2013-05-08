@@ -7,7 +7,6 @@ import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
-import org.deuce.distribution.replication.OID2Object;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationMetadataFactory;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
@@ -21,7 +20,7 @@ import org.deuce.transform.ExcludeTM;
  */
 @ExcludeTM
 public class PartialReplicationSerializer extends ObjectSerializer
-{ // XXX REVIEW EVERYTHING!!!!
+{
 	private static final Logger LOGGER = Logger
 			.getLogger(PartialReplicationSerializer.class);
 	public final static String NAME = Type
@@ -37,50 +36,34 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	{
 		PartialReplicationOID oid = (PartialReplicationOID) obj.getMetadata();
 
+		Group toPublish = null;
 		if (oid == null)
-		{ // XXX does this happens???
+		{ // UniqueObject #metadata (it is not a TxField)
 			oid = factory.generateOID(); // creates PRepMetadata with no group
-			oid.generateId(); // assign id
-			Group toPublish = TribuDSTM.publishObjectTo(obj); // chooses group
+			toPublish = TribuDSTM.publishObjectTo(obj); // choose group
 			oid.setGroup(toPublish);
 			obj.setMetadata(oid);
 
-			if (TribuDSTM.isLocalGroup(toPublish)) // if this is my group
-			{ // save object in locator table
-				TribuDSTM.putObject(oid, obj);
-			}
-
-			LOGGER.debug(String.format("Published %s with OID(%s)", obj, oid));
-
-			return obj;
+			LOGGER.trace("< " + oid + " (oid null)");
 		}
-		else if (!oid.isIdAssigned())
-		{ // id not assigned. object not published
-			oid.generateId();
-
-			Group toPublish = oid.getGroup();
+		else
+		{
+			toPublish = oid.getGroup();
 			if (toPublish == null)
-			{ // chooses group
+			{ // choose group
 				toPublish = TribuDSTM.publishObjectTo(obj);
 				oid.setGroup(toPublish);
 			}
 
-			if (TribuDSTM.isLocalGroup(toPublish)) // if this is my group
-			{ // save object in locator table
-				TribuDSTM.putObject(oid, obj);
-			}
-
-			LOGGER.debug(String.format("Published %s with OID(%s)", obj, oid));
-
-			return obj;
+			LOGGER.trace("< " + oid + " (oid not null)");
 		}
-		else
-		{ // id assigned. object already published. send stub instead
-			LOGGER.debug(String.format("%s already published with OID(%s)",
-					obj, oid));
-
-			return new OID2Object(oid);
+		// OPT posso nao fazer isto?
+		if (TribuDSTM.isLocalGroup(toPublish)) // if this is my group
+		{ // save object in locator table
+			TribuDSTM.putObject(oid, obj);
 		}
+
+		return obj;
 	}
 
 	@Override
@@ -88,31 +71,30 @@ public class PartialReplicationSerializer extends ObjectSerializer
 			throws ObjectStreamException
 	{
 		PartialReplicationOID oid = (PartialReplicationOID) obj.getMetadata();
+
 		Group group = oid.getGroup();
 
-		if (TribuDSTM.getLocalGroup().equals(group))
+		if (TribuDSTM.isLocalGroup(group))
 		{ // it is my group
 			UniqueObject object = TribuDSTM.getObject(oid);
 			if (object == null)
 			{ // object not in locator table. put in table and return it
+				LOGGER.trace("> " + oid + " (not in LT)");
+
 				TribuDSTM.putObject(oid, obj);
-
-				LOGGER.debug(String.format("Freshly published %s with OID(%s)",
-						obj, oid));
-
 				return obj;
 			}
 			else
 			{ // object in locator table. already replicated
-				LOGGER.debug(String.format(
-						"Replaced %s with OID(%s) by local replica %s", obj,
-						oid, object));
+				LOGGER.trace("> " + oid + " (in LT)");
 
 				return object;
 			}
 		}
 		else
 		{ // not for me to replicate this object
+			LOGGER.trace("> " + oid + " (no rep)");
+
 			return obj;
 		}
 	}
@@ -128,9 +110,10 @@ public class PartialReplicationSerializer extends ObjectSerializer
 			+ UniqueObject.DESC + ")" + Type.VOID_TYPE.getDescriptor();
 
 	public void createPartialReplicationMetadata(UniqueObject obj)
-	{ // Generates an empty metadata (id and group are null)
+	{ // Generates an empty metadata (group is null)
 		ObjectMetadata meta = factory.generateOID();
 		obj.setMetadata(meta);
+		TribuDSTM.putObject(meta, obj);
 	}
 
 	public static final String CREATE_FULL_METADATA_METHOD_NAME = "createFullReplicationMetadata";
@@ -138,9 +121,10 @@ public class PartialReplicationSerializer extends ObjectSerializer
 			+ UniqueObject.DESC + ")" + Type.VOID_TYPE.getDescriptor();
 
 	public void createFullReplicationMetadata(UniqueObject obj)
-	{ // Generates metadata with the group assigned with ALL (id is null)
+	{ // Generates metadata with the group assigned with ALL
 		ObjectMetadata meta = factory.generateFullReplicationOID();
 		obj.setMetadata(meta);
+		TribuDSTM.putObject(meta, obj);
 	}
 
 	public static final String BOOTSTRAP_METHOD_NAME = "createBootstrapOID";
@@ -150,11 +134,11 @@ public class PartialReplicationSerializer extends ObjectSerializer
 
 	public void createBootstrapOID(UniqueObject obj, int id)
 	{
-		PartialReplicationOID oid = factory.generateFullReplicationOID(id);
-		obj.setMetadata(oid);
-		TribuDSTM.putObject(oid, obj);
+		PartialReplicationOID meta = factory.generateFullReplicationOID(id);
+		obj.setMetadata(meta);
+		TribuDSTM.putObject(meta, obj);
 
-		LOGGER.info(String.format(
-				"Created bootstrapOID for %s with id(%d) = %s", obj, id, oid));
+		LOGGER.info(String.format("! BootstrapOID %s id(%d) = %s", obj, id,
+				meta));
 	}
 }

@@ -11,20 +11,20 @@ import org.deuce.transform.ExcludeTM;
  */
 @ExcludeTM
 public class PartialReplicationMetadata implements PartialReplicationOID
-{ // XXX REVIEW EVERYTHING!!!!
+{
 	private static final long serialVersionUID = 1L;
 	private java.util.UUID id;
 	private Group group;
 
 	public PartialReplicationMetadata()
-	{ // Requires the insertion of the group and ID later.
-		this.id = null;
+	{ // Requires the insertion of the group later.
+		this.id = java.util.UUID.randomUUID();
 		this.group = null;
 	}
 
 	public PartialReplicationMetadata(Group group)
-	{ // Requires the insertion of the ID later.
-		this.id = null;
+	{
+		this.id = java.util.UUID.randomUUID();
 		this.group = group;
 	}
 
@@ -52,21 +52,6 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	public void setGroup(Group group)
 	{
 		this.group = group;
-	}
-
-	@Override
-	public void generateId()
-	{ // Only if ID is not defined yet
-		if (id == null)
-		{
-			this.id = java.util.UUID.randomUUID();
-		}
-	}
-
-	@Override
-	public boolean isIdAssigned()
-	{
-		return this.id != null;
 	}
 
 	@Override

@@ -10,16 +10,16 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class PartialReplicationMetadataFactory implements
 		PartialReplicationOIDFactory
-{ // XXX REVIEW EVERYTHING!!!!
+{
 	@Override
 	public PartialReplicationOID generateOID()
-	{ // Requires the insertion of the group and ID later.
+	{ // Requires the insertion of the group later.
 		return new PartialReplicationMetadata();
 	}
 
 	@Override
 	public PartialReplicationOID generateFullReplicationOID()
-	{ // Requires the insertion of the ID later.
+	{
 		return new PartialReplicationMetadata(TribuDSTM.ALL);
 	}
 
