@@ -3,6 +3,8 @@ package org.deuce.transaction.tl2;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.deuce.LocalMetadata;
+import org.deuce.distribution.TribuDSTM;
+import org.deuce.profiling.Profiler;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.ReadSet;
@@ -37,7 +39,17 @@ import org.deuce.trove.TObjectProcedure;
 @LocalMetadata(metadataClass = "org.deuce.transaction.tl2.TL2Field")
 public class Context extends DistributedContext
 {
+	
+	/**
+	 * The transaction's read set.
+	 */
+	protected ReadSet readSet;
 
+	/**
+	 * The transaction's write set.
+	 */
+	protected WriteSet writeSet;
+	
 	private static final boolean TX_LOAD_OPT = Boolean
 			.getBoolean("org.deuce.transaction.tl2.txload.opt");
 
@@ -65,12 +77,19 @@ public class Context extends DistributedContext
 	public Context()
 	{
 		super();
+		
+		readSet = new TL2ReadSet();
+		writeSet = new WriteSet();
+		
 		localClock = clock.get();
 	}
 
 	public void recreateContextFromState(DistributedContextState ctxState)
 	{
 		super.recreateContextFromState(ctxState);
+		
+		readSet = (ReadSet) ctxState.rs;
+		writeSet = (WriteSet) ctxState.ws;
 
 		localClock = ((ContextState) ctxState).rv;
 
@@ -98,16 +117,6 @@ public class Context extends DistributedContext
 		// } while (!done);
 	}
 
-	protected ReadSet createReadSet()
-	{
-		return new TL2ReadSet();
-	}
-
-	protected WriteSet createWriteSet()
-	{
-		return new WriteSet();
-	}
-
 	public DistributedContextState createState()
 	{
 		return new ContextState(readSet, writeSet, threadID, atomicBlockId,
@@ -116,6 +125,9 @@ public class Context extends DistributedContext
 
 	public void initialise(int atomicBlockId, String metainf)
 	{
+		readSet.clear();
+		writeSet.clear();
+		
 		currentReadFieldAccess = null;
 		localClock = clock.get();
 		arrayPool.clear();
@@ -524,6 +536,38 @@ public class Context extends DistributedContext
 	@Override
 	public void onIrrevocableAccess()
 	{
+	}
+	
+	/**
+	 * Triggers the distributed commit, and waits until it is processed.
+	 */
+	public boolean commit()
+	{
+		profiler.onTxAppCommit();
 
+		if (writeSet.isEmpty())
+		{
+
+			if (Profiler.enabled)
+				profiler.txCommitted++;
+
+			TribuDSTM.onTxFinished(this, true);
+			return true;
+		}
+
+		TribuDSTM.onTxCommit(this);
+		try
+		{
+			trxProcessed.acquire();
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+
+		TribuDSTM.onTxFinished(this, committed);
+		boolean result = committed;
+		committed = false;
+		return result;
 	}
 }

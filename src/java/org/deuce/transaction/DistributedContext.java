@@ -37,27 +37,15 @@ public abstract class DistributedContext implements ContextMetadata
 	/**
 	 * Semaphore on which a DCtx waits for the distributed commit to take place.
 	 */
-	private Semaphore trxProcessed;
+	protected Semaphore trxProcessed;
 
 	/**
 	 * Result of the distributed commit.
 	 */
-	private boolean committed;
-
-	/**
-	 * The transaction's read set.
-	 */
-	protected ReadSet readSet;
-
-	/**
-	 * The transaction's write set.
-	 */
-	protected WriteSet writeSet;
+	protected boolean committed;
 
 	public DistributedContext()
 	{
-		readSet = createReadSet();
-		writeSet = createWriteSet();
 		threadID = threadIDCounter.getAndIncrement();
 		committed = false;
 		trxProcessed = new Semaphore(0);
@@ -73,29 +61,9 @@ public abstract class DistributedContext implements ContextMetadata
 	 */
 	public void recreateContextFromState(DistributedContextState ctxState)
 	{
-		readSet = ctxState.rs;
-		writeSet = ctxState.ws;
-		// threadID = -1;
-		// committed = false;
-		// trxProcessed = new Semaphore(0);
-
 		profiler.remote = true;
 		Profiler.txRemote++;
 	}
-
-	/**
-	 * Factory method that delegates the concrete read set instance creation.
-	 * 
-	 * @return the concrete read set instance
-	 */
-	abstract protected ReadSet createReadSet();
-
-	/**
-	 * Factory method that delegates the concrete write set instance creation.
-	 * 
-	 * @return the concrete write set instance
-	 */
-	abstract protected WriteSet createWriteSet();
 
 	/**
 	 * Creates a sort of memento object with this transaction's state, but that
@@ -112,9 +80,7 @@ public abstract class DistributedContext implements ContextMetadata
 	public void init(int atomicBlockId, String metainf)
 	{
 		this.atomicBlockId = atomicBlockId;
-		readSet.clear();
-		writeSet.clear();
-		// committed = false;
+
 		initialise(atomicBlockId, metainf);
 		TribuDSTM.onTxBegin(this);
 		profiler.txLocal++;
@@ -174,39 +140,6 @@ public abstract class DistributedContext implements ContextMetadata
 	abstract protected void applyUpdates();
 
 	/**
-	 * Triggers the distributed commit, and waits until it is processed.
-	 */
-	public boolean commit()
-	{
-		profiler.onTxAppCommit();
-
-		if (writeSet.isEmpty())
-		{
-
-			if (Profiler.enabled)
-				profiler.txCommitted++;
-
-			TribuDSTM.onTxFinished(this, true);
-			return true;
-		}
-
-		TribuDSTM.onTxCommit(this);
-		try
-		{
-			trxProcessed.acquire();
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-
-		TribuDSTM.onTxFinished(this, committed);
-		boolean result = committed;
-		committed = false;
-		return result;
-	}
-
-	/**
 	 * Notifies that the distributed commit has finished processing.
 	 * 
 	 * @param committed
@@ -232,20 +165,4 @@ public abstract class DistributedContext implements ContextMetadata
 
 		TribuDSTM.onTxFinished(this, false);
 	}
-
-	// public final static DistributedContext createContextFromState(
-	// DistributedContextState ctxState) {
-	//
-	// DistributedContext ctx = null;
-	// try {
-	// ctx = TribuDSTM.getContextClass()
-	// .getConstructor(DistributedContextState.class)
-	// .newInstance(ctxState);
-	// } catch (Exception e) {
-	// System.err.println("Couldn't instantiate proxy context.");
-	// e.printStackTrace();
-	// System.exit(-1);
-	// }
-	// return ctx;
-	// }
 }

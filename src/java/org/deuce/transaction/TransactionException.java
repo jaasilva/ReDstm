@@ -13,7 +13,7 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class TransactionException extends RuntimeException
 {
-
+	private static final long serialVersionUID = 1L;
 	final static public String TRANSACTION_EXCEPTION_INTERNAL = Type
 			.getInternalName(TransactionException.class);
 

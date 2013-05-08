@@ -89,33 +89,22 @@ final public class SpeculativeContext extends
 	public SpeculativeContext()
 	{
 		super();
+		
+		readSet = new SpeculativeTL2ReadSet();
+		writeSet = new WriteSet();
+		
 		localClock = speculativeClock.get();
 	}
 
 	public void recreateContextFromState(DistributedContextState ctxState)
 	{
 		super.recreateContextFromState(ctxState);
+		
+		readSet = (ReadSet) ctxState.rs;
+		writeSet = (WriteSet) ctxState.ws;
+		
 		localClock = ((SpeculativeContextState) ctxState).speculativeVersionNumber;
 		readOnly = false;
-
-		// boolean done = false;
-		// do {
-		// int c = speculativeClock.get();
-		// if (localClock > c)
-		// done = speculativeClock.compareAndSet(c, localClock);
-		// else
-		// done = true;
-		// } while (!done);
-	}
-
-	protected ReadSet createReadSet()
-	{
-		return new SpeculativeTL2ReadSet();
-	}
-
-	protected WriteSet createWriteSet()
-	{
-		return new WriteSet();
 	}
 
 	public DistributedContextState createState()
@@ -126,6 +115,9 @@ final public class SpeculativeContext extends
 
 	public void initialise(int atomicBlockId, String metainf)
 	{
+		readSet.clear();
+		writeSet.clear();
+		
 		this.currentReadFieldAccess = null;
 		this.localClock = speculativeClock.get();
 		this.arrayPool.clear();

@@ -15,7 +15,6 @@ import org.deuce.transform.localmetadata.type.TxField;
 @ExcludeTM
 public interface ContextMetadata extends IContext
 {
-
 	/* Methods called on Read/Write event */
 	void beforeReadAccess(TxField field);
 
@@ -58,5 +57,4 @@ public interface ContextMetadata extends IContext
 	void onWriteAccess(float value, TxField field);
 
 	void onWriteAccess(double value, TxField field);
-
 }

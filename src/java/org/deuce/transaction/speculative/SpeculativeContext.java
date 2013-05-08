@@ -1,10 +1,25 @@
 package org.deuce.transaction.speculative;
 
+import org.deuce.distribution.TribuDSTM;
+import org.deuce.profiling.Profiler;
 import org.deuce.transaction.DistributedContext;
+import org.deuce.transaction.ReadSet;
 import org.deuce.transaction.TransactionException;
+import org.deuce.transaction.WriteSet;
 
 public abstract class SpeculativeContext extends DistributedContext
 {
+	
+	/**
+	 * The transaction's read set.
+	 */
+	protected ReadSet readSet;
+
+	/**
+	 * The transaction's write set.
+	 */
+	protected WriteSet writeSet;
+	
 	final static public TransactionException EARLY_CONFLICT = new TransactionException(
 			"Latest speculative version is fresher than this tx.");
 
@@ -86,4 +101,37 @@ public abstract class SpeculativeContext extends DistributedContext
 	abstract public int getSpeculativeVersionNumber();
 
 	abstract public void resetSpeculativeVersionNumbers();
+	
+	/**
+	 * Triggers the distributed commit, and waits until it is processed.
+	 */
+	public boolean commit()
+	{
+		profiler.onTxAppCommit();
+
+		if (writeSet.isEmpty())
+		{
+
+			if (Profiler.enabled)
+				profiler.txCommitted++;
+
+			TribuDSTM.onTxFinished(this, true);
+			return true;
+		}
+
+		TribuDSTM.onTxCommit(this);
+		try
+		{
+			trxProcessed.acquire();
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+
+		TribuDSTM.onTxFinished(this, committed);
+		boolean result = committed;
+		committed = false;
+		return result;
+	}
 }

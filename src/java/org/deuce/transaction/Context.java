@@ -17,7 +17,6 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public interface Context extends IContext
 {
-
 	/* Methods called on Read/Write event */
 	void beforeReadAccess(Object obj, long field);
 
@@ -56,5 +55,4 @@ public interface Context extends IContext
 	void onWriteAccess(Object obj, float value, long field);
 
 	void onWriteAccess(Object obj, double value, long field);
-
 }

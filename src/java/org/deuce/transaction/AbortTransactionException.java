@@ -13,7 +13,7 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class AbortTransactionException extends TransactionException
 {
-
+	private static final long serialVersionUID = 1L;
 	final static public String ABORT_TRANSACTION_EXCEPTION_INTERNAL = Type
 			.getInternalName(AbortTransactionException.class);
 

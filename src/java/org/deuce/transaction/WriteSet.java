@@ -37,15 +37,13 @@ public class WriteSet implements Serializable
 	}
 
 	public void put(WriteFieldAccess write)
-	{
-		// Add to write set
+	{ // Add to write set
 		if (!writeSet.add(write))
 			writeSet.replace(write);
 	}
 
 	public WriteFieldAccess contains(ReadFieldAccess read)
-	{
-		// Check if it is already included in the write set
+	{ // Check if it is already included in the write set
 		return writeSet.get(read);
 	}
 
@@ -53,5 +51,4 @@ public class WriteSet implements Serializable
 	{
 		return writeSet.size();
 	}
-
 }
