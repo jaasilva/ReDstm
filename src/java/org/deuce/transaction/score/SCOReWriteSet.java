@@ -2,6 +2,7 @@ package org.deuce.transaction.score;
 
 import java.io.Serializable;
 
+import org.apache.log4j.Logger;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
@@ -18,6 +19,7 @@ import org.deuce.trove.THashSet;
 @ExcludeTM
 public class SCOReWriteSet implements Serializable
 {
+	private static final Logger LOGGER = Logger.getLogger(SCOReWriteSet.class);
 	private static final long serialVersionUID = 1L;
 	private final THashSet<SCOReWriteFieldAccess> writeSet = new THashSet<SCOReWriteFieldAccess>(
 			16);
@@ -59,7 +61,9 @@ public class SCOReWriteSet implements Serializable
 
 	public void put(SCOReWriteFieldAccess write)
 	{ // add to write set
-		if (!writeSet.add(write))
+		boolean a = writeSet.add(write);
+		LOGGER.trace(">>> "+write.field.getMetadata() + " " + a);
+		if (!a)
 		{
 			writeSet.replace(write);
 		}

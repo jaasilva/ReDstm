@@ -89,8 +89,10 @@ public class SCOReContext extends DistributedContext
 	{
 		SCOReReadFieldAccess curr = readSet.getNext();
 		curr.init((VBoxField) field);
-
-		return writeSet.contains(curr);
+		SCOReWriteFieldAccess a = writeSet.contains(curr);
+		
+LOGGER.trace("--- " + field.getMetadata() + a);
+		return a;
 	}
 
 	private Object read(TxField field)
