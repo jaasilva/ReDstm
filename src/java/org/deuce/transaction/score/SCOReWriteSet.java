@@ -62,7 +62,7 @@ public class SCOReWriteSet implements Serializable
 	public void put(SCOReWriteFieldAccess write)
 	{ // add to write set
 		boolean a = writeSet.add(write);
-		LOGGER.trace(">>> "+write.field.getMetadata() + " " + a);
+		LOGGER.trace(">>> " + write.field.getMetadata() + " " + a);
 		if (!a)
 		{
 			writeSet.replace(write);
@@ -73,10 +73,12 @@ public class SCOReWriteSet implements Serializable
 	{ // apply only the TxFields that I replicate
 		for (SCOReWriteFieldAccess a : writeSet)
 		{
+			LOGGER.debug("&& " + a.field.getMetadata());
 			if (TribuDSTM.isLocalGroup(((PartialReplicationOID) a.field
 					.getMetadata()).getGroup()))
 			{
 				a.put(sid);
+				LOGGER.debug("&&&& " + a.field.getMetadata());
 			}
 		}
 	}
@@ -85,13 +87,18 @@ public class SCOReWriteSet implements Serializable
 	{ // assumes that these locks are held
 		for (SCOReWriteFieldAccess a : writeSet)
 		{
+			LOGGER.debug("%% " + a.field.getMetadata());
 			try
 			{
 				((InPlaceRWLock) a.field).exclusiveUnlock();
+				LOGGER.debug("%%%% " + a.field.getMetadata());
 			}
 			catch (IllegalMonitorStateException e)
 			{ // lock is not held by this thread
+				LOGGER.debug("%%2 " + a.field.getMetadata());
 			} // ignore exception
+
+			LOGGER.debug("%%3 " + a.field.getMetadata());
 		}
 	}
 
@@ -101,30 +108,45 @@ public class SCOReWriteSet implements Serializable
 		int i = 0;
 		Object[] ws = writeSet.toArray();
 
-		while (res && i < ws.length)
+		while (i < ws.length && res)
 		{
+			LOGGER.debug("__1 " + ((SCOReWriteFieldAccess) ws[i]).field.getMetadata() + " " + ws.length);
 			res = ((InPlaceRWLock) ((SCOReWriteFieldAccess) ws[i]).field)
 					.exclusiveLock();
 			i++;
+			
+			LOGGER.debug("____2 " + ((SCOReWriteFieldAccess) ws[i-1]).field.getMetadata() + " " + res + " " + (i < ws.length));
 		}
+		
+		LOGGER.debug("___________________________3 ");
 
 		if (!res)
 		{
-			for (int j = i - 1; j >= 0; j--)
-			{
-				try
+			LOGGER.debug("___________________________3.1 ");
+			
+			if (i > 1)
+			{ // there is only 1 elem in WS. it is not locked
+				LOGGER.debug("___________________________3.1.1 ");
+				
+				for (int j = i - 1; j >= 0; j--)
 				{
-					((InPlaceRWLock) ((SCOReWriteFieldAccess) ws[j]).field)
-							.exclusiveUnlock();
+					try
+					{
+						((InPlaceRWLock) ((SCOReWriteFieldAccess) ws[j]).field)
+								.exclusiveUnlock();
+					}
+					catch (IllegalMonitorStateException e)
+					{ // lock is not held by this thread. THIS SHOULD NOT HAPPEN
+						System.err.println("Couldn't unlock all write locks.");
+						e.printStackTrace();
+						System.exit(-1);
+					} // ignore exception
 				}
-				catch (IllegalMonitorStateException e)
-				{ // lock is not held by this thread. THIS SHOULD NOT HAPPEN
-					System.err.println("Couldn't unlock all write locks.");
-					e.printStackTrace();
-					System.exit(-1);
-				} // ignore exception
 			}
 		}
+		
+		LOGGER.debug("___________________________4 ");
+		
 		return res;
 	}
 

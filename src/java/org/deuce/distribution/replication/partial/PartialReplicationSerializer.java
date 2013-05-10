@@ -44,7 +44,8 @@ public class PartialReplicationSerializer extends ObjectSerializer
 			oid.setGroup(toPublish);
 			obj.setMetadata(oid);
 
-			LOGGER.trace("< " + oid + " (oid null)");
+			LOGGER.trace("< " + oid + " (oid null) "
+					+ obj.getClass().getSimpleName());
 		}
 		else
 		{
@@ -55,7 +56,8 @@ public class PartialReplicationSerializer extends ObjectSerializer
 				oid.setGroup(toPublish);
 			}
 
-			LOGGER.trace("< " + oid + " (oid not null)");
+			LOGGER.trace("< " + oid + " (oid not null) "
+					+ obj.getClass().getSimpleName());
 		}
 		// OPT posso nao fazer isto?
 		if (TribuDSTM.isLocalGroup(toPublish)) // if this is my group

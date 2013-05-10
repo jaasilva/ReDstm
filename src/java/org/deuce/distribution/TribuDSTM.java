@@ -30,7 +30,7 @@ public class TribuDSTM
 	private static GroupPartitioner groupPart;
 	private static boolean PARTIAL;
 
-	public static Group ALL;
+	public static Group ALL = new PartialReplicationGroup();
 	public static String partialDefault = "false";
 
 	private static Class<? extends DistributedContext> ctxClass;
@@ -69,7 +69,9 @@ public class TribuDSTM
 					Integer.getInteger("tribu.groups", 1));
 			dataPart.init();
 
-			ALL = new PartialReplicationGroup(getAllMembers());
+			ALL.addAll(getAllMembers());
+
+			LOGGER.warn("> ALL:" + ALL);
 		}
 
 		distProtocol.init();

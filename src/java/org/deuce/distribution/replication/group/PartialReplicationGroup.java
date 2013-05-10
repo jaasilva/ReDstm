@@ -73,6 +73,11 @@ public class PartialReplicationGroup implements Group
 
 	public String toString()
 	{
+		if (this.addrs.size() == 0)
+		{
+			return "[]";
+		}
+		
 		StringBuilder sb = new StringBuilder("[");
 		for (Address a : this.addrs)
 		{

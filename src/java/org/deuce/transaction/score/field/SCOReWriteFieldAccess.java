@@ -30,6 +30,6 @@ public class SCOReWriteFieldAccess extends SCOReReadFieldAccess
 
 	public String toString()
 	{
-		return field.toString();
+		return field.getMetadata().toString();
 	}
 }

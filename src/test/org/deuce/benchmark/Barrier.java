@@ -1,9 +1,5 @@
 package org.deuce.benchmark;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.Random;
-
 import org.deuce.Atomic;
 import org.deuce.reflection.AddressUtil;
 import org.deuce.reflection.UnsafeHolder;

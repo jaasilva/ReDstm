@@ -46,6 +46,6 @@ public class SCOReReadFieldAccess implements Serializable
 
 	public String toString()
 	{
-		return field.toString();
+		return field.getMetadata().toString();
 	}
 }
