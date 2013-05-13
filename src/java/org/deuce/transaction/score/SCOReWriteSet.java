@@ -7,6 +7,7 @@ import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
+import org.deuce.transaction.score.field.InPlaceRWLock;
 import org.deuce.transaction.score.field.SCOReReadFieldAccess;
 import org.deuce.transaction.score.field.SCOReWriteFieldAccess;
 import org.deuce.transform.ExcludeTM;
@@ -44,7 +45,7 @@ public class SCOReWriteSet implements Serializable
 					.getGroup();
 
 			if (TribuDSTM.groupIsAll(other))
-			{ // OPT is this better?
+			{ // OPT is this better? vale a pena este verificação sempre??
 				return other;
 			}
 
@@ -110,24 +111,28 @@ public class SCOReWriteSet implements Serializable
 
 		while (i < ws.length && res)
 		{
-			LOGGER.debug("__1 " + ((SCOReWriteFieldAccess) ws[i]).field.getMetadata() + " " + ws.length);
+			LOGGER.debug("__1 "
+					+ ((SCOReWriteFieldAccess) ws[i]).field.getMetadata() + " "
+					+ ws.length);
 			res = ((InPlaceRWLock) ((SCOReWriteFieldAccess) ws[i]).field)
 					.exclusiveLock();
 			i++;
-			
-			LOGGER.debug("____2 " + ((SCOReWriteFieldAccess) ws[i-1]).field.getMetadata() + " " + res + " " + (i < ws.length));
+
+			LOGGER.debug("____2 "
+					+ ((SCOReWriteFieldAccess) ws[i - 1]).field.getMetadata()
+					+ " " + res + " " + (i < ws.length));
 		}
-		
+
 		LOGGER.debug("___________________________3 ");
 
 		if (!res)
 		{
 			LOGGER.debug("___________________________3.1 ");
-			
+
 			if (i > 1)
 			{ // there is only 1 elem in WS. it is not locked
 				LOGGER.debug("___________________________3.1.1 ");
-				
+
 				for (int j = i - 1; j >= 0; j--)
 				{
 					try
@@ -144,9 +149,9 @@ public class SCOReWriteSet implements Serializable
 				}
 			}
 		}
-		
+
 		LOGGER.debug("___________________________4 ");
-		
+
 		return res;
 	}
 

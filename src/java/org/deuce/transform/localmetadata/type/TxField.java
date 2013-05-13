@@ -1,7 +1,12 @@
 package org.deuce.transform.localmetadata.type;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.ObjectStreamException;
 
+import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
@@ -17,8 +22,9 @@ import org.deuce.transform.localmetadata.array.ArrayContainer;
  * @author Tiago Vale
  */
 @ExcludeTM
-public class TxField implements UniqueObject
+public class TxField implements UniqueObject, Externalizable
 {
+	private static final Logger LOGGER = Logger.getLogger(TxField.class);
 	private static final long serialVersionUID = -4736700297466670012L;
 
 	public static final String DESC = Type.getDescriptor(TxField.class);
@@ -196,5 +202,31 @@ public class TxField implements UniqueObject
 	public Object readResolve() throws ObjectStreamException
 	{
 		return TribuDSTM.getObjectSerializer().readResolveHook(this);
+	}
+
+	@Override
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException
+	{
+		LOGGER.trace("---1 readExternal TxField");
+		ref = in.readObject();
+		address = in.readLong();
+		backend = (Object[]) in.readObject();
+		index = in.readInt();
+		metadata = (ObjectMetadata) in.readObject();
+		LOGGER.trace("---2 readExternal TxField");
+	}
+
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException
+	{
+		LOGGER.trace("---1 writeExternal TxField");
+		System.out.println(">>>> " + ref.getClass().getName());
+		out.writeObject(ref);
+		out.writeLong(address);
+		out.writeObject(backend);
+		out.writeInt(index);
+		out.writeObject(metadata);
+		LOGGER.trace("---2 writeExternal TxField");
 	}
 }

@@ -1,5 +1,7 @@
 package org.deuce.transaction.score.field;
 
+import java.io.Serializable;
+
 import org.deuce.transaction.score.SCOReContext;
 import org.deuce.transform.ExcludeTM;
 
@@ -8,8 +10,9 @@ import org.deuce.transform.ExcludeTM;
  * 
  */
 @ExcludeTM
-public class Version
+public class Version implements Serializable
 {
+	private static final long serialVersionUID = 1L;
 	public int version;
 	public Version next;
 	public Object value;

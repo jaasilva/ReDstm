@@ -1,4 +1,4 @@
-package org.deuce.transaction.score;
+package org.deuce.transaction.score.field;
 
 /**
  * 

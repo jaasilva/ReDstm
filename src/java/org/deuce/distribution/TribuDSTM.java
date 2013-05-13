@@ -91,6 +91,8 @@ public class TribuDSTM
 		groupComm.close();
 
 		LOGGER.info("> TribuDSTM closing");
+		
+		System.exit(0);
 	}
 
 	private static void checkRuntimeMode(String partialDefault)

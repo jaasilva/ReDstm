@@ -7,6 +7,7 @@ import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
+import org.deuce.transaction.score.field.InPlaceRWLock;
 import org.deuce.transaction.score.field.SCOReReadFieldAccess;
 import org.deuce.transform.ExcludeTM;
 
@@ -90,11 +91,11 @@ public class SCOReReadSet implements Serializable
 		if (!res)
 		{
 			LOGGER.debug("---£££££££££££££££££££££££3.1 ");
-			
+
 			if (i > 1)
 			{ // there is only 1 elem in RS. it is not locked
 				LOGGER.debug("---£££££££££££££££££££££££3.1.1 ");
-				
+
 				for (int j = i - 1; j >= 0; j--)
 				{
 					((InPlaceRWLock) readSet[j].field).sharedUnlock();

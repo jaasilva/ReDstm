@@ -56,7 +56,7 @@ public abstract class ObjectSerializer
 			baos.close();
 			payload = baos.toByteArray();
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			System.err.println("Could not serialize object.");
 			e.printStackTrace();
