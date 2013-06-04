@@ -15,11 +15,14 @@ public class VoteMsg implements Serializable
 	public boolean outcome;
 	public int proposedTimestamp;
 	public int ctxID;
+	public String trxID;
 
-	public VoteMsg(boolean outcome, int proposedTimestamp, int ctxID)
+	public VoteMsg(boolean outcome, int proposedTimestamp, int ctxID,
+			String trxID)
 	{
 		this.outcome = outcome;
 		this.proposedTimestamp = proposedTimestamp;
 		this.ctxID = ctxID;
+		this.trxID = trxID;
 	}
 }

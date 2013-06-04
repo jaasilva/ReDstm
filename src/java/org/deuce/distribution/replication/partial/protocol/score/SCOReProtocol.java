@@ -7,11 +7,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
@@ -27,11 +28,11 @@ import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.TransactionException;
-import org.deuce.transaction.score.InPlaceRWLock;
 import org.deuce.transaction.score.SCOReContext;
 import org.deuce.transaction.score.SCOReContextState;
 import org.deuce.transaction.score.SCOReReadSet;
 import org.deuce.transaction.score.SCOReWriteSet;
+import org.deuce.transaction.score.field.InPlaceRWLock;
 import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transaction.score.field.Version;
 import org.deuce.transform.ExcludeTM;
@@ -45,7 +46,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		DeliverySubscriber
 {
 	private static final Logger LOGGER = Logger.getLogger(SCOReProtocol.class);
-
 	private Comparator<Pair<String, Integer>> comp = new Comparator<Pair<String, Integer>>()
 	{
 		@Override
@@ -54,22 +54,35 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			return o1.second - o2.second;
 		}
 	};
+	private Comparator<Pair<Integer, DistributedContextState>> comp2 = new Comparator<Pair<Integer, DistributedContextState>>()
+	{
+		@Override
+		public int compare(Pair<Integer, DistributedContextState> o1,
+				Pair<Integer, DistributedContextState> o2)
+		{
+			return o2.first - o1.first;
+		}
+	};
+	private final BlockingQueue<Pair<Integer, DistributedContextState>> waitingPrepare = new LinkedBlockingQueue<Pair<Integer, DistributedContextState>>(
+			50);
+	private int lastVote = -1;
+	private int numPrepares = 0;
 
 	private final AtomicInteger commitId = new AtomicInteger(0);
 	private final AtomicInteger nextId = new AtomicInteger(0);
 	private final AtomicInteger maxSeenId = new AtomicInteger(0);
 
 	private final int timeout = Integer.getInteger(
-			"tribu.distributed.protocol.score.timeout", 5000);
+			"tribu.distributed.protocol.score.timeout", 2000);
 	private final Timer timeoutTimer = new Timer();
 
 	private final Map<Integer, DistributedContext> ctxs = Collections
 			.synchronizedMap(new HashMap<Integer, DistributedContext>());
 
-	private final Queue<Pair<String, Integer>> pendQ = new PriorityQueue<Pair<String, Integer>>(
-			11, comp);
-	private final Queue<Pair<String, Integer>> stableQ = new PriorityQueue<Pair<String, Integer>>(
-			11, comp);
+	private final BlockingQueue<Pair<String, Integer>> pendQ = new PriorityBlockingQueue<Pair<String, Integer>>(
+			50, comp);
+	private final BlockingQueue<Pair<String, Integer>> stableQ = new PriorityBlockingQueue<Pair<String, Integer>>(
+			50, comp);
 
 	private final Map<String, DistributedContextState> receivedTrxs = Collections
 			.synchronizedMap(new HashMap<String, DistributedContextState>());
@@ -105,7 +118,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	{ // I am the coordinator of this commit.
 		SCOReContext sctx = (SCOReContext) ctx;
 		DistributedContextState ctxState = sctx.createState();
-		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
 
 		Group resGroup = sctx.getInvolvedNodes();
 		int expVotes = resGroup.size();
@@ -113,21 +125,27 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		sctx.votes = new ArrayList<Integer>(expVotes);
 		sctx.expectedVotes = expVotes;
 
-		TribuDSTM.sendToGroup(payload, resGroup);
-
 		TimerTask task = createTimeoutHandler(sctx);
 		sctx.timeoutTask = task;
-		timeoutTimer.schedule(task, timeout);
+		// timeoutTimer.schedule(task, timeout); // set timeout
 
 		StringBuffer log = new StringBuffer();
 		log.append("------------------------------------------\n");
 		log.append("onTxCommit " + sctx.threadID + ":" + sctx.atomicBlockId
 				+ ":" + sctx.trxID + "\n");
-		log.append("Coordinator= " + ((SCOReContextState) ctxState).src + "\n");
-		log.append("Send PREP msg to= " + resGroup);
-		log.append("Timeout (" + task + ")= " + timeout + "ms\n");
+		log.append("Coordinator= " + ((SCOReContextState) ctxState).src
+				+ " sid= " + sctx.sid + "\n");
+		log.append("Send PREP msg to= " + resGroup + "\n");
+		String t = Integer.toHexString(System.identityHashCode(task));
+		log.append("Timeout (" + t + ")= " + timeout + "ms\n");
+		log.append("WS: " + sctx.writeSet + "\n");
+		log.append("RS: " + sctx.readSet + "\n");
 		log.append("------------------------------------------");
 		LOGGER.debug(log.toString());
+
+		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
+
+		TribuDSTM.sendToGroup(payload, resGroup);
 	}
 
 	private TimerTask createTimeoutHandler(final SCOReContext sctx)
@@ -142,10 +160,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 				{ // timeout occurs. abort trx
 					StringBuffer log = new StringBuffer();
 					log.append("------------------------------------------\n");
-					log.append("Timeout (" + this + ") triggered "
-							+ ctx.threadID + ":" + ctx.atomicBlockId + ":"
-							+ ctx.trxID + "\n");
-					log.append("ABORT TRANSACTION !!!");
+					String t = Integer.toHexString(System
+							.identityHashCode(this));
+					log.append("Timeout (" + t + ") triggered\n" + ctx.threadID
+							+ ":" + ctx.atomicBlockId + ":" + ctx.trxID + "\n");
+					log.append("ABORT TRANSACTION !!!\n");
 					log.append("------------------------------------------");
 					LOGGER.debug(log.toString());
 
@@ -216,8 +235,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 
 		log.append("Response (lastCommitted=" + read.lastCommitted
-				+ ", mostRecent=" + read.mostRecent + ", value=" + read.value
-				+ ")\n");
+				+ ", mostRecent=" + read.mostRecent + ")\n");
 
 		if (firstRead)
 		{ // first read of this transaction
@@ -226,9 +244,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		if (sctx.isUpdate() && !read.mostRecent)
 		{
+			LOGGER.debug("* onTxRead ABORT TRANSACTION !!! "
+					+ "(throw TransactionException)\n" + sctx.trxID);
 			throw new TransactionException();
 		}
-		// XXX added to read set in onReadAccess context method??
+		// added to read set in onReadAccess context method
 
 		log.append("------------------------------------------");
 		LOGGER.debug(log.toString());
@@ -246,7 +266,10 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		while (commitId.get() < sid
 				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
 		{ // wait until (commitId.get() >= sid || ((InPlaceRWLock)
-		} // field).isExclusiveUnlocked()
+			// field).isExclusiveUnlocked()
+			LOGGER.debug((commitId.get() < sid) + " "
+					+ !((InPlaceRWLock) field).isExclusiveUnlocked());
+		}
 
 		Version ver = field.getLastVersion().get(sid);
 		boolean mostRecent = ver.equals(field.getLastVersion());
@@ -257,9 +280,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		log.append("doRead (sid=" + sid + ")\n");
 		log.append("Metadata= " + metadata + "\n");
 		log.append("(lastCommitted=" + lastCommitted + ", mostRecent="
-				+ mostRecent + ", value=" + ver.value + ")\n");
+				+ mostRecent + ")\n");
 		log.append("------------------------------------------");
-		LOGGER.debug(log.toString());
+		// LOGGER.debug(log.toString());
 
 		return new ReadDone(ver.value, lastCommitted, mostRecent);
 	}
@@ -286,6 +309,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 	private void readRequest(ReadReq msg, Address src)
 	{
+		LOGGER.debug("* onDelivery (src=" + src + ") -> READ REQ");
+
 		int newReadSid = msg.readSid;
 
 		if (msg.firstRead && commitId.get() > msg.readSid)
@@ -306,7 +331,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		ReadRet ret = new ReadRet(msg.ctxID, msg.msgVersion, read);
 		byte[] payload = ObjectSerializer.object2ByteArray(ret);
-
 		TribuDSTM.sendTo(payload, src);
 		updateNodeTimestamps(msg.readSid);
 	}
@@ -314,6 +338,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	private void readReturn(ReadRet msg, Address src)
 	{ // I am the coordinator of this read.
 		SCOReContext sctx = ((SCOReContext) ctxs.get(msg.ctxID));
+
+		LOGGER.debug("* onDelivery (src=" + src + ") -> READ RET\n"
+				+ sctx.trxID);
 
 		if (sctx.requestVersion > msg.msgVersion)
 		{ // read request already responded. ignore late responses
@@ -332,8 +359,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	@Override
 	public void onDelivery(Object obj, Address src, int size)
 	{
-		LOGGER.debug("* onDelivery (src=" + src + ") " + obj);
-
 		if (obj instanceof DistributedContextState) // Prepare Message
 		{
 			prepareMessage((SCOReContextState) obj, src);
@@ -354,21 +379,45 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		{ // I requested this object
 			readReturn((ReadRet) obj, src);
 		}
+
 		processTx();
 	}
 
 	private void prepareMessage(SCOReContextState ctx, Address src)
 	{ // I am a participant in this commit. Validate and send vote msg
+		LOGGER.debug("* onDelivery (src=" + src + ") -> PREP MSG\n" + ctx.trxID
+				+ " lastVote= " + lastVote);
+
+		if (rejectTrxs.contains(ctx.trxID))
+		{ // late PREPARE msg (already received DECIDE msg (NO) for this tx)
+			LOGGER.debug("* prepareMessage LATE PREP MSG " + ctx.trxID);
+			// XXX posso remover a tx da rejectTrxs!!!!!!!!!!!!!!
+			return;
+		}
+
+		if (lastVote == -1)
+		{ // first prepare msg received
+			lastVote = Integer.parseInt(src.toString().split("-")[1]);
+		}
+		else if (Integer.parseInt(src.toString().split("-")[1]) < lastVote)
+		{ // src < lastVote WAIT
+			LOGGER.debug("WAIT PREPARE (src=" + src + ") " + ctx.trxID);
+			waitingPrepare.add(new Pair<Integer, DistributedContextState>(
+					Integer.parseInt(src.toString().split("-")[1]), ctx));
+			return;
+		}
+		lastVote = Integer.parseInt(src.toString().split("-")[1]);
+		numPrepares++;
+		LOGGER.debug("++++ " + numPrepares + " " + ctx.trxID);
+
 		receivedTrxs.put(ctx.trxID, ctx);
 
-		StringBuffer log = new StringBuffer();
-		log.append("------------------------------------------\n");
-		log.append("prepareMessage (src=" + src + ") " + ctx.ctxID + ":"
-				+ ctx.atomicBlockId + ":" + ctx.trxID + "\n");
+		boolean exclusiveLocks = ((SCOReWriteSet) ctx.ws)
+				.getExclusiveLocks(ctx.trxID);
+		boolean sharedLocks = ((SCOReReadSet) ctx.rs).getSharedLocks(ctx.trxID);
+		boolean validate = ((SCOReReadSet) ctx.rs).validate(ctx.sid);
 
-		boolean outcome = ((SCOReWriteSet) ctx.ws).getExclusiveLocks()
-				&& ((SCOReReadSet) ctx.rs).getSharedLocks()
-				&& ((SCOReReadSet) ctx.rs).validate(ctx.sid);
+		boolean outcome = exclusiveLocks && sharedLocks && validate;
 
 		int next = -1;
 		if (outcome) // valid trx
@@ -376,14 +425,31 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			next = nextId.incrementAndGet();
 			pendQ.add(new Pair<String, Integer>(ctx.trxID, next));
 		}
+		else
+		{ // vote NO! do not need the locks
+			if (sharedLocks)
+			{
+				((SCOReReadSet) ctx.rs).releaseSharedLocks(ctx.trxID);
+			}
+			if (exclusiveLocks)
+			{
+				((SCOReWriteSet) ctx.ws).releaseExclusiveLocks(ctx.trxID);
+			}
+		}
 
-		VoteMsg vote = new VoteMsg(outcome, next, ctx.ctxID);
-		byte[] payload = ObjectSerializer.object2ByteArray(vote);
-		TribuDSTM.sendTo(payload, src);
-
+		StringBuffer log = new StringBuffer();
+		log.append("------------------------------------------\n");
+		log.append("prepareMessage (src=" + src + ") " + ctx.ctxID + ":"
+				+ ctx.atomicBlockId + ":" + ctx.trxID + "\n");
+		log.append("exclusiveLocks= " + exclusiveLocks + "\nsharedLocks= "
+				+ sharedLocks + "\nvalidate= " + validate + "\n");
 		log.append("Send VOTE msg (res=" + outcome + ", fsn=" + next + ")\n");
 		log.append("------------------------------------------");
 		LOGGER.debug(log.toString());
+
+		VoteMsg vote = new VoteMsg(outcome, next, ctx.ctxID, ctx.trxID);
+		byte[] payload = ObjectSerializer.object2ByteArray(vote);
+		TribuDSTM.sendTo(payload, src);
 	}
 
 	private void voteMessage(VoteMsg msg, Address src)
@@ -391,19 +457,34 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		// this context is local. access directly
 		SCOReContext ctx = (SCOReContext) ctxs.get(msg.ctxID);
 
-		if (rejectTrxs.contains(ctx.trxID))
-		{ // late vote. trx already aborted
+		LOGGER.debug("* onDelivery (src=" + src + ") -> VOTE MSG\n" + msg.trxID);
+
+		if (rejectTrxs.contains(ctx.trxID) || !msg.trxID.equals(ctx.trxID))
+		{ // late vote. trx already aborted (no decide msg received yet)
+			LOGGER.debug("* VoteMessage LATE VOTE " + msg.trxID);
+
 			return;
 		}
 
 		StringBuffer log = new StringBuffer();
 		log.append("------------------------------------------\n");
-		log.append("voteMessage (src=" + src + ")");
+		log.append("voteMessage (src=" + src + ") " + ctx.threadID + ":"
+				+ ctx.atomicBlockId + ":" + ctx.trxID + "\n");
+		if (msg.outcome)
+		{
+			log.append("outcome= YES fsn= " + msg.proposedTimestamp + " ("
+					+ (ctx.votes.size() + 1) + "/" + ctx.expectedVotes
+					+ " votes)\n");
+		}
+		else
+		{
+			log.append("outcome= NO\n");
+		}
+		log.append("------------------------------------------");
+		LOGGER.debug(log.toString());
 
 		if (!msg.outcome) // voted NO
 		{ // // do not wait for more votes. abort trx
-			log.append("outcome= NO\n");
-
 			ctx.timeoutTask.cancel(); // cancel timeout
 			finalizeVoteStep(ctx, false);
 		}
@@ -411,18 +492,12 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		{ // voted YES. Save proposed timestamp
 			ctx.votes.add(msg.proposedTimestamp);
 
-			log.append("outcome= YES fsn= " + msg.proposedTimestamp + " ("
-					+ ctx.votes.size() + "/" + ctx.expectedVotes + " votes)\n");
-
 			if (ctx.votes.size() == ctx.expectedVotes)
 			{ // last vote. Every vote was YES. send decide msg
 				ctx.timeoutTask.cancel(); // cancel timeout
 				finalizeVoteStep(ctx, true);
 			}
 		}
-
-		log.append("------------------------------------------");
-		LOGGER.debug(log.toString());
 	}
 
 	private void finalizeVoteStep(SCOReContext ctx, boolean outcome)
@@ -445,68 +520,106 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		DecideMsg decide = new DecideMsg(ctx.threadID, ctx.trxID, finalSid,
 				outcome);
 		Group group = ctx.getInvolvedNodes();
-		byte[] payload = ObjectSerializer.object2ByteArray(decide);
-		TribuDSTM.sendToGroup(payload, group);
 
 		StringBuffer log = new StringBuffer();
 		log.append("------------------------------------------\n");
 		log.append("finalizeVoteStep " + ctx.threadID + ":" + ctx.atomicBlockId
 				+ ":" + ctx.trxID + "\n");
-		log.append("outcome=" + outcome + " finalSid= " + finalSid + "\n");
+		log.append("outcome= " + outcome + " finalSid= " + finalSid + "\n");
 		log.append("Send DECIDE msg to= " + group + "\n");
 		log.append("------------------------------------------");
 		LOGGER.debug(log.toString());
+
+		byte[] payload = ObjectSerializer.object2ByteArray(decide);
+		TribuDSTM.sendToGroup(payload, group);
 	}
 
-	private void decideMessage(DecideMsg msg, Address src) // XXX atomically
-	{ // I am a participant in this commit.
+	private synchronized void decideMessage(DecideMsg msg, Address src)
+	{ // I am a participant in this commit. XXX atomically
+		LOGGER.debug("* onDelivery (src=" + src + ") -> DECIDE MSG\n"
+				+ msg.trxID);
+
 		if (msg.result)
 		{
 			int max = Math.max(nextId.get(), msg.finalSid);
 			nextId.set(max);
-
-			System.out.println(String.format("%s updating nextId to %d.",
-					TribuDSTM.getLocalAddress(), max));
-
 			stableQ.add(new Pair<String, Integer>(msg.trxID, msg.finalSid));
+
+			numPrepares--;
+			LOGGER.debug("---- " + numPrepares + " " + msg.trxID);
 		}
 
-		pendQ.remove(new Pair<String, Integer>(msg.trxID, -1));
+		boolean remove = pendQ.remove(new Pair<String, Integer>(msg.trxID, -1));
 
 		if (!msg.result)
 		{
 			SCOReContextState tx = (SCOReContextState) receivedTrxs
 					.get(msg.trxID);
-			((SCOReWriteSet) tx.ws).releaseExclusiveLocks();
-			((SCOReReadSet) tx.rs).releaseSharedLocks();
 
-			SCOReContext ctx = null;
-			if (src.isLocal())
-			{ // context is local. access directly
-				ctx = (SCOReContext) ctxs.get(msg.ctxID);
+			if (tx != null)
+			{ // received DECIDE msg *after* PREPARE MSG (someone voted NO)
+				numPrepares--;
+				LOGGER.debug("---- " + numPrepares + " " + msg.trxID);
+
+				if (remove) // I only have the locks if I voted YES
+				{ // and put the tx in the pendQ
+					((SCOReReadSet) tx.rs).releaseSharedLocks(msg.trxID);
+					((SCOReWriteSet) tx.ws).releaseExclusiveLocks(msg.trxID);
+				}
+
+				SCOReContext ctx = null;
+				if (src.isLocal())
+				{ // context is local. access directly
+					ctx = (SCOReContext) ctxs.get(msg.ctxID);
+				}
+				else
+				{ // context is remote. recreate from state
+					ctx = (SCOReContext) ContextDelegator.getInstance();
+					ctx.recreateContextFromState(tx);
+				}
+
+				receivedTrxs.remove(msg.trxID);
+				// rejectTrxs.remove(msg.trxID); XXX
+
+				ctx.processed(false);
 			}
 			else
-			{ // context is remote. recreate from state
-				ctx = (SCOReContext) ContextDelegator.getInstance();
-				ctx.recreateContextFromState(tx);
-			}
-			ctx.processed(false);
+			{ // received DECIDE msg *before* PREPARE MSG (someone voted NO)
+				if (src.isLocal())
+				{ // context is local. access directly
+					SCOReContext ctx = (SCOReContext) ctxs.get(msg.ctxID);
+					ctx.processed(false);
+				}
 
-			receivedTrxs.remove(msg.trxID);
-			rejectTrxs.remove(msg.trxID);
+				rejectTrxs.add(msg.trxID);
+			}
 		}
 
 		StringBuffer log = new StringBuffer();
 		log.append("------------------------------------------\n");
-		log.append("decideMessage (src=" + src + ") " + msg.ctxID + ":-1:"
+		log.append("decideMessage (src=" + src + ") " + msg.ctxID + ":X:"
 				+ msg.trxID + "\n");
 		log.append("result= " + msg.result + " finalSid= " + msg.finalSid
 				+ "\n");
 		log.append("------------------------------------------");
 		LOGGER.debug(log.toString());
+
+		Pair<Integer, DistributedContextState> check = waitingPrepare.peek();
+		if (numPrepares == 0 && check != null)
+		{ // I have someone to respond
+			waitingPrepare.poll();
+			lastVote = check.first;
+			LOGGER.debug("----- EXECUTE WAITING PREPARE ");
+			prepareMessage((SCOReContextState) check.second,
+					((SCOReContextState) check.second).src);
+		}
+		else if (check == null)
+		{ // I have no one waiting
+			lastVote = -1;
+		}
 	}
 
-	private void processTx()
+	private synchronized void processTx()
 	{
 		if (maxSeenId.get() > commitId.get() && pendQ.isEmpty()
 				&& stableQ.isEmpty())
@@ -518,6 +631,14 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		{
 			if (stableQ.isEmpty())
 			{ // nothing to do
+				StringBuffer log = new StringBuffer(
+						"* processTx stableQ empty\n");
+				log.append(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+				log.append("stableQ: " + stableQ + "\n");
+				log.append("pendQ: " + pendQ + "\n");
+				log.append("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+				LOGGER.debug(log.toString());
+
 				return;
 			}
 
@@ -526,8 +647,24 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 			if (pTx != null && pTx.second < sTx.second)
 			{ // there are still some trxs that can be serialized before sTx
+				StringBuffer log = new StringBuffer(
+						"* processTx some txs can be serialized before stableQ.head\n");
+				log.append(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+				log.append("stableQ: " + stableQ + "\n");
+				log.append("pendQ: " + pendQ + "\n");
+				log.append("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+				LOGGER.debug(log.toString());
+
 				return;
 			}
+
+			StringBuffer log = new StringBuffer();
+			log.append(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+			log.append("stableQ: " + stableQ + "\n");
+			log.append("pendQ: " + pendQ + "\n");
+			log.append("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+			LOGGER.debug(log.toString());
+
 			// XXX atomically
 			SCOReContext ctx = null;
 			SCOReContextState tx = (SCOReContextState) receivedTrxs
@@ -545,25 +682,31 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			ctx.sid = sTx.second;
 
 			ctx.applyWriteSet();
-			((SCOReWriteSet) tx.ws).releaseExclusiveLocks();
-			((SCOReReadSet) tx.rs).releaseSharedLocks();
+			((SCOReReadSet) tx.rs).releaseSharedLocks(sTx.first);
+			((SCOReWriteSet) tx.ws).releaseExclusiveLocks(sTx.first);
 
 			stableQ.poll(); // remove sTx
 			receivedTrxs.remove(sTx.first);
 
-			StringBuffer log = new StringBuffer();
-			log.append("------------------------------------------\n");
+			log = new StringBuffer();
+			log.append("++++++++++++++++++++++++++++++++++++++++\n");
+			log.append("TRANSACTION COMMITTED!!!\n");
 			log.append("processTx " + ctx.threadID + ":" + ctx.atomicBlockId
 					+ ":" + ctx.trxID + "\n");
 			log.append("finalSid= " + ctx.sid + "\n");
-			log.append("------------------------------------------");
+			log.append("nextId= " + nextId.get() + " commitId= " + sTx.second
+					+ " maxSeenId= " + maxSeenId.get() + "\n");
+			log.append("stableQ: " + stableQ + "\n");
+			log.append("pendQ: " + pendQ + "\n");
+			log.append("++++++++++++++++++++++++++++++++++++++++++");
 			LOGGER.debug(log.toString());
 
-			commitId.set(sTx.second);
+			commitId.set(sTx.second); // XXX isto é assim?
 			ctx.processed(true);
 		}
 	}
 
+	@ExcludeTM
 	class Pair<K, V>
 	{
 		public K first;
@@ -580,6 +723,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		{
 			return (other instanceof Pair)
 					&& (this.first.equals(((Pair<?, ?>) other).first));
+		}
+
+		public String toString()
+		{
+			return "(" + first + "," + second + ")";
 		}
 	}
 }

@@ -20,4 +20,8 @@ public interface PartialReplicationOID extends OID
 	public boolean equals(Object obj);
 
 	public int hashCode();
+
+	public boolean isBootstrap();
+
+	public void setBootstrap(boolean val);
 }
