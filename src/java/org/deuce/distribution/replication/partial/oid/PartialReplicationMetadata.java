@@ -15,17 +15,20 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	private static final long serialVersionUID = 1L;
 	private java.util.UUID id;
 	private Group group;
+	private boolean isBootstrap;
 
 	public PartialReplicationMetadata()
 	{ // Requires the insertion of the group later.
 		this.id = java.util.UUID.randomUUID();
 		this.group = null;
+		this.isBootstrap = false;
 	}
 
 	public PartialReplicationMetadata(Group group)
 	{
 		this.id = java.util.UUID.randomUUID();
 		this.group = group;
+		this.isBootstrap = false;
 	}
 
 	public PartialReplicationMetadata(int seed)
@@ -33,6 +36,7 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 		byte[] name = ByteBuffer.allocate(4).putInt(seed).array();
 		this.id = java.util.UUID.nameUUIDFromBytes(name);
 		this.group = null;
+		this.isBootstrap = false;
 	}
 
 	public PartialReplicationMetadata(int seed, Group group)
@@ -40,6 +44,7 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 		byte[] name = ByteBuffer.allocate(4).putInt(seed).array();
 		this.id = java.util.UUID.nameUUIDFromBytes(name);
 		this.group = group;
+		this.isBootstrap = false;
 	}
 
 	@Override
@@ -71,5 +76,17 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	public int hashCode()
 	{
 		return this.id.hashCode();
+	}
+
+	@Override
+	public boolean isBootstrap()
+	{
+		return this.isBootstrap;
+	}
+
+	@Override
+	public void setBootstrap(boolean val)
+	{
+		this.isBootstrap = val;
 	}
 }

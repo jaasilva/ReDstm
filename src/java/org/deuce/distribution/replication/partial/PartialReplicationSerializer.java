@@ -7,6 +7,7 @@ import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
+import org.deuce.distribution.replication.OID2Object;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationMetadataFactory;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
@@ -46,6 +47,13 @@ public class PartialReplicationSerializer extends ObjectSerializer
 
 			LOGGER.trace("< " + oid + " (oid null) "
 					+ obj.getClass().getSimpleName());
+		}
+		else if (oid.isBootstrap())
+		{
+			LOGGER.trace("< " + oid + " (bootstrap) "
+					+ obj.getClass().getSimpleName());
+// serializar com contexto (no meu grupo(se publicado enviar ids) ou não(enviar objectos))
+			return new OID2Object(oid);
 		}
 		else
 		{
@@ -137,6 +145,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	public void createBootstrapOID(UniqueObject obj, int id)
 	{
 		PartialReplicationOID meta = factory.generateFullReplicationOID(id);
+		meta.setBootstrap(true);
 		obj.setMetadata(meta);
 		TribuDSTM.putObject(meta, obj);
 
