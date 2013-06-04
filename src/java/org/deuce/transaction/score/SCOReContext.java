@@ -19,7 +19,6 @@ import org.deuce.transaction.pool.Pool;
 import org.deuce.transaction.pool.ResourceFactory;
 import org.deuce.transaction.score.field.SCOReReadFieldAccess;
 import org.deuce.transaction.score.field.SCOReWriteFieldAccess;
-import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.array.ArrayContainer;
 import org.deuce.transform.localmetadata.type.TxField;
@@ -48,8 +47,8 @@ public class SCOReContext extends DistributedContext
 	public static final TransactionException VERSION_UNAVAILABLE_EXCEPTION = new TransactionException(
 			"Fail on retrieveing an older or unexistent version.");
 
-	protected SCOReReadSet readSet;
-	protected SCOReWriteSet writeSet;
+	public SCOReReadSet readSet;
+	public SCOReWriteSet writeSet;
 
 	public int sid;
 	public boolean firstReadDone;
@@ -88,10 +87,9 @@ public class SCOReContext extends DistributedContext
 	private SCOReWriteFieldAccess onReadAccess(TxField field)
 	{
 		SCOReReadFieldAccess curr = readSet.getNext();
-		curr.init((VBoxField) field);
+		curr.init(field);
 		SCOReWriteFieldAccess a = writeSet.contains(curr);
-		
-LOGGER.trace("--- " + field.getMetadata() + a);
+
 		return a;
 	}
 
@@ -100,14 +98,16 @@ LOGGER.trace("--- " + field.getMetadata() + a);
 		SCOReWriteFieldAccess writeAccess = onReadAccess(field);
 		if (writeAccess == null)
 		{ // not in the writeSet. Do distributed read
-			LOGGER.trace("- Read " + trxID + " -> " + field.getMetadata()
-					+ " (not in WS)");
+			Object o = TribuDSTM.onTxRead(this, field.getMetadata());
 
-			return TribuDSTM.onTxRead(this, field.getMetadata());
+			LOGGER.trace("- R " + trxID + " -> " + field.getMetadata()
+					+ " (not in WS) " + o);
+
+			return o;
 		}
 		else
 		{ // in the writeSet. Return value
-			LOGGER.trace("- Read " + trxID + " -> " + field.getMetadata()
+			LOGGER.trace("- R " + trxID + " -> " + field.getMetadata()
 					+ " (in WS)");
 
 			return writeAccess.getValue();
@@ -181,6 +181,12 @@ LOGGER.trace("--- " + field.getMetadata() + a);
 
 	private void checkGroupRestrictions(UniqueObject obj, TxField field)
 	{
+		StringBuffer log = new StringBuffer();
+		log.append("==========================================\n");
+		log.append("checkGroupRestrictions " + obj.getClass().getSimpleName()
+				+ "\n");
+		log.append(field.getMetadata() + "\n");
+
 		Group txFieldGroup = ((PartialReplicationOID) field.getMetadata())
 				.getGroup();
 		PartialReplicationOID objMetadata = (PartialReplicationOID) obj
@@ -193,20 +199,43 @@ LOGGER.trace("--- " + field.getMetadata() + a);
 			// group not defined. assign the same group as the txField
 			objMetadata.setGroup(txFieldGroup);
 			obj.setMetadata(objMetadata);
+
+			log.append("objMetadata is null. Creating new metadata. Assign same group as TxField:\n"
+					+ objMetadata + "\n");
 		}
 		else
 		{
+			log.append("objMetadata is not null: " + objMetadata + "\n");
+
 			Group objGroup = objMetadata.getGroup();
 
 			if (objGroup == null) // group not defined
 			{ // assign the same group as the txField
+				log.append("objGroup is null. Assign same group as TxField:\n"
+						+ txFieldGroup + "\n");
+
 				objMetadata.setGroup(txFieldGroup);
 			}
 			else if (!txFieldGroup.equals(objGroup))
 			{ // different group. cannot happen (for now)
-				throw new TransactionException();
+				log.append("TxFieldGroup != objGroup. Throw TransactionException.");
+
+				System.exit(-1);
 			}
 		}
+
+		log.append("==========================================");
+		LOGGER.debug(log.toString());
+	}
+
+	private void write(Object value, TxField field)
+	{
+		SCOReWriteFieldAccess next = WFAPool.getNext();
+		next.set(value, field);
+		addWriteAccess(next);
+
+		LOGGER.trace("+ W " + trxID + " -> " + field.getMetadata() + " "
+				+ value);
 	}
 
 	@Override
@@ -217,106 +246,70 @@ LOGGER.trace("--- " + field.getMetadata() + a);
 			checkGroupRestrictions(value, field);
 		}
 
-		SCOReWriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field);
-		addWriteAccess(next);
-
-		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
+		write(value, field);
 	}
 
 	@Override
 	public void onWriteAccess(Object value, TxField field)
 	{
-		if (value != null)
+		if (value != null && !(value instanceof String)
+				&& !(value instanceof Byte) && !(value instanceof Short)
+				&& !(value instanceof Integer) && !(value instanceof Long)
+				&& !(value instanceof Float) && !(value instanceof Double)
+				&& !(value instanceof Character) && !(value instanceof Boolean))
 		{
 			checkGroupRestrictions((UniqueObject) value, field);
 		}
 
-		SCOReWriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field);
-		addWriteAccess(next);
-
-		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
+		write(value, field);
 	}
 
 	@Override
 	public void onWriteAccess(boolean value, TxField field)
 	{
-		SCOReWriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field);
-		addWriteAccess(next);
-
-		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
+		write(value, field);
 	}
 
 	@Override
 	public void onWriteAccess(byte value, TxField field)
 	{
-		SCOReWriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field);
-		addWriteAccess(next);
-
-		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
+		write(value, field);
 	}
 
 	@Override
 	public void onWriteAccess(char value, TxField field)
 	{
-		SCOReWriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field);
-		addWriteAccess(next);
-
-		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
+		write(value, field);
 	}
 
 	@Override
 	public void onWriteAccess(short value, TxField field)
 	{
-		SCOReWriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field);
-		addWriteAccess(next);
-
-		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
+		write(value, field);
 	}
 
 	@Override
 	public void onWriteAccess(int value, TxField field)
 	{
-		SCOReWriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field);
-		addWriteAccess(next);
-
-		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
+		write(value, field);
 	}
 
 	@Override
 	public void onWriteAccess(long value, TxField field)
 	{
-		SCOReWriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field);
-		addWriteAccess(next);
-
-		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
+		write(value, field);
 	}
 
 	@Override
 	public void onWriteAccess(float value, TxField field)
 	{
-		SCOReWriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field);
-		addWriteAccess(next);
-
-		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
+		write(value, field);
 	}
 
 	@Override
 	public void onWriteAccess(double value, TxField field)
 	{
-		SCOReWriteFieldAccess next = WFAPool.getNext();
-		next.set(value, (VBoxField) field);
-		addWriteAccess(next);
-
-		LOGGER.trace("+ Write " + trxID + " -> " + field.getMetadata());
+		write(value, field);
 	}
 
 	@Override

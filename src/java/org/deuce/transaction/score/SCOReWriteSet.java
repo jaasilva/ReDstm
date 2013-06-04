@@ -62,95 +62,66 @@ public class SCOReWriteSet implements Serializable
 
 	public void put(SCOReWriteFieldAccess write)
 	{ // add to write set
-		boolean a = writeSet.add(write);
-		LOGGER.trace(">>> " + write.field.getMetadata() + " " + a);
-		if (!a)
+		if (!writeSet.add(write))
 		{
 			writeSet.replace(write);
 		}
 	}
 
-	public void apply(int sid)
+	public synchronized void apply(int sid)
 	{ // apply only the TxFields that I replicate
 		for (SCOReWriteFieldAccess a : writeSet)
 		{
-			LOGGER.debug("&& " + a.field.getMetadata());
 			if (TribuDSTM.isLocalGroup(((PartialReplicationOID) a.field
 					.getMetadata()).getGroup()))
 			{
 				a.put(sid);
-				LOGGER.debug("&&&& " + a.field.getMetadata());
+				LOGGER.trace("APPLY " + a.field.getMetadata() + " -> "
+						+ a.value + " (sid=" + sid + ")");
 			}
 		}
 	}
 
-	public void releaseExclusiveLocks()
+	public synchronized boolean releaseExclusiveLocks(String txID)
 	{ // assumes that these locks are held
+		boolean res = false;
 		for (SCOReWriteFieldAccess a : writeSet)
 		{
-			LOGGER.debug("%% " + a.field.getMetadata());
-			try
-			{
-				((InPlaceRWLock) a.field).exclusiveUnlock();
-				LOGGER.debug("%%%% " + a.field.getMetadata());
-			}
-			catch (IllegalMonitorStateException e)
-			{ // lock is not held by this thread
-				LOGGER.debug("%%2 " + a.field.getMetadata());
-			} // ignore exception
-
-			LOGGER.debug("%%3 " + a.field.getMetadata());
+			res = ((InPlaceRWLock) a.field).exclusiveUnlock(txID);
+			LOGGER.trace("XunLock " + a.field.getMetadata() + " " + res);
 		}
+		return res;
 	}
 
-	public boolean getExclusiveLocks()
+	public synchronized boolean getExclusiveLocks(String txID)
 	{
 		boolean res = true;
 		int i = 0;
 		Object[] ws = writeSet.toArray();
-
-		while (i < ws.length && res)
+		while (res && i < ws.length)
 		{
-			LOGGER.debug("__1 "
-					+ ((SCOReWriteFieldAccess) ws[i]).field.getMetadata() + " "
-					+ ws.length);
 			res = ((InPlaceRWLock) ((SCOReWriteFieldAccess) ws[i]).field)
-					.exclusiveLock();
+					.exclusiveLock(txID);
+			LOGGER.trace("XLock "
+					+ ((SCOReWriteFieldAccess) ws[i]).field.getMetadata() + " "
+					+ res);
 			i++;
-
-			LOGGER.debug("____2 "
-					+ ((SCOReWriteFieldAccess) ws[i - 1]).field.getMetadata()
-					+ " " + res + " " + (i < ws.length));
 		}
-
-		LOGGER.debug("___________________________3 ");
 
 		if (!res)
 		{
-			LOGGER.debug("___________________________3.1 ");
-
 			if (i > 1)
 			{ // there is only 1 elem in WS. it is not locked
-				LOGGER.debug("___________________________3.1.1 ");
-
-				for (int j = i - 1; j >= 0; j--)
+				for (int j = i - 2; j >= 0; j--)
 				{
-					try
-					{
-						((InPlaceRWLock) ((SCOReWriteFieldAccess) ws[j]).field)
-								.exclusiveUnlock();
-					}
-					catch (IllegalMonitorStateException e)
-					{ // lock is not held by this thread. THIS SHOULD NOT HAPPEN
-						System.err.println("Couldn't unlock all write locks.");
-						e.printStackTrace();
-						System.exit(-1);
-					} // ignore exception
+					res = ((InPlaceRWLock) ((SCOReWriteFieldAccess) ws[j]).field)
+							.exclusiveUnlock(txID);
+					LOGGER.trace("-> XunLock "
+							+ ((SCOReWriteFieldAccess) ws[j]).field
+									.getMetadata() + " " + res);
 				}
 			}
 		}
-
-		LOGGER.debug("___________________________4 ");
 
 		return res;
 	}

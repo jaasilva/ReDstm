@@ -148,5 +148,4 @@ public class TL2Field extends TxField implements InPlaceLock,
 			throw LockTable.FAILURE_EXCEPTION;
 		}
 	}
-
 }

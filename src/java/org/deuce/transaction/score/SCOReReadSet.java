@@ -9,6 +9,7 @@ import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
 import org.deuce.transaction.score.field.InPlaceRWLock;
 import org.deuce.transaction.score.field.SCOReReadFieldAccess;
+import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -56,59 +57,47 @@ public class SCOReReadSet implements Serializable
 		return readSet[next++];
 	}
 
-	public void releaseSharedLocks()
+	public synchronized boolean releaseSharedLocks(String txID)
 	{ // assumes that these locks are held
+		boolean res = false;
 		for (int i = 0; i < next; i++)
 		{
-			LOGGER.debug("@@1 " + readSet[i].field.getMetadata());
-			try
-			{
-				((InPlaceRWLock) readSet[i].field).sharedUnlock();
-			}
-			catch (IllegalMonitorStateException e)
-			{ // lock is not held by this thread
-				LOGGER.debug("@@2 " + readSet[i].field.getMetadata());
-			} // ignore exception
-
-			LOGGER.debug("@@@@ " + readSet[i].field.getMetadata());
+			res = ((InPlaceRWLock) readSet[i].field).sharedUnlock(txID);
+			LOGGER.trace("SunLock " + readSet[i].field.getMetadata() + " "
+					+ res);
 		}
+
+		return res;
 	}
 
-	public boolean getSharedLocks()
+	public synchronized boolean getSharedLocks(String txID)
 	{
 		boolean res = true;
 		int i = 0;
 		while (res && i < next)
 		{
-			LOGGER.debug("££1 " + readSet[i].field.getMetadata());
-			res = ((InPlaceRWLock) readSet[i].field).sharedLock();
-			LOGGER.debug("££££2 " + readSet[i].field.getMetadata() + " " + res);
+			res = ((InPlaceRWLock) readSet[i].field).sharedLock(txID);
+			LOGGER.trace("SLock " + readSet[i].field.getMetadata() + " " + res);
 			i++;
 		}
 
-		LOGGER.debug("---£££££££££££££££££££££££3 ");
-
 		if (!res)
 		{
-			LOGGER.debug("---£££££££££££££££££££££££3.1 ");
-
 			if (i > 1)
 			{ // there is only 1 elem in RS. it is not locked
-				LOGGER.debug("---£££££££££££££££££££££££3.1.1 ");
-
-				for (int j = i - 1; j >= 0; j--)
+				for (int j = i - 2; j >= 0; j--)
 				{
-					((InPlaceRWLock) readSet[j].field).sharedUnlock();
+					res = ((InPlaceRWLock) readSet[j].field).sharedUnlock(txID);
+					LOGGER.trace("-> SunLock " + readSet[j].field.getMetadata()
+							+ " " + res);
 				}
 			}
 		}
 
-		LOGGER.debug("---£££££££££££££££££££££££4 ");
-
 		return res;
 	}
 
-	public boolean validate(int sid)
+	public synchronized boolean validate(int sid)
 	{ // validate only the TxFields that I replicate
 		for (int i = 0; i < next; i++)
 		{
@@ -116,7 +105,13 @@ public class SCOReReadSet implements Serializable
 					.isLocalGroup(((PartialReplicationOID) readSet[i].field
 							.getMetadata()).getGroup()))
 			{
-				if (readSet[i].field.getLastVersion().version > sid)
+				boolean res = ((VBoxField) readSet[i].field).getLastVersion().version > sid;
+				LOGGER.trace("VAL "
+						+ ((VBoxField) readSet[i].field).getMetadata()
+						+ " "
+						+ ((VBoxField) readSet[i].field).getLastVersion().version
+						+ " " + sid + " -> " + res);
+				if (res)
 				{
 					return false;
 				}
