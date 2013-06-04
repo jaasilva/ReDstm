@@ -56,6 +56,7 @@ echo `date +%H:%M`
 echo "#####"
 
 java -Xmx8g -Xms8g -cp $CP -javaagent:bin/deuceAgent.jar \
+	-Dlog=$7 \
 	-Dorg.deuce.transaction.contextClass=$STM \
 	-Dorg.deuce.exclude=$EXCLUDE \
 	-Dtribu.groupcommunication.class=$COMM \
