@@ -1,65 +1,100 @@
 package test;
 
-import org.deuce.distribution.replication.Bootstrap;
+import java.util.Random;
+
 import org.deuce.Atomic;
+import org.deuce.benchmark.Barrier;
+import org.deuce.distribution.TribuDSTM;
+import org.deuce.distribution.replication.Bootstrap;
 
 public class Prallel
 {
 	@Bootstrap(id = 1)
-	static public Counter c;
-	
-	/**
-	 * @param args
-	 * @throws Exception
-	 */
+	static public Counter count;
+
+	@Bootstrap(id = 2)
+	static public Barrier start;
+
+	@Bootstrap(id = 3)
+	static public Barrier end;
+
 	public static void main(String[] args) throws Exception
 	{
-		
-		init();
+		System.out.println("...");
 
-//		Thread[] threads = new Thread[1];
-//		for (int i = 0; i < threads.length; ++i)
-//		{
-//			threads[i] = new Thread()
-//			{
-//				@Override
-//				public void run()
-//				{
-					System.out.println(".");
-					for (int z = 0; z < 50; ++z)
-					{
-//						try
-//						{
-							c.inc();
+		if (Integer.getInteger("tribu.site") == 1)
+		{
+			init();
+			System.out.println("-- Counter initialized.");
+		}
 
-//						}
-//						catch (Exception e)
-//						{
-//							System.err.println("e");
-//							--z;
-//						}
-						System.out.println(c.get());
-					}
-//					System.out.println(c.get());
-//				}
-//			};
-//			threads[i].start();
-//		}
-//
-//		for (int i = 0; i < threads.length; ++i)
-//		{
-//			threads[i].join();
-//		}
+		int replicas = Integer.getInteger("tribu.replicas");
+		initBarriers(replicas);
+		System.out.println("-- Barriers initialized.");
 
-		// System.out.println( c.get());
-		// System.out.println( c.get());
+		Barrier s = getStartBarrier();
+		System.out.println("-- Starting...");
+		s.join();
 
+		System.out.println(">>> " + get());
+
+		Random r = new Random();
+		for (int i = 0; i < 10; i++)
+		{
+			inc();
+			System.out.println(get());
+
+			Thread.sleep(r.nextInt(1000));
+		}
+
+		Barrier e = getEndBarrier();
+		System.out.println("-- Ending...");
+		e.join();
+
+		System.out.println(">>> " + get());
+
+		TribuDSTM.close();
 	}
-	
+
 	@Atomic
-	public static void init()
+	private static void init()
 	{
-		if (c == null)
-			c = new Counter();
+		if (count == null)
+		{
+			count = new Counter();
+		}
+	}
+
+	@Atomic
+	private static void inc()
+	{
+		count.inc();
+	}
+
+	@Atomic
+	private static int get()
+	{
+		return count.get();
+	}
+
+	@Atomic
+	private static Barrier getStartBarrier()
+	{
+		return start;
+	}
+
+	@Atomic
+	private static Barrier getEndBarrier()
+	{
+		return end;
+	}
+
+	@Atomic
+	private static void initBarriers(int replicas)
+	{
+		if (start == null)
+			start = new Barrier(replicas);
+		if (end == null)
+			end = new Barrier(replicas);
 	}
 }

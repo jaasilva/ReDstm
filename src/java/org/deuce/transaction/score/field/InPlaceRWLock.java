@@ -6,13 +6,13 @@ package org.deuce.transaction.score.field;
  */
 public interface InPlaceRWLock
 {
-	boolean exclusiveLock();
+	boolean exclusiveLock(String holder);
 
-	void exclusiveUnlock();
+	boolean exclusiveUnlock(String holder);
 
-	boolean sharedLock();
+	boolean sharedLock(String holder);
 
-	void sharedUnlock();
+	boolean sharedUnlock(String holder);
 
 	boolean isExclusiveUnlocked();
 }

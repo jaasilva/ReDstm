@@ -3,6 +3,7 @@ package org.deuce.transaction.score.field;
 import java.io.Serializable;
 
 import org.deuce.transform.ExcludeTM;
+import org.deuce.transform.localmetadata.type.TxField;
 
 /**
  * @author jaasilva
@@ -12,18 +13,18 @@ import org.deuce.transform.ExcludeTM;
 public class SCOReReadFieldAccess implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	public VBoxField field;
+	public TxField field;
 
 	public SCOReReadFieldAccess()
 	{
 	}
 
-	public SCOReReadFieldAccess(VBoxField field)
+	public SCOReReadFieldAccess(TxField field)
 	{
 		init(field);
 	}
 
-	public void init(VBoxField field)
+	public void init(TxField field)
 	{
 		this.field = field;
 	}
@@ -34,7 +35,7 @@ public class SCOReReadFieldAccess implements Serializable
 		return field == other.field;
 	}
 
-	public int hashcode()
+	public int hashCode()
 	{
 		return field.hashCode();
 	}

@@ -9,11 +9,11 @@ public class Counter
 	@Atomic
 	public void inc()
 	{
-		++x;
+		x = x + 1;
 	}
 
 	@Atomic
-	public synchronized int get()
+	public int get()
 	{
 		return x;
 	}

@@ -103,6 +103,30 @@ public class StaticMethodTransformer extends MethodAdapter
 		super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName, CLASS_BASE,
 				"Ljava/lang/Object;");
 		// stack: ..., TxField, TxField, Object =>
+
+		// super.visitInsn(Opcodes.DUP);
+		// super.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out",
+		// "Ljava/io/PrintStream;");
+		// super.visitInsn(Opcodes.SWAP);
+		// super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object",
+		// "getClass", "()Ljava/lang/Class;");
+		// super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Class",
+		// "getName", "()Ljava/lang/String;");
+		// super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream",
+		// "println", "(Ljava/lang/String;)V");
+		//
+		// super.visitInsn(Opcodes.DUP);
+		// super.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out",
+		// "Ljava/io/PrintStream;");
+		// super.visitInsn(Opcodes.SWAP);
+		// super.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/System",
+		// "identityHashCode", "(Ljava/lang/Object;)I");
+		// super.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/Integer",
+		// "toHexString", "(I)Ljava/lang/String;");
+		//
+		// super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream",
+		// "println", "(Ljava/lang/String;)V");
+
 		super.visitLdcInsn(Type.getObjectType(this.className));
 		// stack: ..., TxField, TxField, Object, Class (owner) =>
 		super.visitLdcInsn(field.getFieldName());

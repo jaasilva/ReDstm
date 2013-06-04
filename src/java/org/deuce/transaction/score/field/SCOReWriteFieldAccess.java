@@ -1,6 +1,7 @@
 package org.deuce.transaction.score.field;
 
 import org.deuce.transform.ExcludeTM;
+import org.deuce.transform.localmetadata.type.TxField;
 
 /**
  * @author jaasilva
@@ -14,10 +15,10 @@ public class SCOReWriteFieldAccess extends SCOReReadFieldAccess
 
 	public void put(int sid)
 	{
-		field.commit(value, sid);
+		((VBoxField) field).commit(value, sid);
 	}
 
-	public void set(Object value, VBoxField field)
+	public void set(Object value, TxField field)
 	{
 		super.init(field);
 		this.value = value;

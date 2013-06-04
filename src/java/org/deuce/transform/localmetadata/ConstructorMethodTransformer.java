@@ -79,8 +79,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 		mv.visitInsn(Opcodes.DUP);
 		// stack: ..., Object (this), TxField, TxField =>
 		mv.visitVarInsn(Opcodes.ALOAD, 0);
-		// stack: ..., Object (this), TxField, TxField,
-		// Object (this) =>
+		// stack: ..., Object (this), TxField, TxField, Object (this) =>
 		mv.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName, "__STATIC__"
 				+ field.getFieldNameAddress(), Type.LONG_TYPE.getDescriptor());
 		// stack: ..., Object (this), TxField, TxField,

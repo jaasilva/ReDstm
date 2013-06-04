@@ -2,7 +2,6 @@ package org.deuce.benchmark;
 
 import org.deuce.Atomic;
 import org.deuce.reflection.AddressUtil;
-import org.deuce.reflection.UnsafeHolder;
 
 public class Barrier
 {
@@ -58,18 +57,27 @@ public class Barrier
 
 		increment();
 
-		System.err.println("Barrier increased to " + counter + " (expected="
-				+ expected + ")");
+		System.err.println("Barrier increased to " + getCounter()
+				+ " (expected=" + getExpected() + ")");
 		boolean exit = false;
 		while (!exit)
 		{
 			try
 			{
-				if (UnsafeHolder.getUnsafe().getIntVolatile(this,
-						counter_offset) >= expected)
+				int c = getCounter();
+				boolean res = c >= getExpected();
+				System.out.println("##> " + res + " " + c);
+				if (res)
 				{
 					exit = true;
 				}
+
+				// if (UnsafeHolder.getUnsafe().getIntVolatile(this,
+				// counter_offset) >= expected)
+				// {
+				// exit = true;
+				// }
+
 				Thread.sleep(pollingPeriod);
 			}
 			catch (InterruptedException e)
@@ -79,9 +87,32 @@ public class Barrier
 			}
 		}
 
-		System.err.println("Barrier increased to " + counter + " (expected="
-				+ expected + ")");
-		UnsafeHolder.getUnsafe().putIntVolatile(this, counter_offset, 0);
+		System.err.println("-- Barrier increased to " + getCounter()
+				+ " (expected=" + getExpected() + ")");
+		// UnsafeHolder.getUnsafe().putIntVolatile(this, counter_offset, 0);
+		// resetCounter();
+		counter = 0;
+	}
+
+	@Atomic
+	private int getCounter()
+	{
+		return counter;
+	}
+
+	@Atomic
+	private int getExpected()
+	{
+		return expected;
+	}
+
+	@Atomic
+	private void resetCounter()
+	{
+		if (counter > 0)
+		{
+			counter = 0;
+		}
 	}
 
 	@Atomic
