@@ -147,9 +147,13 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 			addr.add((org.jgroups.Address) a.getSpecificAddress());
 		}
 
+		final Message msg = new Message();
+		msg.setDest(addr);
+		msg.setBuffer(payload);
+
 		try
 		{
-			channel.send(addr, payload);
+			channel.send(msg);
 		}
 		catch (Exception e)
 		{
