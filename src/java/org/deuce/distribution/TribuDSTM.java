@@ -28,12 +28,11 @@ public class TribuDSTM
 	private static GroupCommunication groupComm;
 	private static DataPartitioner dataPart;
 	private static GroupPartitioner groupPart;
-
-	public static boolean PARTIAL;
-	public static Group ALL = new PartialReplicationGroup();
-	public static String partialDefault = "false";
-
 	private static Class<? extends DistributedContext> ctxClass;
+
+	public static boolean PARTIAL; // check runtime mode
+	public static Group ALL = new PartialReplicationGroup(); // empty group
+	public static String partialDefault = "false";
 
 	static
 	{

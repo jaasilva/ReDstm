@@ -84,12 +84,13 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public void sendReliably(byte[] payload)
 	{
 		final Message msg = new Message();
 		msg.setDest(null);
 		msg.setBuffer(payload);
-		msg.setFlag(Message.NO_TOTAL_ORDER);
+		msg.setFlag(Message.NO_TOTAL_ORDER); // flag is deprecated
 
 		try
 		{
@@ -192,7 +193,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	public void sendToGroup(byte[] payload, Group group)
 	{
 		for (Address a : group.getAll())
-		{
+		{ // assumes group has no duplicate addresses
 			try
 			{
 				channel.send((org.jgroups.Address) a.getSpecificAddress(),
