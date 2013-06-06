@@ -68,10 +68,13 @@ public class TribuDSTM
 					Integer.getInteger("tribu.groups", 1));
 			dataPart.init();
 
-			ALL.addAll(getAllMembers());
-
-			LOGGER.warn("> ALL:" + ALL);
+			// ALL.addAll(getAllMembers()); XXX
+			//
+			// LOGGER.warn("> ALL:" + ALL);
 		}
+
+		ALL.addAll(getAllMembers());
+		LOGGER.warn("> ALL:" + ALL);
 
 		distProtocol.init();
 
