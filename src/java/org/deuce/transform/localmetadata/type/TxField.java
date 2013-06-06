@@ -197,15 +197,4 @@ public class TxField implements UniqueObject
 	{
 		return TribuDSTM.getObjectSerializer().readResolveHook(this);
 	}
-
-	public boolean equals(Object obj)
-	{ // XXX check this
-		ObjectMetadata meta = (ObjectMetadata) ((TxField) obj).getMetadata();
-		return this.metadata.equals(meta);
-	}
-
-	public int hashCode()
-	{ // XXX check this
-		return this.metadata.hashCode();
-	}
 }
