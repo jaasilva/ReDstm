@@ -145,7 +145,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
 
-		TribuDSTM.sendToGroup(payload, resGroup);
+//		TribuDSTM.sendToGroup(payload, resGroup);
+		TribuDSTM.sendTotalOrdered(payload, resGroup);
 	}
 
 	private TimerTask createTimeoutHandler(final SCOReContext sctx)
@@ -232,15 +233,20 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			}
 
 			read = sctx.response;
+			
+			if (firstRead)
+			{ // first read of this transaction
+				sctx.sid = read.lastCommitted;
+			}
 		}
 
 		log.append("Response (lastCommitted=" + read.lastCommitted
 				+ ", mostRecent=" + read.mostRecent + ")\n");
 
-		if (firstRead)
-		{ // first read of this transaction
-			sctx.sid = read.lastCommitted;
-		}
+//		if (firstRead) XXX
+//		{ // first read of this transaction
+//			sctx.sid = read.lastCommitted;
+//		}
 
 		if (sctx.isUpdate() && !read.mostRecent)
 		{
@@ -395,20 +401,20 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			return;
 		}
 
-		if (lastVote == -1)
-		{ // first prepare msg received
-			lastVote = Integer.parseInt(src.toString().split("-")[1]);
-		}
-		else if (Integer.parseInt(src.toString().split("-")[1]) < lastVote)
-		{ // src < lastVote WAIT
-			LOGGER.debug("WAIT PREPARE (src=" + src + ") " + ctx.trxID);
-			waitingPrepare.add(new Pair<Integer, DistributedContextState>(
-					Integer.parseInt(src.toString().split("-")[1]), ctx));
-			return;
-		}
-		lastVote = Integer.parseInt(src.toString().split("-")[1]);
-		numPrepares++;
-		LOGGER.debug("++++ " + numPrepares + " " + ctx.trxID);
+//		if (lastVote == -1)
+//		{ // first prepare msg received
+//			lastVote = Integer.parseInt(src.toString().split("-")[1]);
+//		}
+//		else if (Integer.parseInt(src.toString().split("-")[1]) < lastVote)
+//		{ // src < lastVote WAIT
+//			LOGGER.debug("WAIT PREPARE (src=" + src + ") " + ctx.trxID);
+//			waitingPrepare.add(new Pair<Integer, DistributedContextState>(
+//					Integer.parseInt(src.toString().split("-")[1]), ctx));
+//			return;
+//		}
+//		lastVote = Integer.parseInt(src.toString().split("-")[1]);
+//		numPrepares++;
+//		LOGGER.debug("++++ " + numPrepares + " " + ctx.trxID);
 
 		receivedTrxs.put(ctx.trxID, ctx);
 
@@ -545,8 +551,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			nextId.set(max);
 			stableQ.add(new Pair<String, Integer>(msg.trxID, msg.finalSid));
 
-			numPrepares--;
-			LOGGER.debug("---- " + numPrepares + " " + msg.trxID);
+//			numPrepares--;
+//			LOGGER.debug("---- " + numPrepares + " " + msg.trxID);
 		}
 
 		boolean remove = pendQ.remove(new Pair<String, Integer>(msg.trxID, -1));
@@ -558,8 +564,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 			if (tx != null)
 			{ // received DECIDE msg *after* PREPARE MSG (someone voted NO)
-				numPrepares--;
-				LOGGER.debug("---- " + numPrepares + " " + msg.trxID);
+//				numPrepares--;
+//				LOGGER.debug("---- " + numPrepares + " " + msg.trxID);
 
 				if (remove) // I only have the locks if I voted YES
 				{ // and put the tx in the pendQ
@@ -604,19 +610,19 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		log.append("------------------------------------------");
 		LOGGER.debug(log.toString());
 
-		Pair<Integer, DistributedContextState> check = waitingPrepare.peek();
-		if (numPrepares == 0 && check != null)
-		{ // I have someone to respond
-			waitingPrepare.poll();
-			lastVote = check.first;
-			LOGGER.debug("----- EXECUTE WAITING PREPARE ");
-			prepareMessage((SCOReContextState) check.second,
-					((SCOReContextState) check.second).src);
-		}
-		else if (check == null)
-		{ // I have no one waiting
-			lastVote = -1;
-		}
+//		Pair<Integer, DistributedContextState> check = waitingPrepare.peek();
+//		if (numPrepares == 0 && check != null)
+//		{ // I have someone to respond
+//			waitingPrepare.poll();
+//			lastVote = check.first;
+//			LOGGER.debug("----- EXECUTE WAITING PREPARE ");
+//			prepareMessage((SCOReContextState) check.second,
+//					((SCOReContextState) check.second).src);
+//		}
+//		else if (check == null)
+//		{ // I have no one waiting
+//			lastVote = -1;
+//		}
 	}
 
 	private synchronized void processTx()

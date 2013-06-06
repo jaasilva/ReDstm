@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deuce.distribution.ObjectSerializer;
+import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.OptimisticDeliveryUnsupportedException;
@@ -34,7 +35,15 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	{
 		try
 		{
-			channel = new JChannel("etc/jgroups.xml");
+			if (TribuDSTM.PARTIAL)
+			{
+				channel = new JChannel("etc/jgroups-toa.xml");
+			}
+			else
+			{
+				channel = new JChannel("etc/jgroups.xml");
+			}
+
 			channel.setReceiver(this);
 			channel.connect(System.getProperty(
 					"tribu.groupcommunication.group", "tvale"));

@@ -28,8 +28,8 @@ public class TribuDSTM
 	private static GroupCommunication groupComm;
 	private static DataPartitioner dataPart;
 	private static GroupPartitioner groupPart;
-	private static boolean PARTIAL;
 
+	public static boolean PARTIAL;
 	public static Group ALL = new PartialReplicationGroup();
 	public static String partialDefault = "false";
 
@@ -91,7 +91,7 @@ public class TribuDSTM
 		groupComm.close();
 
 		LOGGER.info("> TribuDSTM closing");
-		
+
 		System.exit(0);
 	}
 
