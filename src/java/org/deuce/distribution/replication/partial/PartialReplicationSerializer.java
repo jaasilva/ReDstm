@@ -52,7 +52,8 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		{
 			LOGGER.trace("< " + oid + " (bootstrap) "
 					+ obj.getClass().getSimpleName());
-// serializar com contexto (no meu grupo(se publicado enviar ids) ou não(enviar objectos))
+			// serializar com contexto (no meu grupo(se publicado enviar ids) ou
+			// não(enviar objectos)) XXX
 			return new OID2Object(oid);
 		}
 		else

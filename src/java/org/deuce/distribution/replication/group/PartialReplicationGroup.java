@@ -77,7 +77,7 @@ public class PartialReplicationGroup implements Group
 		{
 			return "[]";
 		}
-		
+
 		StringBuilder sb = new StringBuilder("[");
 		for (Address a : this.addrs)
 		{
