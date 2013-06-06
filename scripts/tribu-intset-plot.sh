@@ -4,7 +4,7 @@ DIR=$1
 benchmark=RBTree
 size=32768
 write=10
-for comm in appia.Appia jgroups.JGroups spread.Spread
+for comm in jgroups.JGroups #appia.Appia spread.Spread
 do
 
 	data="logs/${DIR}${benchmark}_i${size}_w${write}_${comm}.data"
@@ -173,7 +173,7 @@ do
 	echo "set style data histograms" >>$pscript
 	echo "set style histogram rowstacked gap 8" >>$pscript
 	echo "set style fill solid 1.0 border lt -1" >>$pscript
-	echo "set xtics border in scale 0,0 nomirror rotate by -45  offset character 0, 0, 0 autojustify" >>$pscript
+	echo "set xtics border in scale 0,0 nomirror rotate by -45  offset character 0, 0, 0" >>$pscript
 	echo "set xtics norangelimit font \",16\"" >>$pscript
 	echo "set ytic auto" >>$pscript
 	echo "set title \"${title[1]}, RBTree (size=${size}, update=${write}%)\"" >>$pscript
