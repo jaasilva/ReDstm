@@ -147,7 +147,7 @@ public class StaticMethodTransformer extends MethodAdapter
 
 		Integer oid = field2OID.get(field.getFieldName());
 		boolean partialField = partialRepFields.contains(field.getFieldName());
-		if (!partial)
+		if (partial)
 		{
 			// ##### setType (VBoxField)
 			// stack: ..., TxField =>
