@@ -90,7 +90,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 
 		Integer oid = field2OID.get(field.getFieldName());
 		boolean partialField = partialRepFields.contains(field.getFieldName());
-		if (partial)
+		if (!partial)
 		{
 			// ##### setType (VBoxField)
 			// stack: ..., Object (this), TxField =>
