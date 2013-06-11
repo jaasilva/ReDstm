@@ -43,7 +43,7 @@ public class Version implements Serializable
 	}
 
 	public boolean equals(Object other)
-	{ // CHECKME do I have to check the value?
+	{
 		return other instanceof Version
 				&& this.version == ((Version) other).version
 		/* && this.value.equals(((Version) other).value) */;

@@ -26,7 +26,7 @@ public class SCOReReadSet implements Serializable
 	private int next = 0;
 
 	public SCOReReadSet()
-	{ // CHECKME change array to hashSet?
+	{
 		fillArray(0);
 	}
 

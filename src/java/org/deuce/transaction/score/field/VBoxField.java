@@ -126,7 +126,7 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 
 	@Override
 	public boolean sharedUnlock(String holder)
-	{ // XXX todos podem chamar este metodo
+	{ // USE CAREFULY!!! everyone can call this method without any check
 		if (readLock != 0)
 		{ // readLock LOCKED
 			readLock--;

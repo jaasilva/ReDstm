@@ -68,7 +68,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 			LOGGER.trace("< " + oid + " (oid not null) "
 					+ obj.getClass().getSimpleName());
 		}
-		// OPT posso nao fazer isto? weak hash map no faz mal meter isto lá...
+
 		if (TribuDSTM.isLocalGroup(toPublish)) // if this is my group
 		{ // save object in locator table
 			TribuDSTM.putObject(oid, obj);

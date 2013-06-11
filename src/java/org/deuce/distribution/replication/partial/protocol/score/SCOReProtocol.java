@@ -233,11 +233,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		log.append("Response (lastCommitted=" + read.lastCommitted
 				+ ", mostRecent=" + read.mostRecent + ")\n");
 
-		// if (firstRead) XXX
-		// { // first read of this transaction
-		// sctx.sid = read.lastCommitted;
-		// }
-
 		if (sctx.isUpdate() && !read.mostRecent)
 		{
 			LOGGER.debug("* onTxRead ABORT TRANSACTION !!! "
@@ -406,7 +401,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		if (rejectTrxs.contains(ctx.trxID))
 		{ // late PREPARE msg (already received DECIDE msg (NO) for this tx)
 			LOGGER.debug("* prepareMessage LATE PREP MSG " + ctx.trxID);
-			// XXX posso remover a tx da rejectTrxs!!!!!!!!!!!!!!
+
+			// rejectTrxs.remove(ctx.trxID); XXX
 			return;
 		}
 
@@ -535,12 +531,12 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	}
 
 	private synchronized void decideMessage(DecideMsg msg, Address src)
-	{ // I am a participant in this commit. XXX atomically
+	{ // I am a participant in this commit. *atomically*
 		LOGGER.debug("* onDelivery (src=" + src + ") -> DECIDE MSG\n"
 				+ msg.trxID);
 
 		if (msg.result)
-		{
+		{ // DECIDE YES
 			int max = Math.max(nextId.get(), msg.finalSid);
 			nextId.set(max);
 			stableQ.add(new Pair<String, Integer>(msg.trxID, msg.finalSid));
@@ -549,7 +545,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		boolean remove = pendQ.remove(new Pair<String, Integer>(msg.trxID, -1));
 
 		if (!msg.result)
-		{
+		{ // DECIDE NO
 			SCOReContextState tx = (SCOReContextState) receivedTrxs
 					.get(msg.trxID);
 
@@ -565,18 +561,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 				if (src.isLocal())
 				{ // context is local. access directly
 					ctx = (SCOReContext) ctxs.get(msg.ctxID);
-				}
-				else
-				// XXX this doesnt need to happen
-				{ // context is remote. recreate from state
-					ctx = (SCOReContext) ContextDelegator.getInstance();
-					ctx.recreateContextFromState(tx);
+					ctx.processed(false);
 				}
 
 				receivedTrxs.remove(msg.trxID);
 				// rejectTrxs.remove(msg.trxID); XXX
-
-				ctx.processed(false);
 			}
 			else
 			{ // received DECIDE msg *before* PREPARE MSG (someone voted NO)
@@ -646,7 +635,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			log.append("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 			LOGGER.debug(log.toString());
 
-			// XXX atomically
+			// *atomically*
 			SCOReContext ctx = null;
 			SCOReContextState tx = (SCOReContextState) receivedTrxs
 					.get(sTx.first);
@@ -682,7 +671,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			log.append("++++++++++++++++++++++++++++++++++++++++++");
 			LOGGER.debug(log.toString());
 
-			commitId.set(sTx.second); // XXX isto é assim?
+			commitId.set(sTx.second);
 			ctx.processed(true);
 		}
 	}
