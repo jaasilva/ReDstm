@@ -57,7 +57,7 @@ echo "Comm: ${_COMM}"
 echo `date +%H:%M`
 echo "#####"
 
-java -Xmx1g -Xms1g -cp $CP -javaagent:bin/deuceAgent.jar \
+java -cp $CP -javaagent:bin/deuceAgent.jar \
 	-Dlog=$6 \
 	-Dorg.deuce.transaction.contextClass=$STM \
 	-Dorg.deuce.exclude=$EXCLUDE \

@@ -11,7 +11,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -54,26 +55,13 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			return o1.second - o2.second;
 		}
 	};
-	private Comparator<Pair<Integer, DistributedContextState>> comp2 = new Comparator<Pair<Integer, DistributedContextState>>()
-	{
-		@Override
-		public int compare(Pair<Integer, DistributedContextState> o1,
-				Pair<Integer, DistributedContextState> o2)
-		{
-			return o2.first - o1.first;
-		}
-	};
-	private final BlockingQueue<Pair<Integer, DistributedContextState>> waitingPrepare = new LinkedBlockingQueue<Pair<Integer, DistributedContextState>>(
-			50);
-	private int lastVote = -1;
-	private int numPrepares = 0;
 
 	private final AtomicInteger commitId = new AtomicInteger(0);
 	private final AtomicInteger nextId = new AtomicInteger(0);
 	private final AtomicInteger maxSeenId = new AtomicInteger(0);
 
 	private final int timeout = Integer.getInteger(
-			"tribu.distributed.protocol.score.timeout", 2000);
+			"tribu.distributed.protocol.score.timeout", 10000);
 	private final Timer timeoutTimer = new Timer();
 
 	private final Map<Integer, DistributedContext> ctxs = Collections
@@ -88,6 +76,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			.synchronizedMap(new HashMap<String, DistributedContextState>());
 	private final Set<String> rejectTrxs = Collections
 			.synchronizedSet(new HashSet<String>());
+
+	private final Executor pool = Executors.newFixedThreadPool(3);
 
 	@Override
 	public void init()
@@ -127,7 +117,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		TimerTask task = createTimeoutHandler(sctx);
 		sctx.timeoutTask = task;
-		// timeoutTimer.schedule(task, timeout); // set timeout
+		timeoutTimer.schedule(task, timeout); // set timeout
 
 		StringBuffer log = new StringBuffer();
 		log.append("------------------------------------------\n");
@@ -313,6 +303,25 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		LOGGER.debug(log.toString());
 	}
 
+	@ExcludeTM
+	class ReadRequestHandler implements Runnable
+	{
+		private ReadReq msg;
+		private Address src;
+
+		public ReadRequestHandler(ReadReq msg, Address src)
+		{
+			this.msg = msg;
+			this.src = src;
+		}
+
+		@Override
+		public void run()
+		{
+			readRequest(msg, src);
+		}
+	}
+
 	private void readRequest(ReadReq msg, Address src)
 	{
 		LOGGER.debug("* onDelivery (src=" + src + ") -> READ REQ");
@@ -379,7 +388,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 		else if (obj instanceof ReadReq) // Read Request
 		{ // I have the requested object
-			readRequest((ReadReq) obj, src);
+			// readRequest((ReadReq) obj, src);
+			pool.execute(new ReadRequestHandler((ReadReq) obj, src));
 		}
 		else if (obj instanceof ReadRet) // Read Return
 		{ // I requested this object
@@ -391,8 +401,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 	private void prepareMessage(SCOReContextState ctx, Address src)
 	{ // I am a participant in this commit. Validate and send vote msg
-		LOGGER.debug("* onDelivery (src=" + src + ") -> PREP MSG\n" + ctx.trxID
-				+ " lastVote= " + lastVote);
+		LOGGER.debug("* onDelivery (src=" + src + ") -> PREP MSG\n" + ctx.trxID);
 
 		if (rejectTrxs.contains(ctx.trxID))
 		{ // late PREPARE msg (already received DECIDE msg (NO) for this tx)
@@ -400,21 +409,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			// XXX posso remover a tx da rejectTrxs!!!!!!!!!!!!!!
 			return;
 		}
-
-		// if (lastVote == -1)
-		// { // first prepare msg received
-		// lastVote = Integer.parseInt(src.toString().split("-")[1]);
-		// }
-		// else if (Integer.parseInt(src.toString().split("-")[1]) < lastVote)
-		// { // src < lastVote WAIT
-		// LOGGER.debug("WAIT PREPARE (src=" + src + ") " + ctx.trxID);
-		// waitingPrepare.add(new Pair<Integer, DistributedContextState>(
-		// Integer.parseInt(src.toString().split("-")[1]), ctx));
-		// return;
-		// }
-		// lastVote = Integer.parseInt(src.toString().split("-")[1]);
-		// numPrepares++;
-		// LOGGER.debug("++++ " + numPrepares + " " + ctx.trxID);
 
 		receivedTrxs.put(ctx.trxID, ctx);
 
@@ -550,9 +544,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			int max = Math.max(nextId.get(), msg.finalSid);
 			nextId.set(max);
 			stableQ.add(new Pair<String, Integer>(msg.trxID, msg.finalSid));
-
-			// numPrepares--;
-			// LOGGER.debug("---- " + numPrepares + " " + msg.trxID);
 		}
 
 		boolean remove = pendQ.remove(new Pair<String, Integer>(msg.trxID, -1));
@@ -564,9 +555,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 			if (tx != null)
 			{ // received DECIDE msg *after* PREPARE MSG (someone voted NO)
-			// numPrepares--;
-			// LOGGER.debug("---- " + numPrepares + " " + msg.trxID);
-
 				if (remove) // I only have the locks if I voted YES
 				{ // and put the tx in the pendQ
 					((SCOReReadSet) tx.rs).releaseSharedLocks(msg.trxID);
@@ -579,6 +567,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 					ctx = (SCOReContext) ctxs.get(msg.ctxID);
 				}
 				else
+				// XXX this doesnt need to happen
 				{ // context is remote. recreate from state
 					ctx = (SCOReContext) ContextDelegator.getInstance();
 					ctx.recreateContextFromState(tx);
@@ -603,26 +592,12 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		StringBuffer log = new StringBuffer();
 		log.append("------------------------------------------\n");
-		log.append("decideMessage (src=" + src + ") " + msg.ctxID + ":X:"
+		log.append("decideMessage (src=" + src + ") " + msg.ctxID + ":_:"
 				+ msg.trxID + "\n");
 		log.append("result= " + msg.result + " finalSid= " + msg.finalSid
 				+ "\n");
 		log.append("------------------------------------------");
 		LOGGER.debug(log.toString());
-
-		// Pair<Integer, DistributedContextState> check = waitingPrepare.peek();
-		// if (numPrepares == 0 && check != null)
-		// { // I have someone to respond
-		// waitingPrepare.poll();
-		// lastVote = check.first;
-		// LOGGER.debug("----- EXECUTE WAITING PREPARE ");
-		// prepareMessage((SCOReContextState) check.second,
-		// ((SCOReContextState) check.second).src);
-		// }
-		// else if (check == null)
-		// { // I have no one waiting
-		// lastVote = -1;
-		// }
 	}
 
 	private synchronized void processTx()

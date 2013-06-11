@@ -4,12 +4,7 @@
     <UDP ucast_recv_buf_size="25M"
          ucast_send_buf_size="640K"
          mcast_recv_buf_size="25M"
-         mcast_send_buf_size="640K"
-
-         thread_pool.enabled="true"
-         thread_pool.min_threads="1"
-         thread_pool.max_threads="1"
-         oob_thread_pool.enabled="false"/>
+         mcast_send_buf_size="640K" />
     <PING/>
     <MERGE2/>
     <FD_SOCK/>

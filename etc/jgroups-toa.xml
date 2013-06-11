@@ -24,6 +24,6 @@
     <MFC/>
     <FRAG2/>
     <RSVP/>
-    <tom.TOA />
+    <tom.TOA/>
     <pbcast.STATE_TRANSFER/>
 </config>
