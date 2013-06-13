@@ -40,7 +40,7 @@ public class NonVoting extends FullReplicationProtocol implements
 		{
 			ctx = contexts.get(ctxState.ctxID);
 			ctx.profiler.onTODelivery();
-			PRProfiler.onLastVoteDelivery(ctxState.ctxID);
+			PRProfiler.onLastVoteReceived(ctxState.ctxID);
 			ctx.profiler.newMsgRecv(payloadSize);
 			PRProfiler.newMsgRecv(payloadSize);
 		}

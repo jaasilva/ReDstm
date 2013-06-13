@@ -457,6 +457,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			return;
 		}
 
+		PRProfiler.onPrepMsgReceived(ctx.ctxID);
+
 		receivedTrxs.put(ctx.trxID, ctx);
 
 		PRProfiler.onTxValidateBegin(ctx.ctxID);
@@ -553,7 +555,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 			if (ctx.votes.size() == ctx.expectedVotes)
 			{ // last vote. Every vote was YES. send decide msg
-				PRProfiler.onLastVoteDelivery(ctx.threadID);
+				PRProfiler.onLastVoteReceived(ctx.threadID);
 
 				ctx.timeoutTask.cancel(); // cancel timeout
 				finalizeVoteStep(ctx, true);
@@ -609,6 +611,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		if (msg.result)
 		{ // DECIDE YES
+			PRProfiler.onDecideReceived(msg.ctxID);
+
 			int max = Math.max(nextId.get(), msg.finalSid);
 			nextId.set(max);
 			stableQ.add(new Pair<String, Integer>(msg.trxID, msg.finalSid));
@@ -622,7 +626,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 					.get(msg.trxID);
 
 			if (tx != null)
-			{ // received DECIDE msg *after* PREPARE MSG (someone voted NO)
+			{ // received DECIDE msg *after* PREPARE msg (someone voted NO)
+				PRProfiler.onDecideReceived(msg.ctxID);
+
 				if (remove) // I only have the locks if I voted YES
 				{ // and put the tx in the pendQ
 					((SCOReReadSet) tx.rs).releaseSharedLocks(msg.trxID);
@@ -640,7 +646,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 				// rejectTrxs.remove(msg.trxID); XXX
 			}
 			else
-			{ // received DECIDE msg *before* PREPARE MSG (someone voted NO)
+			{ // received DECIDE msg *before* PREPARE msg (someone voted NO)
 				if (src.isLocal())
 				{ // context is local. access directly
 					SCOReContext ctx = (SCOReContext) ctxs.get(msg.ctxID);

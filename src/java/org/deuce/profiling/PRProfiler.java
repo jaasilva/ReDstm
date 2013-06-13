@@ -18,7 +18,8 @@ public class PRProfiler
 	 * Incremental average.
 	 */
 	private static long txDurationIt, txVotesIt, txValidateIt, txCommitIt,
-			msgSent, msgRecv, txRReadIt, txLReadIt, txCReadIt, serIt;
+			msgSent, msgRecv, txRReadIt, txLReadIt, txCReadIt, serIt,
+			txPrepDecideIt;
 
 	/**
 	 * Time related, in nanoseconds.
@@ -31,6 +32,7 @@ public class PRProfiler
 	private static long[] txLRead = new long[THREADS];
 	private static long[] txCRead = new long[THREADS];
 	private static long[] serialization = new long[THREADS];
+	private static long[] txPrepDecide = new long[THREADS];
 	private static long txAppDurationAvg, txAppDurationMax = Long.MIN_VALUE,
 			txAppDurationMin = Long.MAX_VALUE, txVotesAvg,
 			txVotesMax = Long.MIN_VALUE, txVotesMin = Long.MAX_VALUE,
@@ -42,7 +44,8 @@ public class PRProfiler
 			txLReadMax = Long.MIN_VALUE, txLReadMin = Long.MAX_VALUE,
 			txCReadAvg, txCReadMax = Long.MIN_VALUE,
 			txCReadMin = Long.MAX_VALUE, serAvg, serMax = Long.MIN_VALUE,
-			serMin = Long.MAX_VALUE;
+			serMin = Long.MAX_VALUE, txPrepDecideAvg,
+			txPrepDecideMax = Long.MIN_VALUE, txPrepDecideMin = Long.MAX_VALUE;
 
 	/**
 	 * Network related, in bytes.
@@ -138,7 +141,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void onLastVoteDelivery(int ctxID)
+	public static void onLastVoteReceived(int ctxID)
 	{
 		if (enabled)
 		{
@@ -396,6 +399,40 @@ public class PRProfiler
 		}
 	}
 
+	public static void onPrepMsgReceived(int ctxID)
+	{
+		if (enabled)
+		{
+			long prepStart = System.nanoTime();
+			txPrepDecide[ctxID] = prepStart;
+		}
+	}
+
+	public static void onDecideReceived(int ctxID)
+	{
+		if (enabled)
+		{
+			long decideEnd = System.nanoTime();
+			long elapsed = decideEnd - txPrepDecide[ctxID];
+
+			synchronized (lock)
+			{
+				if (elapsed < txPrepDecideMin)
+				{
+					txPrepDecideMin = elapsed;
+				}
+				else if (elapsed > txPrepDecideMax)
+				{
+					txPrepDecideMax = elapsed;
+				}
+
+				txPrepDecideAvg = incAvg(txPrepDecideAvg, elapsed,
+						txPrepDecideIt);
+				txPrepDecideIt++;
+			}
+		}
+	}
+
 	public static void print()
 	{
 		StringBuffer stats = new StringBuffer();
@@ -439,6 +476,10 @@ public class PRProfiler
 		stats.append("\t\tavg = " + txVotesAvg / 1000000 + " ms\n");
 		stats.append("\t\tmax = " + txVotesMax / 1000000 + " ms\n");
 		stats.append("\t\tmin = " + txVotesMin / 1000000 + " ms\n");
+		stats.append("\tBetween PREP msg and DECIDE msg\n");
+		stats.append("\t\tavg = " + txPrepDecideAvg / 1000000 + " ms\n");
+		stats.append("\t\tmax = " + txPrepDecideMax / 1000000 + " ms\n");
+		stats.append("\t\tmin = " + txPrepDecideMin / 1000000 + " ms\n");
 		stats.append("\tMsgs sent = " + msgSent + "\n");
 		stats.append("\t\tavg = " + msgSentSizeAvg + " bytes\n");
 		stats.append("\t\tmax = " + msgSentSizeMax + " bytes\n");
