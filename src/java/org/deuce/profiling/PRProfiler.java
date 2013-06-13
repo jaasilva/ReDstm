@@ -1,7 +1,5 @@
 package org.deuce.profiling;
 
-import java.util.HashMap;
-
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
@@ -9,6 +7,7 @@ public class PRProfiler
 {
 	public static boolean enabled = false;
 	private static Object lock = new Object();
+	private static final int THREADS = 8;
 
 	/**
 	 * Transaction throughput related.
@@ -19,23 +18,29 @@ public class PRProfiler
 	 * Incremental average.
 	 */
 	private static long txDurationIt, txVotesIt, txValidateIt, txCommitIt,
-			msgSent, msgRecv, txReadIt;
+			msgSent, msgRecv, txRReadIt, txLReadIt, txCReadIt;
 
 	/**
 	 * Time related, in nanoseconds.
 	 */
-	private static HashMap<Integer, Long> txAppDuration = new HashMap<Integer, Long>();
-	private static HashMap<Integer, Long> txVotes = new HashMap<Integer, Long>();
-	private static HashMap<Integer, Long> txValidate = new HashMap<Integer, Long>();
-	private static HashMap<Integer, Long> txCommit = new HashMap<Integer, Long>();
-	private static HashMap<Integer, Long> txRead = new HashMap<Integer, Long>();
+	private static long[] txAppDuration = new long[THREADS];
+	private static long[] txVotes = new long[THREADS];
+	private static long[] txValidate = new long[THREADS];
+	private static long[] txCommit = new long[THREADS];
+	private static long[] txRRead = new long[THREADS];
+	private static long[] txLRead = new long[THREADS];
+	private static long[] txCRead = new long[THREADS];
 	private static long txAppDurationAvg, txAppDurationMax = Long.MIN_VALUE,
 			txAppDurationMin = Long.MAX_VALUE, txVotesAvg,
 			txVotesMax = Long.MIN_VALUE, txVotesMin = Long.MAX_VALUE,
 			txValidateAvg, txValidateMax = Long.MIN_VALUE,
 			txValidateMin = Long.MAX_VALUE, txCommitAvg,
 			txCommitMax = Long.MIN_VALUE, txCommitMin = Long.MAX_VALUE,
-			txReadAvg, txReadMax = Long.MIN_VALUE, txReadMin = Long.MAX_VALUE;
+			txRReadAvg, txRReadMax = Long.MIN_VALUE,
+			txRReadMin = Long.MAX_VALUE, txLReadAvg,
+			txLReadMax = Long.MIN_VALUE, txLReadMin = Long.MAX_VALUE,
+			txCReadAvg, txCReadMax = Long.MIN_VALUE,
+			txCReadMin = Long.MAX_VALUE;
 
 	/**
 	 * Network related, in bytes.
@@ -93,7 +98,7 @@ public class PRProfiler
 		if (enabled)
 		{
 			long txAppStart = System.nanoTime();
-			txAppDuration.put(ctxID, txAppStart);
+			txAppDuration[ctxID] = txAppStart;
 		}
 	}
 
@@ -102,7 +107,7 @@ public class PRProfiler
 		if (enabled)
 		{
 			long txAppEnd = System.nanoTime();
-			long elapsed = txAppEnd - txAppDuration.get(ctxID);
+			long elapsed = txAppEnd - txAppDuration[ctxID];
 
 			synchronized (lock)
 			{
@@ -127,7 +132,7 @@ public class PRProfiler
 		if (enabled)
 		{
 			long txPrepStart = System.nanoTime();
-			txVotes.put(ctxID, txPrepStart);
+			txVotes[ctxID] = txPrepStart;
 		}
 	}
 
@@ -136,7 +141,7 @@ public class PRProfiler
 		if (enabled)
 		{
 			long txPrepEnd = System.nanoTime();
-			long elapsed = txPrepEnd - txVotes.get(ctxID);
+			long elapsed = txPrepEnd - txVotes[ctxID];
 
 			synchronized (lock)
 			{
@@ -160,7 +165,7 @@ public class PRProfiler
 		if (enabled)
 		{
 			long txValidateStart = System.nanoTime();
-			txValidate.put(ctxID, txValidateStart);
+			txValidate[ctxID] = txValidateStart;
 		}
 	}
 
@@ -169,7 +174,7 @@ public class PRProfiler
 		if (enabled)
 		{
 			long txValidateEnd = System.nanoTime();
-			long elapsed = txValidateEnd - txValidate.get(ctxID);
+			long elapsed = txValidateEnd - txValidate[ctxID];
 
 			synchronized (lock)
 			{
@@ -193,7 +198,7 @@ public class PRProfiler
 		if (enabled)
 		{
 			long txCommitStart = System.nanoTime();
-			txCommit.put(ctxID, txCommitStart);
+			txCommit[ctxID] = txCommitStart;
 		}
 	}
 
@@ -202,7 +207,7 @@ public class PRProfiler
 		if (enabled)
 		{
 			long txCommitEnd = System.nanoTime();
-			long elapsed = txCommitEnd - txCommit.get(ctxID);
+			long elapsed = txCommitEnd - txCommit[ctxID];
 
 			synchronized (lock)
 			{
@@ -257,35 +262,101 @@ public class PRProfiler
 		}
 	}
 
-	public static void onTxReadBegin(int ctxID)
+	public static void onTxRemoteReadBegin(int ctxID)
 	{
 		if (enabled)
 		{
 			long txReadStart = System.nanoTime();
-			txRead.put(ctxID, txReadStart);
+			txRRead[ctxID] = txReadStart;
 		}
 	}
 
-	public static void onTxReadFinish(int ctxID)
+	public static void onTxRemoteReadFinish(int ctxID)
 	{
 		if (enabled)
 		{
 			long txReadEnd = System.nanoTime();
-			long elapsed = txReadEnd - txRead.get(ctxID);
+			long elapsed = txReadEnd - txRRead[ctxID];
 
 			synchronized (lock)
 			{
-				if (elapsed < txReadMin)
+				if (elapsed < txRReadMin)
 				{
-					txReadMin = elapsed;
+					txRReadMin = elapsed;
 				}
-				else if (elapsed > txReadMax)
+				else if (elapsed > txRReadMax)
 				{
-					txReadMax = elapsed;
+					txRReadMax = elapsed;
 				}
 
-				txReadAvg = incAvg(txReadAvg, elapsed, txReadIt);
-				txReadIt++;
+				txRReadAvg = incAvg(txRReadAvg, elapsed, txRReadIt);
+				txRReadIt++;
+			}
+		}
+	}
+
+	public static void onTxLocalReadBegin(int ctxID)
+	{
+		if (enabled)
+		{
+			long txReadStart = System.nanoTime();
+			txLRead[ctxID] = txReadStart;
+		}
+	}
+
+	public static void onTxLocalReadFinish(int ctxID)
+	{
+		if (enabled)
+		{
+			long txReadEnd = System.nanoTime();
+			long elapsed = txReadEnd - txLRead[ctxID];
+
+			synchronized (lock)
+			{
+				if (elapsed < txLReadMin)
+				{
+					txLReadMin = elapsed;
+				}
+				else if (elapsed > txLReadMax)
+				{
+					txLReadMax = elapsed;
+				}
+
+				txLReadAvg = incAvg(txLReadAvg, elapsed, txLReadIt);
+				txLReadIt++;
+			}
+		}
+	}
+
+	public static void onTxCompleteReadBegin(int ctxID)
+	{
+		if (enabled)
+		{
+			long txReadStart = System.nanoTime();
+			txCRead[ctxID] = txReadStart;
+		}
+	}
+
+	public static void onTxCompleteReadFinish(int ctxID)
+	{
+		if (enabled)
+		{
+			long txReadEnd = System.nanoTime();
+			long elapsed = txReadEnd - txCRead[ctxID];
+
+			synchronized (lock)
+			{
+				if (elapsed < txCReadMin)
+				{
+					txCReadMin = elapsed;
+				}
+				else if (elapsed > txCReadMax)
+				{
+					txCReadMax = elapsed;
+				}
+
+				txCReadAvg = incAvg(txCReadAvg, elapsed, txCReadIt);
+				txCReadIt++;
 			}
 		}
 	}
@@ -311,10 +382,18 @@ public class PRProfiler
 		stats.append("\t\tavg = " + txCommitAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + txCommitMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + txCommitMin / 1000 + " µs\n");
+		stats.append("\tComplete Reads\n");
+		stats.append("\t\tavg = " + txCReadAvg / 1000 + " µs\n");
+		stats.append("\t\tmax = " + txCReadMax / 1000 + " µs\n");
+		stats.append("\t\tmin = " + txCReadMin / 1000 + " µs\n");
 		stats.append("\tRemote Reads\n");
-		stats.append("\t\tavg = " + txReadAvg / 1000000 + " ms\n");
-		stats.append("\t\tmax = " + txReadMax / 1000000 + " ms\n");
-		stats.append("\t\tmin = " + txReadMin / 1000000 + " ms\n");
+		stats.append("\t\tavg = " + txRReadAvg / 1000000 + " ms\n");
+		stats.append("\t\tmax = " + txRReadMax / 1000000 + " ms\n");
+		stats.append("\t\tmin = " + txRReadMin / 1000000 + " ms\n");
+		stats.append("\tLocal Reads\n");
+		stats.append("\t\tavg = " + txLReadAvg / 1000 + " µs\n");
+		stats.append("\t\tmax = " + txLReadMax / 1000 + " µs\n");
+		stats.append("\t\tmin = " + txLReadMin / 1000 + " µs\n");
 
 		stats.append("\n");
 

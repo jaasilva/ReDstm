@@ -182,6 +182,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	@Override
 	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata)
 	{ // I am the coordinator of this read.
+		PRProfiler.onTxCompleteReadBegin(ctx.threadID);
+
 		SCOReContext sctx = (SCOReContext) ctx;
 
 		StringBuffer log = new StringBuffer();
@@ -204,7 +206,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		ReadDone read;
 		if (group.contains(TribuDSTM.getLocalAddress()))
 		{ // local read
+			PRProfiler.onTxLocalReadBegin(ctx.threadID);
+
 			read = doRead(sctx.sid, metadata);
+
+			PRProfiler.onTxLocalReadFinish(ctx.threadID);
 
 			log.append("Local read (sid=" + sctx.sid + ")\n");
 		}
@@ -219,7 +225,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			byte[] payload = ObjectSerializer.object2ByteArray(req);
 
 			PRProfiler.newMsgSent(payload.length);
-			PRProfiler.onTxReadBegin(ctx.threadID);
+			PRProfiler.onTxRemoteReadBegin(ctx.threadID);
 
 			TribuDSTM.sendToGroup(payload, group);
 
@@ -232,7 +238,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 				e.printStackTrace();
 			}
 
-			PRProfiler.onTxReadFinish(ctx.threadID);
+			PRProfiler.onTxRemoteReadFinish(ctx.threadID);
 
 			read = sctx.response;
 
@@ -255,6 +261,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		log.append("------------------------------------------");
 		LOGGER.debug(log.toString());
+
+		PRProfiler.onTxCompleteReadFinish(ctx.threadID);
 
 		return read.value;
 	}
