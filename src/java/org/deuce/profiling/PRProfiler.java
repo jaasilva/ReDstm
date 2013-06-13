@@ -7,7 +7,7 @@ public class PRProfiler
 {
 	public static boolean enabled = false;
 	private static Object lock = new Object();
-	private static final int THREADS = 8;
+	private static final int THREADS = 16;
 
 	/**
 	 * Transaction throughput related.
