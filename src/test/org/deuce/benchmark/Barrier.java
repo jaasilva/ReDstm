@@ -66,7 +66,7 @@ public class Barrier
 			{
 				int c = getCounter();
 				boolean res = c >= getExpected();
-				System.out.println("##> " + res + " " + c);
+				// System.out.println("##> " + res + " " + c);
 				if (res)
 				{
 					exit = true;
@@ -104,15 +104,6 @@ public class Barrier
 	private int getExpected()
 	{
 		return expected;
-	}
-
-	@Atomic
-	private void resetCounter()
-	{
-		if (counter > 0)
-		{
-			counter = 0;
-		}
 	}
 
 	@Atomic

@@ -434,8 +434,6 @@ public class PRProfiler
 		stats.append("\t\tmax = " + serMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + serMin / 1000 + " µs\n");
 
-		stats.append("\n");
-
 		stats.append("=== Network\n");
 		stats.append("\tWaiting for votes\n");
 		stats.append("\t\tavg = " + txVotesAvg / 1000000 + " ms\n");

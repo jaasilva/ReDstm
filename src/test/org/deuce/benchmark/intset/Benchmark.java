@@ -63,8 +63,11 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			}
 
 			System.err.println("Set created.");
+			long start = System.nanoTime();
 			initializeSet(new Random(), initial);
-			System.err.println("Set populated.");
+			long end = System.nanoTime();
+			System.err.println("Set populated: " + (end - start) / 1000000
+					+ " ms");
 
 			// for (int i = 0; i < initial; i++)
 			// m_set.add(random.nextInt(m_range));
@@ -162,14 +165,11 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 
 	public void initializeSet(Random random, int initial)
 	{
-		long start = System.nanoTime();
 		int chunkSize = initial / 1024;
 		for (int i = 0; i < initial; i += chunkSize)
 		{
 			addToSet(random, chunkSize);
 		}
-		long end = System.nanoTime();
-		System.out.println((end - start) / 1000000 + " ms");
 	}
 
 	@Atomic
