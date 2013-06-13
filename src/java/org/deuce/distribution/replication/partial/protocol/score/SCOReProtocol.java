@@ -79,7 +79,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			.synchronizedSet(new HashSet<String>());
 
 	private static final int minReadThreads = 2;
-	private final Executor pool = Executors.newFixedThreadPool(Math.min(
+	private final Executor pool = Executors.newFixedThreadPool(Math.max(
 			TribuDSTM.getNumGroups() / 2, minReadThreads));
 
 	public static final ThreadLocal<Boolean> serializationContext = new ThreadLocal<Boolean>()
