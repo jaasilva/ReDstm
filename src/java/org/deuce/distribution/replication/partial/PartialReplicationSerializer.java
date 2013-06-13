@@ -48,12 +48,12 @@ public class PartialReplicationSerializer extends ObjectSerializer
 			LOGGER.trace("< " + oid + " (oid null) "
 					+ obj.getClass().getSimpleName());
 		}
-		else if (oid.isBootstrap())
+		else if (oid.isPublished())
 		{
 			LOGGER.trace("< " + oid + " (bootstrap) "
 					+ obj.getClass().getSimpleName());
-			// serializar com contexto (no meu grupo(se publicado enviar ids) ou
-			// não(enviar objectos)) XXX
+			// XXX serializar com contexto (no meu grupo(se publicado enviar
+			// ids) ou não(enviar objectos))
 			return new OID2Object(oid);
 		}
 		else
@@ -146,7 +146,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	public void createBootstrapOID(UniqueObject obj, int id)
 	{
 		PartialReplicationOID meta = factory.generateFullReplicationOID(id);
-		meta.setBootstrap(true);
+		meta.publish();
 		obj.setMetadata(meta);
 		TribuDSTM.putObject(meta, obj);
 

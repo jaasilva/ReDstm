@@ -18,7 +18,7 @@ public class PRProfiler
 	 * Incremental average.
 	 */
 	private static long txDurationIt, txVotesIt, txValidateIt, txCommitIt,
-			msgSent, msgRecv, txRReadIt, txLReadIt, txCReadIt;
+			msgSent, msgRecv, txRReadIt, txLReadIt, txCReadIt, serIt;
 
 	/**
 	 * Time related, in nanoseconds.
@@ -30,6 +30,7 @@ public class PRProfiler
 	private static long[] txRRead = new long[THREADS];
 	private static long[] txLRead = new long[THREADS];
 	private static long[] txCRead = new long[THREADS];
+	private static long[] serialization = new long[THREADS];
 	private static long txAppDurationAvg, txAppDurationMax = Long.MIN_VALUE,
 			txAppDurationMin = Long.MAX_VALUE, txVotesAvg,
 			txVotesMax = Long.MIN_VALUE, txVotesMin = Long.MAX_VALUE,
@@ -40,7 +41,8 @@ public class PRProfiler
 			txRReadMin = Long.MAX_VALUE, txLReadAvg,
 			txLReadMax = Long.MIN_VALUE, txLReadMin = Long.MAX_VALUE,
 			txCReadAvg, txCReadMax = Long.MIN_VALUE,
-			txCReadMin = Long.MAX_VALUE;
+			txCReadMin = Long.MAX_VALUE, serAvg, serMax = Long.MIN_VALUE,
+			serMin = Long.MAX_VALUE;
 
 	/**
 	 * Network related, in bytes.
@@ -361,6 +363,39 @@ public class PRProfiler
 		}
 	}
 
+	public static void onSerializationBegin(int ctxID)
+	{
+		if (enabled)
+		{
+			long serStart = System.nanoTime();
+			serialization[ctxID] = serStart;
+		}
+	}
+
+	public static void onSerializationFinish(int ctxID)
+	{
+		if (enabled)
+		{
+			long serEnd = System.nanoTime();
+			long elapsed = serEnd - serialization[ctxID];
+
+			synchronized (lock)
+			{
+				if (elapsed < serMin)
+				{
+					serMin = elapsed;
+				}
+				else if (elapsed > serMax)
+				{
+					serMax = elapsed;
+				}
+
+				serAvg = incAvg(serAvg, elapsed, serIt);
+				serIt++;
+			}
+		}
+	}
+
 	public static void print()
 	{
 		StringBuffer stats = new StringBuffer();
@@ -394,6 +429,10 @@ public class PRProfiler
 		stats.append("\t\tavg = " + txLReadAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + txLReadMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + txLReadMin / 1000 + " µs\n");
+		stats.append("\tSerialization\n");
+		stats.append("\t\tavg = " + serAvg / 1000 + " µs\n");
+		stats.append("\t\tmax = " + serMax / 1000 + " µs\n");
+		stats.append("\t\tmin = " + serMin / 1000 + " µs\n");
 
 		stats.append("\n");
 

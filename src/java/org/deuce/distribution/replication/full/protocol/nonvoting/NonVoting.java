@@ -73,7 +73,11 @@ public class NonVoting extends FullReplicationProtocol implements
 
 	public void onTxCommit(DistributedContext ctx)
 	{
+		PRProfiler.onSerializationBegin(ctx.threadID);
+
 		byte[] payload = ObjectSerializer.object2ByteArray(ctx.createState());
+
+		PRProfiler.onSerializationFinish(ctx.threadID);
 
 		ctx.profiler.onTOSend();
 		PRProfiler.onPrepSend(ctx.threadID);

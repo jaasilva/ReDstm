@@ -29,6 +29,7 @@ public class TribuDSTM
 	private static DataPartitioner dataPart;
 	private static GroupPartitioner groupPart;
 	private static Class<? extends DistributedContext> ctxClass;
+	private static int numGroups;
 
 	public static boolean PARTIAL; // check runtime mode
 	public static Group ALL = new PartialReplicationGroup(); // empty group
@@ -64,11 +65,11 @@ public class TribuDSTM
 
 		if (PARTIAL)
 		{
-			int groups = Integer.getInteger("tribu.groups", 1);
+			numGroups = Integer.getInteger("tribu.groups", 1);
 
-			LOGGER.warn("> Groups: " + groups);
+			LOGGER.warn("> Groups: " + numGroups);
 
-			groupPart.partitionGroups(getAllMembers(), groups);
+			groupPart.partitionGroups(getAllMembers(), numGroups);
 			dataPart.init();
 
 			ALL.addAll(getAllMembers());
@@ -326,5 +327,10 @@ public class TribuDSTM
 	public static final void sendToGroup(byte[] payload, Group group)
 	{
 		groupComm.sendToGroup(payload, group);
+	}
+
+	public static final int getNumGroups()
+	{
+		return numGroups;
 	}
 }

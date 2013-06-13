@@ -15,20 +15,20 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	private static final long serialVersionUID = 1L;
 	private java.util.UUID id;
 	private Group group;
-	private boolean isBootstrap;
+	private boolean isPublished;
 
 	public PartialReplicationMetadata()
 	{ // Requires the insertion of the group later.
 		this.id = java.util.UUID.randomUUID();
 		this.group = null;
-		this.isBootstrap = false;
+		this.isPublished = false;
 	}
 
 	public PartialReplicationMetadata(Group group)
 	{
 		this.id = java.util.UUID.randomUUID();
 		this.group = group;
-		this.isBootstrap = false;
+		this.isPublished = false;
 	}
 
 	public PartialReplicationMetadata(int seed)
@@ -36,7 +36,7 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 		byte[] name = ByteBuffer.allocate(4).putInt(seed).array();
 		this.id = java.util.UUID.nameUUIDFromBytes(name);
 		this.group = null;
-		this.isBootstrap = false;
+		this.isPublished = false;
 	}
 
 	public PartialReplicationMetadata(int seed, Group group)
@@ -44,7 +44,7 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 		byte[] name = ByteBuffer.allocate(4).putInt(seed).array();
 		this.id = java.util.UUID.nameUUIDFromBytes(name);
 		this.group = group;
-		this.isBootstrap = false;
+		this.isPublished = false;
 	}
 
 	@Override
@@ -79,14 +79,14 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	}
 
 	@Override
-	public boolean isBootstrap()
+	public boolean isPublished()
 	{
-		return this.isBootstrap;
+		return this.isPublished;
 	}
 
 	@Override
-	public void setBootstrap(boolean val)
+	public void publish()
 	{
-		this.isBootstrap = val;
+		this.isPublished = true;
 	}
 }

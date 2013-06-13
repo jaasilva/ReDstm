@@ -21,7 +21,7 @@ public interface PartialReplicationOID extends OID
 
 	public int hashCode();
 
-	public boolean isBootstrap();
+	public boolean isPublished();
 
-	public void setBootstrap(boolean val);
+	public void publish();
 }

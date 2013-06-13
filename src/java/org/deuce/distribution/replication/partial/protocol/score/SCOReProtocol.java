@@ -78,7 +78,18 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	private final Set<String> rejectTrxs = Collections
 			.synchronizedSet(new HashSet<String>());
 
-	private final Executor pool = Executors.newFixedThreadPool(3);
+	private static final int minReadThreads = 2;
+	private final Executor pool = Executors.newFixedThreadPool(Math.min(
+			TribuDSTM.getNumGroups() / 2, minReadThreads));
+
+	public static final ThreadLocal<Boolean> serializationContext = new ThreadLocal<Boolean>()
+	{ // false -> *not* read context; true -> read context
+		@Override
+		protected Boolean initialValue()
+		{
+			return false;
+		}
+	};
 
 	@Override
 	public void init()
@@ -134,7 +145,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		log.append("------------------------------------------");
 		LOGGER.debug(log.toString());
 
+		PRProfiler.onSerializationBegin(ctx.threadID);
+
 		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
+
+		PRProfiler.onSerializationFinish(ctx.threadID);
 
 		PRProfiler.onPrepSend(ctx.threadID);
 		PRProfiler.newMsgSent(payload.length);
@@ -222,7 +237,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			log.append("Remote read (sid=" + sctx.sid + ", requestVersion="
 					+ sctx.requestVersion + ")\n");
 
+			PRProfiler.onSerializationBegin(ctx.threadID);
+
 			byte[] payload = ObjectSerializer.object2ByteArray(req);
+
+			PRProfiler.onSerializationFinish(ctx.threadID);
 
 			PRProfiler.newMsgSent(payload.length);
 			PRProfiler.onTxRemoteReadBegin(ctx.threadID);
@@ -360,7 +379,14 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		ReadDone read = doRead(newReadSid, msg.metadata);
 
 		ReadRet ret = new ReadRet(msg.ctxID, msg.msgVersion, read);
-		byte[] payload = ObjectSerializer.object2ByteArray(ret);
+
+		PRProfiler.onSerializationBegin(msg.ctxID);
+
+		serializationContext.set(true);
+		byte[] payload = ObjectSerializer.object2ByteArray(ret); // XXX read ctx
+		serializationContext.set(false);
+
+		PRProfiler.onSerializationFinish(msg.ctxID);
 
 		PRProfiler.newMsgSent(payload.length);
 
@@ -473,7 +499,12 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		LOGGER.debug(log.toString());
 
 		VoteMsg vote = new VoteMsg(outcome, next, ctx.ctxID, ctx.trxID);
+
+		PRProfiler.onSerializationBegin(ctx.ctxID);
+
 		byte[] payload = ObjectSerializer.object2ByteArray(vote);
+
+		PRProfiler.onSerializationFinish(ctx.ctxID);
 
 		PRProfiler.newMsgSent(payload.length);
 
@@ -560,7 +591,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		log.append("------------------------------------------");
 		LOGGER.debug(log.toString());
 
+		PRProfiler.onSerializationBegin(ctx.threadID);
+
 		byte[] payload = ObjectSerializer.object2ByteArray(decide);
+
+		PRProfiler.onSerializationFinish(ctx.threadID);
 
 		PRProfiler.newMsgSent(payload.length);
 

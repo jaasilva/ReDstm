@@ -227,7 +227,8 @@ public class SCOReContext extends DistributedContext
 			}
 			else if (!txFieldGroup.equals(objGroup))
 			{ // different group. cannot happen (for now)
-				log.append("TxFieldGroup != objGroup. Throw TransactionException.");
+				log.append("TxFieldGroup != objGroup.");
+				System.err.println("TxFieldGroup != objGroup. CANNOT HAPPEN!");
 
 				System.exit(-1);
 			}
