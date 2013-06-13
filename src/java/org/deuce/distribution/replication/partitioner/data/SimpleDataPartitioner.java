@@ -32,7 +32,7 @@ public class SimpleDataPartitioner extends Partitioner implements
 	{
 		Group res = super.getLocalGroup();
 
-		LOGGER.info(String.format("~ Publish obj(%s) to group(%s)",
+		LOGGER.trace(String.format("~ Publish obj(%s) to group(%s)",
 				obj.getMetadata(), res));
 
 		return res;

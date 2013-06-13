@@ -7,7 +7,7 @@ CP="${CP}:lib/appia-groupcomm-4.1.2.jar"
 CP="${CP}:lib/appia-test-4.1.2.jar"
 CP="${CP}:lib/flanagan.jar"
 CP="${CP}:lib/jgcs-0.6.1.jar"
-CP="${CP}:lib/jgroups-3.1.0.Beta1.jar"
+CP="${CP}:lib/jgroups-3.3.0.Final.jar"
 CP="${CP}:lib/guava-14.0.jar"
 CP="${CP}:lib/junit-4.6.jar"
 CP="${CP}:lib/jvstm.jar"
@@ -32,8 +32,8 @@ REPLICAS=$4
 RUN=$5
 
 BENCHMARK=$1
-SIZE=32768 # 2^15
-RANGE=131072 # SIZE*4
+SIZE=1024
+RANGE=4096
 WRITES=10
 
 _STM=score.SCOReContext
@@ -57,7 +57,7 @@ echo "Comm: ${_COMM}"
 echo `date +%H:%M`
 echo "#####"
 
-java -Xmx8g -Xms8g -cp $CP -javaagent:bin/deuceAgent.jar \
+java -Xmx1g -Xms1g -cp $CP -javaagent:bin/deuceAgent.jar \
 	-Dlog=$6 \
 	-Dorg.deuce.transaction.contextClass=$STM \
 	-Dorg.deuce.exclude=$EXCLUDE \

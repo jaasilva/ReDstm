@@ -76,8 +76,17 @@ public class SCOReWriteSet implements Serializable
 					.getMetadata()).getGroup()))
 			{
 				a.put(sid);
-				LOGGER.trace("APPLY " + a.field.getMetadata() + " -> "
-						+ a.value + " (sid=" + sid + ")");
+
+				try
+				{
+					LOGGER.trace("APPLY " + a.field.getMetadata() + " -> "
+							+ a.value + " (sid=" + sid + ")");
+				}
+				catch (NullPointerException e)
+				{
+					LOGGER.trace("APPLY " + a.field.getMetadata()
+							+ " -> NullPtr (sid=" + sid + ")");
+				}
 			}
 		}
 	}

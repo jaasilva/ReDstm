@@ -11,6 +11,7 @@ import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
 import org.deuce.distribution.replication.partial.protocol.score.ReadDone;
+import org.deuce.profiling.PRProfiler;
 import org.deuce.profiling.Profiler;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
@@ -100,8 +101,16 @@ public class SCOReContext extends DistributedContext
 		{ // not in the writeSet. Do distributed read
 			Object o = TribuDSTM.onTxRead(this, field.getMetadata());
 
-			LOGGER.trace("- R " + trxID + " -> " + field.getMetadata()
-					+ " (not in WS) " + o);
+			try
+			{
+				LOGGER.trace("- R " + trxID + " -> " + field.getMetadata()
+						+ " (not in WS) " + o);
+			}
+			catch (NullPointerException e)
+			{
+				LOGGER.trace("- R " + trxID + " -> " + field.getMetadata()
+						+ " (not in WS) NullPtr");
+			}
 
 			return o;
 		}
@@ -234,8 +243,16 @@ public class SCOReContext extends DistributedContext
 		next.set(value, field);
 		addWriteAccess(next);
 
-		LOGGER.trace("+ W " + trxID + " -> " + field.getMetadata() + " "
-				+ value);
+		try
+		{
+			LOGGER.trace("+ W " + trxID + " -> " + field.getMetadata() + " "
+					+ value);
+		}
+		catch (NullPointerException e)
+		{
+			LOGGER.trace("+ W " + trxID + " -> " + field.getMetadata()
+					+ "NullPtr");
+		}
 	}
 
 	@Override
@@ -386,11 +403,13 @@ public class SCOReContext extends DistributedContext
 	public boolean commit()
 	{
 		profiler.onTxAppCommit();
+		PRProfiler.onTxAppFinish(threadID);
 
 		if (writeSet.isEmpty())
 		{ // read-only transaction
 			if (Profiler.enabled)
 				profiler.txCommitted++;
+			PRProfiler.txProcessed(true);
 
 			TribuDSTM.onTxFinished(this, true);
 			return true;

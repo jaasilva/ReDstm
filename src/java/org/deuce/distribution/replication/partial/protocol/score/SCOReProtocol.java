@@ -25,6 +25,7 @@ import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partial.PartialReplicationProtocol;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
+import org.deuce.profiling.PRProfiler;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
@@ -135,7 +136,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
 
-		// TribuDSTM.sendToGroup(payload, resGroup);
+		PRProfiler.onPrepSend(ctx.threadID);
+		PRProfiler.newMsgSent(payload.length);
+
 		TribuDSTM.sendTotalOrdered(payload, resGroup);
 	}
 
@@ -149,6 +152,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			{ // just to double check if it is really necessary to run this
 				if (ctx.votes.size() != ctx.expectedVotes)
 				{ // timeout occurs. abort trx
+					PRProfiler.txTimeout();
+
 					StringBuffer log = new StringBuffer();
 					log.append("------------------------------------------\n");
 					String t = Integer.toHexString(System
@@ -169,7 +174,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	public void onTxFinished(DistributedContext ctx, boolean committed)
 	{
 		SCOReContext sctx = (SCOReContext) ctx;
-		LOGGER.debug("* onTxFinished " + sctx.threadID + ":"
+
+		LOGGER.warn("* onTxFinished " + sctx.threadID + ":"
 				+ sctx.atomicBlockId + ":" + sctx.trxID + "= " + committed);
 	}
 
@@ -211,6 +217,10 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 					+ sctx.requestVersion + ")\n");
 
 			byte[] payload = ObjectSerializer.object2ByteArray(req);
+
+			PRProfiler.newMsgSent(payload.length);
+			PRProfiler.onTxReadBegin(ctx.threadID);
+
 			TribuDSTM.sendToGroup(payload, group);
 
 			try
@@ -221,6 +231,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			{
 				e.printStackTrace();
 			}
+
+			PRProfiler.onTxReadFinish(ctx.threadID);
 
 			read = sctx.response;
 
@@ -341,6 +353,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		ReadRet ret = new ReadRet(msg.ctxID, msg.msgVersion, read);
 		byte[] payload = ObjectSerializer.object2ByteArray(ret);
+
+		PRProfiler.newMsgSent(payload.length);
+
 		TribuDSTM.sendTo(payload, src);
 		updateNodeTimestamps(msg.readSid);
 	}
@@ -369,6 +384,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	@Override
 	public void onDelivery(Object obj, Address src, int size)
 	{
+		PRProfiler.newMsgRecv(size);
+
 		if (obj instanceof DistributedContextState) // Prepare Message
 		{
 			prepareMessage((SCOReContextState) obj, src);
@@ -408,10 +425,14 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		receivedTrxs.put(ctx.trxID, ctx);
 
+		PRProfiler.onTxValidateBegin(ctx.ctxID);
+
 		boolean exclusiveLocks = ((SCOReWriteSet) ctx.ws)
 				.getExclusiveLocks(ctx.trxID);
 		boolean sharedLocks = ((SCOReReadSet) ctx.rs).getSharedLocks(ctx.trxID);
 		boolean validate = ((SCOReReadSet) ctx.rs).validate(ctx.sid);
+
+		PRProfiler.onTxValidateEnd(ctx.ctxID);
 
 		boolean outcome = exclusiveLocks && sharedLocks && validate;
 
@@ -445,6 +466,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		VoteMsg vote = new VoteMsg(outcome, next, ctx.ctxID, ctx.trxID);
 		byte[] payload = ObjectSerializer.object2ByteArray(vote);
+
+		PRProfiler.newMsgSent(payload.length);
+
 		TribuDSTM.sendTo(payload, src);
 	}
 
@@ -490,6 +514,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 			if (ctx.votes.size() == ctx.expectedVotes)
 			{ // last vote. Every vote was YES. send decide msg
+				PRProfiler.onLastVoteDelivery(ctx.threadID);
+
 				ctx.timeoutTask.cancel(); // cancel timeout
 				finalizeVoteStep(ctx, true);
 			}
@@ -527,6 +553,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		LOGGER.debug(log.toString());
 
 		byte[] payload = ObjectSerializer.object2ByteArray(decide);
+
+		PRProfiler.newMsgSent(payload.length);
+
 		TribuDSTM.sendToGroup(payload, group);
 	}
 
@@ -652,6 +681,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			ctx.sid = sTx.second;
 
 			ctx.applyWriteSet();
+
 			((SCOReReadSet) tx.rs).releaseSharedLocks(sTx.first);
 			((SCOReWriteSet) tx.ws).releaseExclusiveLocks(sTx.first);
 

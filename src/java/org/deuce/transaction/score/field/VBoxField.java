@@ -52,9 +52,9 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 	public void commit(Object newVal, int sid)
 	{
 		Version ver = new Version(Integer.MAX_VALUE, newVal, version);
-		// this.version.value = read(type);
+		this.version.value = read(type); // WEAK ISOLATION
 		this.version = ver;
-		// write(ver.value, type);
+		write(ver.value, type); // WEAK ISOLATION
 		this.version.version = sid;
 	}
 

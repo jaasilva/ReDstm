@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.deuce.LocalMetadata;
 import org.deuce.distribution.TribuDSTM;
+import org.deuce.profiling.PRProfiler;
 import org.deuce.profiling.Profiler;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
@@ -544,12 +545,14 @@ public class Context extends DistributedContext
 	public boolean commit()
 	{
 		profiler.onTxAppCommit();
+		PRProfiler.onTxAppFinish(threadID);
 
 		if (writeSet.isEmpty())
 		{
 
 			if (Profiler.enabled)
 				profiler.txCommitted++;
+			PRProfiler.txProcessed(true);
 
 			TribuDSTM.onTxFinished(this, true);
 			return true;

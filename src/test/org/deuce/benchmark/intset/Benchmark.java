@@ -162,9 +162,14 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 
 	public void initializeSet(Random random, int initial)
 	{
+		long start = System.nanoTime();
 		int chunkSize = initial / 1024;
 		for (int i = 0; i < initial; i += chunkSize)
+		{
 			addToSet(random, chunkSize);
+		}
+		long end = System.nanoTime();
+		System.out.println((end - start) / 1000000 + " ms");
 	}
 
 	@Atomic

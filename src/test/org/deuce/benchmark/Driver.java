@@ -3,6 +3,7 @@ package org.deuce.benchmark;
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
+import org.deuce.profiling.PRProfiler;
 import org.deuce.profiling.Profiler;
 
 // import papi.j.PAPI_J;
@@ -103,6 +104,7 @@ public class Driver
 		setupBarrier.join();
 
 		Profiler.enabled = true;
+		PRProfiler.enabled = true;
 
 		BenchmarkThread[] bt = new BenchmarkThread[nb_threads];
 		for (int i = 0; i < bt.length; i++)
@@ -191,6 +193,7 @@ public class Driver
 		Profiler.enabled = false;
 
 		Profiler.print();
+		PRProfiler.print();
 
 		// System.out.println(((org.deuce.benchmark.intset.Benchmark) b).m_set);
 

@@ -11,6 +11,7 @@ import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.full.FullReplicationProtocol;
+import org.deuce.profiling.PRProfiler;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
@@ -39,7 +40,9 @@ public class NonVoting extends FullReplicationProtocol implements
 		{
 			ctx = contexts.get(ctxState.ctxID);
 			ctx.profiler.onTODelivery();
+			PRProfiler.onLastVoteDelivery(ctxState.ctxID);
 			ctx.profiler.newMsgRecv(payloadSize);
+			PRProfiler.newMsgRecv(payloadSize);
 		}
 		else
 		{
@@ -73,7 +76,9 @@ public class NonVoting extends FullReplicationProtocol implements
 		byte[] payload = ObjectSerializer.object2ByteArray(ctx.createState());
 
 		ctx.profiler.onTOSend();
+		PRProfiler.onPrepSend(ctx.threadID);
 		ctx.profiler.newMsgSent(payload.length);
+		PRProfiler.newMsgSent(payload.length);
 
 		TribuDSTM.sendTotalOrdered(payload);
 	}

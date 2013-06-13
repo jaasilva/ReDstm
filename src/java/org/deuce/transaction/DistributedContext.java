@@ -4,6 +4,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.deuce.distribution.TribuDSTM;
+import org.deuce.profiling.PRProfiler;
 import org.deuce.profiling.Profiler;
 import org.deuce.transform.ExcludeTM;
 
@@ -85,6 +86,7 @@ public abstract class DistributedContext implements ContextMetadata
 		TribuDSTM.onTxBegin(this);
 		profiler.txLocal++;
 		profiler.onTxBegin();
+		PRProfiler.onTxAppBegin(threadID);
 	}
 
 	/**
@@ -107,9 +109,11 @@ public abstract class DistributedContext implements ContextMetadata
 	public boolean validate()
 	{
 		profiler.onTxValidateBegin();
+		PRProfiler.onTxValidateBegin(threadID);
 
 		boolean valid = performValidation();
 
+		PRProfiler.onTxValidateEnd(threadID);
 		profiler.onTxValidateEnd();
 
 		return valid;
@@ -127,9 +131,11 @@ public abstract class DistributedContext implements ContextMetadata
 	public void applyWriteSet()
 	{
 		profiler.onTxCommitStart();
+		PRProfiler.onTxCommitBegin(threadID);
 
 		applyUpdates();
 
+		PRProfiler.onTxCommitEnd(threadID);
 		profiler.onTxCommitEnd();
 	}
 
@@ -149,6 +155,7 @@ public abstract class DistributedContext implements ContextMetadata
 	{
 		this.committed = committed;
 
+		PRProfiler.txProcessed(committed);
 		if (Profiler.enabled)
 			if (committed)
 				profiler.txCommitted++;
@@ -162,6 +169,7 @@ public abstract class DistributedContext implements ContextMetadata
 	{
 		if (Profiler.enabled)
 			profiler.txAborted++;
+		PRProfiler.txAborted();
 
 		TribuDSTM.onTxFinished(this, false);
 	}

@@ -64,8 +64,11 @@ public class TribuDSTM
 
 		if (PARTIAL)
 		{
-			groupPart.partitionGroups(getAllMembers(),
-					Integer.getInteger("tribu.groups", 1));
+			int groups = Integer.getInteger("tribu.groups", 1);
+
+			LOGGER.warn("> Groups: " + groups);
+
+			groupPart.partitionGroups(getAllMembers(), groups);
 			dataPart.init();
 
 			ALL.addAll(getAllMembers());
