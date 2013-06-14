@@ -15,15 +15,37 @@ public class Version implements Serializable
 {
 	private static final Logger LOGGER = Logger.getLogger(Version.class);
 	private static final long serialVersionUID = 1L;
+	private static final int MAX_VERSIONS = 16;
 	public int version;
 	public Version next;
 	public Object value;
+	private int size;
 
 	public Version(int version, Object value, Version next)
 	{
 		this.version = version;
 		this.next = next;
 		this.value = value;
+		this.size = next != null ? next.size + 1 : 1;
+		if (size == MAX_VERSIONS)
+		{
+			cleanVersions();
+			// divide by 2
+			size = MAX_VERSIONS >>> 1;
+		}
+	}
+
+	private void cleanVersions()
+	{
+		// divide by 2
+		int c = MAX_VERSIONS >>> 1;
+		Version v = this;
+		while (c > 1)
+		{
+			v = v.next;
+			c--;
+		}
+		v.next = null;
 	}
 
 	public Version get(int maxVersion)
