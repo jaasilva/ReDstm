@@ -62,7 +62,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	private final AtomicInteger maxSeenId = new AtomicInteger(0);
 
 	private final int timeout = Integer.getInteger(
-			"tribu.distributed.protocol.score.timeout", 10000);
+			"tribu.distributed.protocol.score.timeout", 3000);
 	private final Timer timeoutTimer = new Timer();
 
 	private final Map<Integer, DistributedContext> ctxs = Collections

@@ -175,7 +175,7 @@ public class TribuDSTM
 	{
 		String groupPartClass = System
 				.getProperty("tribu.distributed.GroupPartitionerClass",
-						"org.deuce.distribution.replication.partitioner.group.RandomGroupPartitioner");
+						"org.deuce.distribution.replication.partitioner.group.RoundRobinGroupPartitioner");
 		String dataPartClass = System
 				.getProperty("tribu.distributed.DataPartitionerClass",
 						"org.deuce.distribution.replication.partitioner.data.SimpleDataPartitioner");

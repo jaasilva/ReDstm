@@ -15,7 +15,6 @@ public class Version implements Serializable
 {
 	private static final Logger LOGGER = Logger.getLogger(Version.class);
 	private static final long serialVersionUID = 1L;
-	private static final int MAX_VERSIONS = 16;
 	public int version;
 	public Version next;
 	public Object value;
@@ -27,18 +26,18 @@ public class Version implements Serializable
 		this.next = next;
 		this.value = value;
 		this.size = next != null ? next.size + 1 : 1;
-		if (size == MAX_VERSIONS)
+		if (size == SCOReContext.MAX_VERSIONS)
 		{
 			cleanVersions();
 			// divide by 2
-			size = MAX_VERSIONS >>> 1;
+			size = SCOReContext.MAX_VERSIONS >>> 1;
 		}
 	}
 
 	private void cleanVersions()
 	{
 		// divide by 2
-		int c = MAX_VERSIONS >>> 1;
+		int c = SCOReContext.MAX_VERSIONS >>> 1;
 		Version v = this;
 		while (c > 1)
 		{

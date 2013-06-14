@@ -47,6 +47,8 @@ public class SCOReContext extends DistributedContext
 	private static final Logger LOGGER = Logger.getLogger(SCOReContext.class);
 	public static final TransactionException VERSION_UNAVAILABLE_EXCEPTION = new TransactionException(
 			"Fail on retrieveing an older or unexistent version.");
+	public static int MAX_VERSIONS = Integer.getInteger(
+			"org.deuce.transaction.score.versions", 16);
 
 	public SCOReReadSet readSet;
 	public SCOReWriteSet writeSet;

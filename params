@@ -9,14 +9,14 @@ tribu.site - XXX
 
 ----------------------------------------------
 *tribu.distributed.PartialReplicationMode - false
-tribu.distributed.GroupPartitionerClass - org.deuce.distribution.replication.partitioner.group.RandomGroupPartitioner
+tribu.distributed.GroupPartitionerClass - org.deuce.distribution.replication.partitioner.group.RoundRobinGroupPartitioner
 tribu.distributed.DataPartitionerClass - org.deuce.distribution.replication.partitioner.data.SimpleDataPartitioner
 tribu.groups - 1
 tribu.distributed.GroupPartitionerHashClass - org.deuce.hashing.MD5GuavaHashFunction
 (tribu.distributed.DataPartitionerHashClass - _)
 
 ----------------------------------------------
-(org.deuce.transaction.score.versions - 16)
-tribu.distributed.protocol.score.timeout - 10000 (ms)
+org.deuce.transaction.score.versions - 16
+tribu.distributed.protocol.score.timeout - 3000 (ms)
 log - XXX
 
