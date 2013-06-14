@@ -14,8 +14,6 @@ tribu.distributed.DataPartitionerClass - org.deuce.distribution.replication.part
 tribu.groups - 1
 tribu.distributed.GroupPartitionerHashClass - org.deuce.hashing.MD5GuavaHashFunction
 (tribu.distributed.DataPartitionerHashClass - _)
-
-----------------------------------------------
 org.deuce.transaction.score.versions - 16
 tribu.distributed.protocol.score.timeout - 3000 (ms)
 log - XXX

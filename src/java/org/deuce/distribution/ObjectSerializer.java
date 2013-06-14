@@ -93,6 +93,7 @@ public abstract class ObjectSerializer
 			}
 			catch (NullPointerException e)
 			{
+				e.printStackTrace();
 				throw new GCPayloadException();
 			}
 			catch (ClassNotFoundException e)
