@@ -293,6 +293,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		VBoxField field = (VBoxField) TribuDSTM.getObject(metadata);
 
+		long st = System.nanoTime();
 		while (commitId.get() < sid
 				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
 		{ // wait until (commitId.get() >= sid || ((InPlaceRWLock)
@@ -300,6 +301,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			LOGGER.debug((commitId.get() < sid) + " "
 					+ !((InPlaceRWLock) field).isExclusiveUnlocked());
 		}
+		long end = System.nanoTime();
+		PRProfiler.onWaitingReadFinish(end - st);
 
 		Version ver = field.getLastVersion().get(sid);
 		boolean mostRecent = ver.equals(field.getLastVersion());

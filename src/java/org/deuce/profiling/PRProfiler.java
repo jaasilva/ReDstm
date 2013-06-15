@@ -18,7 +18,8 @@ public class PRProfiler
 	 * Incremental average.
 	 */
 	private static long txDurationIt, txVotesIt, txValidateIt, txCommitIt,
-			msgSent, msgRecv, txRReadIt, txLReadIt, txCReadIt, serIt;
+			msgSent, msgRecv, txRReadIt, txLReadIt, txCReadIt, serIt,
+			waitingReadIt;
 
 	/**
 	 * Time related, in nanoseconds.
@@ -42,7 +43,8 @@ public class PRProfiler
 			txLReadMax = Long.MIN_VALUE, txLReadMin = Long.MAX_VALUE,
 			txCReadAvg, txCReadMax = Long.MIN_VALUE,
 			txCReadMin = Long.MAX_VALUE, serAvg, serMax = Long.MIN_VALUE,
-			serMin = Long.MAX_VALUE;
+			serMin = Long.MAX_VALUE, waitingReadAvg,
+			waitingReadMax = Long.MIN_VALUE, waitingReadMin = Long.MAX_VALUE;
 
 	/**
 	 * Network related, in bytes.
@@ -396,6 +398,27 @@ public class PRProfiler
 		}
 	}
 
+	public static void onWaitingReadFinish(long time)
+	{
+		if (enabled)
+		{
+			synchronized (lock)
+			{
+				if (time < waitingReadMin)
+				{
+					waitingReadMin = time;
+				}
+				else if (time > waitingReadMax)
+				{
+					waitingReadMax = time;
+				}
+
+				waitingReadAvg = incAvg(waitingReadAvg, time, waitingReadIt);
+				waitingReadIt++;
+			}
+		}
+	}
+
 	public static void print()
 	{
 		StringBuffer stats = new StringBuffer();
@@ -417,18 +440,22 @@ public class PRProfiler
 		stats.append("\t\tavg = " + txCommitAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + txCommitMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + txCommitMin / 1000 + " µs\n");
-		stats.append("\tComplete Reads\n");
+		stats.append("\tComplete reads\n");
 		stats.append("\t\tavg = " + txCReadAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + txCReadMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + txCReadMin / 1000 + " µs\n");
-		stats.append("\tRemote Reads\n");
+		stats.append("\tRemote reads\n");
 		stats.append("\t\tavg = " + txRReadAvg / 1000000 + " ms\n");
 		stats.append("\t\tmax = " + txRReadMax / 1000000 + " ms\n");
 		stats.append("\t\tmin = " + txRReadMin / 1000000 + " ms\n");
-		stats.append("\tLocal Reads\n");
+		stats.append("\tLocal reads\n");
 		stats.append("\t\tavg = " + txLReadAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + txLReadMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + txLReadMin / 1000 + " µs\n");
+		stats.append("\tWaiting for doRead\n");
+		stats.append("\t\tavg = " + waitingReadAvg / 1000 + " µs\n");
+		stats.append("\t\tmax = " + waitingReadMax / 1000 + " µs\n");
+		stats.append("\t\tmin = " + waitingReadMin / 1000 + " µs\n");
 		stats.append("\tSerialization\n");
 		stats.append("\t\tavg = " + serAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + serMax / 1000 + " µs\n");
