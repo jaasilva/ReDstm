@@ -12,6 +12,7 @@ import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationMetadataFactory;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOIDFactory;
+import org.deuce.distribution.replication.partial.protocol.score.SCOReProtocol;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 
@@ -36,6 +37,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 			throws ObjectStreamException
 	{
 		PartialReplicationOID oid = (PartialReplicationOID) obj.getMetadata();
+		boolean isRead = SCOReProtocol.serializationContext.get();
 
 		Group toPublish = null;
 		if (oid == null)

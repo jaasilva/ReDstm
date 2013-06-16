@@ -68,7 +68,7 @@ java -Xmx1g -Xms1g -cp $CP -javaagent:bin/deuceAgent.jar \
 	-Dtribu.distributed.protocolClass=$REP \
 	-Dtribu.serialization.compress=$ZIP \
 	-Dtribu.distributed.PartialReplicationMode=true \
-	-Dtribu.groups=1 \
+	-Dtribu.groups=2 \
 	org.deuce.benchmark.Driver -n $THREADS -d $DURATION -w $WARMUP \
 		org.deuce.benchmark.intset.Benchmark $BENCHMARK -r $RANGE -i $SIZE \
 		-w $WRITES

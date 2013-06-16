@@ -91,9 +91,8 @@ public class SCOReContext extends DistributedContext
 	{
 		SCOReReadFieldAccess curr = readSet.getNext();
 		curr.init(field);
-		SCOReWriteFieldAccess a = writeSet.contains(curr);
 
-		return a;
+		return writeSet.contains(curr);
 	}
 
 	private Object read(TxField field)

@@ -174,7 +174,8 @@ public class TribuDSTM
 	private static void initPartitioners()
 	{
 		String groupPartClass = System
-				.getProperty("tribu.distributed.GroupPartitionerClass",
+				.getProperty(
+						"tribu.distributed.GroupPartitionerClass",
 						"org.deuce.distribution.replication.partitioner.group.RoundRobinGroupPartitioner");
 		String dataPartClass = System
 				.getProperty("tribu.distributed.DataPartitionerClass",
@@ -285,8 +286,8 @@ public class TribuDSTM
 	}
 
 	public static final Collection<Address> getAllMembers()
-	{
-		return groupComm.getMembers();
+	{ // assumes members are always in the same order on
+		return groupComm.getMembers(); // the collection (in every node)
 	}
 
 	public static final Address getLocalAddress()

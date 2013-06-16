@@ -146,9 +146,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		LOGGER.debug(log.toString());
 
 		PRProfiler.onSerializationBegin(ctx.threadID);
-
 		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
-
 		PRProfiler.onSerializationFinish(ctx.threadID);
 
 		PRProfiler.onPrepSend(ctx.threadID);
@@ -222,9 +220,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		if (group.contains(TribuDSTM.getLocalAddress()))
 		{ // local read
 			PRProfiler.onTxLocalReadBegin(ctx.threadID);
-
 			read = doRead(sctx.sid, metadata);
-
 			PRProfiler.onTxLocalReadFinish(ctx.threadID);
 
 			log.append("Local read (sid=" + sctx.sid + ")\n");
@@ -238,9 +234,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 					+ sctx.requestVersion + ")\n");
 
 			PRProfiler.onSerializationBegin(ctx.threadID);
-
 			byte[] payload = ObjectSerializer.object2ByteArray(req);
-
 			PRProfiler.onSerializationFinish(ctx.threadID);
 
 			PRProfiler.newMsgSent(payload.length);
@@ -258,7 +252,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			}
 
 			PRProfiler.onTxRemoteReadFinish(ctx.threadID);
-
 			read = sctx.response;
 
 			if (firstRead)
@@ -282,7 +275,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		LOGGER.debug(log.toString());
 
 		PRProfiler.onTxCompleteReadFinish(ctx.threadID);
-
 		return read.value;
 	}
 
@@ -384,15 +376,12 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		ReadRet ret = new ReadRet(msg.ctxID, msg.msgVersion, read);
 
 		PRProfiler.onSerializationBegin(msg.ctxID);
-
 		serializationContext.set(true);
 		byte[] payload = ObjectSerializer.object2ByteArray(ret); // XXX read ctx
 		serializationContext.set(false);
-
 		PRProfiler.onSerializationFinish(msg.ctxID);
 
 		PRProfiler.newMsgSent(payload.length);
-
 		TribuDSTM.sendTo(payload, src);
 		updateNodeTimestamps(msg.readSid);
 	}
@@ -463,12 +452,10 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		receivedTrxs.put(ctx.trxID, ctx);
 
 		PRProfiler.onTxValidateBegin(ctx.ctxID);
-
 		boolean exclusiveLocks = ((SCOReWriteSet) ctx.ws)
 				.getExclusiveLocks(ctx.trxID);
 		boolean sharedLocks = ((SCOReReadSet) ctx.rs).getSharedLocks(ctx.trxID);
 		boolean validate = ((SCOReReadSet) ctx.rs).validate(ctx.sid);
-
 		PRProfiler.onTxValidateEnd(ctx.ctxID);
 
 		boolean outcome = exclusiveLocks && sharedLocks && validate;
@@ -504,13 +491,10 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		VoteMsg vote = new VoteMsg(outcome, next, ctx.ctxID, ctx.trxID);
 
 		PRProfiler.onSerializationBegin(ctx.ctxID);
-
 		byte[] payload = ObjectSerializer.object2ByteArray(vote);
-
 		PRProfiler.onSerializationFinish(ctx.ctxID);
 
 		PRProfiler.newMsgSent(payload.length);
-
 		TribuDSTM.sendTo(payload, src);
 	}
 
@@ -595,13 +579,10 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		LOGGER.debug(log.toString());
 
 		PRProfiler.onSerializationBegin(ctx.threadID);
-
 		byte[] payload = ObjectSerializer.object2ByteArray(decide);
-
 		PRProfiler.onSerializationFinish(ctx.threadID);
 
 		PRProfiler.newMsgSent(payload.length);
-
 		TribuDSTM.sendToGroup(payload, group);
 	}
 
