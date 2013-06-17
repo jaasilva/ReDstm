@@ -1,6 +1,7 @@
 package org.deuce.distribution.replication.partial.oid;
 
 import org.deuce.distribution.TribuDSTM;
+import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -20,13 +21,13 @@ public class PartialReplicationMetadataFactory implements
 	@Override
 	public PartialReplicationOID generateFullReplicationOID()
 	{
-		return new PartialReplicationMetadata(TribuDSTM.ALL);
+		return new PartialReplicationMetadata(new PartialReplicationGroup(TribuDSTM.ALL));
 	}
 
 	@Override
 	public PartialReplicationOID generateFullReplicationOID(int oid)
 	{
-		return new PartialReplicationMetadata(oid, TribuDSTM.ALL);
+		return new PartialReplicationMetadata(oid, new PartialReplicationGroup(TribuDSTM.ALL));
 	}
 
 	@Override

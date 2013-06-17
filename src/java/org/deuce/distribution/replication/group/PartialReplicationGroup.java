@@ -2,7 +2,6 @@ package org.deuce.distribution.replication.group;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.transform.ExcludeTM;
@@ -15,16 +14,16 @@ import org.deuce.transform.ExcludeTM;
 public class PartialReplicationGroup implements Group
 {
 	private static final long serialVersionUID = 1L;
-	private Set<Address> addrs;
+	private Collection<Address> addrs;
 
 	public PartialReplicationGroup()
 	{
 		this.addrs = new HashSet<Address>();
 	}
 
-	public PartialReplicationGroup(Collection<? extends Address> addrs)
+	public PartialReplicationGroup(Collection<Address> addrs)
 	{
-		this.addrs = new HashSet<Address>(addrs);
+		this.addrs = addrs;
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.full.FullReplicationProtocol;
+import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
@@ -74,7 +75,7 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 		ctx.profiler.onTOSend();
 		ctx.profiler.newMsgSent(payload.length);
 
-		TribuDSTM.sendTotalOrdered(payload, TribuDSTM.ALL);
+		TribuDSTM.sendTotalOrdered(payload, new PartialReplicationGroup(TribuDSTM.ALL));
 	}
 
 	public void onTxFinished(DistributedContext ctx, boolean committed)
