@@ -47,8 +47,7 @@ import org.deuce.profiling.Profiler;
  * =============================================================================
  */
 
-public class Client extends Thread
-{
+public class Client extends Thread {
 	int id;
 	Manager managerPtr;
 	Random randomPtr;
@@ -57,8 +56,7 @@ public class Client extends Thread
 	int queryRange;
 	int percentUser;
 
-	public Client()
-	{
+	public Client() {
 	}
 
 	/*
@@ -68,8 +66,7 @@ public class Client extends Thread
 	 * ===============================================
 	 */
 	public Client(int id, Manager managerPtr, int numOperation,
-			int numQueryPerTransaction, int queryRange, int percentUser)
-	{
+			int numQueryPerTransaction, int queryRange, int percentUser) {
 		this.randomPtr = new Random();
 		// this.randomPtr.init_genrand(id);
 		this.randomPtr.random_alloc();
@@ -87,18 +84,12 @@ public class Client extends Thread
 	 * ==========================================================
 	 * ===================
 	 */
-	public int selectAction(int r, int percentUser)
-	{
-		if (r < percentUser)
-		{
+	public int selectAction(int r, int percentUser) {
+		if (r < percentUser) {
 			return Defines.ACTION_MAKE_RESERVATION;
-		}
-		else if ((r & 1) == 1)
-		{
+		} else if ((r & 1) == 1) {
 			return Defines.ACTION_DELETE_CUSTOMER;
-		}
-		else
-		{
+		} else {
 			return Defines.ACTION_UPDATE_TABLES;
 		}
 	}
@@ -109,125 +100,56 @@ public class Client extends Thread
 	 * ================
 	 * =============================================================
 	 */
-	public void run()
-	{
-		int myId = id;
-
-		Manager managerPtr = this.managerPtr;
-		Random randomPtr = this.randomPtr;
-
-		int numOperation = this.numOperation;
-		int numQueryPerTransaction = this.numQueryPerTransaction;
-		int queryRange = this.queryRange;
-		int percentUser = this.percentUser;
-
-		int types[] = new int[numQueryPerTransaction];
-		int ids[] = new int[numQueryPerTransaction];
-		int ops[] = new int[numQueryPerTransaction];
-		int prices[] = new int[numQueryPerTransaction];
-
+	public void run() {
 		Vacation.benchBarrier.join();
 		Profiler.enabled = true;
 		Barrier.enterBarrier();
-		for (int i = 0; i < numOperation; i++)
-		{
+		for (int i = 0; i < numOperation; i++) {
 			int r = randomPtr.posrandom_generate() % 100;
 			int action = selectAction(r, percentUser);
 
-			if (action == Defines.ACTION_MAKE_RESERVATION)
-			{
-				int maxPrices[] = new int[Defines.NUM_RESERVATION_TYPE];
-				int maxIds[] = new int[Defines.NUM_RESERVATION_TYPE];
-				maxPrices[0] = -1;
-				maxPrices[1] = -1;
-				maxPrices[2] = -1;
-				maxIds[0] = -1;
-				maxIds[1] = -1;
-				maxIds[2] = -1;
-				int n;
+			if (action == Defines.ACTION_MAKE_RESERVATION) {
 				int numQuery = randomPtr.posrandom_generate()
 						% numQueryPerTransaction + 1;
 				int customerId = randomPtr.posrandom_generate() % queryRange
 						+ 1;
-				for (n = 0; n < numQuery; n++)
-				{
-					types[n] = randomPtr.random_generate()
-							% Defines.NUM_RESERVATION_TYPE;
-					ids[n] = (randomPtr.random_generate() % queryRange) + 1;
-				}
-				boolean isFound = false;
-
-				n = atomicMethodOne(managerPtr, types, ids, maxPrices, maxIds,
-						numQuery, customerId, isFound);
-
-			}
-			else if (action == Defines.ACTION_DELETE_CUSTOMER)
-			{
+				makeReservation(managerPtr, numQuery, customerId);
+			} else if (action == Defines.ACTION_DELETE_CUSTOMER) {
 				int customerId = randomPtr.posrandom_generate() % queryRange
 						+ 1;
-				atomicMethodTwo(managerPtr, customerId);
-			}
-			else if (action == Defines.ACTION_UPDATE_TABLES)
-			{
+				deleteCustomer(managerPtr, customerId);
+			} else if (action == Defines.ACTION_UPDATE_TABLES) {
 				int numUpdate = randomPtr.posrandom_generate()
 						% numQueryPerTransaction + 1;
-				int n;
-				for (n = 0; n < numUpdate; n++)
-				{
-					types[n] = randomPtr.posrandom_generate()
-							% Defines.NUM_RESERVATION_TYPE;
-					ids[n] = (randomPtr.posrandom_generate() % queryRange) + 1;
-					ops[n] = randomPtr.posrandom_generate() % 2;
-					if (ops[n] == 1)
-					{
-						prices[n] = ((randomPtr.posrandom_generate() % 5) * 10) + 50;
-					}
-				}
-				n = atomicMethodThree(managerPtr, types, ids, ops, prices,
-						numUpdate);
+				updateTables(managerPtr, numUpdate);
 			}
 		} /* for i */
 		Barrier.enterBarrier();
 	}
 
 	@Atomic
-	private int atomicMethodThree(Manager managerPtr, int[] types, int[] ids,
-			int[] ops, int[] prices, int numUpdate)
-	{
+	private int updateTables(Manager managerPtr, int numUpdate) {
 		int n;
-		for (n = 0; n < numUpdate; n++)
-		{
-			int t = types[n];
-			int id = ids[n];
-			int doAdd = ops[n];
-			if (doAdd == 1)
-			{
-				int newPrice = prices[n];
-				if (t == Defines.RESERVATION_CAR)
-				{
+		for (n = 0; n < numUpdate; n++) {
+			int t = randomPtr.posrandom_generate()
+					% Defines.NUM_RESERVATION_TYPE;
+			int id = (randomPtr.posrandom_generate() % queryRange) + 1;
+			int doAdd = randomPtr.posrandom_generate() % 2;
+			if (doAdd == 1) {
+				int newPrice = ((randomPtr.posrandom_generate() % 5) * 10) + 50;
+				if (t == Defines.RESERVATION_CAR) {
 					managerPtr.manager_addCar(id, 100, newPrice);
-				}
-				else if (t == Defines.RESERVATION_FLIGHT)
-				{
+				} else if (t == Defines.RESERVATION_FLIGHT) {
 					managerPtr.manager_addFlight(id, 100, newPrice);
-				}
-				else if (t == Defines.RESERVATION_ROOM)
-				{
+				} else if (t == Defines.RESERVATION_ROOM) {
 					managerPtr.manager_addRoom(id, 100, newPrice);
 				}
-			}
-			else
-			{ /* do delete */
-				if (t == Defines.RESERVATION_CAR)
-				{
+			} else { /* do delete */
+				if (t == Defines.RESERVATION_CAR) {
 					managerPtr.manager_deleteCar(id, 100);
-				}
-				else if (t == Defines.RESERVATION_FLIGHT)
-				{
+				} else if (t == Defines.RESERVATION_FLIGHT) {
 					managerPtr.manager_deleteFlight(id);
-				}
-				else if (t == Defines.RESERVATION_ROOM)
-				{
+				} else if (t == Defines.RESERVATION_ROOM) {
 					managerPtr.manager_deleteRoom(id, 100);
 				}
 			}
@@ -236,72 +158,63 @@ public class Client extends Thread
 	}
 
 	@Atomic
-	private void atomicMethodTwo(Manager managerPtr, int customerId)
-	{
+	private void deleteCustomer(Manager managerPtr, int customerId) {
 		int bill = managerPtr.manager_queryCustomerBill(customerId);
-		if (bill >= 0)
-		{
+		if (bill >= 0) {
 			managerPtr.manager_deleteCustomer(customerId);
 		}
 	}
 
 	@Atomic
-	private int atomicMethodOne(Manager managerPtr, int[] types, int[] ids,
-			int[] maxPrices, int[] maxIds, int numQuery, int customerId,
-			boolean isFound)
-	{
+	private int makeReservation(Manager managerPtr, int numQuery, int customerId) {
 		int n;
-		for (n = 0; n < numQuery; n++)
-		{
-			int t = types[n];
-			int id = ids[n];
+		boolean isFound = false;
+		int maxPrices_car = -1, maxPrices_flight = -1, maxPrices_room = -1;
+		int maxIds_car = -1, maxIds_flight = -1, maxIds_room = -1;
+		for (n = 0; n < numQuery; n++) {
+			int t = randomPtr.random_generate() % Defines.NUM_RESERVATION_TYPE;
+			int id = (randomPtr.random_generate() % queryRange) + 1;
 			int price = -1;
-			if (t == Defines.RESERVATION_CAR)
-			{
-				if (managerPtr.manager_queryCar(id) >= 0)
-				{
+			if (t == Defines.RESERVATION_CAR) {
+				if (managerPtr.manager_queryCar(id) >= 0) {
 					price = managerPtr.manager_queryCarPrice(id);
 				}
-			}
-			else if (t == Defines.RESERVATION_FLIGHT)
-			{
-				if (managerPtr.manager_queryFlight(id) >= 0)
-				{
+				if (price > maxPrices_car) {
+					maxPrices_car = price;
+					maxIds_car = id;
+					isFound = true;
+				}
+			} else if (t == Defines.RESERVATION_FLIGHT) {
+				if (managerPtr.manager_queryFlight(id) >= 0) {
 					price = managerPtr.manager_queryFlightPrice(id);
 				}
-			}
-			else if (t == Defines.RESERVATION_ROOM)
-			{
-				if (managerPtr.manager_queryRoom(id) >= 0)
-				{
+				if (price > maxPrices_flight) {
+					maxPrices_flight = price;
+					maxIds_flight = id;
+					isFound = true;
+				}
+			} else if (t == Defines.RESERVATION_ROOM) {
+				if (managerPtr.manager_queryRoom(id) >= 0) {
 					price = managerPtr.manager_queryRoomPrice(id);
 				}
-			}
-			if (price > maxPrices[t])
-			{
-				maxPrices[t] = price;
-				maxIds[t] = id;
-				isFound = true;
+				if (price > maxPrices_room) {
+					maxPrices_room = price;
+					maxIds_room = id;
+					isFound = true;
+				}
 			}
 		} /* for n */
-		if (isFound)
-		{
+		if (isFound) {
 			managerPtr.manager_addCustomer(customerId);
 		}
-		if (maxIds[Defines.RESERVATION_CAR] > 0)
-		{
-			managerPtr.manager_reserveCar(customerId,
-					maxIds[Defines.RESERVATION_CAR]);
+		if (maxIds_car > 0) {
+			managerPtr.manager_reserveCar(customerId, maxIds_car);
 		}
-		if (maxIds[Defines.RESERVATION_FLIGHT] > 0)
-		{
-			managerPtr.manager_reserveFlight(customerId,
-					maxIds[Defines.RESERVATION_FLIGHT]);
+		if (maxIds_flight > 0) {
+			managerPtr.manager_reserveFlight(customerId, maxIds_flight);
 		}
-		if (maxIds[Defines.RESERVATION_ROOM] > 0)
-		{
-			managerPtr.manager_reserveRoom(customerId,
-					maxIds[Defines.RESERVATION_ROOM]);
+		if (maxIds_room > 0) {
+			managerPtr.manager_reserveRoom(customerId, maxIds_room);
 		}
 		return n;
 	}
