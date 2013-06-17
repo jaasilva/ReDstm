@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import org.deuce.distribution.groupcomm.Address;
+import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -11,8 +12,10 @@ import org.deuce.transform.ExcludeTM;
  * 
  */
 @ExcludeTM
-public interface Group extends Serializable
-{
+public interface Group extends Serializable {
+	public final static String NAME = Type.getInternalName(Group.class);
+	public final static String DESC = Type.getDescriptor(Group.class);
+
 	public Collection<Address> getAll();
 
 	public boolean contains(Address addr);

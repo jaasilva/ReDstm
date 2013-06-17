@@ -15,7 +15,7 @@ public class PartialReplicationMetadataFactory implements
 	@Override
 	public PartialReplicationOID generateOID()
 	{ // Requires the insertion of the group later.
-		return new PartialReplicationMetadata();
+		return new PartialReplicationMetadata(new PartialReplicationGroup());
 	}
 
 	@Override

@@ -202,6 +202,7 @@ public class SCOReContext extends DistributedContext
 		PartialReplicationOID objMetadata = (PartialReplicationOID) obj
 				.getMetadata();
 
+		/* XXX t.vale: never happens now. */
 		if (objMetadata == null)
 		{ // normal object, no metadata (no TxField). first time written.
 			objMetadata = (PartialReplicationOID) TribuDSTM
@@ -219,20 +220,14 @@ public class SCOReContext extends DistributedContext
 
 			Group objGroup = objMetadata.getGroup();
 
-			if (objGroup == null) // group not defined
-			{ // assign the same group as the txField
-				log.append("objGroup is null. Assign same group as TxField:\n"
-						+ txFieldGroup + "\n");
-
-				objMetadata.setGroup(txFieldGroup);
-			}
-			else if (!txFieldGroup.equals(objGroup))
+			if (objMetadata.isPublished() && !txFieldGroup.equals(objGroup))
 			{ // different group. cannot happen (for now)
 				log.append("TxFieldGroup != objGroup.");
 				System.err.println("TxFieldGroup != objGroup. CANNOT HAPPEN!");
 
 				System.exit(-1);
 			}
+			objMetadata.setGroup(txFieldGroup);
 		}
 
 		log.append("==========================================");

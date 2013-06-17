@@ -5,8 +5,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deuce.distribution.TribuDSTM;
+import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.replication.full.FullReplicationSerializer;
 import org.deuce.distribution.replication.partial.PartialReplicationSerializer;
+import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
 import org.deuce.objectweb.asm.MethodVisitor;
 import org.deuce.objectweb.asm.Opcodes;
 import org.deuce.objectweb.asm.Type;
@@ -67,6 +69,27 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 		this.field2OID = field2OID;
 		this.partialRepFields = partialRepFields;
 		this.partial = partial;
+	}
+
+	protected void initDistributionMetadata() {
+		// stack: ... =>
+		mv.visitVarInsn(Opcodes.ALOAD, 0);
+		// stack: ..., Object (this) =>
+		mv.visitMethodInsn(Opcodes.INVOKESTATIC, TribuDSTM.NAME,
+				TribuDSTM.GETSERIALIZER_METHOD_NAME,
+				TribuDSTM.GETSERIALIZER_METHOD_DESC);
+		// stack: ..., Object (this), ObjectSerializer =>
+		mv.visitTypeInsn(Opcodes.CHECKCAST,
+				PartialReplicationSerializer.NAME);
+		// stack: ..., Object (this), PartialReplicationSerializer =>
+		mv.visitInsn(Opcodes.SWAP);
+		// stack: ..., PartialReplicationSerializer, Object (this) =>
+		mv.visitMethodInsn(
+				Opcodes.INVOKEVIRTUAL,
+				PartialReplicationSerializer.NAME,
+				PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_NAME,
+				PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_DESC);
+		// stack: ... =>
 	}
 
 	protected void initMetadataField(Field field)
@@ -185,6 +208,37 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 						PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_NAME,
 						PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_DESC);
 				// stack: ..., Object (this), TxField =>
+				/* XXX t.vale: inherit group from parent object. */
+				mv.visitInsn(Opcodes.DUP2);
+				// stack: ..., Object (this), TxField, Object (this), TxField =>
+				mv.visitInsn(Opcodes.SWAP);
+				// stack: ..., Object (this), TxField, TxField, Object (this) =>
+				mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, className,
+						UniqueObject.GETMETADATA_METHOD_NAME,
+						UniqueObject.GETMETADATA_METHOD_DESC);
+				// stack: ..., Object (this), TxField, TxField, ObjectMetadata =>
+				mv.visitTypeInsn(Opcodes.CHECKCAST, PartialReplicationOID.NAME);
+				// stack: ..., Object (this), TxField, TxField, PartialRepOID =>
+				mv.visitMethodInsn(Opcodes.INVOKEINTERFACE,
+						PartialReplicationOID.NAME,
+						PartialReplicationOID.GET_GROUP_METHOD_NAME,
+						PartialReplicationOID.GET_GROUP_METHOD_DESC);
+				// stack: ..., Object (this), TxField, TxField, Group (this) =>
+				mv.visitInsn(Opcodes.SWAP);
+				// stack: ..., Object (this), TxField, Group (this), TxField =>
+				mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, UniqueObject.NAME,
+						UniqueObject.GETMETADATA_METHOD_NAME,
+						UniqueObject.GETMETADATA_METHOD_DESC);
+				// stack: ..., Object (this), TxField, Group (this), ObjectMetadata =>
+				mv.visitTypeInsn(Opcodes.CHECKCAST, PartialReplicationOID.NAME);
+				// stack: ..., Object (this), TxField, Group (this), PartialRepOID =>
+				mv.visitInsn(Opcodes.SWAP);
+				// stack: ..., Object (this), TxField, PartialRepOID, Group (this) =>
+				mv.visitMethodInsn(Opcodes.INVOKEINTERFACE,
+						PartialReplicationOID.NAME,
+						PartialReplicationOID.SET_GROUP_METHOD_NAME,
+						PartialReplicationOID.SET_GROUP_METHOD_DESC);
+				// stack: ..., Object (this), TxField =>
 			}
 		}
 		else
@@ -232,37 +286,6 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 	}
 
 	@Override
-	public void visitInsn(int opcode)
-	{
-		if (opcode == Opcodes.RETURN && !callsOtherCtor)
-		{
-			((MethodTransformer) mv).disableDuplicateInstrumentation(true);
-			((MethodTransformer) mv).disableMethodInstrumentation(true);
-			if (fields.size() > 0)
-			{
-				for (Field field : fields)
-				{
-					if ((field.getAccess() & Opcodes.ACC_STATIC) == 0)
-					{
-						addField(field);
-					}
-				}
-			}
-			((MethodTransformer) mv).disableMethodInstrumentation(false);
-			((MethodTransformer) mv).disableDuplicateInstrumentation(false);
-		}
-
-		super.visitInsn(opcode);
-	}
-
-	@Override
-	public void visitEnd()
-	{
-		// ((MethodTransformer)mv).disableDuplicateInstrumentation(false);
-		super.visitEnd();
-	}
-
-	@Override
 	public void visitMethodInsn(final int opcode, final String owner,
 			final String name, final String desc)
 	{
@@ -290,7 +313,27 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 				}
 			}
 		}
-
 		super.visitMethodInsn(opcode, owner, name, desc);
+		if (!callsOtherCtor && opcode == Opcodes.INVOKESPECIAL && name.equals("<init>")
+				&& owner.equals(Type.getInternalName(Object.class))) {
+			((MethodTransformer) mv).disableDuplicateInstrumentation(true);
+			((MethodTransformer) mv).disableMethodInstrumentation(true);
+			// stack: ... =>
+			initDistributionMetadata();
+			// stack: ... =>
+			if (fields.size() > 0)
+			{
+				for (Field field : fields)
+				{
+					if ((field.getAccess() & Opcodes.ACC_STATIC) == 0)
+					{
+						addField(field);
+					}
+				}
+			}
+			// stack: ... =>
+			((MethodTransformer) mv).disableMethodInstrumentation(false);
+			((MethodTransformer) mv).disableDuplicateInstrumentation(false);
+		}
 	}
 }

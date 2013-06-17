@@ -40,6 +40,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		boolean isRead = SCOReProtocol.serializationContext.get();
 
 		Group toPublish = null;
+		/* XXX t.vale: never happens now. */
 		if (oid == null)
 		{ // UniqueObject #metadata (it is not a TxField)
 			oid = factory.generateOID(); // creates PRepMetadata with no group
@@ -61,10 +62,10 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		else
 		{
 			toPublish = oid.getGroup();
-			if (toPublish == null)
+			if (toPublish.getAll().isEmpty())
 			{ // choose group
 				toPublish = TribuDSTM.publishObjectTo(obj);
-				oid.setGroup(toPublish);
+				oid.getGroup().getAll().addAll(toPublish.getAll());
 			}
 
 			LOGGER.trace("< " + oid + " (oid not null) "

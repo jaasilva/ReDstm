@@ -2,6 +2,7 @@ package org.deuce.distribution.replication.partial.oid;
 
 import org.deuce.distribution.replication.OID;
 import org.deuce.distribution.replication.group.Group;
+import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -11,7 +12,19 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public interface PartialReplicationOID extends OID
 {
+	public final static String NAME = Type
+			.getInternalName(PartialReplicationOID.class);
+	public final static String DESC = Type
+			.getDescriptor(PartialReplicationOID.class);
+
+	public static final String GET_GROUP_METHOD_NAME = "getGroup";
+	public static final String GET_GROUP_METHOD_DESC = "()" + Group.DESC;
+
 	public Group getGroup();
+
+	public static final String SET_GROUP_METHOD_NAME = "setGroup";
+	public static final String SET_GROUP_METHOD_DESC = "(" + Group.DESC + ")"
+			+ Type.VOID_TYPE.getDescriptor();
 
 	public void setGroup(Group group);
 
