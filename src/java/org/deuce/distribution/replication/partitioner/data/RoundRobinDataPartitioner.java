@@ -39,8 +39,8 @@ public class RoundRobinDataPartitioner extends Partitioner implements
 		Group res = super.getGroups().get(round.get() % groups);
 		round.getAndIncrement();
 
-		LOGGER.trace(String.format("~ Publish obj(%s) to group(%s)",
-				obj.getMetadata(), res));
+		LOGGER.trace(String.format("~ Publish obj(%s) to group(%s) %s",
+				obj.getMetadata(), res, obj.getClass().getSimpleName()));
 
 		return res;
 	}

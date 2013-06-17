@@ -52,7 +52,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		}
 		else if (oid.isPublished())
 		{
-			LOGGER.trace("< " + oid + " (bootstrap) "
+			LOGGER.trace("< " + oid + " (published) "
 					+ obj.getClass().getSimpleName());
 			// XXX serializar com contexto (no meu grupo(se publicado enviar
 			// ids) ou não(enviar objectos))
@@ -72,7 +72,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		}
 
 		if (TribuDSTM.isLocalGroup(toPublish)) // if this is my group
-		{ // save object in locator table
+		{ // save object in locator table XXX change place
 			TribuDSTM.putObject(oid, obj);
 		}
 
@@ -86,7 +86,6 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		PartialReplicationOID oid = (PartialReplicationOID) obj.getMetadata();
 
 		Group group = oid.getGroup();
-
 		if (TribuDSTM.isLocalGroup(group))
 		{ // it is my group
 			UniqueObject object = TribuDSTM.getObject(oid);
@@ -114,7 +113,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 
 	@Override
 	public ObjectMetadata createMetadata()
-	{ // Generates an empty metadata (id and group are null)
+	{ // Generates an empty metadata (group is null)
 		return factory.generateOID();
 	}
 

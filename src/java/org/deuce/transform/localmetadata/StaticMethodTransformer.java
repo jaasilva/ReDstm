@@ -218,7 +218,7 @@ public class StaticMethodTransformer extends MethodAdapter
 				// stack: ..., TxField =>
 			}
 			else if (partialField)
-			{ // Partial field -> partialRepOID() [id:null,group:null]
+			{ // Partial field -> partialRepOID() [id:rand(),group:null]
 				// stack: ..., TxField, PartialReplicationSerializer, TxField =>
 				super.visitMethodInsn(
 						Opcodes.INVOKEVIRTUAL,
@@ -228,7 +228,7 @@ public class StaticMethodTransformer extends MethodAdapter
 				// stack: ..., TxField =>
 			}
 			else
-			{ // Full field -> fullRepOID() [id:null,group:ALL]
+			{ // Full field -> fullRepOID() [id:rand(),group:ALL]
 				// stack: ..., TxField, PartialReplicationSerializer, TxField =>
 				super.visitMethodInsn(
 						Opcodes.INVOKEVIRTUAL,

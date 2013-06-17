@@ -300,13 +300,13 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		boolean mostRecent = ver.equals(field.getLastVersion());
 		int lastCommitted = commitId.get();
 
-		StringBuffer log = new StringBuffer();
-		log.append("------------------------------------------\n");
-		log.append("doRead (sid=" + sid + ")\n");
-		log.append("Metadata= " + metadata + "\n");
-		log.append("(lastCommitted=" + lastCommitted + ", mostRecent="
-				+ mostRecent + ")\n");
-		log.append("------------------------------------------");
+		// StringBuffer log = new StringBuffer();
+		// log.append("------------------------------------------\n");
+		// log.append("doRead (sid=" + sid + ")\n");
+		// log.append("Metadata= " + metadata + "\n");
+		// log.append("(lastCommitted=" + lastCommitted + ", mostRecent="
+		// + mostRecent + ")\n");
+		// log.append("------------------------------------------");
 		// LOGGER.debug(log.toString());
 
 		return new ReadDone(ver.value, lastCommitted, mostRecent);
@@ -325,8 +325,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		StringBuffer log = new StringBuffer();
 		log.append("------------------------------------------\n");
 		log.append("updateNodeTimestamps\n");
-		log.append("nextId= " + nextId.get() + "(old=" + oldNextId + ")\n");
-		log.append("maxSeenId= " + maxSeenId.get() + "(old=" + oldMaxSeenId
+		log.append("nextId= " + nextId.get() + " (old=" + oldNextId + ")\n");
+		log.append("maxSeenId= " + maxSeenId.get() + " (old=" + oldMaxSeenId
 				+ ")\n");
 		log.append("------------------------------------------");
 		LOGGER.debug(log.toString());

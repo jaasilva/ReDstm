@@ -15,12 +15,10 @@ public class Barrier
 		}
 		catch (NoSuchFieldException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (SecurityException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -57,15 +55,15 @@ public class Barrier
 
 		increment();
 
-		System.err.println("Barrier increased to " + getCounter()
-				+ " (expected=" + getExpected() + ")");
+		System.err.println("Barrier increased to " + counter + " (expected="
+				+ expected + ")");
 		boolean exit = false;
 		while (!exit)
 		{
 			try
 			{
-				int c = getCounter();
-				boolean res = c >= getExpected();
+				int c = counter;
+				boolean res = c >= expected;
 				// System.out.println("##> " + res + " " + c);
 				if (res)
 				{
@@ -87,24 +85,24 @@ public class Barrier
 			}
 		}
 
-		System.err.println("-- Barrier increased to " + getCounter()
-				+ " (expected=" + getExpected() + ")");
+		System.err.println("-- Barrier increased to " + counter + " (expected="
+				+ expected + ")");
 		// UnsafeHolder.getUnsafe().putIntVolatile(this, counter_offset, 0);
 		// resetCounter();
 		counter = 0;
 	}
 
-	@Atomic
-	private int getCounter()
-	{
-		return counter;
-	}
-
-	@Atomic
-	private int getExpected()
-	{
-		return expected;
-	}
+	// @Atomic
+	// private int getCounter()
+	// {
+	// return counter;
+	// }
+	//
+	// @Atomic
+	// private int getExpected()
+	// {
+	// return expected;
+	// }
 
 	@Atomic
 	private void increment()

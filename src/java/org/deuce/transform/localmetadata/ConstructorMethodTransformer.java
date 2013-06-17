@@ -165,7 +165,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 				// stack: ..., Object (this), TxField =>
 			}
 			else if (partialField)
-			{ // Partial field -> partialRepOID() [id:null,group:null]
+			{ // Partial field -> partialRepOID() [id:rand(),group:null]
 				// stack: ..., Object (this), TxField,
 				// PartialReplicationSerializer, TxField =>
 				mv.visitMethodInsn(
@@ -176,7 +176,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 				// stack: ..., Object (this), TxField =>
 			}
 			else
-			{ // Full field -> fullRepOID() [id:null,group:ALL]
+			{ // Full field -> fullRepOID() [id:rand(),group:ALL]
 				// stack: ..., Object (this), TxField,
 				// PartialReplicationSerializer, TxField =>
 				mv.visitMethodInsn(

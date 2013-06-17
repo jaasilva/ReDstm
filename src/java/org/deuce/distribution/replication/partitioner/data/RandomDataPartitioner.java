@@ -39,8 +39,8 @@ public class RandomDataPartitioner extends Partitioner implements
 		int r = rand.nextInt(groups + 1);
 		Group res = super.getGroups().get(r);
 
-		LOGGER.trace(String.format("~ Publish obj(%s) to group(%s)",
-				obj.getMetadata(), res));
+		LOGGER.trace(String.format("~ Publish obj(%s) to group(%s) %s",
+				obj.getMetadata(), res, obj.getClass().getSimpleName()));
 
 		return res;
 	}
