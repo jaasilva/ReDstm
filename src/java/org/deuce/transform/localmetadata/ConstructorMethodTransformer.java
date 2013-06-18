@@ -115,48 +115,6 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 		boolean partialField = partialRepFields.contains(field.getFieldName());
 		if (partial)
 		{
-			// ##### setType (VBoxField)
-			// stack: ..., Object (this), TxField =>
-			mv.visitInsn(Opcodes.DUP);
-			// stack: ..., Object (this), TxField, TxField =>
-			mv.visitTypeInsn(Opcodes.CHECKCAST, VBoxField.NAME);
-			// stack: ..., Object (this), TxField, VBoxField =>
-
-			switch (field.getOriginalType().getSort())
-			{
-				case Type.BYTE:
-					super.visitLdcInsn(Type.BYTE);
-					break;
-				case Type.BOOLEAN:
-					super.visitLdcInsn(Type.BOOLEAN);
-					break;
-				case Type.CHAR:
-					super.visitLdcInsn(Type.CHAR);
-					break;
-				case Type.SHORT:
-					super.visitLdcInsn(Type.SHORT);
-					break;
-				case Type.INT:
-					super.visitLdcInsn(Type.INT);
-					break;
-				case Type.LONG:
-					super.visitLdcInsn(Type.LONG);
-					break;
-				case Type.FLOAT:
-					super.visitLdcInsn(Type.FLOAT);
-					break;
-				case Type.DOUBLE:
-					super.visitLdcInsn(Type.DOUBLE);
-					break;
-				case Type.OBJECT:
-					super.visitLdcInsn(Type.OBJECT);
-					break;
-			}
-			// stack: ..., Object (this), TxField, VBoxField, Type =>
-			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, VBoxField.NAME,
-					VBoxField.SET_TYPE_METHOD_NAME,
-					VBoxField.SET_TYPE_METHOD_DESC);
-
 			// ##### setMetadata
 			// stack: ..., Object (this), TxField =>
 			mv.visitInsn(Opcodes.DUP);
@@ -283,6 +241,79 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 		mv.visitFieldInsn(Opcodes.PUTFIELD, fieldsHolderName,
 				field.getFieldNameAddress(), field.getType().getDescriptor());
 		// stack: ... =>
+	}
+
+	protected void initField(Field field)
+	{
+		if (partial)
+		{
+			// stack: ... =>
+			mv.visitVarInsn(Opcodes.ALOAD, 0);
+			// stack: ..., Object (this) =>
+			mv.visitFieldInsn(Opcodes.GETFIELD, fieldsHolderName, field
+					.getFieldNameAddress(), field.getType().getDescriptor());
+			// stack: ..., TxField =>
+			mv.visitTypeInsn(Opcodes.CHECKCAST, VBoxField.NAME);
+			// stack: ..., VBoxField =>
+			switch (field.getOriginalType().getSort()) {
+			case Type.BYTE:
+				super.visitLdcInsn(Type.BYTE);
+				break;
+			case Type.BOOLEAN:
+				super.visitLdcInsn(Type.BOOLEAN);
+				break;
+			case Type.CHAR:
+				super.visitLdcInsn(Type.CHAR);
+				break;
+			case Type.SHORT:
+				super.visitLdcInsn(Type.SHORT);
+				break;
+			case Type.INT:
+				super.visitLdcInsn(Type.INT);
+				break;
+			case Type.LONG:
+				super.visitLdcInsn(Type.LONG);
+				break;
+			case Type.FLOAT:
+				super.visitLdcInsn(Type.FLOAT);
+				break;
+			case Type.DOUBLE:
+				super.visitLdcInsn(Type.DOUBLE);
+				break;
+			case Type.OBJECT:
+				super.visitLdcInsn(Type.OBJECT);
+				break;
+			}
+			// stack: ..., VBoxField, Type =>
+			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, VBoxField.NAME,
+					VBoxField.SET_TYPE_METHOD_NAME,
+					VBoxField.SET_TYPE_METHOD_DESC);
+			// stack: ... =>
+		}
+	}
+
+	@Override
+	public void visitInsn(int opcode)
+	{
+		if (opcode == Opcodes.RETURN && !callsOtherCtor)
+		{
+			((MethodTransformer) mv).disableDuplicateInstrumentation(true);
+			((MethodTransformer) mv).disableMethodInstrumentation(true);
+			if (fields.size() > 0)
+			{
+				for (Field field : fields)
+				{
+					if ((field.getAccess() & Opcodes.ACC_STATIC) == 0)
+					{
+						initField(field);
+					}
+				}
+			}
+			((MethodTransformer) mv).disableMethodInstrumentation(false);
+			((MethodTransformer) mv).disableDuplicateInstrumentation(false);
+		}
+
+		super.visitInsn(opcode);
 	}
 
 	@Override
