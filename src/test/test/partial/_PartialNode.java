@@ -5,11 +5,12 @@ import org.deuce.distribution.replication.partial.Partial;
 public class _PartialNode<T>
 {
 	private _PartialNode<T> next;
-	@Partial
-	private T value;
+	public int key;
+	@Partial private T value;
 
-	public _PartialNode(T val, _PartialNode<T> n)
+	public _PartialNode(int key, T val, _PartialNode<T> n)
 	{
+		this.key = key;
 		this.next = n;
 		this.value = val;
 	}
@@ -34,8 +35,8 @@ public class _PartialNode<T>
 		this.value = val;
 	}
 
-	public _PartialNode<T> cons(T val)
+	public _PartialNode<T> cons(int key, T val)
 	{
-		return new _PartialNode<T>(val, this);
+		return new _PartialNode<T>(key, val, this);
 	}
 }

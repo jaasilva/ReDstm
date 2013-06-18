@@ -2,13 +2,23 @@ package test.partial;
 
 import org.deuce.Atomic;
 import org.deuce.benchmark.Barrier;
+import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.TribuDSTM;
+import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.replication.Bootstrap;
+import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
 
+class MyObject {
+	String string;
+
+	public MyObject(final String string) {
+		this.string = string;
+	}
+}
 public class Main
 {
 	@Bootstrap(id = 1)
-	static PartialList<Integer> intset;
+	static PartialList<MyObject> intset;
 
 	@Bootstrap(id = 2)
 	static public Barrier start;
@@ -36,16 +46,15 @@ public class Main
 		System.out.println("-- Starting...");
 		start.join();
 
-		add(Integer.getInteger("tribu.site"));
-		add(Integer.getInteger("tribu.site") * 3);
+		add(Integer.getInteger("tribu.site") * 3, new MyObject("two"));
+		add(Integer.getInteger("tribu.site") * 3, new MyObject("one"));
 
 		System.out.println("-- Ending...");
 		end.join();
 
-		if (Integer.getInteger("tribu.site") == 1)
-		{
-			printList(intset);
-		}
+		printList(intset);
+		System.out.println("---");
+		printLocalList(intset);
 
 		System.out.println("-- Closing...");
 		close.join();
@@ -58,8 +67,7 @@ public class Main
 	{
 		if (intset == null)
 		{
-			intset = new PartialList<Integer>();
-			intset.init();
+			intset = new PartialList<MyObject>();
 		}
 	}
 
@@ -75,19 +83,35 @@ public class Main
 	}
 
 	@Atomic
-	private static void add(int val)
+	private static void add(int key, MyObject val)
 	{
-		intset.add(val);
+		intset.add(key, val);
 	}
 
 	@Atomic
-	private static void printList(PartialList<Integer> list)
+	private static void printList(PartialList<MyObject> list)
 	{
-		_PartialNode<Integer> n = list.head;
+		_PartialNode<MyObject> n = list.head;
+		while (n != null) {
+			MyObject value = n.getValue();
+			if (value == null) {
+				System.out.println(n.key+": null");
+			} else {
+				ObjectMetadata m = ((UniqueObject) value).getMetadata();
+				PartialReplicationOID pm = (PartialReplicationOID) m;
+				System.out.println(n.key + ": " + value.string + " ("
+						+ pm.getGroup() + ")");
+			}
+			n = n.getNext();
+		}
+	}
 
-		while (n != null)
-		{
-			System.out.println(n.getValue());
+	private static void printLocalList(PartialList<MyObject> list) {
+		_PartialNode<MyObject> n = list.head;
+		while (n != null) {
+			MyObject value = n.getValue();
+			System.out.print(n.key + ": ");
+			System.out.println(value == null ? "null" : value.string);
 			n = n.getNext();
 		}
 	}

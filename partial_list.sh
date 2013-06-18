@@ -22,6 +22,8 @@ EXCLUDE="${EXCLUDE},flanagan.*"
 EXCLUDE="${EXCLUDE},org.apache.log4j.*"
 EXCLUDE="${EXCLUDE},spread.*"
 EXCLUDE="${EXCLUDE},org.deuce.trove.*"
+EXCLUDE="${EXCLUDE},org.deuce.distribution.UniqueObject"
+EXCLUDE="${EXCLUDE},org.deuce.distribution.replication.partial.oid.PartialReplicationOID"
 
 WARMUP=0
 DURATION=10000

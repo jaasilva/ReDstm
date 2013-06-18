@@ -6,15 +6,11 @@ public class PartialList<T>
 
 	public PartialList()
 	{
+		head = new _PartialNode<T>(0, null, null);
 	}
 
-	public void init()
+	public void add(int key, T val)
 	{
-		head = new _PartialNode<T>(null, null);
-	}
-
-	public void add(T val)
-	{
-		this.head = head.cons(val);
+		this.head = head.cons(key, val);
 	}
 }
