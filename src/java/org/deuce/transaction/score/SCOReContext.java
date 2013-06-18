@@ -227,7 +227,7 @@ public class SCOReContext extends DistributedContext
 
 				System.exit(-1);
 			}
-			objMetadata.setGroup(txFieldGroup);
+			objGroup.set(txFieldGroup.getAll());
 		}
 
 		log.append("==========================================");

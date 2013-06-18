@@ -57,6 +57,11 @@ public class PartialReplicationGroup implements Group
 	}
 
 	@Override
+	public void set(Collection<Address> addrs) {
+		this.addrs = addrs;
+	}
+
+	@Override
 	public int size()
 	{
 		return this.addrs.size();

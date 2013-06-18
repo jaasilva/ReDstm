@@ -26,6 +26,8 @@ public interface Group extends Serializable {
 
 	public boolean remove(Address addr);
 
+	public void set(Collection<Address> addrs);
+
 	public int size();
 
 	public String toString();
