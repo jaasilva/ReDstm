@@ -155,7 +155,6 @@ public class StaticMethodTransformer extends MethodAdapter
 			// stack: ..., TxField, TxField =>
 			super.visitTypeInsn(Opcodes.CHECKCAST, VBoxField.NAME);
 			// stack: ..., TxField, VBoxField =>
-
 			switch (field.getOriginalType().getSort())
 			{
 				case Type.BYTE:
@@ -184,6 +183,9 @@ public class StaticMethodTransformer extends MethodAdapter
 					break;
 				case Type.OBJECT:
 					super.visitLdcInsn(Type.OBJECT);
+					break;
+				case Type.ARRAY:
+					super.visitLdcInsn(Type.ARRAY);
 					break;
 			}
 			// stack: ..., TxField, VBoxField, Type =>

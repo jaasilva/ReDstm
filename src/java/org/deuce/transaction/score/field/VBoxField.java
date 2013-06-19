@@ -3,6 +3,7 @@ package org.deuce.transaction.score.field;
 import org.apache.log4j.Logger;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
+import org.deuce.transform.localmetadata.array.ArrayContainer;
 import org.deuce.transform.localmetadata.type.TxField;
 
 /**
@@ -175,6 +176,8 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 			case Type.OBJECT:
 				writeObject(value);
 				break;
+			case Type.ARRAY:
+				writeArray((ArrayContainer) value);
 		}
 	}
 
@@ -200,6 +203,8 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 				return readDouble();
 			case Type.OBJECT:
 				return readObject();
+			case Type.ARRAY:
+				return readArray();
 		}
 		return null;
 	}

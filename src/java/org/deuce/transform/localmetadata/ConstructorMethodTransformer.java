@@ -42,14 +42,14 @@ import org.deuce.transform.localmetadata.type.TxField;
  * TODOs: Try to move @Bootstrap related transformations to other class
  */
 @ExcludeTM
-public class ConstructorMethodTransformer extends AnalyzerAdapter
-{
+public class ConstructorMethodTransformer extends AnalyzerAdapter {
 	final static public String CLASS_BASE = "__CLASS_BASE__";
 
 	protected final List<Field> fields;
 	protected final String fieldsHolderName;
 	protected boolean callsOtherCtor;
 	protected final String className;
+	protected final String superName;
 
 	// ################################# @Bootstrap @Partial
 	protected final Map<String, Integer> field2OID;
@@ -58,14 +58,14 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 
 	public ConstructorMethodTransformer(MethodVisitor mv, List<Field> fields,
 			Map<String, Integer> field2OID, Set<String> partialRepFields,
-			boolean partial, String className, int access, String name,
-			String desc, String fieldsHolderName)
-	{
+			boolean partial, String className, String superName, int access,
+			String name, String desc, String fieldsHolderName) {
 		super(className, access, name, desc, mv);
 		this.fields = fields;
 		this.fieldsHolderName = fieldsHolderName;
 		this.callsOtherCtor = false;
 		this.className = className;
+		this.superName = superName;
 		this.field2OID = field2OID;
 		this.partialRepFields = partialRepFields;
 		this.partial = partial;
@@ -79,21 +79,18 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 				TribuDSTM.GETSERIALIZER_METHOD_NAME,
 				TribuDSTM.GETSERIALIZER_METHOD_DESC);
 		// stack: ..., Object (this), ObjectSerializer =>
-		mv.visitTypeInsn(Opcodes.CHECKCAST,
-				PartialReplicationSerializer.NAME);
+		mv.visitTypeInsn(Opcodes.CHECKCAST, PartialReplicationSerializer.NAME);
 		// stack: ..., Object (this), PartialReplicationSerializer =>
 		mv.visitInsn(Opcodes.SWAP);
 		// stack: ..., PartialReplicationSerializer, Object (this) =>
-		mv.visitMethodInsn(
-				Opcodes.INVOKEVIRTUAL,
+		mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
 				PartialReplicationSerializer.NAME,
 				PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_NAME,
 				PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_DESC);
 		// stack: ... =>
 	}
 
-	protected void initMetadataField(Field field)
-	{
+	protected void initMetadataField(Field field) {
 		// stack: ... =>
 		mv.visitVarInsn(Opcodes.ALOAD, 0);
 		// stack: ..., Object (this) =>
@@ -113,8 +110,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 
 		Integer oid = field2OID.get(field.getFieldName());
 		boolean partialField = partialRepFields.contains(field.getFieldName());
-		if (partial)
-		{
+		if (partial) {
 			// ##### setMetadata
 			// stack: ..., Object (this), TxField =>
 			mv.visitInsn(Opcodes.DUP);
@@ -131,10 +127,10 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 			// stack: ..., Object (this), TxField, PartialReplicationSerializer,
 			// TxField =>
 
-			if (oid != null)
-			{ // Bootstrap field -> fullRepOID(oid) [id:rand(oid),group:ALL]
-				// stack: ..., Object (this), TxField,
-				// PartialReplicationSerializer, TxField =>
+			if (oid != null) { // Bootstrap field -> fullRepOID(oid)
+								// [id:rand(oid),group:ALL]
+								// stack: ..., Object (this), TxField,
+								// PartialReplicationSerializer, TxField =>
 				mv.visitLdcInsn(oid);
 				// stack: ..., Object (this), TxField,
 				// PartialReplicationSerializer, TxField,
@@ -144,22 +140,20 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 						PartialReplicationSerializer.BOOTSTRAP_METHOD_NAME,
 						PartialReplicationSerializer.BOOTSTRAP_METHOD_DESC);
 				// stack: ..., Object (this), TxField =>
-			}
-			else if (partialField)
-			{ // Partial field -> partialRepOID() [id:rand(),group:null]
-				// stack: ..., Object (this), TxField,
-				// PartialReplicationSerializer, TxField =>
+			} else if (partialField) { // Partial field -> partialRepOID()
+										// [id:rand(),group:null]
+										// stack: ..., Object (this), TxField,
+										// PartialReplicationSerializer, TxField
+										// =>
 				mv.visitMethodInsn(
 						Opcodes.INVOKEVIRTUAL,
 						PartialReplicationSerializer.NAME,
 						PartialReplicationSerializer.CREATE_PARTIAL_METADATA_METHOD_NAME,
 						PartialReplicationSerializer.CREATE_PARTIAL_METADATA_METHOD_DESC);
 				// stack: ..., Object (this), TxField =>
-			}
-			else
-			{ // Full field -> fullRepOID() [id:rand(),group:ALL]
-				// stack: ..., Object (this), TxField,
-				// PartialReplicationSerializer, TxField =>
+			} else { // Full field -> fullRepOID() [id:rand(),group:ALL]
+						// stack: ..., Object (this), TxField,
+						// PartialReplicationSerializer, TxField =>
 				mv.visitMethodInsn(
 						Opcodes.INVOKEVIRTUAL,
 						PartialReplicationSerializer.NAME,
@@ -174,7 +168,8 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 				mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, className,
 						UniqueObject.GETMETADATA_METHOD_NAME,
 						UniqueObject.GETMETADATA_METHOD_DESC);
-				// stack: ..., Object (this), TxField, TxField, ObjectMetadata =>
+				// stack: ..., Object (this), TxField, TxField, ObjectMetadata
+				// =>
 				mv.visitTypeInsn(Opcodes.CHECKCAST, PartialReplicationOID.NAME);
 				// stack: ..., Object (this), TxField, TxField, PartialRepOID =>
 				mv.visitMethodInsn(Opcodes.INVOKEINTERFACE,
@@ -187,22 +182,22 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 				mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, UniqueObject.NAME,
 						UniqueObject.GETMETADATA_METHOD_NAME,
 						UniqueObject.GETMETADATA_METHOD_DESC);
-				// stack: ..., Object (this), TxField, Group (this), ObjectMetadata =>
+				// stack: ..., Object (this), TxField, Group (this),
+				// ObjectMetadata =>
 				mv.visitTypeInsn(Opcodes.CHECKCAST, PartialReplicationOID.NAME);
-				// stack: ..., Object (this), TxField, Group (this), PartialRepOID =>
+				// stack: ..., Object (this), TxField, Group (this),
+				// PartialRepOID =>
 				mv.visitInsn(Opcodes.SWAP);
-				// stack: ..., Object (this), TxField, PartialRepOID, Group (this) =>
+				// stack: ..., Object (this), TxField, PartialRepOID, Group
+				// (this) =>
 				mv.visitMethodInsn(Opcodes.INVOKEINTERFACE,
 						PartialReplicationOID.NAME,
 						PartialReplicationOID.SET_GROUP_METHOD_NAME,
 						PartialReplicationOID.SET_GROUP_METHOD_DESC);
 				// stack: ..., Object (this), TxField =>
 			}
-		}
-		else
-		{ // @Bootstrap, assumes FullReplicationSerializer
-			if (oid != null)
-			{
+		} else { // @Bootstrap, assumes FullReplicationSerializer
+			if (oid != null) {
 				// stack: ..., Object (this), TxField =>
 				mv.visitInsn(Opcodes.DUP);
 				// stack: ..., Object (this), TxField, TxField =>
@@ -233,8 +228,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 		// stack: ..., Object (this), TxField =>
 	}
 
-	protected void addField(Field field)
-	{
+	protected void addField(Field field) {
 		// stack: ... =>
 		initMetadataField(field);
 		// stack: ..., Object (this), TxField =>
@@ -243,10 +237,8 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 		// stack: ... =>
 	}
 
-	protected void initField(Field field)
-	{
-		if (partial)
-		{
+	protected void initField(Field field) {
+		if (partial) {
 			// stack: ... =>
 			mv.visitVarInsn(Opcodes.ALOAD, 0);
 			// stack: ..., Object (this) =>
@@ -283,6 +275,9 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 			case Type.OBJECT:
 				super.visitLdcInsn(Type.OBJECT);
 				break;
+			case Type.ARRAY:
+				super.visitLdcInsn(Type.ARRAY);
+				break;
 			}
 			// stack: ..., VBoxField, Type =>
 			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, VBoxField.NAME,
@@ -293,18 +288,13 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 	}
 
 	@Override
-	public void visitInsn(int opcode)
-	{
-		if (opcode == Opcodes.RETURN && !callsOtherCtor)
-		{
+	public void visitInsn(int opcode) {
+		if (opcode == Opcodes.RETURN && !callsOtherCtor) {
 			((MethodTransformer) mv).disableDuplicateInstrumentation(true);
 			((MethodTransformer) mv).disableMethodInstrumentation(true);
-			if (fields.size() > 0)
-			{
-				for (Field field : fields)
-				{
-					if ((field.getAccess() & Opcodes.ACC_STATIC) == 0)
-					{
+			if (fields.size() > 0) {
+				for (Field field : fields) {
+					if ((field.getAccess() & Opcodes.ACC_STATIC) == 0) {
 						initField(field);
 					}
 				}
@@ -318,16 +308,13 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 
 	@Override
 	public void visitMethodInsn(final int opcode, final String owner,
-			final String name, final String desc)
-	{
-		if (opcode == Opcodes.INVOKESPECIAL && name.equals("<init>"))
-		{
+			final String name, final String desc) {
+		if (opcode == Opcodes.INVOKESPECIAL && name.equals("<init>")) {
 			/*
 			 * if (owner.equals(Type.getInternalName(Object.class)) &&
 			 * isUniqueObject) { super.visitMethodInsn(opcode,
 			 * UniqueObject.NAME, name, desc); return; } else
-			 */if (owner.equals(className))
-			{
+			 */if (owner.equals(className)) {
 				// The method is created merely to know the #params
 				int nParams = new Method(name, desc).getArgumentTypes().length;
 
@@ -338,26 +325,22 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 
 				// Is it <this>, uninitialized?
 				if (stackObj instanceof Integer
-						&& ((Integer) stackObj) == Opcodes.UNINITIALIZED_THIS)
-				{
+						&& ((Integer) stackObj) == Opcodes.UNINITIALIZED_THIS) {
 					callsOtherCtor = true;
 				}
 			}
 		}
 		super.visitMethodInsn(opcode, owner, name, desc);
-		if (!callsOtherCtor && opcode == Opcodes.INVOKESPECIAL && name.equals("<init>")
-				&& owner.equals(Type.getInternalName(Object.class))) {
+		if (!callsOtherCtor && opcode == Opcodes.INVOKESPECIAL
+				&& name.equals("<init>") && owner.equals(superName)) {
 			((MethodTransformer) mv).disableDuplicateInstrumentation(true);
 			((MethodTransformer) mv).disableMethodInstrumentation(true);
 			// stack: ... =>
 			initDistributionMetadata();
 			// stack: ... =>
-			if (fields.size() > 0)
-			{
-				for (Field field : fields)
-				{
-					if ((field.getAccess() & Opcodes.ACC_STATIC) == 0)
-					{
+			if (fields.size() > 0) {
+				for (Field field : fields) {
+					if ((field.getAccess() & Opcodes.ACC_STATIC) == 0) {
 						addField(field);
 					}
 				}

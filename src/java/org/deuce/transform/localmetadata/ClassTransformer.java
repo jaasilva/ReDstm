@@ -152,6 +152,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 
 	protected boolean isAbstract;
 
+	private String superName;
+
 	// ################################# @Bootstrap @Partial
 	public final Map<String, Integer> field2OID = new java.util.HashMap<String, Integer>();
 	public final Set<String> partialRepFields = new java.util.HashSet<String>(
@@ -171,6 +173,7 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 			final String signature, final String superName,
 			final String[] interfaces)
 	{
+		this.superName = superName;
 		fieldsHolder.visit(superName);
 		isInterface = (access & Opcodes.ACC_INTERFACE) != 0;
 		isEnum = ENUM_DESC.equals(superName);
@@ -375,7 +378,7 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 					desc, newMethod, fieldsHolder);
 
 			return new ConstructorMethodTransformer(mv, fields, field2OID,
-					partialRepFields, partial, className, access, name,
+					partialRepFields, partial, className, superName, access, name,
 					nm.getDescriptor(),
 					fieldsHolder.getFieldsHolderName(className));
 		}

@@ -4,6 +4,7 @@ import org.deuce.objectweb.asm.Type;
 import org.deuce.reflection.AddressUtil;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.IContext;
+import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
@@ -41,6 +42,17 @@ public class ShortArrayContainer extends ArrayContainer
 				obj = ContextDelegator.getMetadataClass().newInstance();
 				TxField field = (TxField) obj;
 				field.init(arr, base + scale * i);
+				/*
+				 * XXX t.vale: A instrumentação tem que passar mais informação
+				 * ao init, nomeadamente o tipo! O João implementou este pedaço
+				 * de código na instrumentação mas os metadados das células dos
+				 * arrays são inicializados nesta classe. Se o init do TxField
+				 * receber o tipo fica gerar para todos os algoritmos.
+				 */
+				if (field instanceof VBoxField) {
+					VBoxField vbox = (VBoxField) field;
+					vbox.setType(Type.SHORT);
+				}
 				metadata[i] = field;
 			}
 			catch (InstantiationException e)
