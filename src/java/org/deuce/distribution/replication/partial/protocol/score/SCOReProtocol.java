@@ -129,7 +129,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		TimerTask task = createTimeoutHandler(sctx);
 		sctx.timeoutTask = task;
-		timeoutTimer.schedule(task, timeout); // set timeout
 
 		StringBuffer log = new StringBuffer();
 		log.append("------------------------------------------\n");
@@ -148,6 +147,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		PRProfiler.onSerializationBegin(ctx.threadID);
 		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
 		PRProfiler.onSerializationFinish(ctx.threadID);
+
+		timeoutTimer.schedule(task, timeout); // set timeout
 
 		PRProfiler.onPrepSend(ctx.threadID);
 		PRProfiler.newMsgSent(payload.length);
