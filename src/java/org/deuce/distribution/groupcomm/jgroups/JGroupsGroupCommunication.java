@@ -37,7 +37,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		{
 			if (TribuDSTM.PARTIAL)
 			{
-				channel = new JChannel("etc/jgroups-toa.xml");
+				channel = new JChannel("etc/jgroups-partial.xml");
 			}
 			else
 			{
