@@ -3,18 +3,17 @@ package org.deuce.distribution.replication.partial.protocol.score;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
@@ -58,24 +57,19 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 	};
 
-	private final AtomicInteger commitId = new AtomicInteger(0);
-	private final AtomicInteger nextId = new AtomicInteger(0);
-	private final AtomicInteger maxSeenId = new AtomicInteger(0);
-
-	private final int timeout = Integer.getInteger(
-			"tribu.distributed.protocol.score.timeout", 3000);
-	private final Timer timeoutTimer = new Timer();
+	private final AtomicInteger commitId = new AtomicInteger(0); // updated ONLY by bottom threads
+	private final AtomicInteger nextId = new AtomicInteger(0); // updated by up and bottom threads
+	private final AtomicInteger maxSeenId = new AtomicInteger(0); // updated ONLY by bottom threads
 
 	private final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 
-	private final BlockingQueue<Pair<String, Integer>> pendQ = new PriorityBlockingQueue<Pair<String, Integer>>(
-			50, comp);
-	private final BlockingQueue<Pair<String, Integer>> stableQ = new PriorityBlockingQueue<Pair<String, Integer>>(
-			50, comp);
+	private final Queue<Pair<String, Integer>> pendQ = new PriorityQueue<Pair<String, Integer>>(
+			50, comp); // accessed only by bottom threads
+	private final Queue<Pair<String, Integer>> stableQ = new PriorityQueue<Pair<String, Integer>>(
+			50, comp); // accessed only by bottom threads
 
-	private final Map<String, DistributedContextState> receivedTrxs = new ConcurrentHashMap<String, DistributedContextState>();
-	private final Set<String> rejectTrxs = Collections
-			.synchronizedSet(new HashSet<String>());
+	private final Map<String, DistributedContextState> receivedTrxs = new HashMap<String, DistributedContextState>(); // accessed only by bottom threads
+	private final Set<String> rejectTrxs = new HashSet<String>(); // accessed only by bottom threads
 
 	private static final int minReadThreads = 2;
 	private final Executor pool = Executors.newFixedThreadPool(Math.max(
@@ -126,9 +120,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		sctx.votes = new ArrayList<Integer>(expVotes);
 		sctx.expectedVotes = expVotes;
 
-		TimerTask task = createTimeoutHandler(sctx);
-		sctx.timeoutTask = task;
-
 		StringBuffer log = new StringBuffer();
 		log.append("------------------------------------------\n");
 		log.append("onTxCommit " + sctx.threadID + ":" + sctx.atomicBlockId
@@ -136,8 +127,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		log.append("Coordinator= " + ((SCOReContextState) ctxState).src
 				+ " sid= " + sctx.sid + "\n");
 		log.append("Send PREP msg to= " + resGroup + "\n");
-		String t = Integer.toHexString(System.identityHashCode(task));
-		log.append("Timeout (" + t + ")= " + timeout + "ms\n");
 		log.append("WS: " + sctx.writeSet + "\n");
 		log.append("RS: " + sctx.readSet + "\n");
 		log.append("------------------------------------------");
@@ -147,40 +136,10 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
 		PRProfiler.onSerializationFinish(ctx.threadID);
 
-		timeoutTimer.schedule(task, timeout); // set timeout
-
 		PRProfiler.onPrepSend(ctx.threadID);
 		PRProfiler.newMsgSent(payload.length);
 
 		TribuDSTM.sendToGroup(payload, resGroup);
-	}
-
-	private TimerTask createTimeoutHandler(final SCOReContext sctx)
-	{ // I am the coordinator of this commit.
-		return new TimerTask()
-		{
-			SCOReContext ctx = sctx;
-
-			public void run()
-			{ // just to double check if it is really necessary to run this
-				if (ctx.votes.size() != ctx.expectedVotes)
-				{ // timeout occurs. abort trx
-					PRProfiler.txTimeout();
-
-					StringBuffer log = new StringBuffer();
-					log.append("------------------------------------------\n");
-					String t = Integer.toHexString(System
-							.identityHashCode(this));
-					log.append("Timeout (" + t + ") triggered\n" + ctx.threadID
-							+ ":" + ctx.atomicBlockId + ":" + ctx.trxID + "\n");
-					log.append("ABORT TRANSACTION !!!\n");
-					log.append("------------------------------------------");
-					LOGGER.debug(log.toString());
-
-					finalizeVoteStep(ctx, false);
-				}
-			}
-		};
 	}
 
 	@Override
@@ -545,7 +504,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		if (!outcome) // voted NO
 		{ // do not wait for more votes. abort trx
-			ctx.timeoutTask.cancel(); // cancel timeout
 			finalizeVoteStep(ctx, false);
 		}
 		else
@@ -556,7 +514,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			{ // last vote. Every vote was YES. send decide msg
 				PRProfiler.onLastVoteReceived(ctx.threadID);
 
-				ctx.timeoutTask.cancel(); // cancel timeout
 				finalizeVoteStep(ctx, true);
 			}
 		}

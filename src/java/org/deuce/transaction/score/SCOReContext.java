@@ -1,7 +1,6 @@
 package org.deuce.transaction.score;
 
 import java.util.List;
-import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
 
 import org.apache.log4j.Logger;
@@ -60,7 +59,6 @@ public class SCOReContext extends DistributedContext
 	public String trxID;
 	private Group involvedNodes;
 
-	public TimerTask timeoutTask;
 	public Semaphore syncMsg;
 	public ReadDone response;
 	public int requestVersion;
@@ -343,7 +341,6 @@ public class SCOReContext extends DistributedContext
 		this.firstReadDone = false;
 		this.votes = null;
 		this.expectedVotes = 0;
-		this.timeoutTask = null;
 		response = null;
 		trxID = java.util.UUID.randomUUID().toString();
 		involvedNodes = null;
