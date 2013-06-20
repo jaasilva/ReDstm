@@ -243,7 +243,6 @@ public class Manager
 	boolean manager_deleteCustomer(int customerId)
 	{
 		Customer customerPtr;
-		RBTree reservationTables[] = new RBTree[Defines.NUM_RESERVATION_TYPE];
 		List_t reservationInfoListPtr;
 		List_Node it;
 		boolean status;
@@ -254,21 +253,29 @@ public class Manager
 			return false;
 		}
 
-		reservationTables[Defines.RESERVATION_CAR] = carTablePtr;
-		reservationTables[Defines.RESERVATION_ROOM] = roomTablePtr;
-		reservationTables[Defines.RESERVATION_FLIGHT] = flightTablePtr;
-
 		/* Cancel this customer's reservations */
 		reservationInfoListPtr = customerPtr.reservationInfoListPtr;
 		it = reservationInfoListPtr.head;
 		while (it.nextPtr != null)
 		{
 			Reservation_Info reservationInfoPtr;
-			Reservation reservationPtr;
+			Reservation reservationPtr = null;
 			it = it.nextPtr;
 			reservationInfoPtr = (Reservation_Info) it.dataPtr;
-			reservationPtr = (Reservation) reservationTables[reservationInfoPtr.type]
-					.find(reservationInfoPtr.id);
+			switch (reservationInfoPtr.type) {
+			case Defines.RESERVATION_CAR:
+				reservationPtr = (Reservation) carTablePtr
+						.find(reservationInfoPtr.id);
+				break;
+			case Defines.RESERVATION_ROOM:
+				reservationPtr = (Reservation) roomTablePtr
+						.find(reservationInfoPtr.id);
+				break;
+			case Defines.RESERVATION_FLIGHT:
+				reservationPtr = (Reservation) flightTablePtr
+						.find(reservationInfoPtr.id);
+				break;
+			}
 			status = reservationPtr.reservation_cancel();
 		}
 

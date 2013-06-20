@@ -1,7 +1,7 @@
 package jstamp.vacation;
 
 import org.deuce.Atomic;
-import org.deuce.profiling.Profiler;
+import org.deuce.profiling.PRProfiler;
 
 /*
  * =============================================================================
@@ -102,7 +102,8 @@ public class Client extends Thread {
 	 */
 	public void run() {
 		Vacation.benchBarrier.join();
-		Profiler.enabled = true;
+//		Profiler.enabled = true;
+		PRProfiler.enabled = true;
 		Barrier.enterBarrier();
 		for (int i = 0; i < numOperation; i++) {
 			int r = randomPtr.posrandom_generate() % 100;

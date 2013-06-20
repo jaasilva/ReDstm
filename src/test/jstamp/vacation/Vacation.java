@@ -1,11 +1,9 @@
 package jstamp.vacation;
 
-import java.util.Iterator;
-
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
-import org.deuce.profiling.Profiler;
+import org.deuce.profiling.PRProfiler;
 
 /*
  * =============================================================================
@@ -167,11 +165,35 @@ public class Vacation
 	 * ====================================================
 	 * =========================
 	 */
+	@Bootstrap(id = 5)
+	static int[] ids;
+
 	@Atomic
-	public void initializeManager()
-	{
+	public void initializeManager(int numRelations) {
 		System.out.println("Initializing manager... ");
 		managerPtr = new Manager();
+		ids = new int[numRelations];
+	}
+
+	@Atomic
+	public final void initIds(final int begin, final int end) {
+		final int[] arr = ids;
+		for (int i = begin; i < end; i++) {
+			arr[i] = i + 1;
+		}
+	}
+
+	@Atomic
+	public final void shuffleIds(final int begin, final int end,
+			final Random randomPtr, int numRelations) {
+		final int[] arr = ids;
+		for (int i = begin; i < end; i++) {
+			int x = randomPtr.posrandom_generate() % numRelations;
+			int y = randomPtr.posrandom_generate() % numRelations;
+			int tmp = arr[x];
+			arr[x] = arr[y];
+			arr[y] = tmp;
+		}
 	}
 
 	// @Atomic
@@ -185,48 +207,33 @@ public class Vacation
 		randomPtr.random_alloc();
 
 		int numRelation = RELATIONS;
-		int ids[] = new int[numRelation];
-		for (i = 0; i < numRelation; i++)
+		int chunk = numRelation / 16;
+		for (i = 0; i < numRelation; i += chunk + 1)
 		{
-			ids[i] = i + 1;
+			int end = i + chunk;
+			end = (end > numRelation ? numRelation : end);
+			initIds(i, end);
 		}
 
 		for (t = 0; t < 4; t++)
 		{
 
 			/* Shuffle ids */
-			for (i = 0; i < numRelation; i++)
+			chunk = numRelation / 16;
+			for (i = 0; i < numRelation; i += chunk + 1)
 			{
-				int x = randomPtr.posrandom_generate() % numRelation;
-				int y = randomPtr.posrandom_generate() % numRelation;
-				int tmp = ids[x];
-				ids[x] = ids[y];
-				ids[y] = tmp;
+				int end = i + chunk;
+				end = (end > numRelation ? numRelation : end);
+				shuffleIds(i, end, randomPtr, numRelation);
 			}
 
 			/* Populate table */
-			// for (i = 0; i < numRelation; i++) {
-			// boolean status;
-			// int id = ids[i];
-			// int num = ((randomPtr.posrandom_generate() % 5) + 1) * 100;
-			// int price = ((randomPtr.posrandom_generate() % 5) * 10) + 50;
-			// if (t==0) {
-			// status=managerPtr.manager_addCar(id, num, price);
-			// } else if (t==1) {
-			// status=managerPtr.manager_addFlight(id, num, price);
-			// } else if (t==2) {
-			// status=managerPtr.manager_addRoom(id, num, price);
-			// } else if (t==3) {
-			// status=managerPtr.manager_addCustomer(id);
-			// }
-			// //assert(status);
-			// }
-			int chunk = numRelation / 10;
-			for (i = 0; i < numRelation; i += chunk)
+			chunk = numRelation / 32;
+			for (i = 0; i < numRelation; i += chunk + 1)
 			{
-				int stop = i + chunk;
-				populateTable(i, (stop > numRelation ? numRelation : stop),
-						randomPtr, ids, t);
+				int end = i + chunk;
+				end = (end > numRelation ? numRelation : end);
+				populateTable(i, end, randomPtr, t);
 			}
 
 		} /* for t */
@@ -236,14 +243,14 @@ public class Vacation
 	}
 
 	@Atomic
-	public void populateTable(int i, int numRelation, Random randomPtr,
-			int[] ids, int t)
+	public void populateTable(int i, int end, Random randomPtr, int t)
 	{
+		final int[] arr = ids;
 		/* Populate table */
-		for (i = 0; i < numRelation; i++)
+		for (i = 0; i < end; i++)
 		{
 			boolean status;
-			int id = ids[i];
+			int id = arr[i];
 			int num = ((randomPtr.posrandom_generate() % 5) + 1) * 100;
 			int price = ((randomPtr.posrandom_generate() % 5) * 10) + 50;
 			if (t == 0)
@@ -365,7 +372,7 @@ public class Vacation
 
 		if (Integer.getInteger("tribu.site") == 1)
 		{
-			vac.initializeManager();
+			vac.initializeManager(vac.RELATIONS);
 			vac.populateManager();
 			initBenchBarrier(vac.CLIENTS * Integer.getInteger("tribu.replicas"));
 		}
@@ -401,7 +408,8 @@ public class Vacation
 		stop = System.currentTimeMillis();
 		diff = stop - start;
 		System.out.println("TIME2=" + diff);
-		Profiler.enabled = false;
+//		Profiler.enabled = false;
+		PRProfiler.enabled = false;
 
 		vac.checkTables(managerPtr);
 
@@ -412,7 +420,8 @@ public class Vacation
 		 */
 		System.out.println("done.");
 
-		Profiler.print();
+//		Profiler.print();
+		PRProfiler.print();
 
 		// Thread.sleep(5000);
 
@@ -464,6 +473,25 @@ public class Vacation
 		// System.out.println("done.");
 
 		System.out.println("Checking tables... ");
+
+		for (t = 0; t < 4; t++) {
+			switch (t) {
+			case 0:
+				System.out.println("Verifying cars...");
+				break;
+			case 1:
+				System.out.println("Verifying flights...");
+				break;
+			case 2:
+				System.out.println("Verifying rooms...");
+				break;
+			case 3:
+				System.out.println("Verifying customers...");
+				break;
+			}
+			final RBTree tree = (t < 3 ? tables[t] : managerPtr.customerTablePtr);
+			tree.verify(1);
+		}
 
 		/* Check for unique customer IDs */
 		int percentQuery = QUERIES;

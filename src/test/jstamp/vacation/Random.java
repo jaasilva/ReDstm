@@ -1,6 +1,9 @@
 package jstamp.vacation;
 
-public class Random
+import org.deuce.transform.ExcludeTM;
+
+@ExcludeTM
+public class Random implements java.io.Serializable
 {
 	long[] mt;
 	int mti;
