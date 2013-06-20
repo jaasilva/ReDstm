@@ -83,14 +83,11 @@ public class SCOReReadSet implements Serializable
 
 		if (!res)
 		{
-			if (i > 1)
-			{ // there is only 1 elem in RS. it is not locked
-				for (int j = i - 2; j >= 0; j--)
-				{
-					res = ((InPlaceRWLock) readSet[j].field).sharedUnlock(txID);
-					LOGGER.trace("-> SunLock " + readSet[j].field.getMetadata()
-							+ " " + res);
-				}
+			for (int j = 0; j < i - 1; j++)
+			{
+				boolean unlock_res = ((InPlaceRWLock) readSet[j].field).sharedUnlock(txID);
+				LOGGER.trace("-> SunLock " + readSet[j].field.getMetadata()
+						+ " " + unlock_res);
 			}
 		}
 

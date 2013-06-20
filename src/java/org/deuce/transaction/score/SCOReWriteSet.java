@@ -119,16 +119,12 @@ public class SCOReWriteSet implements Serializable
 
 		if (!res)
 		{
-			if (i > 1)
-			{ // there is only 1 elem in WS. it is not locked
-				for (int j = i - 2; j >= 0; j--)
-				{
-					res = ((InPlaceRWLock) ((SCOReWriteFieldAccess) ws[j]).field)
-							.exclusiveUnlock(txID);
-					LOGGER.trace("-> XunLock "
-							+ ((SCOReWriteFieldAccess) ws[j]).field
-									.getMetadata() + " " + res);
-				}
+			for (int j = 0; j < i - 1; j++) {
+				boolean unlock_res = ((InPlaceRWLock) ((SCOReWriteFieldAccess) ws[j]).field)
+						.exclusiveUnlock(txID);
+				LOGGER.trace("-> XunLock "
+						+ ((SCOReWriteFieldAccess) ws[j]).field.getMetadata()
+						+ " " + unlock_res);
 			}
 		}
 
