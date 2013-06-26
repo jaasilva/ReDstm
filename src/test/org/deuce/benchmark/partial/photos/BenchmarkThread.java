@@ -13,9 +13,10 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 	final private int m_rate, m_read_rate;
 	boolean m_write;
 	final private Random m_random; // rand.nextInt(max - min + 1) + min
+	int initial;
 
 	public BenchmarkThread(RBTree[] myTrees, RBTree[] otherTrees,
-			int max_range, int min_range, int rate, int read_rate, int key_range)
+			int max_range, int min_range, int rate, int read_rate, int key_range, int init)
 	{
 		my_photos = myTrees;
 		other_photos = otherTrees;
@@ -24,6 +25,7 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 		m_key_range = key_range;
 		m_rate = rate;
 		m_read_rate = read_rate;
+		initial = init;
 		m_nb_add = m_nb_remove = m_nb_contains_remote = m_nb_contains_local = 0;
 		m_write = true;
 		m_random = new Random();
@@ -64,11 +66,11 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 			{
 				System.out.println("remote read");
 				int photo = m_random.nextInt(other_photos.length);
-				while (other_photos[photo].find(m_random.nextInt(m_key_range)) == null)
-				{
+				other_photos[photo].random_lookup(initial);
+				
 					if (phase == Benchmark.TEST_PHASE)
 						m_nb_contains_remote++;
-				}
+				
 			}
 			else
 			{

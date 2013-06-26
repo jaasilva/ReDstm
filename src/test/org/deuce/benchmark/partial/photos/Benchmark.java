@@ -25,13 +25,14 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 
 	int m_max_range, m_min_range, m_key_range;
 	int m_rate = 10, m_read_rate = 10;
+	int initial;
 	RBTree[] myTrees;
 	RBTree[] otherTrees;
 
 	public void init(String[] args)
 	{
 		boolean error = false;
-		int initial = 256;
+		initial = 256;
 
 		if (args.length == 0)
 			error = true;
@@ -430,7 +431,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 	public org.deuce.benchmark.BenchmarkThread createThread(int i, int nb)
 	{
 		return new BenchmarkThread(myTrees, otherTrees, m_max_range,
-				m_min_range, m_rate, m_read_rate, m_key_range);
+				m_min_range, m_rate, m_read_rate, m_key_range, initial);
 	}
 
 	public String getStats(org.deuce.benchmark.BenchmarkThread[] threads)

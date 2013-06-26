@@ -1,5 +1,7 @@
 package org.deuce.benchmark.partial.photos;
 
+import java.util.Random;
+
 import org.deuce.Atomic;
 
 /*
@@ -81,15 +83,30 @@ public class RBTree
 		return null;
 	}
 	
-//	private RBTreeNode random_lookup()
-//	{
-//		RBTreeNode p = root;
-//		
-//		while(p != null)
-//		{
-//			
-//		}
-//	}XXX
+	@Atomic
+	public RBTreeNode random_lookup(int initial)
+	{
+		RBTreeNode p = root;
+		Random rand = new Random();
+		int down = rand.nextInt((int) (Math.log10(initial)/Math.log10(2)));
+		RBTreeNode prev = p;
+		
+		while(p != null && down > 0)
+		{
+			prev = p;
+			if (rand.nextBoolean())
+			{
+				p = p.l;
+			}
+			else
+			{
+				p = p.r;
+			}
+			down--;
+		}
+		
+		return p == null ? prev : p;
+	}
 
 	/* rotateLeft */
 	private void rotateLeft(RBTreeNode x)
