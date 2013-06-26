@@ -41,7 +41,7 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 				m_write = false;
 				int width = m_random.nextInt(m_range + 1) + m_min_range;
 				int height = m_random.nextInt(m_range + 1) + m_min_range;
-				Object val = new byte[width * height * 3 * 1024];
+				Object val = new MyObject(new byte[width * height * 3]);
 				my_photos[photo].insert(m_random.nextInt(m_key_range), val);
 
 				if (phase == Benchmark.TEST_PHASE)
@@ -64,8 +64,7 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 			{
 				System.out.println("remote read");
 				int photo = m_random.nextInt(other_photos.length);
-				while (other_photos[photo].contains(m_random
-						.nextInt(m_key_range)) == null)
+				while (other_photos[photo].find(m_random.nextInt(m_key_range)) == null)
 				{
 					if (phase == Benchmark.TEST_PHASE)
 						m_nb_contains_remote++;
@@ -75,7 +74,7 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 			{
 				System.out.println("local read");
 				int photo = m_random.nextInt(my_photos.length);
-				my_photos[photo].contains(m_random.nextInt(m_key_range));
+				my_photos[photo].find(m_random.nextInt(m_key_range));
 
 				if (phase == Benchmark.TEST_PHASE)
 					m_nb_contains_local++;

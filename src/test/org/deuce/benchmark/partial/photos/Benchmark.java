@@ -147,17 +147,23 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			{
 				if (group.getId() == 0)
 				{
+					System.out.println("photos_1");
 					initializeSet(photos_1, new Random(), initial);
+					System.out.println("photos_2");
 					initializeSet(photos_2, new Random(), initial);
 				}
 				else if (group.getId() == 1)
 				{
+					System.out.println("photos_3");
 					initializeSet(photos_3, new Random(), initial);
+					System.out.println("photos_4");
 					initializeSet(photos_4, new Random(), initial);
 				}
 				else
 				{
+					System.out.println("photos_5");
 					initializeSet(photos_5, new Random(), initial);
+					System.out.println("photos_6");
 					initializeSet(photos_6, new Random(), initial);
 				}
 			}
@@ -165,26 +171,32 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			{
 				if (group.getId() == 0)
 				{
+					System.out.println("photos_1");
 					initializeSet(photos_1, new Random(), initial);
 				}
 				else if (group.getId() == 1)
 				{
+					System.out.println("photos_2");
 					initializeSet(photos_2, new Random(), initial);
 				}
 				else if (group.getId() == 2)
 				{
+					System.out.println("photos_3");
 					initializeSet(photos_3, new Random(), initial);
 				}
 				else if (group.getId() == 3)
 				{
+					System.out.println("photos_4");
 					initializeSet(photos_4, new Random(), initial);
 				}
 				else if (group.getId() == 4)
 				{
+					System.out.println("photos_5");
 					initializeSet(photos_5, new Random(), initial);
 				}
 				else if (group.getId() == 5)
 				{
+					System.out.println("photos_6");
 					initializeSet(photos_6, new Random(), initial);
 				}
 			}
@@ -216,7 +228,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 		if (numGroups == 1)
 		{
 			m_read_rate = 0;
-			
+
 			myTrees = new RBTree[6];
 			myTrees[0] = photos_1;
 			myTrees[1] = photos_2;
@@ -390,7 +402,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			int width = random.nextInt(m_range + 1) + min_range;
 			int height = random.nextInt(m_range + 1) + min_range;
 
-			Object val = new byte[width * height * 3];
+			Object val = new MyObject(new byte[width * height * 3]);
 			while (!photos.insert(random.nextInt(key_range), val))
 				;
 		}
