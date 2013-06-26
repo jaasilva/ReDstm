@@ -189,9 +189,9 @@ public class Driver
 		// System.err.println("-- Benchmark finished. Press enter to exit.");
 		// new Scanner(System.in).nextLine();
 
-		finishBarrier.join();
 		PRProfiler.enabled = false;
 		Profiler.enabled = false;
+		finishBarrier.join();
 
 		Profiler.print();
 		PRProfiler.print();
