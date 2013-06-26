@@ -84,7 +84,7 @@ public class RBTree
 	}
 	
 	@Atomic
-	public RBTreeNode random_lookup(int initial)
+	public Object random_lookup(int initial)
 	{
 		RBTreeNode p = root;
 		Random rand = new Random();
@@ -105,7 +105,7 @@ public class RBTree
 			down--;
 		}
 		
-		return p == null ? prev : p;
+		return p == null ? prev.v : p.v;
 	}
 
 	/* rotateLeft */
