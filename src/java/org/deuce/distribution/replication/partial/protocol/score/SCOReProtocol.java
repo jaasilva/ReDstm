@@ -345,11 +345,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		PRProfiler.onSerializationBegin(msg.ctxID);
 		serializationContext.set(true);
 		byte[] payload = ObjectSerializer.object2ByteArray(ret); // XXX read ctx
-		serializationContext.set(false);
 		PRProfiler.onSerializationFinish(msg.ctxID);
 
 		PRProfiler.newMsgSent(payload.length);
 		TribuDSTM.sendTo(payload, src);
+		serializationContext.set(false);
 		updateNodeTimestamps(msg.readSid);
 	}
 
