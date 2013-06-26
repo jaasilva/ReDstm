@@ -11,9 +11,11 @@ import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
@@ -63,13 +65,13 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 	private final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 
-	private final Queue<Pair<String, Integer>> pendQ = new PriorityQueue<Pair<String, Integer>>(
+	private final Queue<Pair<String, Integer>> pendQ = new PriorityBlockingQueue<Pair<String, Integer>>(
 			50, comp); // accessed only by bottom threads
 	private final Queue<Pair<String, Integer>> stableQ = new PriorityQueue<Pair<String, Integer>>(
 			50, comp); // accessed only by bottom threads
 
-	private final Map<String, DistributedContextState> receivedTrxs = new HashMap<String, DistributedContextState>(); // accessed only by bottom threads
-	private final Set<String> rejectTrxs = new HashSet<String>(); // accessed only by bottom threads
+	private final Map<String, DistributedContextState> receivedTrxs = new ConcurrentHashMap<String, DistributedContextState>(); // accessed only by bottom threads
+	private final Set<String> rejectTrxs = Collections.synchronizedSet(new HashSet<String>()); // accessed only by bottom threads
 
 	private static final int minReadThreads = 2;
 	private final Executor pool = Executors.newFixedThreadPool(Math.max(
