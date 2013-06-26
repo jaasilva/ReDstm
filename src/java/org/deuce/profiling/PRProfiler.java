@@ -119,7 +119,7 @@ public class PRProfiler
 				{
 					txAppDurationMin = elapsed;
 				}
-				else if (elapsed > txAppDurationMax)
+				if (elapsed > txAppDurationMax)
 				{
 					txAppDurationMax = elapsed;
 				}
@@ -153,7 +153,7 @@ public class PRProfiler
 				{
 					txVotesMin = elapsed;
 				}
-				else if (elapsed > txVotesMax)
+				if (elapsed > txVotesMax)
 				{
 					txVotesMax = elapsed;
 				}
@@ -186,7 +186,7 @@ public class PRProfiler
 				{
 					txValidateMin = elapsed;
 				}
-				else if (elapsed > txValidateMax)
+				if (elapsed > txValidateMax)
 				{
 					txValidateMax = elapsed;
 				}
@@ -219,7 +219,7 @@ public class PRProfiler
 				{
 					txCommitMin = elapsed;
 				}
-				else if (elapsed > txCommitMax)
+				if (elapsed > txCommitMax)
 				{
 					txCommitMax = elapsed;
 				}
@@ -238,7 +238,7 @@ public class PRProfiler
 			{
 				msgSentSizeMin = bytes;
 			}
-			else if (bytes > msgSentSizeMax)
+			if (bytes > msgSentSizeMax)
 			{
 				msgSentSizeMax = bytes;
 			}
@@ -256,7 +256,7 @@ public class PRProfiler
 			{
 				msgRecvSizeMin = bytes;
 			}
-			else if (bytes > msgRecvSizeMax)
+			if (bytes > msgRecvSizeMax)
 			{
 				msgRecvSizeMax = bytes;
 			}
@@ -288,7 +288,7 @@ public class PRProfiler
 				{
 					txRReadMin = elapsed;
 				}
-				else if (elapsed > txRReadMax)
+				if (elapsed > txRReadMax)
 				{
 					txRReadMax = elapsed;
 				}
@@ -321,7 +321,7 @@ public class PRProfiler
 				{
 					txLReadMin = elapsed;
 				}
-				else if (elapsed > txLReadMax)
+				if (elapsed > txLReadMax)
 				{
 					txLReadMax = elapsed;
 				}
@@ -354,7 +354,7 @@ public class PRProfiler
 				{
 					txCReadMin = elapsed;
 				}
-				else if (elapsed > txCReadMax)
+				if (elapsed > txCReadMax)
 				{
 					txCReadMax = elapsed;
 				}
@@ -387,7 +387,7 @@ public class PRProfiler
 				{
 					serMin = elapsed;
 				}
-				else if (elapsed > serMax)
+				if (elapsed > serMax)
 				{
 					serMax = elapsed;
 				}
@@ -408,7 +408,7 @@ public class PRProfiler
 				{
 					waitingReadMin = time;
 				}
-				else if (time > waitingReadMax)
+				if (time > waitingReadMax)
 				{
 					waitingReadMax = time;
 				}
