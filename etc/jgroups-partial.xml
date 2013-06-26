@@ -11,15 +11,9 @@
          thread_pool.max_threads="1"
          oob_thread_pool.enabled="false"/>
     <PING/>
-    <MERGE2/>
-    <FD_SOCK/>
-    <VERIFY_SUSPECT/>
-    <BARRIER/>
     <pbcast.NAKACK2/>
     <UNICAST3/>
     <pbcast.STABLE/>
     <pbcast.GMS/>
-    <UFC/>
-    <MFC/>
     <FRAG2/>
 </config>
