@@ -192,7 +192,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			log.append("Remote read (sid=" + sctx.sid + ", requestVersion="
 					+ sctx.requestVersion + ")\n");
 			
-			LOGGER.debug("REMOTE READ " + group);
+			LOGGER.debug("REMOTE READ " + group + " " + metadata);
 
 			PRProfiler.onSerializationBegin(ctx.threadID);
 			byte[] payload = ObjectSerializer.object2ByteArray(req);
