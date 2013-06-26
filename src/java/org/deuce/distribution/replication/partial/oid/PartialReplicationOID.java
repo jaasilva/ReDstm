@@ -27,6 +27,17 @@ public interface PartialReplicationOID extends OID
 			+ Type.VOID_TYPE.getDescriptor();
 
 	public void setGroup(Group group);
+	
+	public static final String GET_PGROUP_METHOD_NAME = "getPartialGroup";
+	public static final String GET_PGROUP_METHOD_DESC = "()" + Group.DESC;
+
+	public Group getPartialGroup();
+
+	public static final String SET_PGROUP_METHOD_NAME = "setPartialGroup";
+	public static final String SET_PGROUP_METHOD_DESC = "(" + Group.DESC + ")"
+			+ Type.VOID_TYPE.getDescriptor();
+
+	public void setPartialGroup(Group group);
 
 	public String toString();
 

@@ -166,7 +166,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 				+ sctx.trxID + "\n");
 
 		boolean firstRead = !sctx.firstReadDone;
-		Group group = ((PartialReplicationOID) metadata).getGroup();
+		Group group = ((PartialReplicationOID) metadata).getPartialGroup();
 
 		if (firstRead)
 		{ // first read of this transaction

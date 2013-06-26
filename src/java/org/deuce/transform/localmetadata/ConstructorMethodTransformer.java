@@ -131,38 +131,22 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter {
 			// stack: ..., Object (this), TxField, PartialReplicationSerializer,
 			// TxField =>
 
-			if (oid != null) { // Bootstrap field -> fullRepOID(oid)
-								// [id:rand(oid),group:ALL]
-								// stack: ..., Object (this), TxField,
-								// PartialReplicationSerializer, TxField =>
+			if (oid != null) { // Bootstrap field -> fullRepOID(oid) [id:rand(oid),group:ALL]
+				// stack: ..., Object (this), TxField, PartialReplicationSerializer, TxField =>
 				mv.visitLdcInsn(oid);
-				// stack: ..., Object (this), TxField,
-				// PartialReplicationSerializer, TxField,
-				// int =>
+				// stack: ..., Object (this), TxField, PartialReplicationSerializer, TxField, int =>
 				mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
 						PartialReplicationSerializer.NAME,
 						PartialReplicationSerializer.BOOTSTRAP_METHOD_NAME,
 						PartialReplicationSerializer.BOOTSTRAP_METHOD_DESC);
 				// stack: ..., Object (this), TxField =>
-			} else if (partialField) { // Partial field -> partialRepOID()
-										// [id:rand(),group:null]
-										// stack: ..., Object (this), TxField,
-										// PartialReplicationSerializer, TxField
-										// =>
+			} else if (partialField) { // Partial field -> partialRepOID() [id:rand(),group:null]
+				// stack: ..., Object (this), TxField, PartialReplicationSerializer, TxField =>
 				mv.visitMethodInsn(
 						Opcodes.INVOKEVIRTUAL,
 						PartialReplicationSerializer.NAME,
 						PartialReplicationSerializer.CREATE_PARTIAL_METADATA_METHOD_NAME,
 						PartialReplicationSerializer.CREATE_PARTIAL_METADATA_METHOD_DESC);
-				// stack: ..., Object (this), TxField =>
-			} else { // Full field -> fullRepOID() [id:rand(),group:ALL]
-						// stack: ..., Object (this), TxField,
-						// PartialReplicationSerializer, TxField =>
-				mv.visitMethodInsn(
-						Opcodes.INVOKEVIRTUAL,
-						PartialReplicationSerializer.NAME,
-						PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_NAME,
-						PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_DESC);
 				// stack: ..., Object (this), TxField =>
 				/* XXX t.vale: inherit group from parent object. */
 				mv.visitInsn(Opcodes.DUP2);
@@ -199,6 +183,52 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter {
 						PartialReplicationOID.SET_GROUP_METHOD_NAME,
 						PartialReplicationOID.SET_GROUP_METHOD_DESC);
 				// stack: ..., Object (this), TxField =>
+			} else { // Full field -> fullRepOID() [id:rand(),group:ALL]
+				// stack: ..., Object (this), TxField, PartialReplicationSerializer, TxField =>
+				mv.visitMethodInsn(
+						Opcodes.INVOKEVIRTUAL,
+						PartialReplicationSerializer.NAME,
+						PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_NAME,
+						PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_DESC);
+				// stack: ..., Object (this), TxField =>
+				/* XXX t.vale: inherit group from parent object. */
+				mv.visitInsn(Opcodes.DUP2);
+				// stack: ..., Object (this), TxField, Object (this), TxField =>
+				mv.visitInsn(Opcodes.SWAP);
+				// stack: ..., Object (this), TxField, TxField, Object (this) =>
+				mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, className,
+						UniqueObject.GETMETADATA_METHOD_NAME,
+						UniqueObject.GETMETADATA_METHOD_DESC);
+				// stack: ..., Object (this), TxField, TxField, ObjectMetadata
+				// =>
+				mv.visitTypeInsn(Opcodes.CHECKCAST, PartialReplicationOID.NAME);
+				// stack: ..., Object (this), TxField, TxField, PartialRepOID =>
+				mv.visitMethodInsn(Opcodes.INVOKEINTERFACE,
+						PartialReplicationOID.NAME,
+						PartialReplicationOID.GET_GROUP_METHOD_NAME,
+						PartialReplicationOID.GET_GROUP_METHOD_DESC);
+				// stack: ..., Object (this), TxField, TxField, Group (this) =>
+				mv.visitInsn(Opcodes.SWAP);
+				// stack: ..., Object (this), TxField, Group (this), TxField =>
+				mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, UniqueObject.NAME,
+						UniqueObject.GETMETADATA_METHOD_NAME,
+						UniqueObject.GETMETADATA_METHOD_DESC);
+				// stack: ..., Object (this), TxField, Group (this), ObjectMetadata =>
+				mv.visitTypeInsn(Opcodes.CHECKCAST, PartialReplicationOID.NAME);
+				// stack: ..., Object (this), TxField, Group (this), PartialRepOID =>
+				mv.visitInsn(Opcodes.SWAP);
+				// stack: ..., Object (this), TxField, PartialRepOID, Group (this) =>
+				mv.visitInsn(Opcodes.DUP2);
+				// stack: ..., Object (this), TxField, PartialRepOID, Group (this), PartialRepOID, Group (this) =>
+				mv.visitMethodInsn(Opcodes.INVOKEINTERFACE,
+						PartialReplicationOID.NAME,
+						PartialReplicationOID.SET_GROUP_METHOD_NAME,
+						PartialReplicationOID.SET_GROUP_METHOD_DESC);
+				// stack: ..., Object (this), TxField, PartialRepOID, Group (this) =>
+				mv.visitMethodInsn(Opcodes.INVOKEINTERFACE,
+						PartialReplicationOID.NAME,
+						PartialReplicationOID.SET_PGROUP_METHOD_NAME,
+						PartialReplicationOID.SET_PGROUP_METHOD_DESC);
 			}
 		} else { // @Bootstrap, assumes FullReplicationSerializer
 			if (oid != null) {

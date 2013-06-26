@@ -15,12 +15,14 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	private static final long serialVersionUID = 1L;
 	private java.util.UUID id;
 	private Group group;
+	private Group partialGroup;
 	private boolean isPublished;
 
 	public PartialReplicationMetadata()
 	{ // Requires the insertion of the group later.
 		this.id = java.util.UUID.randomUUID();
 		this.group = null;
+		this.partialGroup = null;
 		this.isPublished = false;
 	}
 
@@ -28,6 +30,7 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	{
 		this.id = java.util.UUID.randomUUID();
 		this.group = group;
+		this.partialGroup = group;
 		this.isPublished = false;
 	}
 
@@ -36,6 +39,7 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 		byte[] name = ByteBuffer.allocate(4).putInt(seed).array();
 		this.id = java.util.UUID.nameUUIDFromBytes(name);
 		this.group = null;
+		this.partialGroup = null;
 		this.isPublished = false;
 	}
 
@@ -44,6 +48,7 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 		byte[] name = ByteBuffer.allocate(4).putInt(seed).array();
 		this.id = java.util.UUID.nameUUIDFromBytes(name);
 		this.group = group;
+		this.partialGroup = group;
 		this.isPublished = false;
 	}
 
@@ -57,6 +62,18 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	public void setGroup(Group group)
 	{
 		this.group = group;
+	}
+	
+	@Override
+	public Group getPartialGroup()
+	{
+		return this.partialGroup;
+	}
+
+	@Override
+	public void setPartialGroup(Group group)
+	{
+		this.partialGroup = group;
 	}
 
 	@Override

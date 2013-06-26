@@ -58,6 +58,7 @@ public class ByteArrayContainer extends ArrayContainer
 					final PartialReplicationOID field_metadata = (PartialReplicationOID) field
 							.getMetadata();
 					field_metadata.setGroup(g);
+					field_metadata.setPartialGroup(g);
 				}
 				/*
 				 * XXX t.vale: A instrumentação tem que passar mais informação

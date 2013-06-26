@@ -196,7 +196,7 @@ public class SCOReContext extends DistributedContext
 		log.append(field.getMetadata() + "\n");
 
 		Group txFieldGroup = ((PartialReplicationOID) field.getMetadata())
-				.getGroup();
+				.getPartialGroup();
 		PartialReplicationOID objMetadata = (PartialReplicationOID) obj
 				.getMetadata();
 
@@ -226,6 +226,7 @@ public class SCOReContext extends DistributedContext
 				System.exit(-1);
 			}
 			objGroup.set(txFieldGroup.getAll());
+			objMetadata.getPartialGroup().set(txFieldGroup.getAll());
 		}
 
 		log.append("==========================================");
