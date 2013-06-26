@@ -178,8 +178,10 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	{
 		try
 		{
-			channel.send((org.jgroups.Address) addr.getSpecificAddress(),
+			final Message msg = new Message((org.jgroups.Address) addr.getSpecificAddress(),
 					payload);
+			msg.setFlag(Message.Flag.OOB);
+			channel.send(msg);
 		}
 		catch (Exception e)
 		{
