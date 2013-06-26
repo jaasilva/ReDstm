@@ -67,7 +67,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		}
 		else
 		{
-//			toPublish = oid.getGroup();
+			toPublish = oid.getGroup();
 //			if (toPublish.getAll().isEmpty())
 //			{ // choose group
 //				toPublish = TribuDSTM.publishObjectTo(obj);
