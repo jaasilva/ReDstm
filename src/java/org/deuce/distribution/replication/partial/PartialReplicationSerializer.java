@@ -15,6 +15,7 @@ import org.deuce.distribution.replication.partial.oid.PartialReplicationOIDFacto
 import org.deuce.distribution.replication.partial.protocol.score.SCOReProtocol;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
+import org.deuce.transform.localmetadata.type.TxField;
 
 /**
  * @author jaasilva
@@ -115,6 +116,11 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		else
 		{ // not for me to replicate this object
 			LOGGER.trace("> " + oid + " (no rep)");
+			
+			if (obj instanceof TxField)
+			{
+				TribuDSTM.putObject(oid, obj);
+			}
 
 			return obj;
 		}
