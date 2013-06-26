@@ -268,7 +268,7 @@ public class SCOReContext extends DistributedContext
 				&& !(value instanceof Byte) && !(value instanceof Short)
 				&& !(value instanceof Integer) && !(value instanceof Long)
 				&& !(value instanceof Float) && !(value instanceof Double)
-				&& !(value instanceof Character) && !(value instanceof Boolean))
+				&& !(value instanceof Character) && !(value instanceof Boolean) && (value instanceof UniqueObject))
 		{
 			checkGroupRestrictions((UniqueObject) value, field);
 		}
