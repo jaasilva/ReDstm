@@ -117,10 +117,10 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		{ // not for me to replicate this object
 			LOGGER.trace("> " + oid + " (no rep)");
 			
-			if (obj instanceof TxField)
-			{
-				TribuDSTM.putObject(oid, obj);
-			}
+//			if (obj instanceof TxField)
+//			{
+//				TribuDSTM.putObject(oid, obj);
+//			}
 
 			return obj;
 		}
