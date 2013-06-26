@@ -253,7 +253,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
 		{ // wait until (commitId.get() >= sid || ((InPlaceRWLock)
 			// field).isExclusiveUnlocked()
-			LOGGER.debug((commitId.get() < sid) + " "
+			LOGGER.debug("doRead waiting "+(commitId.get() < sid) + " "
 					+ !((InPlaceRWLock) field).isExclusiveUnlocked());
 		}
 		long end = System.nanoTime();
@@ -346,11 +346,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		PRProfiler.onSerializationBegin(msg.ctxID);
 		serializationContext.set(true);
 		byte[] payload = ObjectSerializer.object2ByteArray(ret); // XXX read ctx
+		serializationContext.set(false);
 		PRProfiler.onSerializationFinish(msg.ctxID);
 
 		PRProfiler.newMsgSent(payload.length);
 		TribuDSTM.sendTo(payload, src);
-		serializationContext.set(false);
 		updateNodeTimestamps(msg.readSid);
 	}
 
