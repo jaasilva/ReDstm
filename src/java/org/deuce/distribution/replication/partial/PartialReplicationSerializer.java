@@ -36,6 +36,8 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	public Object writeReplaceHook(UniqueObject obj)
 			throws ObjectStreamException
 	{
+		LOGGER.trace("----- " + obj.getClass().getSimpleName());
+		
 		PartialReplicationOID oid = (PartialReplicationOID) obj.getMetadata();
 		boolean isRead = SCOReProtocol.serializationContext.get();
 
