@@ -1,5 +1,9 @@
 package org.deuce.transform.localmetadata.array;
 
+import org.deuce.distribution.TribuDSTM;
+import org.deuce.distribution.replication.group.Group;
+import org.deuce.distribution.replication.partial.PartialReplicationSerializer;
+import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.reflection.AddressUtil;
 import org.deuce.transaction.ContextDelegator;
@@ -28,6 +32,7 @@ public class ObjectArrayContainer extends ArrayContainer
 
 	public ObjectArrayContainer(Object[] arr)
 	{
+		super();
 		array = arr;
 
 		final int base = AddressUtil.arrayBaseOffset(Object[].class);
@@ -42,6 +47,18 @@ public class ObjectArrayContainer extends ArrayContainer
 				obj = ContextDelegator.getMetadataClass().newInstance();
 				TxField field = (TxField) obj;
 				field.init(arr, base + scale * i);
+
+				// XXX
+				if (TribuDSTM.PARTIAL) {
+					final PartialReplicationSerializer s = (PartialReplicationSerializer) TribuDSTM
+							.getObjectSerializer();
+					s.createFullReplicationMetadata(field);
+					final Group g = ((PartialReplicationOID) this.getMetadata())
+							.getGroup();
+					final PartialReplicationOID field_metadata = (PartialReplicationOID) field
+							.getMetadata();
+					field_metadata.setGroup(g);
+				}
 				/*
 				 * XXX t.vale: A instrumentação tem que passar mais informação
 				 * ao init, nomeadamente o tipo! O João implementou este pedaço
@@ -49,7 +66,7 @@ public class ObjectArrayContainer extends ArrayContainer
 				 * arrays são inicializados nesta classe. Se o init do TxField
 				 * receber o tipo fica gerar para todos os algoritmos.
 				 */
-				if (field instanceof VBoxField) {
+				if (TribuDSTM.PARTIAL && field instanceof VBoxField) {
 					VBoxField vbox = (VBoxField) field;
 					vbox.setType(Type.OBJECT);
 				}

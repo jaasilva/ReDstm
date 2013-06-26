@@ -5,6 +5,7 @@ import java.io.ObjectStreamException;
 import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
+import org.deuce.distribution.replication.partial.PartialReplicationSerializer;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transaction.IContext;
 import org.deuce.transform.ExcludeTM;
@@ -21,6 +22,14 @@ public abstract class ArrayContainer implements UniqueObject
 	public static final String GETARRAY_METHOD_NAME = "getArray";
 	public static final String GETARRAY_METHOD_DESC = "()"
 			+ Type.getDescriptor(Object.class);
+
+	public ArrayContainer() {
+		if (TribuDSTM.PARTIAL) {
+			final PartialReplicationSerializer s = (PartialReplicationSerializer) TribuDSTM
+					.getObjectSerializer();
+			s.createFullReplicationMetadata(this);
+		}
+	}
 
 	public abstract Object getArray();
 

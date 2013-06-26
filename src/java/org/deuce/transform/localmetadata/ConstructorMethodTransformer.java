@@ -72,22 +72,26 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter {
 	}
 
 	protected void initDistributionMetadata() {
-		// stack: ... =>
-		mv.visitVarInsn(Opcodes.ALOAD, 0);
-		// stack: ..., Object (this) =>
-		mv.visitMethodInsn(Opcodes.INVOKESTATIC, TribuDSTM.NAME,
-				TribuDSTM.GETSERIALIZER_METHOD_NAME,
-				TribuDSTM.GETSERIALIZER_METHOD_DESC);
-		// stack: ..., Object (this), ObjectSerializer =>
-		mv.visitTypeInsn(Opcodes.CHECKCAST, PartialReplicationSerializer.NAME);
-		// stack: ..., Object (this), PartialReplicationSerializer =>
-		mv.visitInsn(Opcodes.SWAP);
-		// stack: ..., PartialReplicationSerializer, Object (this) =>
-		mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL,
-				PartialReplicationSerializer.NAME,
-				PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_NAME,
-				PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_DESC);
-		// stack: ... =>
+		if (partial) {
+			// stack: ... =>
+			mv.visitVarInsn(Opcodes.ALOAD, 0);
+			// stack: ..., Object (this) =>
+			mv.visitMethodInsn(Opcodes.INVOKESTATIC, TribuDSTM.NAME,
+					TribuDSTM.GETSERIALIZER_METHOD_NAME,
+					TribuDSTM.GETSERIALIZER_METHOD_DESC);
+			// stack: ..., Object (this), ObjectSerializer =>
+			mv.visitTypeInsn(Opcodes.CHECKCAST,
+					PartialReplicationSerializer.NAME);
+			// stack: ..., Object (this), PartialReplicationSerializer =>
+			mv.visitInsn(Opcodes.SWAP);
+			// stack: ..., PartialReplicationSerializer, Object (this) =>
+			mv.visitMethodInsn(
+					Opcodes.INVOKEVIRTUAL,
+					PartialReplicationSerializer.NAME,
+					PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_NAME,
+					PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_DESC);
+			// stack: ... =>
+		}
 	}
 
 	protected void initMetadataField(Field field) {
