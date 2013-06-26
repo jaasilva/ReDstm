@@ -612,8 +612,13 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		StringBuffer log = new StringBuffer();
 		log.append("------------------------------------------\n");
+		try{
 		log.append("decideMessage (src=" + src + ") " + ctxID + ":"
 				+ tx.atomicBlockId + ":" + trxID + "\n");
+		}catch (NullPointerException e)
+		{
+			log.append("decideMessage\n");
+		}
 		log.append("result= " + result + " finalSid= " + finalSid
 				+ "\n");
 		log.append("------------------------------------------");
