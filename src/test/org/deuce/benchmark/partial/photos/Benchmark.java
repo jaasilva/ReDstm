@@ -403,7 +403,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			int width = random.nextInt(m_range + 1) + min_range;
 			int height = random.nextInt(m_range + 1) + min_range;
 
-			Object val = new MyObject();
+			Object val = new MyObject(width, height);
 			while (!photos.insert(random.nextInt(key_range), val))
 				;
 		}
