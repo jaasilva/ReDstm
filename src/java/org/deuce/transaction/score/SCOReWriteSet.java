@@ -37,7 +37,7 @@ public class SCOReWriteSet implements Serializable
 
 	public Group getInvolvedNodes()
 	{
-		Group resGroup = new PartialReplicationGroup();
+		Group resGroup = new PartialReplicationGroup(-2);
 
 		for (SCOReWriteFieldAccess wfa : writeSet)
 		{

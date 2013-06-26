@@ -37,4 +37,6 @@ public interface Group extends Serializable {
 	public int hashCode();
 
 	public Group union(Group other);
+
+	public int getId();
 }

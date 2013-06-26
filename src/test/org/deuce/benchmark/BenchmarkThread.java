@@ -6,7 +6,7 @@ package org.deuce.benchmark;
  * @author Pascal Felber
  * @since 0.1
  */
-abstract public class BenchmarkThread implements Runnable
+public class BenchmarkThread implements Runnable
 {
 
 	volatile private int m_phase;
@@ -63,7 +63,13 @@ abstract public class BenchmarkThread implements Runnable
 		// cm.close();
 	}
 
-	abstract protected void step(int phase);
+	protected void step(int phase)
+	{
+		
+	}
 
-	abstract public String getStats();
+	public String getStats()
+	{
+		return "";
+	}
 }

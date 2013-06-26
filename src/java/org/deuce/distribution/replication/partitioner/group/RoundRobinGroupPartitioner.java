@@ -32,7 +32,7 @@ public class RoundRobinGroupPartitioner extends Partitioner implements
 		List<Group> g = getGroups();
 		for (int i = 0; i < groups; i++)
 		{
-			g.add(new PartialReplicationGroup());
+			g.add(new PartialReplicationGroup(i));
 		}
 
 		int group = 0;

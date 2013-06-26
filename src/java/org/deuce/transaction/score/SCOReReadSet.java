@@ -120,7 +120,7 @@ public class SCOReReadSet implements Serializable
 
 	public Group getInvolvedNodes()
 	{
-		Group resGroup = new PartialReplicationGroup();
+		Group resGroup = new PartialReplicationGroup(-2);
 
 		for (int i = 0; i < next; i++)
 		{
