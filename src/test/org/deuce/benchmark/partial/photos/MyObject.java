@@ -7,8 +7,8 @@ public class MyObject
 {
 	final byte[] array;
 
-	public MyObject(byte[] a)
+	public MyObject()
 	{
-		array = a;
+		array = new byte[65255];
 	}
 }
