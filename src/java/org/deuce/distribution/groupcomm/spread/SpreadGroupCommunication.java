@@ -23,6 +23,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 {
 	private SpreadConnection connection;
 	private SpreadGroup group;
+	private SpreadGroup[] members;
 
 	public SpreadGroupCommunication()
 	{
@@ -127,11 +128,14 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 
 	public void membershipMessageReceived(SpreadMessage message)
 	{
+		final SpreadGroup[] members;
 		if (message.isMembership()
 				&& message.getMembershipInfo().isRegularMembership()
-				&& message.getMembershipInfo().getMembers().length == Integer
-						.getInteger("tribu.replicas").intValue())
+				&& (members = message.getMembershipInfo().getMembers()).length == Integer
+						.getInteger("tribu.replicas").intValue()) {
+			this.members = members;
 			membersArrived();
+		}
 	}
 
 	@Override
@@ -144,22 +148,50 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 	@Override
 	public void sendTo(byte[] payload, Address addr)
 	{
-		System.err.println("Feature not implemented.");
-		System.exit(-1);
+		SpreadMessage message = new SpreadMessage();
+		message.setData(payload);
+		message.addGroup((SpreadGroup) addr.getSpecificAddress());
+		message.setReliable();
+		try
+		{
+			connection.multicast(message);
+		}
+		catch (SpreadException e)
+		{
+			System.err.println("Couldn't send message.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
 	}
 
 	@Override
 	public void sendToGroup(byte[] payload, Group group)
 	{
-		System.err.println("Feature not implemented.");
-		System.exit(-1);
+		SpreadMessage message = new SpreadMessage();
+		message.setData(payload);
+		for (Address addr : group.getAll()) {
+			message.addGroup((SpreadGroup) addr.getSpecificAddress());
+		}
+		message.setReliable();
+		try
+		{
+			connection.multicast(message);
+		}
+		catch (SpreadException e)
+		{
+			System.err.println("Couldn't send message.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
 	}
 
 	@Override
 	public List<Address> getMembers()
 	{
-		System.err.println("Feature not implemented.");
-		System.exit(-1);
-		return null;
+		final List<Address> addrs = new java.util.LinkedList<Address>();
+		for (SpreadGroup addr : members) {
+			addrs.add(new SpreadAddress(addr));
+		}
+		return addrs;
 	}
 }
