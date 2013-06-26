@@ -41,15 +41,19 @@ public class PartialReplicationSerializer extends ObjectSerializer
 
 		Group toPublish = null;
 		/* XXX t.vale: never happens now. */
-		if (oid == null)
-		{ // UniqueObject #metadata (it is not a TxField)
-			oid = factory.generateOID(); // creates PRepMetadata with no group
-			toPublish = TribuDSTM.publishObjectTo(obj); // choose group
-			oid.setGroup(toPublish);
-			obj.setMetadata(oid);
-
-			LOGGER.trace("< " + oid + " (oid null) "
-					+ obj.getClass().getSimpleName());
+//		if (oid == null)
+//		{ // UniqueObject #metadata (it is not a TxField)
+//			oid = factory.generateOID(); // creates PRepMetadata with no group
+//			toPublish = TribuDSTM.publishObjectTo(obj); // choose group
+//			oid.setGroup(toPublish);
+//			obj.setMetadata(oid);
+//
+//			LOGGER.trace("< " + oid + " (oid null) "
+//					+ obj.getClass().getSimpleName());
+//		}
+		if (isRead)
+		{
+			return obj;
 		}
 		else if (oid.isPublished())
 		{
@@ -61,13 +65,15 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		}
 		else
 		{
-			toPublish = oid.getGroup();
-			if (toPublish.getAll().isEmpty())
-			{ // choose group
-				toPublish = TribuDSTM.publishObjectTo(obj);
-				oid.getGroup().getAll().addAll(toPublish.getAll());
-			}
-
+//			toPublish = oid.getGroup();
+//			if (toPublish.getAll().isEmpty())
+//			{ // choose group
+//				toPublish = TribuDSTM.publishObjectTo(obj);
+//				oid.getGroup().getAll().addAll(toPublish.getAll());
+//			}
+			
+			oid.publish();
+			
 			LOGGER.trace("< " + oid + " (oid not null) "
 					+ obj.getClass().getSimpleName());
 		}
