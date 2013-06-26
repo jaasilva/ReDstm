@@ -66,10 +66,10 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 				int photo = m_random.nextInt(other_photos.length);
 				while (other_photos[photo].contains(m_random
 						.nextInt(m_key_range)) == null)
-					;
-
-				if (phase == Benchmark.TEST_PHASE)
-					m_nb_contains_remote++;
+				{
+					if (phase == Benchmark.TEST_PHASE)
+						m_nb_contains_remote++;
+				}
 			}
 			else
 			{
