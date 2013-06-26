@@ -72,8 +72,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	private final Set<String> rejectTrxs = new HashSet<String>(); // accessed only by bottom threads
 
 	private static final int minReadThreads = 2;
-	private final Executor pool = Executors.newFixedThreadPool(Math.max(
-			TribuDSTM.getNumGroups() / 2, minReadThreads));
+//	private final Executor pool = Executors.newFixedThreadPool(Math.max(
+//			TribuDSTM.getNumGroups() / 2, minReadThreads));
+	private final Executor pool = Executors.newSingleThreadExecutor();
 
 	public static final ThreadLocal<Boolean> serializationContext = new ThreadLocal<Boolean>()
 	{ // false -> *not* read context; true -> read context
