@@ -103,7 +103,7 @@ public class Driver
 		initBarriers();
 		setupBarrier.join();
 
-		Profiler.enabled = true;
+//		Profiler.enabled = true;
 		PRProfiler.enabled = true;
 
 		BenchmarkThread[] bt = new BenchmarkThread[nb_threads];
@@ -190,10 +190,10 @@ public class Driver
 		// new Scanner(System.in).nextLine();
 
 		PRProfiler.enabled = false;
-		Profiler.enabled = false;
+//		Profiler.enabled = false;
 		finishBarrier.join();
 
-		Profiler.print();
+//		Profiler.print();
 		PRProfiler.print();
 
 		// System.out.println(((org.deuce.benchmark.intset.Benchmark) b).m_set);
