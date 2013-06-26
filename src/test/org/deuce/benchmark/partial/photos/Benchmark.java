@@ -109,11 +109,17 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			long start = System.nanoTime();
 			if (numGroups == 1)
 			{
+				System.out.println("photos_1");
 				initializeSet(photos_1, new Random(), initial);
+				System.out.println("photos_2");
 				initializeSet(photos_2, new Random(), initial);
+				System.out.println("photos_3");
 				initializeSet(photos_3, new Random(), initial);
+				System.out.println("photos_4");
 				initializeSet(photos_4, new Random(), initial);
+				System.out.println("photos_5");
 				initializeSet(photos_5, new Random(), initial);
+				System.out.println("photos_6");
 				initializeSet(photos_6, new Random(), initial);
 			}
 			else if (numGroups == 2)
