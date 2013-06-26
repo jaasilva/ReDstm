@@ -22,6 +22,7 @@ EXCLUDE="${EXCLUDE},flanagan.*"
 EXCLUDE="${EXCLUDE},org.apache.log4j.*"
 EXCLUDE="${EXCLUDE},spread.*"
 EXCLUDE="${EXCLUDE},org.deuce.trove.*"
+EXCLUDE="${EXCLUDE},org.deuce.benchmark.partial.photos.MyObject"
 
 WARMUP=0
 DURATION=10000
