@@ -15,7 +15,6 @@ import org.deuce.distribution.replication.partial.oid.PartialReplicationOIDFacto
 import org.deuce.distribution.replication.partial.protocol.score.SCOReProtocol;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
-import org.deuce.transform.localmetadata.type.TxField;
 
 /**
  * @author jaasilva
@@ -68,13 +67,13 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		}
 		else
 		{
-			toPublish = oid.getGroup();
-			if (toPublish.getAll().isEmpty())
-			{ // choose group
-				toPublish = TribuDSTM.publishObjectTo(obj);
-				oid.getGroup().getAll().addAll(toPublish.getAll());
-				oid.getPartialGroup().getAll().addAll(toPublish.getAll());
-			}
+//			toPublish = oid.getGroup();
+//			if (toPublish.getAll().isEmpty())
+//			{ // choose group
+//				toPublish = TribuDSTM.publishObjectTo(obj);
+//				oid.getGroup().getAll().addAll(toPublish.getAll());
+//				oid.getPartialGroup().getAll().addAll(toPublish.getAll());
+//			}
 			
 			oid.publish();
 			
@@ -141,6 +140,8 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	{ // Generates an empty metadata (group is null)
 		ObjectMetadata meta = factory.generateOID();
 		obj.setMetadata(meta);
+		final Group toPublish = TribuDSTM.publishObjectTo(obj);
+		((PartialReplicationOID) meta).getPartialGroup().getAll().addAll(toPublish.getAll());
 		TribuDSTM.putObject(meta, obj); // XXX
 	}
 
