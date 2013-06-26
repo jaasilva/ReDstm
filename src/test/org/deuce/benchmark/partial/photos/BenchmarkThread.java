@@ -64,11 +64,12 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 			{
 				System.out.println("remote read");
 				int photo = m_random.nextInt(other_photos.length);
-				while(!other_photos[photo].contains(m_random.nextInt(m_key_range)))
-				{
-					if (phase == Benchmark.TEST_PHASE)
-						m_nb_contains_remote++;
-				}
+				while (other_photos[photo].contains(m_random
+						.nextInt(m_key_range)) == null)
+					;
+
+				if (phase == Benchmark.TEST_PHASE)
+					m_nb_contains_remote++;
 			}
 			else
 			{

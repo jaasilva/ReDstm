@@ -760,11 +760,11 @@ public class RBTree
 	 * ======================= bool_t rbtree_contains (rbtree_t* r, void* key);
 	 */
 	@Atomic
-	public boolean contains(int key)
+	public Object contains(int key)
 	{
 		RBTreeNode n = lookup(key);
 
-		return (n != null);
+		return n != null ? n.v : null;
 	}
 
 	public int size()
