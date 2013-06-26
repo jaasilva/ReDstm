@@ -190,6 +190,7 @@ public class Driver
 		// new Scanner(System.in).nextLine();
 
 		finishBarrier.join();
+		PRProfiler.enabled = false;
 		Profiler.enabled = false;
 
 		Profiler.print();

@@ -203,7 +203,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			}
 			catch (InterruptedException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
