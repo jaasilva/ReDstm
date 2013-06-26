@@ -100,7 +100,7 @@ public class SCOReReadSet implements Serializable
 		{
 			if (TribuDSTM
 					.isLocalGroup(((PartialReplicationOID) readSet[i].field
-							.getMetadata()).getGroup()))
+							.getMetadata()).getPartialGroup()))
 			{
 				boolean res = ((VBoxField) readSet[i].field).getLastVersion().version > sid;
 				LOGGER.trace("VAL "
