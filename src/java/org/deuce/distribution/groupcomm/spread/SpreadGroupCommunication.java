@@ -41,7 +41,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 			connection.add(this);
 			group.join(connection, System.getProperty(
 					"tribu.groupcommunication.group", "tvale"));
-			myAddress = new SpreadAddress(connection.getPrivateGroup());
+			myAddress = new SpreadAddress(connection.getPrivateGroup().toString());
 		}
 		catch (SpreadException e)
 		{
@@ -122,7 +122,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 			return;
 		}
 
-		notifyDelivery(obj, new SpreadAddress(message.getSender()),
+		notifyDelivery(obj, new SpreadAddress(message.getSender().toString()),
 				payload.length);
 	}
 
@@ -150,7 +150,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 	{
 		SpreadMessage message = new SpreadMessage();
 		message.setData(payload);
-		message.addGroup((SpreadGroup) addr.getSpecificAddress());
+		message.addGroup((String) addr.getSpecificAddress());
 		message.setReliable();
 		try
 		{
@@ -170,7 +170,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		SpreadMessage message = new SpreadMessage();
 		message.setData(payload);
 		for (Address addr : group.getAll()) {
-			message.addGroup((SpreadGroup) addr.getSpecificAddress());
+			message.addGroup((String) addr.getSpecificAddress());
 		}
 		message.setReliable();
 		try
@@ -190,7 +190,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 	{
 		final List<Address> addrs = new java.util.LinkedList<Address>();
 		for (SpreadGroup addr : members) {
-			addrs.add(new SpreadAddress(addr));
+			addrs.add(new SpreadAddress(addr.toString()));
 		}
 		return addrs;
 	}
