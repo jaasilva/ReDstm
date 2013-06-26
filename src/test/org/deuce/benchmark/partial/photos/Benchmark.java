@@ -91,8 +91,8 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 		Address master = group.getAll().iterator().next();
 		int numGroups = TribuDSTM.getNumGroups();
 
-		System.out.println(">>> Local addr: " + id);
-		System.out.println(">>> Master addr: " + master);
+		// System.out.println(">>> Local addr: " + id);
+		// System.out.println(">>> Master addr: " + master);
 		System.out.println(">>> Group ID: " + group.getId());
 
 		if (id.equals(master))
@@ -385,7 +385,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 
 	public void initializeSet(RBTree photos, Random random, int initial)
 	{
-		int chunkSize = initial / 8;
+		int chunkSize = initial / 64;
 		for (int i = 0; i < initial; i += chunkSize)
 		{
 			addToSet(photos, random, chunkSize, m_max_range, m_min_range,
@@ -402,7 +402,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			int m_range = max_range - min_range;
 			int width = random.nextInt(m_range + 1) + min_range;
 			int height = random.nextInt(m_range + 1) + min_range;
-
 			Object val = new MyObject(width, height);
 			while (!photos.insert(random.nextInt(key_range), val))
 				;

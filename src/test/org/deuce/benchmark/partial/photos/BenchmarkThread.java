@@ -16,7 +16,8 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 	int initial;
 
 	public BenchmarkThread(RBTree[] myTrees, RBTree[] otherTrees,
-			int max_range, int min_range, int rate, int read_rate, int key_range, int init)
+			int max_range, int min_range, int rate, int read_rate,
+			int key_range, int init)
 	{
 		my_photos = myTrees;
 		other_photos = otherTrees;
@@ -39,7 +40,7 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 			int photo = m_random.nextInt(my_photos.length);
 			if (m_write)
 			{
-//				System.out.println("add");
+				// System.out.println("add");
 				m_write = false;
 				int width = m_random.nextInt(m_range + 1) + m_min_range;
 				int height = m_random.nextInt(m_range + 1) + m_min_range;
@@ -51,7 +52,7 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 			}
 			else
 			{
-//				System.out.println("remove");
+				// System.out.println("remove");
 				my_photos[photo].remove(m_random.nextInt(m_key_range));
 
 				if (phase == Benchmark.TEST_PHASE)
@@ -64,17 +65,17 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 			int j = m_random.nextInt(100);
 			if (j < m_read_rate)
 			{
-//				System.out.println("remote read");
+				// System.out.println("remote read");
 				int photo = m_random.nextInt(other_photos.length);
 				other_photos[photo].random_lookup(initial);
-				
-					if (phase == Benchmark.TEST_PHASE)
-						m_nb_contains_remote++;
-				
+
+				if (phase == Benchmark.TEST_PHASE)
+					m_nb_contains_remote++;
+
 			}
 			else
 			{
-//				System.out.println("local read");
+				// System.out.println("local read");
 				int photo = m_random.nextInt(my_photos.length);
 				my_photos[photo].find(m_random.nextInt(m_key_range));
 
