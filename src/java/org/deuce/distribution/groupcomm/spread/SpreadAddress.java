@@ -3,14 +3,13 @@ package org.deuce.distribution.groupcomm.spread;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.transform.ExcludeTM;
 
-import spread.SpreadGroup;
-
 @ExcludeTM
 public class SpreadAddress extends Address
 {
-	private SpreadGroup addr;
+//	private SpreadGroup addr;
+	private String addr;
 
-	public SpreadAddress(SpreadGroup addr)
+	public SpreadAddress(/*SpreadGroup*/String addr)
 	{
 		this.addr = addr;
 	}

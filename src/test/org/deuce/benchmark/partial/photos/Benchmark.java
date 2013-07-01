@@ -87,13 +87,22 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 		}
 
 		Address id = TribuDSTM.getLocalAddress();
-		Group group = TribuDSTM.getLocalGroup();
-		Address master = group.getAll().iterator().next();
-		int numGroups = TribuDSTM.getNumGroups();
+		Address master;
+		int numGroups;
+		Group group = null;
+		if (TribuDSTM.PARTIAL) {
+		group = TribuDSTM.getLocalGroup();
+		master = group.getAll().iterator().next();
+		numGroups = TribuDSTM.getNumGroups();
+		
 
 		// System.out.println(">>> Local addr: " + id);
 		// System.out.println(">>> Master addr: " + master);
 		System.out.println(">>> Group ID: " + group.getId());
+		} else {
+			master = TribuDSTM.getAllMembers().iterator().next();
+			numGroups = 1;
+		}
 
 		if (id.equals(master))
 		{

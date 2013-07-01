@@ -73,7 +73,7 @@ public class SCOReWriteSet implements Serializable
 		for (SCOReWriteFieldAccess a : writeSet)
 		{
 			if (TribuDSTM.isLocalGroup(((PartialReplicationOID) a.field
-					.getMetadata()).getGroup()))
+					.getMetadata()).getPartialGroup()))
 			{
 				a.put(sid);
 

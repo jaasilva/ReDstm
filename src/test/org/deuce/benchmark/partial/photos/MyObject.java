@@ -5,10 +5,10 @@ import java.io.Serializable;
 public class MyObject implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	final byte[] array;
+	final MyObjectBackend backend;
 
 	public MyObject(int width, int height)
 	{
-		array = new byte[width * height * 3];
+		backend = new MyObjectBackend(width, height);
 	}
 }
