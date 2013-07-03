@@ -19,7 +19,7 @@ public class PRProfiler
 	 */
 	private static long txDurationIt, txVotesIt, txValidateIt, txCommitIt,
 			msgSent, msgRecv, txRReadIt, txLReadIt, txCReadIt, serIt,
-			waitingReadIt;
+			waitingReadIt, applyWsIt;
 
 	/**
 	 * Time related, in nanoseconds.
@@ -32,6 +32,7 @@ public class PRProfiler
 	private static long[] txLRead = new long[THREADS];
 	private static long[] txCRead = new long[THREADS];
 	private static long[] serialization = new long[THREADS];
+	private static long[] applyWs = new long[THREADS];
 	private static long txAppDurationAvg, txAppDurationMax = Long.MIN_VALUE,
 			txAppDurationMin = Long.MAX_VALUE, txVotesAvg,
 			txVotesMax = Long.MIN_VALUE, txVotesMin = Long.MAX_VALUE,
@@ -44,7 +45,9 @@ public class PRProfiler
 			txCReadAvg, txCReadMax = Long.MIN_VALUE,
 			txCReadMin = Long.MAX_VALUE, serAvg, serMax = Long.MIN_VALUE,
 			serMin = Long.MAX_VALUE, waitingReadAvg,
-			waitingReadMax = Long.MIN_VALUE, waitingReadMin = Long.MAX_VALUE;
+			waitingReadMax = Long.MIN_VALUE, waitingReadMin = Long.MAX_VALUE,
+			applyWsAvg, applyWsMax = Long.MIN_VALUE,
+			applyWsMin = Long.MAX_VALUE;
 
 	/**
 	 * Network related, in bytes.
@@ -415,6 +418,39 @@ public class PRProfiler
 
 				waitingReadAvg = incAvg(waitingReadAvg, time, waitingReadIt);
 				waitingReadIt++;
+			}
+		}
+	}
+
+	public static void onApplyWsBegin(int ctxID)
+	{
+		if (enabled)
+		{
+			long applyStart = System.nanoTime();
+			applyWs[ctxID] = applyStart;
+		}
+	}
+
+	public static void onApplyWsFinish(int ctxID)
+	{
+		if (enabled)
+		{
+			long applyEnd = System.nanoTime();
+			long elapsed = applyEnd - applyWs[ctxID];
+
+			synchronized (lock)
+			{
+				if (elapsed < applyWsMin)
+				{
+					applyWsMin = elapsed;
+				}
+				if (elapsed > applyWsMax)
+				{
+					applyWsMax = elapsed;
+				}
+
+				applyWsAvg = incAvg(applyWsAvg, elapsed, applyWsIt);
+				applyWsIt++;
 			}
 		}
 	}

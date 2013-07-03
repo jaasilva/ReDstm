@@ -44,7 +44,7 @@ public class SCOReWriteSet implements Serializable
 			Group other = ((PartialReplicationOID) wfa.field.getMetadata())
 					.getGroup();
 
-			if (TribuDSTM.groupIsAll(other))
+			if (/* TribuDSTM.groupIsAll(other) */other.isAll())
 			{ // OPT is this better? vale a pena este verificação sempre??
 				return other;
 			}
@@ -72,8 +72,11 @@ public class SCOReWriteSet implements Serializable
 	{ // apply only the TxFields that I replicate
 		for (SCOReWriteFieldAccess a : writeSet)
 		{
-			if (TribuDSTM.isLocalGroup(((PartialReplicationOID) a.field
-					.getMetadata()).getPartialGroup()))
+			if (/*
+				 * TribuDSTM.isLocalGroup(((PartialReplicationOID) a.field
+				 * .getMetadata()).getPartialGroup())
+				 */((PartialReplicationOID) a.field.getMetadata())
+					.getPartialGroup().isLocal())
 			{
 				a.put(sid);
 

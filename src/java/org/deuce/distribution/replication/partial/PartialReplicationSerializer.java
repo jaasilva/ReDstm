@@ -61,8 +61,8 @@ public class PartialReplicationSerializer extends ObjectSerializer
 					+ obj.getClass().getSimpleName());
 		}
 
-		if (TribuDSTM.isLocalGroup(toPublish)) // if this is my group
-		{ // save object in locator table XXX change place
+		if (/* TribuDSTM.isLocalGroup(toPublish) */toPublish.isLocal())
+		{ // if this is my group save object in locator table XXX change place
 			TribuDSTM.putObject(oid, obj);
 		}
 
@@ -76,7 +76,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		PartialReplicationOID oid = (PartialReplicationOID) obj.getMetadata();
 
 		Group group = oid.getGroup();
-		if (TribuDSTM.isLocalGroup(group))
+		if (/* TribuDSTM.isLocalGroup(group) */group.isLocal())
 		{ // it is my group
 			UniqueObject object = TribuDSTM.getObject(oid);
 			if (object == null)

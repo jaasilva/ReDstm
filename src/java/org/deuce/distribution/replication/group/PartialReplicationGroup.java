@@ -119,6 +119,12 @@ public class PartialReplicationGroup implements Group
 	@Override
 	public boolean isLocal()
 	{
-		return TribuDSTM.isLocalGroup(this); // XXX
+		return TribuDSTM.isLocalGroup(this);
+	}
+
+	@Override
+	public boolean isAll()
+	{
+		return TribuDSTM.groupIsAll(this);
 	}
 }

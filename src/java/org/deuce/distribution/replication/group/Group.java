@@ -42,4 +42,6 @@ public interface Group extends Serializable
 	public int getId();
 
 	public boolean isLocal();
+	
+	public boolean isAll();
 }

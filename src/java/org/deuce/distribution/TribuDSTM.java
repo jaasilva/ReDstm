@@ -307,12 +307,12 @@ public class TribuDSTM
 
 	public static final boolean isLocalGroup(Group group)
 	{
-		return group.contains(getLocalAddress()); // XXX
+		return group.contains(getLocalAddress());
 	}
 
 	public static final boolean groupIsAll(Group group)
 	{
-		return group.getAll().equals(ALL); // XXX
+		return group.getAll().equals(ALL);
 	}
 
 	public static final void sendTotalOrdered(byte[] payload, Group group)

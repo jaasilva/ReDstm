@@ -99,9 +99,11 @@ public class SCOReReadSet implements Serializable
 	{ // validate only the TxFields that I replicate
 		for (int i = 0; i < next; i++)
 		{
-			if (TribuDSTM
-					.isLocalGroup(((PartialReplicationOID) readSet[i].field
-							.getMetadata()).getPartialGroup()))
+			if (/*
+				 * TribuDSTM .isLocalGroup(((PartialReplicationOID)
+				 * readSet[i].field .getMetadata()).getPartialGroup())
+				 */((PartialReplicationOID) readSet[i].field.getMetadata())
+					.getPartialGroup().isLocal())
 			{
 				boolean res = ((VBoxField) readSet[i].field).getLastVersion().version > sid;
 				LOGGER.trace("VAL "
@@ -128,7 +130,7 @@ public class SCOReReadSet implements Serializable
 			Group other = ((PartialReplicationOID) readSet[i].field
 					.getMetadata()).getGroup();
 
-			if (!TribuDSTM.groupIsAll(other))
+			if (!/*TribuDSTM.groupIsAll(other)*/other.isAll())
 			{ // never do union with the group ALL
 				resGroup = resGroup.union(other);
 			}

@@ -66,9 +66,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 	private final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 	private final Queue<Pair<String, Integer>> pendQ = new PriorityQueue<Pair<String, Integer>>(
-			50, comp); // accessed only by bottom threads
+			50, comp); // accessed ONLY by bottom threads
 	private final Queue<Pair<String, Integer>> stableQ = new PriorityQueue<Pair<String, Integer>>(
-			50, comp); // accessed only by bottom threads
+			50, comp); // accessed ONLY by bottom threads
 
 	// accessed ONLY by bottom threads
 	private final Map<String, DistributedContextState> receivedTrxs = new HashMap<String, DistributedContextState>();
@@ -230,9 +230,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		if (sctx.isUpdate() && !read.mostRecent)
 		{
-			LOGGER.debug("* onTxRead ABORT TRANSACTION !!! "
-					+ "(throw TransactionException)\n" + sctx.trxID);
-			throw new TransactionException();
+			LOGGER.debug("* onTxRead ABORT TRANSACTION !!! " + sctx.trxID);
+			throw new TransactionException(); // abort transaction
 		}
 		// added to read set in onReadAccess context method
 
