@@ -52,7 +52,7 @@ public class RandomGroupPartitioner extends Partitioner implements
 		List<Group> g = super.getGroups();
 		for (int i = 0; i < groups; i++)
 		{
-			g.add(new PartialReplicationGroup(i)); // XXX
+			g.add(new PartialReplicationGroup((short) i)); // XXX
 		}
 
 		for (Address a : members)

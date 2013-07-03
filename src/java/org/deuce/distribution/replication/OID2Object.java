@@ -45,7 +45,7 @@ public final class OID2Object implements Serializable
 	protected Object readResolve() throws ObjectStreamException
 	{
 		UniqueObject object = TribuDSTM.getObject(oid);
-		LOGGER.trace("> " + oid + " (oid2object)");
+		LOGGER.trace("> " + oid + " (published)");
 		return object;
 	}
 }

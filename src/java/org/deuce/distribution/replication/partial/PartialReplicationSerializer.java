@@ -39,8 +39,6 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		PartialReplicationOID oid = (PartialReplicationOID) obj.getMetadata();
 		boolean isRead = SCOReProtocol.serializationContext.get();
 
-		Group toPublish = null;
-
 		if (isRead)
 		{
 			return obj;
@@ -54,16 +52,15 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		}
 		else
 		{
-			toPublish = oid.getGroup();
+			Group group = oid.getGroup();
 			oid.publish();
+			if (/* TribuDSTM.isLocalGroup(toPublish) */group.isLocal())
+			{ // if this is my group save object in locator table
+				TribuDSTM.putObject(oid, obj); // XXX
+			}
 
 			LOGGER.trace("< " + oid + " (oid not null) "
 					+ obj.getClass().getSimpleName());
-		}
-
-		if (/* TribuDSTM.isLocalGroup(toPublish) */toPublish.isLocal())
-		{ // if this is my group save object in locator table XXX change place
-			TribuDSTM.putObject(oid, obj);
 		}
 
 		return obj;

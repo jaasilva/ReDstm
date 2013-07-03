@@ -1,6 +1,7 @@
 package org.deuce.distribution.replication.partial.oid;
 
 import org.deuce.distribution.TribuDSTM;
+import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.transform.ExcludeTM;
 
@@ -15,10 +16,8 @@ public class PartialReplicationMetadataFactory implements
 	@Override
 	public PartialReplicationOID generateOID()
 	{ // Requires the insertion of the group later.
-		final PartialReplicationGroup group = new PartialReplicationGroup(
-				TribuDSTM.ALL);
-		final PartialReplicationGroup partialGroup = new PartialReplicationGroup(
-				-3);
+		final Group group = TribuDSTM.ALL;
+		final PartialReplicationGroup partialGroup = new PartialReplicationGroup();
 		final PartialReplicationMetadata metadata = new PartialReplicationMetadata(
 				group);
 		metadata.setPartialGroup(partialGroup);
@@ -28,15 +27,13 @@ public class PartialReplicationMetadataFactory implements
 	@Override
 	public PartialReplicationOID generateFullReplicationOID()
 	{
-		return new PartialReplicationMetadata(new PartialReplicationGroup(
-				TribuDSTM.ALL));
+		return new PartialReplicationMetadata(TribuDSTM.ALL);
 	}
 
 	@Override
 	public PartialReplicationOID generateFullReplicationOID(int oid)
 	{
-		return new PartialReplicationMetadata(oid, new PartialReplicationGroup(
-				TribuDSTM.ALL));
+		return new PartialReplicationMetadata(oid, TribuDSTM.ALL);
 	}
 
 	@Override

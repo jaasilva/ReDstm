@@ -17,6 +17,9 @@ public interface Group extends Serializable
 	public final static String NAME = Type.getInternalName(Group.class);
 	public final static String DESC = Type.getDescriptor(Group.class);
 
+	public final static short ALL = -1;
+	public final static short NIL = -2;
+
 	public Collection<Address> getAll();
 
 	public boolean contains(Address addr);
@@ -42,6 +45,6 @@ public interface Group extends Serializable
 	public int getId();
 
 	public boolean isLocal();
-	
+
 	public boolean isAll();
 }

@@ -1,7 +1,6 @@
 package org.deuce.distribution;
 
 import java.util.Collection;
-import java.util.HashSet;
 
 import org.apache.log4j.Logger;
 import org.deuce.distribution.groupcomm.Address;
@@ -10,6 +9,7 @@ import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
 import org.deuce.distribution.location.SimpleLocator;
 import org.deuce.distribution.replication.group.Group;
+import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.distribution.replication.partitioner.data.DataPartitioner;
 import org.deuce.distribution.replication.partitioner.group.GroupPartitioner;
 import org.deuce.objectweb.asm.Type;
@@ -29,14 +29,14 @@ public class TribuDSTM
 	private static GroupCommunication groupComm;
 	private static DataPartitioner dataPart;
 	private static GroupPartitioner groupPart;
-	// private static Class<? extends DistributedContext> ctxClass;
+	private static Class<? extends DistributedContext> ctxClass;
 	private static int numGroups;
 	public static boolean PARTIAL; // check runtime mode
 	/*
 	 * XXX t.vale: we initialise an HashSet here because PartialReplicationGroup
 	 * uses HashSet. Most likely this isn't generic.
 	 */
-	final public static Collection<Address> ALL = new HashSet<Address>();
+	final public static Group ALL = new PartialReplicationGroup();
 	public static String partialDefault = "false";
 
 	/*
@@ -52,7 +52,7 @@ public class TribuDSTM
 
 		checkRuntimeMode();
 		initReplicationProtocol();
-		// initTransactionContext();
+		initTransactionContext();
 
 		if (PARTIAL)
 		{
@@ -137,25 +137,25 @@ public class TribuDSTM
 		LOGGER.warn("> Group communication: " + className);
 	}
 
-	// @SuppressWarnings("unchecked")
-	// private static void initTransactionContext()
-	// {
-	// String className = System.getProperty(
-	// "org.deuce.transaction.contextClass",
-	// "org.deuce.transaction.tl2.Context");
-	// try
-	// {
-	// ctxClass = (Class<? extends DistributedContext>) Class
-	// .forName(className);
-	// }
-	// catch (Exception e)
-	// {
-	// e.printStackTrace();
-	// System.exit(-1);
-	// }
-	//
-	// LOGGER.info("> Transaction context: " + className);
-	// }
+	@SuppressWarnings("unchecked")
+	private static void initTransactionContext()
+	{
+		String className = System.getProperty(
+				"org.deuce.transaction.contextClass",
+				"org.deuce.transaction.tl2.Context");
+		try
+		{
+			ctxClass = (Class<? extends DistributedContext>) Class
+					.forName(className);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
+		LOGGER.info("> Transaction context: " + className);
+	}
 
 	private static void initReplicationProtocol()
 	{
@@ -214,10 +214,10 @@ public class TribuDSTM
 	 * ################################################################
 	 */
 
-	// public static final Locator getLocator()
-	// {
-	// return locator;
-	// }
+	public static final Locator getLocator()
+	{
+		return locator;
+	}
 
 	public static final UniqueObject getObject(ObjectMetadata metadata)
 	{
@@ -250,10 +250,10 @@ public class TribuDSTM
 	 * ################################################################
 	 */
 
-	// public static final Class<? extends DistributedContext> getContextClass()
-	// {
-	// return ctxClass;
-	// }
+	public static final Class<? extends DistributedContext> getContextClass()
+	{
+		return ctxClass;
+	}
 
 	public static final void onContextCreation(DistributedContext ctx)
 	{
@@ -349,9 +349,9 @@ public class TribuDSTM
 		return groupPart.getLocalGroup();
 	}
 
-	public static final Group getGroup(int idx)
+	public static final Group getGroup(int id)
 	{
-		return groupPart.getGroups().get(idx);
+		return groupPart.getGroups().get(id);
 	}
 
 	public static final boolean isLocalGroup(Group group)
@@ -361,7 +361,7 @@ public class TribuDSTM
 
 	public static final boolean groupIsAll(Group group)
 	{
-		return group.getAll().equals(ALL); // XXX posso mudar isto?
+		return group/* .getAll() */.equals(ALL); // XXX posso mudar isto?
 	}
 
 	public static final int getNumGroups()

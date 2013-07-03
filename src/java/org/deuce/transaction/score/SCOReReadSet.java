@@ -3,7 +3,6 @@ package org.deuce.transaction.score;
 import java.io.Serializable;
 
 import org.apache.log4j.Logger;
-import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
@@ -123,7 +122,7 @@ public class SCOReReadSet implements Serializable
 
 	public Group getInvolvedNodes()
 	{
-		Group resGroup = new PartialReplicationGroup(-2);
+		Group resGroup = new PartialReplicationGroup();
 
 		for (int i = 0; i < next; i++)
 		{

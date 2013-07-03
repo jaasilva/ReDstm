@@ -7,14 +7,13 @@ import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.group.Group;
-import org.deuce.distribution.replication.group.PartialReplicationGroup;
 
 public class UnicastTest implements DeliverySubscriber
 {
 	public static void main(String[] args) throws InterruptedException
 	{
 		TribuDSTM.init();
-		Group group = new PartialReplicationGroup(TribuDSTM.ALL);
+		Group group = TribuDSTM.ALL;
 		TribuDSTM.subscribeDeliveries(new UnicastTest());
 		Random r = new Random();
 

@@ -60,13 +60,6 @@ public class FloatArrayContainer extends ArrayContainer
 					field_metadata.setGroup(g);
 					field_metadata.setPartialGroup(g);
 				}
-				/*
-				 * XXX t.vale: A instrumentação tem que passar mais informação
-				 * ao init, nomeadamente o tipo! O João implementou este pedaço
-				 * de código na instrumentação mas os metadados das células dos
-				 * arrays são inicializados nesta classe. Se o init do TxField
-				 * receber o tipo fica gerar para todos os algoritmos.
-				 */
 				if (TribuDSTM.PARTIAL && field instanceof VBoxField)
 				{
 					VBoxField vbox = (VBoxField) field;

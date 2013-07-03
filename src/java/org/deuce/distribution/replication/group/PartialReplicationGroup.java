@@ -16,9 +16,15 @@ public class PartialReplicationGroup implements Group
 {
 	private static final long serialVersionUID = 1L;
 	private Collection<Address> addrs;
-	int id;
+	private short id;
 
-	public PartialReplicationGroup(int id)
+	public PartialReplicationGroup()
+	{
+		this.id = Group.NIL;
+		this.addrs = new HashSet<Address>();
+	}
+	
+	public PartialReplicationGroup(short id)
 	{
 		this.id = id;
 		this.addrs = new HashSet<Address>();
@@ -26,6 +32,7 @@ public class PartialReplicationGroup implements Group
 
 	public PartialReplicationGroup(Collection<Address> addrs)
 	{
+		this.id = Group.NIL;
 		this.addrs = addrs;
 	}
 
@@ -79,6 +86,7 @@ public class PartialReplicationGroup implements Group
 		return new PartialReplicationGroup(union);
 	}
 
+	@Override
 	public String toString()
 	{
 		if (this.addrs.size() == 0)
@@ -97,6 +105,7 @@ public class PartialReplicationGroup implements Group
 		return sb.toString().trim();
 	}
 
+	@Override
 	public boolean equals(Object obj)
 	{
 		return (obj instanceof PartialReplicationGroup)
@@ -105,6 +114,7 @@ public class PartialReplicationGroup implements Group
 						.containsAll(this.addrs));
 	}
 
+	@Override
 	public int hashCode()
 	{
 		return this.addrs.hashCode();
