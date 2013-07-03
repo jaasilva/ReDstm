@@ -15,6 +15,7 @@ final public class Pool<T>
 {
 
 	private static final int DEFAULT_CAPACITY = 1024;
+	@SuppressWarnings("unchecked")
 	private T[] pool = (T[]) new Object[DEFAULT_CAPACITY];
 	private int nextAvaliable = 0;
 	final private ResourceFactory<T> factory;
@@ -43,6 +44,7 @@ final public class Pool<T>
 		if (nextAvaliable >= pool.length)
 		{
 			int orignLength = pool.length;
+			@SuppressWarnings("unchecked")
 			T[] newPool = (T[]) new Object[orignLength + DEFAULT_CAPACITY];
 			System.arraycopy(pool, 0, newPool, 0, pool.length);
 			pool = newPool;

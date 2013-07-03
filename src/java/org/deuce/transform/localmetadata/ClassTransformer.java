@@ -378,8 +378,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 					desc, newMethod, fieldsHolder);
 
 			return new ConstructorMethodTransformer(mv, fields, field2OID,
-					partialRepFields, partial, className, superName, access, name,
-					nm.getDescriptor(),
+					partialRepFields, partial, className, superName, access,
+					name, nm.getDescriptor(),
 					fieldsHolder.getFieldsHolderName(className));
 		}
 

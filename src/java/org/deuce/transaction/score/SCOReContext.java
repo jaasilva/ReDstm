@@ -98,7 +98,7 @@ public class SCOReContext extends DistributedContext
 		SCOReWriteFieldAccess writeAccess = onReadAccess(field);
 		if (writeAccess == null)
 		{ // not in the writeSet. Do distributed read
-			Object o = TribuDSTM.onTxRead(this, field.getMetadata());
+			Object o = TribuDSTM.onTxRead(this, field);
 
 			try
 			{
@@ -269,7 +269,8 @@ public class SCOReContext extends DistributedContext
 				&& !(value instanceof Byte) && !(value instanceof Short)
 				&& !(value instanceof Integer) && !(value instanceof Long)
 				&& !(value instanceof Float) && !(value instanceof Double)
-				&& !(value instanceof Character) && !(value instanceof Boolean) && (value instanceof UniqueObject))
+				&& !(value instanceof Character) && !(value instanceof Boolean)
+				&& (value instanceof UniqueObject))
 		{
 			checkGroupRestrictions((UniqueObject) value, field);
 		}

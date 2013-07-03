@@ -15,6 +15,7 @@ import org.deuce.distribution.replication.partitioner.group.GroupPartitioner;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transform.ExcludeTM;
+import org.deuce.transform.localmetadata.type.TxField;
 
 @ExcludeTM
 public class TribuDSTM
@@ -28,7 +29,7 @@ public class TribuDSTM
 	private static GroupCommunication groupComm;
 	private static DataPartitioner dataPart;
 	private static GroupPartitioner groupPart;
-	private static Class<? extends DistributedContext> ctxClass;
+	// private static Class<? extends DistributedContext> ctxClass;
 	private static int numGroups;
 
 	public static boolean PARTIAL; // check runtime mode
@@ -36,7 +37,7 @@ public class TribuDSTM
 	 * XXX t.vale: we initialise an HashSet here because PartialReplicationGroup
 	 * uses HashSet. Most likely this isn't generic.
 	 */
-	final public static Collection<Address> ALL = new HashSet<Address>();
+	final public static Collection<Address> ALL = new HashSet<Address>(); // XXX
 
 	public static String partialDefault = "false";
 
@@ -45,9 +46,9 @@ public class TribuDSTM
 		LOGGER.warn("#################################");
 		LOGGER.warn("> TribuDSTM initializing...");
 
-		checkRuntimeMode(partialDefault);
+		checkRuntimeMode();
 		initReplicationProtocol();
-		initTransactionContext();
+		// initTransactionContext();
 
 		if (PARTIAL)
 		{
@@ -94,21 +95,21 @@ public class TribuDSTM
 
 	public static void close()
 	{
-		LOGGER.info("> TribuDSTM closing");
+		LOGGER.warn("> TribuDSTM closing");
 
 		groupComm.close();
 
-		LOGGER.info("> TribuDSTM closing");
+		LOGGER.warn("> TribuDSTM closing");
 
 		System.exit(0);
 	}
 
-	private static void checkRuntimeMode(String partialDefault)
+	private static void checkRuntimeMode()
 	{
 		PARTIAL = Boolean.parseBoolean(System.getProperty(
 				"tribu.distributed.PartialReplicationMode", partialDefault));
 
-		LOGGER.warn("> Partial replication mode active: " + PARTIAL);
+		LOGGER.warn("> Partial replication mode: " + PARTIAL);
 	}
 
 	private static void initGroupCommunication()
@@ -116,7 +117,6 @@ public class TribuDSTM
 		String className = System
 				.getProperty("tribu.groupcommunication.class",
 						"org.deuce.distribution.groupcomm.jgroups.JGroupsGroupCommunication");
-
 		try
 		{
 			@SuppressWarnings("unchecked")
@@ -130,36 +130,34 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.warn("> Group comunication: " + className);
+		LOGGER.warn("> Group communication: " + className);
 	}
 
-	@SuppressWarnings("unchecked")
-	private static void initTransactionContext()
-	{
-		String className = System.getProperty(
-				"org.deuce.transaction.contextClass",
-				"org.deuce.transaction.tl2.Context");
-
-		try
-		{
-			ctxClass = (Class<? extends DistributedContext>) Class
-					.forName(className);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			System.exit(-1);
-		}
-
-		LOGGER.info("> Transaction context: " + className);
-	}
+	// @SuppressWarnings("unchecked")
+	// private static void initTransactionContext()
+	// {
+	// String className = System.getProperty(
+	// "org.deuce.transaction.contextClass",
+	// "org.deuce.transaction.tl2.Context");
+	// try
+	// {
+	// ctxClass = (Class<? extends DistributedContext>) Class
+	// .forName(className);
+	// }
+	// catch (Exception e)
+	// {
+	// e.printStackTrace();
+	// System.exit(-1);
+	// }
+	//
+	// LOGGER.info("> Transaction context: " + className);
+	// }
 
 	private static void initReplicationProtocol()
 	{
 		String className = System
 				.getProperty("tribu.distributed.protocolClass",
 						"org.deuce.distribution.replication.full.protocol.nonvoting.NonVoting");
-
 		try
 		{
 			@SuppressWarnings("unchecked")
@@ -185,14 +183,12 @@ public class TribuDSTM
 		String dataPartClass = System
 				.getProperty("tribu.distributed.DataPartitionerClass",
 						"org.deuce.distribution.replication.partitioner.data.SimpleDataPartitioner");
-
 		try
 		{
 			@SuppressWarnings("unchecked")
 			Class<? extends GroupPartitioner> groupP = (Class<? extends GroupPartitioner>) Class
 					.forName(groupPartClass);
 			groupPart = groupP.newInstance();
-
 			@SuppressWarnings("unchecked")
 			Class<? extends DataPartitioner> dataP = (Class<? extends DataPartitioner>) Class
 					.forName(dataPartClass);
@@ -208,15 +204,15 @@ public class TribuDSTM
 		LOGGER.warn("> Data Partitioner: " + dataPartClass);
 	}
 
-	public static final Class<? extends DistributedContext> getContextClass()
-	{
-		return ctxClass;
-	}
+	// public static final Class<? extends DistributedContext> getContextClass()
+	// {
+	// return ctxClass;
+	// }
 
-	public static final Locator getLocator()
-	{
-		return locator;
-	}
+	// public static final Locator getLocator()
+	// {
+	// return locator;
+	// }
 
 	public static final UniqueObject getObject(ObjectMetadata metadata)
 	{
@@ -249,10 +245,9 @@ public class TribuDSTM
 		distProtocol.onTxCommit(ctx);
 	}
 
-	public static final Object onTxRead(DistributedContext ctx,
-			ObjectMetadata metadata)
+	public static final Object onTxRead(DistributedContext ctx, TxField field)
 	{
-		return distProtocol.onTxRead(ctx, metadata);
+		return distProtocol.onTxRead(ctx, field);
 	}
 
 	public static final String GETSERIALIZER_METHOD_NAME = "getObjectSerializer";
@@ -312,12 +307,12 @@ public class TribuDSTM
 
 	public static final boolean isLocalGroup(Group group)
 	{
-		return group.contains(getLocalAddress());
+		return group.contains(getLocalAddress()); // XXX
 	}
 
 	public static final boolean groupIsAll(Group group)
 	{
-		return group.getAll().equals(ALL);
+		return group.getAll().equals(ALL); // XXX
 	}
 
 	public static final void sendTotalOrdered(byte[] payload, Group group)

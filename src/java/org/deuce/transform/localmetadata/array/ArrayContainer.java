@@ -23,8 +23,10 @@ public abstract class ArrayContainer implements UniqueObject
 	public static final String GETARRAY_METHOD_DESC = "()"
 			+ Type.getDescriptor(Object.class);
 
-	public ArrayContainer() {
-		if (TribuDSTM.PARTIAL) {
+	public ArrayContainer()
+	{
+		if (TribuDSTM.PARTIAL)
+		{
 			final PartialReplicationSerializer s = (PartialReplicationSerializer) TribuDSTM
 					.getObjectSerializer();
 			s.createFullReplicationMetadata(this);

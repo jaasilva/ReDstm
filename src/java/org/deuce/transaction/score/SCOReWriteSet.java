@@ -119,7 +119,8 @@ public class SCOReWriteSet implements Serializable
 
 		if (!res)
 		{
-			for (int j = 0; j < i - 1; j++) {
+			for (int j = 0; j < i - 1; j++)
+			{
 				boolean unlock_res = ((InPlaceRWLock) ((SCOReWriteFieldAccess) ws[j]).field)
 						.exclusiveUnlock(txID);
 				LOGGER.trace("-> XunLock "

@@ -4,6 +4,7 @@ import org.deuce.distribution.replication.Bootstrap;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transform.ExcludeTM;
+import org.deuce.transform.localmetadata.type.TxField;
 
 @ExcludeTM
 public interface DistributedProtocol
@@ -22,7 +23,7 @@ public interface DistributedProtocol
 
 	public void onTxFinished(DistributedContext ctx, boolean committed);
 
-	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata);
+	public Object onTxRead(DistributedContext ctx, TxField field);
 
 	public ObjectSerializer getObjectSerializer();
 }

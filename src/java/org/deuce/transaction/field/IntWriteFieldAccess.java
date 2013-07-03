@@ -27,5 +27,4 @@ public class IntWriteFieldAccess extends WriteFieldAccess
 	{
 		return value;
 	}
-
 }

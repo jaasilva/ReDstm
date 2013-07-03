@@ -12,7 +12,6 @@ import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.OptimisticDeliveryUnsupportedException;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
 import org.deuce.distribution.replication.group.Group;
-import org.deuce.distribution.replication.partial.protocol.score.SCOReProtocol;
 import org.deuce.distribution.serialization.GCPayloadException;
 import org.deuce.transform.ExcludeTM;
 import org.jgroups.AnycastAddress;
@@ -179,11 +178,12 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	{
 		try
 		{
-			final Message msg = new Message((org.jgroups.Address) addr.getSpecificAddress(),
-					payload);
-			if (SCOReProtocol.serializationContext.get()) {
-				msg.setFlag(Message.Flag.OOB);
-			}
+			final Message msg = new Message(
+					(org.jgroups.Address) addr.getSpecificAddress(), payload);
+			// if (SCOReProtocol.serializationContext.get())
+			// {
+			// msg.setFlag(Message.Flag.OOB);
+			// }
 			channel.send(msg);
 		}
 		catch (Exception e)

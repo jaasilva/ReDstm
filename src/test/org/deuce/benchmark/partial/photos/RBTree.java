@@ -82,16 +82,16 @@ public class RBTree
 
 		return null;
 	}
-	
+
 	@Atomic
 	public Object random_lookup(int initial)
 	{
 		RBTreeNode p = root;
 		Random rand = new Random();
-		int down = rand.nextInt((int) (Math.log10(initial)/Math.log10(2)));
+		int down = rand.nextInt((int) (Math.log10(initial) / Math.log10(2)));
 		RBTreeNode prev = p;
-		
-		while(p != null && down > 0)
+
+		while (p != null && down > 0)
 		{
 			prev = p;
 			if (rand.nextBoolean())
@@ -104,7 +104,7 @@ public class RBTree
 			}
 			down--;
 		}
-		
+
 		return p == null ? prev.v : p.v;
 	}
 

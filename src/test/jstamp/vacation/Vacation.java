@@ -169,25 +169,30 @@ public class Vacation
 	static int[] ids;
 
 	@Atomic
-	public void initializeManager(int numRelations) {
+	public void initializeManager(int numRelations)
+	{
 		System.out.println("Initializing manager... ");
 		managerPtr = new Manager();
 		ids = new int[numRelations];
 	}
 
 	@Atomic
-	public final void initIds(final int begin, final int end) {
+	public final void initIds(final int begin, final int end)
+	{
 		final int[] arr = ids;
-		for (int i = begin; i < end; i++) {
+		for (int i = begin; i < end; i++)
+		{
 			arr[i] = i + 1;
 		}
 	}
 
 	@Atomic
 	public final void shuffleIds(final int begin, final int end,
-			final Random randomPtr, int numRelations) {
+			final Random randomPtr, int numRelations)
+	{
 		final int[] arr = ids;
-		for (int i = begin; i < end; i++) {
+		for (int i = begin; i < end; i++)
+		{
 			int x = randomPtr.posrandom_generate() % numRelations;
 			int y = randomPtr.posrandom_generate() % numRelations;
 			int tmp = arr[x];
@@ -408,7 +413,7 @@ public class Vacation
 		stop = System.currentTimeMillis();
 		diff = stop - start;
 		System.out.println("TIME2=" + diff);
-//		Profiler.enabled = false;
+		// Profiler.enabled = false;
 		PRProfiler.enabled = false;
 
 		vac.checkTables(managerPtr);
@@ -420,7 +425,7 @@ public class Vacation
 		 */
 		System.out.println("done.");
 
-//		Profiler.print();
+		// Profiler.print();
 		PRProfiler.print();
 
 		// Thread.sleep(5000);
@@ -474,22 +479,25 @@ public class Vacation
 
 		System.out.println("Checking tables... ");
 
-		for (t = 0; t < 4; t++) {
-			switch (t) {
-			case 0:
-				System.out.println("Verifying cars...");
-				break;
-			case 1:
-				System.out.println("Verifying flights...");
-				break;
-			case 2:
-				System.out.println("Verifying rooms...");
-				break;
-			case 3:
-				System.out.println("Verifying customers...");
-				break;
+		for (t = 0; t < 4; t++)
+		{
+			switch (t)
+			{
+				case 0:
+					System.out.println("Verifying cars...");
+					break;
+				case 1:
+					System.out.println("Verifying flights...");
+					break;
+				case 2:
+					System.out.println("Verifying rooms...");
+					break;
+				case 3:
+					System.out.println("Verifying customers...");
+					break;
 			}
-			final RBTree tree = (t < 3 ? tables[t] : managerPtr.customerTablePtr);
+			final RBTree tree = (t < 3 ? tables[t]
+					: managerPtr.customerTablePtr);
 			tree.verify(1);
 		}
 

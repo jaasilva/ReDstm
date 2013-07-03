@@ -27,5 +27,4 @@ public class FloatWriteFieldAccess extends WriteFieldAccess
 	{
 		return value;
 	}
-
 }

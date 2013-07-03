@@ -65,7 +65,7 @@ public class BenchmarkThread implements Runnable
 
 	protected void step(int phase)
 	{
-		
+
 	}
 
 	public String getStats()

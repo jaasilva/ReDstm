@@ -128,8 +128,8 @@ public class MultiArrayContainer extends ArrayContainer
 				TxField field = (TxField) obj;
 				field.init(nextDim, i, matrix);
 
-				// XXX
-				if (TribuDSTM.PARTIAL) {
+				if (TribuDSTM.PARTIAL)
+				{
 					final PartialReplicationSerializer s = (PartialReplicationSerializer) TribuDSTM
 							.getObjectSerializer();
 					s.createFullReplicationMetadata(field);
@@ -147,7 +147,8 @@ public class MultiArrayContainer extends ArrayContainer
 				 * arrays são inicializados nesta classe. Se o init do TxField
 				 * receber o tipo fica gerar para todos os algoritmos.
 				 */
-				if (TribuDSTM.PARTIAL && field instanceof VBoxField) {
+				if (TribuDSTM.PARTIAL && field instanceof VBoxField)
+				{
 					VBoxField vbox = (VBoxField) field;
 					vbox.setType(Type.ARRAY);
 				}

@@ -47,9 +47,9 @@ public class ShortArrayContainer extends ArrayContainer
 				obj = ContextDelegator.getMetadataClass().newInstance();
 				TxField field = (TxField) obj;
 				field.init(arr, base + scale * i);
-				
-				// XXX
-				if (TribuDSTM.PARTIAL) {
+
+				if (TribuDSTM.PARTIAL)
+				{
 					final PartialReplicationSerializer s = (PartialReplicationSerializer) TribuDSTM
 							.getObjectSerializer();
 					s.createFullReplicationMetadata(field);
@@ -67,7 +67,8 @@ public class ShortArrayContainer extends ArrayContainer
 				 * arrays são inicializados nesta classe. Se o init do TxField
 				 * receber o tipo fica gerar para todos os algoritmos.
 				 */
-				if (TribuDSTM.PARTIAL && field instanceof VBoxField) {
+				if (TribuDSTM.PARTIAL && field instanceof VBoxField)
+				{
 					VBoxField vbox = (VBoxField) field;
 					vbox.setType(Type.SHORT);
 				}

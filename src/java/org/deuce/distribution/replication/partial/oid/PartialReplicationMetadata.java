@@ -63,7 +63,7 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	{
 		this.group = group;
 	}
-	
+
 	@Override
 	public Group getPartialGroup()
 	{
@@ -79,7 +79,8 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	@Override
 	public String toString()
 	{ // id:[group]:[pgroup]
-		return String.format("%s:%s:%s", this.id, this.group, this.partialGroup);
+		return String
+				.format("%s:%s:%s", this.id, this.group, this.partialGroup);
 	}
 
 	@Override

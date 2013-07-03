@@ -85,7 +85,8 @@ public class SCOReReadSet implements Serializable
 		{
 			for (int j = 0; j < i - 1; j++)
 			{
-				boolean unlock_res = ((InPlaceRWLock) readSet[j].field).sharedUnlock(txID);
+				boolean unlock_res = ((InPlaceRWLock) readSet[j].field)
+						.sharedUnlock(txID);
 				LOGGER.trace("-> SunLock " + readSet[j].field.getMetadata()
 						+ " " + unlock_res);
 			}

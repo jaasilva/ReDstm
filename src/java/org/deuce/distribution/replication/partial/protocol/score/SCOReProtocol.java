@@ -38,6 +38,7 @@ import org.deuce.transaction.score.field.InPlaceRWLock;
 import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transaction.score.field.Version;
 import org.deuce.transform.ExcludeTM;
+import org.deuce.transform.localmetadata.type.TxField;
 
 /**
  * @author jaasilva
@@ -56,27 +57,30 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			return o1.second - o2.second;
 		}
 	};
-
-	private final AtomicInteger commitId = new AtomicInteger(0); // updated ONLY by bottom threads
-	private final AtomicInteger nextId = new AtomicInteger(0); // updated by up and bottom threads
-	private final AtomicInteger maxSeenId = new AtomicInteger(0); // updated ONLY by bottom threads
+	// updated ONLY by bottom threads
+	private final AtomicInteger commitId = new AtomicInteger(0);
+	// updated by up and bottom threads
+	private final AtomicInteger nextId = new AtomicInteger(0);
+	// updated ONLY by bottom threads
+	private final AtomicInteger maxSeenId = new AtomicInteger(0);
 
 	private final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
-
 	private final Queue<Pair<String, Integer>> pendQ = new PriorityQueue<Pair<String, Integer>>(
 			50, comp); // accessed only by bottom threads
 	private final Queue<Pair<String, Integer>> stableQ = new PriorityQueue<Pair<String, Integer>>(
 			50, comp); // accessed only by bottom threads
 
-	private final Map<String, DistributedContextState> receivedTrxs = new HashMap<String, DistributedContextState>(); // accessed only by bottom threads
-	private final Set<String> rejectTrxs = new HashSet<String>(); // accessed only by bottom threads
+	// accessed ONLY by bottom threads
+	private final Map<String, DistributedContextState> receivedTrxs = new HashMap<String, DistributedContextState>();
+	// accessed ONLY by bottom threads
+	private final Set<String> rejectTrxs = new HashSet<String>();
 
-	private static final int minReadThreads = 2;
+	private static final int minReadThreads = 1;
 	private final Executor pool = Executors.newFixedThreadPool(Math.max(
 			Integer.getInteger("tribu.replicas") - 1, minReadThreads));
 
 	public static final ThreadLocal<Boolean> serializationContext = new ThreadLocal<Boolean>()
-	{ // false -> *not* read context; true -> read context
+	{ // false -> *NOT* read context; true -> read context
 		@Override
 		protected Boolean initialValue()
 		{
@@ -152,9 +156,10 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	}
 
 	@Override
-	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata)
+	public Object onTxRead(DistributedContext ctx, TxField field)
 	{ // I am the coordinator of this read.
 		PRProfiler.onTxCompleteReadBegin(ctx.threadID);
+		ObjectMetadata metadata = field.getMetadata();
 
 		SCOReContext sctx = (SCOReContext) ctx;
 
@@ -191,7 +196,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 			log.append("Remote read (sid=" + sctx.sid + ", requestVersion="
 					+ sctx.requestVersion + ")\n");
-			
+
 			LOGGER.debug("REMOTE READ " + group + " " + metadata);
 
 			PRProfiler.onSerializationBegin(ctx.threadID);
@@ -241,9 +246,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	private ReadDone doRead(int sid, ObjectMetadata metadata)
 	{
 		int origNextId;
-		do {
+		do
+		{
 			origNextId = nextId.get();
-		} while (!nextId.compareAndSet(origNextId, Math.max(origNextId, sid)));
+		}
+		while (!nextId.compareAndSet(origNextId, Math.max(origNextId, sid)));
 
 		VBoxField field = (VBoxField) TribuDSTM.getObject(metadata);
 
@@ -252,7 +259,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
 		{ // wait until (commitId.get() >= sid || ((InPlaceRWLock)
 			// field).isExclusiveUnlocked()
-			LOGGER.debug("doRead waiting "+(commitId.get() < sid) + " "
+			LOGGER.debug("doRead waiting " + (commitId.get() < sid) + " "
 					+ !((InPlaceRWLock) field).isExclusiveUnlocked());
 		}
 		long end = System.nanoTime();
@@ -277,15 +284,19 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	private void updateNodeTimestamps(int lastCommitted)
 	{
 		int origNextId;
-		do {
+		do
+		{
 			origNextId = nextId.get();
-		} while (!nextId.compareAndSet(origNextId,
+		}
+		while (!nextId.compareAndSet(origNextId,
 				Math.max(origNextId, lastCommitted)));
 
 		int origMaxSeenId;
-		do {
+		do
+		{
 			origMaxSeenId = maxSeenId.get();
-		} while (!maxSeenId.compareAndSet(origMaxSeenId,
+		}
+		while (!maxSeenId.compareAndSet(origMaxSeenId,
 				Math.max(origMaxSeenId, lastCommitted)));
 		advanceCommitId();
 
@@ -344,7 +355,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		PRProfiler.onSerializationBegin(msg.ctxID);
 		serializationContext.set(true);
-		byte[] payload = ObjectSerializer.object2ByteArray(ret); // XXX read ctx
+		byte[] payload = ObjectSerializer.object2ByteArray(ret);
 		serializationContext.set(false);
 		PRProfiler.onSerializationFinish(msg.ctxID);
 
@@ -494,8 +505,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		if (outcome)
 		{
 			log.append("outcome= YES fsn= " + proposedTimestamp + " ("
-					+ (votes.size() + 1) + "/" + expectedVotes
-					+ " votes)\n");
+					+ (votes.size() + 1) + "/" + expectedVotes + " votes)\n");
 		}
 		else
 		{
@@ -562,17 +572,19 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	private synchronized void decideMessage(DecideMsg msg, Address src)
 	{ // I am a participant in this commit. *atomically*
 		final String trxID = msg.trxID;
-		LOGGER.debug("* onDelivery (src=" + src + ") -> DECIDE MSG\n"
-				+ trxID);
+		LOGGER.debug("* onDelivery (src=" + src + ") -> DECIDE MSG\n" + trxID);
 
 		final boolean result = msg.result;
 		final int finalSid = msg.finalSid;
 		if (result)
 		{ // DECIDE YES
 			int origNextId;
-			do {
+			do
+			{
 				origNextId = nextId.get();
-			} while (!nextId.compareAndSet(origNextId, Math.max(origNextId, finalSid)));
+			}
+			while (!nextId.compareAndSet(origNextId,
+					Math.max(origNextId, finalSid)));
 			stableQ.add(new Pair<String, Integer>(trxID, finalSid));
 		}
 
@@ -614,15 +626,16 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		StringBuffer log = new StringBuffer();
 		log.append("------------------------------------------\n");
-		try{
-		log.append("decideMessage (src=" + src + ") " + ctxID + ":"
-				+ tx.atomicBlockId + ":" + trxID + "\n");
-		}catch (NullPointerException e)
+		try
+		{
+			log.append("decideMessage (src=" + src + ") " + ctxID + ":"
+					+ tx.atomicBlockId + ":" + trxID + "\n");
+		}
+		catch (NullPointerException e)
 		{
 			log.append("decideMessage\n");
 		}
-		log.append("result= " + result + " finalSid= " + finalSid
-				+ "\n");
+		log.append("result= " + result + " finalSid= " + finalSid + "\n");
 		log.append("------------------------------------------");
 		LOGGER.debug(log.toString());
 	}
@@ -638,7 +651,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		{
 			if (stableQ.isEmpty())
 			{ // nothing to do
-				if (snId != -1) {
+				if (snId != -1)
+				{
 					// it is safe to make snapshot visible
 					commitId.set(snId);
 				}
@@ -659,8 +673,10 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			Pair<String, Integer> pTx = pendQ.peek();
 
 			if (pTx != null && pTx.second <= sTx.second)
-			{ // there are still some trxs that can be serialized before/with sTx
-				if (snId != -1) {
+			{ // there are still some trxs that can be serialized before/with
+				// sTx
+				if (snId != -1)
+				{
 					// it is safe to make snapshot visible
 					commitId.set(snId);
 				}
@@ -697,7 +713,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 				ctx.recreateContextFromState(tx);
 			}
 			ctx.sid = sTx.second;
-			if (ctx.sid > snId) {
+			if (ctx.sid > snId)
+			{
 				// this snapshot is fresher than snId, it is safe to make
 				// previous snapshot visible
 				commitId.set(snId);
@@ -729,15 +746,19 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 	}
 
-	final private void advanceCommitId() {
+	final private void advanceCommitId()
+	{
 		int origCommitId;
-		do {
+		do
+		{
 			origCommitId = commitId.get();
 			if (origCommitId >= maxSeenId.get() || !pendQ.isEmpty()
-					|| !stableQ.isEmpty()) {
+					|| !stableQ.isEmpty())
+			{
 				return;
 			}
-		} while (!commitId.compareAndSet(origCommitId, maxSeenId.get()));
+		}
+		while (!commitId.compareAndSet(origCommitId, maxSeenId.get()));
 	}
 
 	@ExcludeTM

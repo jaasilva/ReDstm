@@ -29,15 +29,13 @@ public class Version implements Serializable
 		if (size == SCOReContext.MAX_VERSIONS)
 		{
 			cleanVersions();
-			// divide by 2
-			size = SCOReContext.MAX_VERSIONS >>> 1;
+			size = SCOReContext.MAX_VERSIONS >>> 1; // divide by 2
 		}
 	}
 
 	private void cleanVersions()
 	{
-		// divide by 2
-		int c = SCOReContext.MAX_VERSIONS >>> 1;
+		int c = SCOReContext.MAX_VERSIONS >>> 1; // divide by 2
 		Version v = this;
 		while (c > 1)
 		{

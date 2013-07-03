@@ -11,7 +11,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
@@ -23,6 +22,7 @@ import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.speculative.SpeculativeContext;
 import org.deuce.transaction.speculative.SpeculativeContextState;
 import org.deuce.transform.ExcludeTM;
+import org.deuce.transform.localmetadata.type.TxField;
 
 @ExcludeTM
 public class SpeculativeNonVoting extends FullReplicationProtocol implements
@@ -370,7 +370,7 @@ public class SpeculativeNonVoting extends FullReplicationProtocol implements
 		contexts.put(ctx.threadID, (SpeculativeContext) ctx);
 	}
 
-	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata)
+	public Object onTxRead(DistributedContext ctx, TxField field)
 	{
 		return null;
 	}

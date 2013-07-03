@@ -38,21 +38,29 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		group = new SpreadGroup();
 		try
 		{
-			connection.connect(/*null*/InetAddress.getByName("node8"), 0,
-					"replica" + Integer.getInteger("tribu.site"), false, true);
+			String daemon = System.getProperty(
+					"tribu.groupcommunication.spread.daemon", "localhost");
+			String privateName = "replica" + Integer.getInteger("tribu.site");
+
+			connection.connect(/* null */InetAddress.getByName(daemon), 0,
+					privateName, false, true);
 			connection.add(this);
 			group.join(connection, System.getProperty(
 					"tribu.groupcommunication.group", "tvale"));
-			myAddress = new SpreadAddress(connection.getPrivateGroup().toString());
+			myAddress = new SpreadAddress(connection.getPrivateGroup()
+					.toString());
 		}
 		catch (SpreadException e)
 		{
 			System.err.println("Couldn't initialise Spread client.");
 			e.printStackTrace();
 			System.exit(-1);
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
+		}
+		catch (UnknownHostException e)
+		{
+			System.err.println("Couldn't initialise Spread client.");
 			e.printStackTrace();
+			System.exit(-1);
 		}
 	}
 
@@ -137,7 +145,8 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		if (message.isMembership()
 				&& message.getMembershipInfo().isRegularMembership()
 				&& (members = message.getMembershipInfo().getMembers()).length == Integer
-						.getInteger("tribu.replicas").intValue()) {
+						.getInteger("tribu.replicas").intValue())
+		{
 			this.members = members;
 			membersArrived();
 		}
@@ -156,7 +165,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		SpreadMessage message = new SpreadMessage();
 		message.setData(payload);
 		message.addGroup((String) addr.getSpecificAddress());
-//		message.setReliable();
+		// message.setReliable();
 		message.setFifo();
 		try
 		{
@@ -175,10 +184,11 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 	{
 		SpreadMessage message = new SpreadMessage();
 		message.setData(payload);
-		for (Address addr : group.getAll()) {
+		for (Address addr : group.getAll())
+		{
 			message.addGroup((String) addr.getSpecificAddress());
 		}
-//		message.setReliable();
+		// message.setReliable();
 		message.setFifo();
 		try
 		{
@@ -196,7 +206,8 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 	public List<Address> getMembers()
 	{
 		final List<Address> addrs = new java.util.LinkedList<Address>();
-		for (SpreadGroup addr : members) {
+		for (SpreadGroup addr : members)
+		{
 			addrs.add(new SpreadAddress(addr.toString()));
 		}
 		return addrs;

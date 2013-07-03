@@ -15,9 +15,12 @@ public class PartialReplicationMetadataFactory implements
 	@Override
 	public PartialReplicationOID generateOID()
 	{ // Requires the insertion of the group later.
-		final PartialReplicationGroup group = new PartialReplicationGroup(TribuDSTM.ALL);
-		final PartialReplicationGroup partialGroup = new PartialReplicationGroup(-3);
-		final PartialReplicationMetadata metadata = new PartialReplicationMetadata(group);
+		final PartialReplicationGroup group = new PartialReplicationGroup(
+				TribuDSTM.ALL);
+		final PartialReplicationGroup partialGroup = new PartialReplicationGroup(
+				-3);
+		final PartialReplicationMetadata metadata = new PartialReplicationMetadata(
+				group);
 		metadata.setPartialGroup(partialGroup);
 		return metadata;
 	}
@@ -25,13 +28,15 @@ public class PartialReplicationMetadataFactory implements
 	@Override
 	public PartialReplicationOID generateFullReplicationOID()
 	{
-		return new PartialReplicationMetadata(new PartialReplicationGroup(TribuDSTM.ALL));
+		return new PartialReplicationMetadata(new PartialReplicationGroup(
+				TribuDSTM.ALL));
 	}
 
 	@Override
 	public PartialReplicationOID generateFullReplicationOID(int oid)
 	{
-		return new PartialReplicationMetadata(oid, new PartialReplicationGroup(TribuDSTM.ALL));
+		return new PartialReplicationMetadata(oid, new PartialReplicationGroup(
+				TribuDSTM.ALL));
 	}
 
 	@Override

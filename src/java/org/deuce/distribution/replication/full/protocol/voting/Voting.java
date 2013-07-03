@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
@@ -18,6 +17,7 @@ import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transform.ExcludeTM;
+import org.deuce.transform.localmetadata.type.TxField;
 
 @ExcludeTM
 public class Voting extends FullReplicationProtocol implements
@@ -198,7 +198,7 @@ public class Voting extends FullReplicationProtocol implements
 	}
 
 	@Override
-	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata)
+	public Object onTxRead(DistributedContext ctx, TxField field)
 	{
 		return null;
 	}

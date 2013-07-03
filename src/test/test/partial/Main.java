@@ -8,13 +8,16 @@ import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.replication.Bootstrap;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
 
-class MyObject {
+class MyObject
+{
 	String string;
 
-	public MyObject(final String string) {
+	public MyObject(final String string)
+	{
 		this.string = string;
 	}
 }
+
 public class Main
 {
 	@Bootstrap(id = 1)
@@ -92,11 +95,15 @@ public class Main
 	private static void printList(PartialList<MyObject> list)
 	{
 		_PartialNode<MyObject> n = list.head;
-		while (n != null) {
+		while (n != null)
+		{
 			MyObject value = n.getValue();
-			if (value == null) {
-				System.out.println(n.key+": null");
-			} else {
+			if (value == null)
+			{
+				System.out.println(n.key + ": null");
+			}
+			else
+			{
 				ObjectMetadata m = ((UniqueObject) value).getMetadata();
 				PartialReplicationOID pm = (PartialReplicationOID) m;
 				System.out.println(n.key + ": " + value.string + " ("
@@ -106,9 +113,11 @@ public class Main
 		}
 	}
 
-	private static void printLocalList(PartialList<MyObject> list) {
+	private static void printLocalList(PartialList<MyObject> list)
+	{
 		_PartialNode<MyObject> n = list.head;
-		while (n != null) {
+		while (n != null)
+		{
 			MyObject value = n.getValue();
 			System.out.print(n.key + ": ");
 			System.out.println(value == null ? "null" : value.string);

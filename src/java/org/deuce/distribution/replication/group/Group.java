@@ -12,7 +12,8 @@ import org.deuce.transform.ExcludeTM;
  * 
  */
 @ExcludeTM
-public interface Group extends Serializable {
+public interface Group extends Serializable
+{
 	public final static String NAME = Type.getInternalName(Group.class);
 	public final static String DESC = Type.getDescriptor(Group.class);
 
@@ -39,4 +40,6 @@ public interface Group extends Serializable {
 	public Group union(Group other);
 
 	public int getId();
+
+	public boolean isLocal();
 }

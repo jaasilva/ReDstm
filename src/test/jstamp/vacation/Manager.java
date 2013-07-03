@@ -262,19 +262,20 @@ public class Manager
 			Reservation reservationPtr = null;
 			it = it.nextPtr;
 			reservationInfoPtr = (Reservation_Info) it.dataPtr;
-			switch (reservationInfoPtr.type) {
-			case Defines.RESERVATION_CAR:
-				reservationPtr = (Reservation) carTablePtr
-						.find(reservationInfoPtr.id);
-				break;
-			case Defines.RESERVATION_ROOM:
-				reservationPtr = (Reservation) roomTablePtr
-						.find(reservationInfoPtr.id);
-				break;
-			case Defines.RESERVATION_FLIGHT:
-				reservationPtr = (Reservation) flightTablePtr
-						.find(reservationInfoPtr.id);
-				break;
+			switch (reservationInfoPtr.type)
+			{
+				case Defines.RESERVATION_CAR:
+					reservationPtr = (Reservation) carTablePtr
+							.find(reservationInfoPtr.id);
+					break;
+				case Defines.RESERVATION_ROOM:
+					reservationPtr = (Reservation) roomTablePtr
+							.find(reservationInfoPtr.id);
+					break;
+				case Defines.RESERVATION_FLIGHT:
+					reservationPtr = (Reservation) flightTablePtr
+							.find(reservationInfoPtr.id);
+					break;
 			}
 			status = reservationPtr.reservation_cancel();
 		}

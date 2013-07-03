@@ -1,20 +1,19 @@
-org.deuce.transaction.contextClass - org.deuce.transaction.tl2.Context
+tribu.serialization.compress - true
 tribu.groupcommunication.class - org.deuce.distribution.groupcomm.jgroups.JGroupsGroupCommunication
+org.deuce.transaction.contextClass - org.deuce.transaction.tl2.Context
 tribu.distributed.protocolClass - org.deuce.distribution.replication.full.protocol.nonvoting.NonVoting
 tribu.groupcommunication.group - tvale
+tribu.replicas - XXX
+tribu.groupcommunication.spread.daemon - localhost
+tribu.site - XXX
 org.deuce.exclude - XXX
 org.deuce.include - XXX
-tribu.serialization.compress - true
-tribu.site - XXX
-
-----------------------------------------------
-*tribu.distributed.PartialReplicationMode - false
+-------------------------------------------------------------------------
+tribu.groups - 1
+tribu.distributed.PartialReplicationMode - false
 tribu.distributed.GroupPartitionerClass - org.deuce.distribution.replication.partitioner.group.RoundRobinGroupPartitioner
 tribu.distributed.DataPartitionerClass - org.deuce.distribution.replication.partitioner.data.SimpleDataPartitioner
-tribu.groups - 1
 tribu.distributed.GroupPartitionerHashClass - org.deuce.hashing.MD5GuavaHashFunction
-(tribu.distributed.DataPartitionerHashClass - _)
 org.deuce.transaction.score.versions - 16
-tribu.distributed.protocol.score.timeout - 3000 (ms)
 log - XXX
 

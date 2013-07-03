@@ -27,5 +27,4 @@ public class ByteWriteFieldAccess extends WriteFieldAccess
 	{
 		return value;
 	}
-
 }

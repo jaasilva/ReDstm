@@ -6,7 +6,8 @@ public class _PartialNode<T>
 {
 	private _PartialNode<T> next;
 	public int key;
-	@Partial private T value;
+	@Partial
+	private T value;
 
 	public _PartialNode(int key, T val, _PartialNode<T> n)
 	{

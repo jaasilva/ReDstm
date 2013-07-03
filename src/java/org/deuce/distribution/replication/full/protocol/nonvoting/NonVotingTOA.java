@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
@@ -16,6 +15,7 @@ import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transform.ExcludeTM;
+import org.deuce.transform.localmetadata.type.TxField;
 
 @ExcludeTM
 public class NonVotingTOA extends FullReplicationProtocol implements
@@ -75,7 +75,8 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 		ctx.profiler.onTOSend();
 		ctx.profiler.newMsgSent(payload.length);
 
-		TribuDSTM.sendTotalOrdered(payload, new PartialReplicationGroup(TribuDSTM.ALL));
+		TribuDSTM.sendTotalOrdered(payload, new PartialReplicationGroup(
+				TribuDSTM.ALL));
 	}
 
 	public void onTxFinished(DistributedContext ctx, boolean committed)
@@ -88,7 +89,7 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 	}
 
 	@Override
-	public Object onTxRead(DistributedContext ctx, ObjectMetadata metadata)
+	public Object onTxRead(DistributedContext ctx, TxField field)
 	{
 		return null;
 	}

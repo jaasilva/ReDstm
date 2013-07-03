@@ -60,12 +60,15 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 			recvService = new AppiaService("uniform_total_order");
 			dataSession = protocol.openDataSession(config);
 			controlSession = (BlockSession) protocol.openControlSession(config);
+
 			dataSession.setExceptionListener(this);
 			dataSession.setMessageListener(this);
 			dataSession.setServiceListener(this);
+
 			controlSession.setBlockListener(this);
 			controlSession.setMembershipListener(this);
 			controlSession.join();
+
 			myAddress = new AppiaAddress(controlSession.getLocalAddress());
 		}
 		catch (JGCSException e)

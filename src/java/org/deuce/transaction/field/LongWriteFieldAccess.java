@@ -19,7 +19,7 @@ public class LongWriteFieldAccess extends WriteFieldAccess
 	public void put()
 	{
 		// UnsafeHolder.getUnsafe().putLong(field.ref, field.address, value);
-		field.writeObject(value);
+		field.writeLong(value);
 		// clear();
 	}
 
@@ -27,5 +27,4 @@ public class LongWriteFieldAccess extends WriteFieldAccess
 	{
 		return value;
 	}
-
 }

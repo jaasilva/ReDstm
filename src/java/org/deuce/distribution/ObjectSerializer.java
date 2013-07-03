@@ -75,7 +75,6 @@ public abstract class ObjectSerializer
 			BufferedInputStream bis = null;
 			GZIPInputStream gzis = null;
 			ObjectInputStream ois = null;
-
 			if (COMPRESS)
 			{
 				gzis = new GZIPInputStream(bais);
@@ -86,7 +85,6 @@ public abstract class ObjectSerializer
 			{
 				ois = new ObjectInputStream(bais);
 			}
-
 			try
 			{
 				obj = ois.readObject();

@@ -27,5 +27,4 @@ public class CharWriteFieldAccess extends WriteFieldAccess
 	{
 		return value;
 	}
-
 }
