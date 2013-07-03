@@ -31,15 +31,19 @@ public class TribuDSTM
 	private static GroupPartitioner groupPart;
 	// private static Class<? extends DistributedContext> ctxClass;
 	private static int numGroups;
-
 	public static boolean PARTIAL; // check runtime mode
 	/*
 	 * XXX t.vale: we initialise an HashSet here because PartialReplicationGroup
 	 * uses HashSet. Most likely this isn't generic.
 	 */
-	final public static Collection<Address> ALL = new HashSet<Address>(); // XXX
-
+	final public static Collection<Address> ALL = new HashSet<Address>();
 	public static String partialDefault = "false";
+
+	/*
+	 * ################################################################
+	 * ########### INITIALIZATION #####################################
+	 * ################################################################
+	 */
 
 	static
 	{
@@ -204,10 +208,11 @@ public class TribuDSTM
 		LOGGER.warn("> Data Partitioner: " + dataPartClass);
 	}
 
-	// public static final Class<? extends DistributedContext> getContextClass()
-	// {
-	// return ctxClass;
-	// }
+	/*
+	 * ################################################################
+	 * ########### LOCATOR TABLE ######################################
+	 * ################################################################
+	 */
 
 	// public static final Locator getLocator()
 	// {
@@ -223,6 +228,32 @@ public class TribuDSTM
 	{
 		locator.put(metadata, obj);
 	}
+
+	/*
+	 * ################################################################
+	 * ########### SERIALIZATION ######################################
+	 * ################################################################
+	 */
+
+	public static final String GETSERIALIZER_METHOD_NAME = "getObjectSerializer";
+	public static final String GETSERIALIZER_METHOD_DESC = "()"
+			+ ObjectSerializer.DESC;
+
+	public static final ObjectSerializer getObjectSerializer()
+	{
+		return distProtocol.getObjectSerializer();
+	}
+
+	/*
+	 * ################################################################
+	 * ########### DISTRIBUTED PROTOCOL ###############################
+	 * ################################################################
+	 */
+
+	// public static final Class<? extends DistributedContext> getContextClass()
+	// {
+	// return ctxClass;
+	// }
 
 	public static final void onContextCreation(DistributedContext ctx)
 	{
@@ -250,14 +281,11 @@ public class TribuDSTM
 		return distProtocol.onTxRead(ctx, field);
 	}
 
-	public static final String GETSERIALIZER_METHOD_NAME = "getObjectSerializer";
-	public static final String GETSERIALIZER_METHOD_DESC = "()"
-			+ ObjectSerializer.DESC;
-
-	public static final ObjectSerializer getObjectSerializer()
-	{
-		return distProtocol.getObjectSerializer();
-	}
+	/*
+	 * ################################################################
+	 * ########### COMMUNICATION ######################################
+	 * ################################################################
+	 */
 
 	public static final void sendTotalOrdered(byte[] payload)
 	{
@@ -267,6 +295,21 @@ public class TribuDSTM
 	public static final void sendReliably(byte[] payload)
 	{
 		groupComm.sendReliably(payload);
+	}
+
+	public static final void sendTotalOrdered(byte[] payload, Group group)
+	{
+		groupComm.sendTotalOrdered(payload, group);
+	}
+
+	public static final void sendTo(byte[] payload, Address addr)
+	{
+		groupComm.sendTo(payload, addr);
+	}
+
+	public static final void sendToGroup(byte[] payload, Group group)
+	{
+		groupComm.sendToGroup(payload, group);
 	}
 
 	public static final boolean isLocalAddress(Address addr)
@@ -295,14 +338,20 @@ public class TribuDSTM
 		return groupComm.getLocalAddress();
 	}
 
-	public static final Group publishObjectTo(UniqueObject obj)
-	{
-		return dataPart.publishTo(obj);
-	}
+	/*
+	 * ################################################################
+	 * ########### GROUPS #############################################
+	 * ################################################################
+	 */
 
 	public static final Group getLocalGroup()
 	{
 		return groupPart.getLocalGroup();
+	}
+
+	public static final Group getGroup(int idx)
+	{
+		return groupPart.getGroups().get(idx);
 	}
 
 	public static final boolean isLocalGroup(Group group)
@@ -312,26 +361,22 @@ public class TribuDSTM
 
 	public static final boolean groupIsAll(Group group)
 	{
-		return group.getAll().equals(ALL);
-	}
-
-	public static final void sendTotalOrdered(byte[] payload, Group group)
-	{
-		groupComm.sendTotalOrdered(payload, group);
-	}
-
-	public static final void sendTo(byte[] payload, Address addr)
-	{
-		groupComm.sendTo(payload, addr);
-	}
-
-	public static final void sendToGroup(byte[] payload, Group group)
-	{
-		groupComm.sendToGroup(payload, group);
+		return group.getAll().equals(ALL); // XXX posso mudar isto?
 	}
 
 	public static final int getNumGroups()
 	{
 		return numGroups;
+	}
+
+	/*
+	 * ################################################################
+	 * ########### DATA ###############################################
+	 * ################################################################
+	 */
+
+	public static final Group publishObjectTo(UniqueObject obj)
+	{
+		return dataPart.publishTo(obj);
 	}
 }

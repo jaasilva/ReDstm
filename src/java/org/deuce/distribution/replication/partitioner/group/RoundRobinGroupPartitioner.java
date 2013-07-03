@@ -29,10 +29,10 @@ public class RoundRobinGroupPartitioner extends Partitioner implements
 	@Override
 	public void partitionGroups(Collection<Address> members, int groups)
 	{
-		List<Group> g = getGroups();
+		List<Group> g = super.getGroups();
 		for (int i = 0; i < groups; i++)
 		{
-			g.add(new PartialReplicationGroup(i));
+			g.add(new PartialReplicationGroup(i)); // XXX
 		}
 
 		int group = 0;

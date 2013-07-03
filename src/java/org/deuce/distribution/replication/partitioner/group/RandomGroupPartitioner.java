@@ -30,7 +30,6 @@ public class RandomGroupPartitioner extends Partitioner implements
 		String className = System.getProperty(
 				"tribu.distributed.GroupPartitionerHashClass",
 				"org.deuce.hashing.MD5GuavaHashFunction");
-
 		try
 		{
 			@SuppressWarnings("unchecked")
@@ -50,10 +49,10 @@ public class RandomGroupPartitioner extends Partitioner implements
 	@Override
 	public void partitionGroups(Collection<Address> members, int groups)
 	{
-		List<Group> g = getGroups();
+		List<Group> g = super.getGroups();
 		for (int i = 0; i < groups; i++)
 		{
-			g.add(new PartialReplicationGroup(i));
+			g.add(new PartialReplicationGroup(i)); // XXX
 		}
 
 		for (Address a : members)

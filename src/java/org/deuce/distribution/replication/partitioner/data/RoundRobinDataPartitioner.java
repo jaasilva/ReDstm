@@ -3,9 +3,9 @@ package org.deuce.distribution.replication.partitioner.data;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
+import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.replication.group.Group;
-import org.deuce.distribution.replication.partitioner.Partitioner;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -13,8 +13,7 @@ import org.deuce.transform.ExcludeTM;
  * 
  */
 @ExcludeTM
-public class RoundRobinDataPartitioner extends Partitioner implements
-		DataPartitioner
+public class RoundRobinDataPartitioner implements DataPartitioner
 {
 	private static final Logger LOGGER = Logger
 			.getLogger(RoundRobinDataPartitioner.class);
@@ -30,13 +29,13 @@ public class RoundRobinDataPartitioner extends Partitioner implements
 	@Override
 	public void init()
 	{
-		groups = super.getGroups().size();
+		groups = TribuDSTM.getNumGroups();
 	}
 
 	@Override
 	public Group publishTo(UniqueObject obj)
 	{
-		Group res = super.getGroups().get(round.get() % groups);
+		Group res = TribuDSTM.getGroup(round.get() % groups);
 		round.getAndIncrement();
 
 		LOGGER.trace(String.format("~ Publish obj(%s) to group(%s) %s",

@@ -13,8 +13,8 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public abstract class Partitioner
 {
-	private static List<Group> groups = new ArrayList<Group>();
-	private static Group myGroup;
+	private List<Group> groups = new ArrayList<Group>();
+	private Group localGroup;
 
 	public Partitioner()
 	{
@@ -27,11 +27,11 @@ public abstract class Partitioner
 
 	public Group getLocalGroup()
 	{
-		return myGroup;
+		return localGroup;
 	}
 
 	public void setLocalGroup(Group group)
 	{
-		myGroup = group;
+		localGroup = group;
 	}
 }
