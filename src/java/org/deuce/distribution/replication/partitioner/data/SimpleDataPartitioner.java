@@ -1,6 +1,5 @@
 package org.deuce.distribution.replication.partitioner.data;
 
-import org.apache.log4j.Logger;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.replication.group.Group;
@@ -13,9 +12,6 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class SimpleDataPartitioner implements DataPartitioner
 {
-	private static final Logger LOGGER = Logger
-			.getLogger(SimpleDataPartitioner.class);
-
 	public SimpleDataPartitioner()
 	{
 		super();
@@ -29,11 +25,6 @@ public class SimpleDataPartitioner implements DataPartitioner
 	@Override
 	public Group publishTo(UniqueObject obj)
 	{
-		Group res = TribuDSTM.getLocalGroup();
-
-		LOGGER.trace(String.format("~ Publish obj(%s) to group(%s) %s",
-				obj.getMetadata(), res, obj.getClass().getSimpleName()));
-
-		return res;
+		return TribuDSTM.getLocalGroup();
 	}
 }

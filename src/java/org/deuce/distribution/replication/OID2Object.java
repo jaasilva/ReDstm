@@ -3,7 +3,6 @@ package org.deuce.distribution.replication;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
 import org.deuce.objectweb.asm.Type;
@@ -19,7 +18,6 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public final class OID2Object implements Serializable
 {
-	private static final Logger LOGGER = Logger.getLogger(OID2Object.class);
 	private static final long serialVersionUID = 1L;
 	public static final String DESC = Type.getDescriptor(OID2Object.class);
 	public static final String NAME = Type.getInternalName(OID2Object.class);
@@ -45,7 +43,6 @@ public final class OID2Object implements Serializable
 	protected Object readResolve() throws ObjectStreamException
 	{
 		UniqueObject object = TribuDSTM.getObject(oid);
-		LOGGER.trace("> " + oid + " (published)");
 		return object;
 	}
 }

@@ -3,7 +3,6 @@ package org.deuce.transaction.score;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-import org.apache.log4j.Logger;
 import org.deuce.LocalMetadata;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
@@ -43,7 +42,6 @@ import org.deuce.transform.localmetadata.type.TxField;
 @LocalMetadata(metadataClass = "org.deuce.transaction.score.field.VBoxField")
 public class SCOReContext extends DistributedContext
 {
-	private static final Logger LOGGER = Logger.getLogger(SCOReContext.class);
 	public static final TransactionException VERSION_UNAVAILABLE_EXCEPTION = new TransactionException(
 			"Fail on retrieveing an older or unexistent version.");
 	public static int MAX_VERSIONS = Integer.getInteger(
@@ -98,26 +96,10 @@ public class SCOReContext extends DistributedContext
 		SCOReWriteFieldAccess writeAccess = onReadAccess(field);
 		if (writeAccess == null)
 		{ // not in the writeSet. Do distributed read
-			Object o = TribuDSTM.onTxRead(this, field);
-
-			try
-			{
-				LOGGER.trace("- R " + trxID + " -> " + field.getMetadata()
-						+ " (not in WS) " + o);
-			}
-			catch (NullPointerException e)
-			{
-				LOGGER.trace("- R " + trxID + " -> " + field.getMetadata()
-						+ " (not in WS) NullPtr");
-			}
-
-			return o;
+			return TribuDSTM.onTxRead(this, field);
 		}
 		else
 		{ // in the writeSet. Return value
-			LOGGER.trace("- R " + trxID + " -> " + field.getMetadata()
-					+ " (in WS)");
-
 			return writeAccess.getValue();
 		}
 	}
@@ -189,12 +171,6 @@ public class SCOReContext extends DistributedContext
 
 	private void checkGroupRestrictions(UniqueObject obj, TxField field)
 	{
-		StringBuffer log = new StringBuffer();
-		log.append("==========================================\n");
-		log.append("checkGroupRestrictions " + obj.getClass().getSimpleName()
-				+ "\n");
-		log.append(field.getMetadata() + "\n");
-
 		Group txFieldGroup = ((PartialReplicationOID) field.getMetadata())
 				.getPartialGroup();
 		PartialReplicationOID objMetadata = (PartialReplicationOID) obj
@@ -208,29 +184,19 @@ public class SCOReContext extends DistributedContext
 			// group not defined. assign the same group as the txField
 			objMetadata.setGroup(txFieldGroup);
 			obj.setMetadata(objMetadata);
-
-			log.append("objMetadata is null. Creating new metadata. Assign same group as TxField:\n"
-					+ objMetadata + "\n");
 		}
 		else
 		{
-			log.append("objMetadata is not null: " + objMetadata + "\n");
-
 			Group objGroup = objMetadata.getGroup();
 
 			if (objMetadata.isPublished() && !txFieldGroup.equals(objGroup))
 			{ // different group. cannot happen (for now)
-				log.append("TxFieldGroup != objGroup.");
 				System.err.println("TxFieldGroup != objGroup. CANNOT HAPPEN!");
-
 				System.exit(-1);
 			}
 			objGroup.set(txFieldGroup.getAll());
 			objMetadata.getPartialGroup().set(txFieldGroup.getAll());
 		}
-
-		log.append("==========================================");
-		LOGGER.debug(log.toString());
 	}
 
 	private void write(Object value, TxField field)
@@ -238,17 +204,6 @@ public class SCOReContext extends DistributedContext
 		SCOReWriteFieldAccess next = WFAPool.getNext();
 		next.set(value, field);
 		addWriteAccess(next);
-
-		try
-		{
-			LOGGER.trace("+ W " + trxID + " -> " + field.getMetadata() + " "
-					+ value);
-		}
-		catch (NullPointerException e)
-		{
-			LOGGER.trace("+ W " + trxID + " -> " + field.getMetadata()
-					+ "NullPtr");
-		}
 	}
 
 	@Override

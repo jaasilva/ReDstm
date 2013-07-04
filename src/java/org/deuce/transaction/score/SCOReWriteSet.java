@@ -2,7 +2,6 @@ package org.deuce.transaction.score;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
@@ -19,7 +18,6 @@ import org.deuce.trove.THashSet;
 @ExcludeTM
 public class SCOReWriteSet implements Serializable
 {
-	private static final Logger LOGGER = Logger.getLogger(SCOReWriteSet.class);
 	private static final long serialVersionUID = 1L;
 	private final THashSet<SCOReWriteFieldAccess> writeSet = new THashSet<SCOReWriteFieldAccess>(
 			16);
@@ -42,13 +40,7 @@ public class SCOReWriteSet implements Serializable
 		{
 			Group other = ((PartialReplicationOID) wfa.field.getMetadata())
 					.getGroup();
-
-			if (/* TribuDSTM.groupIsAll(other) */other.isAll())
-			{ // OPT is this better? vale a pena este verificação sempre??
-				return other;
-			}
-
-			resGroup = resGroup.union(other);
+			resGroup = resGroup.union(other); // XXX é o getGroup? ou o getPartialGroup?
 		}
 
 		return resGroup;
@@ -71,24 +63,10 @@ public class SCOReWriteSet implements Serializable
 	{ // apply only the TxFields that I replicate
 		for (SCOReWriteFieldAccess a : writeSet)
 		{
-			if (/*
-				 * TribuDSTM.isLocalGroup(((PartialReplicationOID) a.field
-				 * .getMetadata()).getPartialGroup())
-				 */((PartialReplicationOID) a.field.getMetadata())
+			if (((PartialReplicationOID) a.field.getMetadata())
 					.getPartialGroup().isLocal())
 			{
 				a.put(sid);
-
-				try
-				{
-					LOGGER.trace("APPLY " + a.field.getMetadata() + " -> "
-							+ a.value + " (sid=" + sid + ")");
-				}
-				catch (NullPointerException e)
-				{
-					LOGGER.trace("APPLY " + a.field.getMetadata()
-							+ " -> NullPtr (sid=" + sid + ")");
-				}
 			}
 		}
 	}
@@ -99,7 +77,6 @@ public class SCOReWriteSet implements Serializable
 		for (SCOReWriteFieldAccess a : writeSet)
 		{
 			res = ((InPlaceRWLock) a.field).exclusiveUnlock(txID);
-			LOGGER.trace("XunLock " + a.field.getMetadata() + " " + res);
 		}
 		return res;
 	}
@@ -113,9 +90,6 @@ public class SCOReWriteSet implements Serializable
 		{
 			res = ((InPlaceRWLock) ((SCOReWriteFieldAccess) ws[i]).field)
 					.exclusiveLock(txID);
-			LOGGER.trace("XLock "
-					+ ((SCOReWriteFieldAccess) ws[i]).field.getMetadata() + " "
-					+ res);
 			i++;
 		}
 
@@ -123,11 +97,8 @@ public class SCOReWriteSet implements Serializable
 		{
 			for (int j = 0; j < i - 1; j++)
 			{
-				boolean unlock_res = ((InPlaceRWLock) ((SCOReWriteFieldAccess) ws[j]).field)
+				((InPlaceRWLock) ((SCOReWriteFieldAccess) ws[j]).field)
 						.exclusiveUnlock(txID);
-				LOGGER.trace("-> XunLock "
-						+ ((SCOReWriteFieldAccess) ws[j]).field.getMetadata()
-						+ " " + unlock_res);
 			}
 		}
 

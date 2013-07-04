@@ -1,6 +1,5 @@
 package org.deuce.transaction.score.field;
 
-import org.apache.log4j.Logger;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.array.ArrayContainer;
@@ -14,7 +13,6 @@ import org.deuce.transform.localmetadata.type.TxField;
 public class VBoxField extends TxField implements InPlaceRWLock,
 		java.io.Serializable
 {
-	private static final Logger LOGGER = Logger.getLogger(VBoxField.class);
 	public final static String NAME = Type.getInternalName(VBoxField.class);
 
 	public volatile Version version;
@@ -74,18 +72,15 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 	{
 		if (readLock != 0)
 		{ // readLock LOCKED
-			LOGGER.trace("exclusiveLock 1 - " + readLock + " - " + lockHolder);
 			return false;
 		}
 		else if (!writeLock)
 		{ // readLock UNLOCKED && writeLock UNLOCKED
 			writeLock = true;
 			lockHolder = holder;
-			LOGGER.trace("exclusiveLock 2");
 			return true;
 		}
 		// readLock UNLOCKED && writeLock LOCKED
-		LOGGER.trace("exclusiveLock 3 - " + writeLock + " - " + lockHolder);
 		return false;
 	}
 
@@ -94,18 +89,15 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 	{
 		if (!holder.equals(lockHolder))
 		{ // lockHolder != holder
-			LOGGER.trace("exclusiveUnlock 1 - " + lockHolder);
 			return false;
 		}
 		else if (writeLock)
 		{ // lockHolder == holder && writeLock LOCKED
 			writeLock = false;
 			lockHolder = null; // clean lockHolder
-			LOGGER.trace("exclusiveUnlock 2");
 			return true;
 		}
 		// lockHolder == holder && writeLock UNLOCKED
-		LOGGER.trace("exclusiveUnlock 3");
 		return false;
 	}
 
@@ -114,13 +106,11 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 	{
 		if (writeLock && !holder.equals(lockHolder))
 		{ // writeLock LOCKED && lockHolder != holder
-			LOGGER.trace("sharedLock 1 - " + lockHolder);
 			return false;
 		}
 		else
 		{ // writeLock UNLOCKED (&& lockHolder == holder)
 			readLock++;
-			LOGGER.trace("sharedLock 2 - " + readLock);
 			return true;
 		}
 	}
@@ -131,11 +121,9 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 		if (readLock != 0)
 		{ // readLock LOCKED
 			readLock--;
-			LOGGER.trace("sharedUnlock 1 - " + readLock);
 			return true;
 		}
 		// readLock UNLOCKED
-		LOGGER.trace("sharedUnlock 2");
 		return false;
 	}
 

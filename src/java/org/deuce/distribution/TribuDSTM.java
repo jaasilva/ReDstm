@@ -99,6 +99,7 @@ public class TribuDSTM
 
 	public static void close()
 	{
+		LOGGER.warn("#################################");
 		LOGGER.warn("> TribuDSTM closing");
 
 		groupComm.close();

@@ -2,7 +2,6 @@ package org.deuce.transaction.score;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
@@ -18,7 +17,6 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class SCOReReadSet implements Serializable
 {
-	private static final Logger LOGGER = Logger.getLogger(SCOReReadSet.class);
 	private static final long serialVersionUID = 1L;
 	private static final int DEFAULT_CAPACITY = 1024;
 	private SCOReReadFieldAccess[] readSet = new SCOReReadFieldAccess[DEFAULT_CAPACITY];
@@ -62,10 +60,7 @@ public class SCOReReadSet implements Serializable
 		for (int i = 0; i < next; i++)
 		{
 			res = ((InPlaceRWLock) readSet[i].field).sharedUnlock(txID);
-			LOGGER.trace("SunLock " + readSet[i].field.getMetadata() + " "
-					+ res);
 		}
-
 		return res;
 	}
 
@@ -76,7 +71,6 @@ public class SCOReReadSet implements Serializable
 		while (res && i < next)
 		{
 			res = ((InPlaceRWLock) readSet[i].field).sharedLock(txID);
-			LOGGER.trace("SLock " + readSet[i].field.getMetadata() + " " + res);
 			i++;
 		}
 
@@ -84,10 +78,7 @@ public class SCOReReadSet implements Serializable
 		{
 			for (int j = 0; j < i - 1; j++)
 			{
-				boolean unlock_res = ((InPlaceRWLock) readSet[j].field)
-						.sharedUnlock(txID);
-				LOGGER.trace("-> SunLock " + readSet[j].field.getMetadata()
-						+ " " + unlock_res);
+				((InPlaceRWLock) readSet[j].field).sharedUnlock(txID);
 			}
 		}
 
@@ -98,18 +89,10 @@ public class SCOReReadSet implements Serializable
 	{ // validate only the TxFields that I replicate
 		for (int i = 0; i < next; i++)
 		{
-			if (/*
-				 * TribuDSTM .isLocalGroup(((PartialReplicationOID)
-				 * readSet[i].field .getMetadata()).getPartialGroup())
-				 */((PartialReplicationOID) readSet[i].field.getMetadata())
+			if (((PartialReplicationOID) readSet[i].field.getMetadata())
 					.getPartialGroup().isLocal())
 			{
 				boolean res = ((VBoxField) readSet[i].field).getLastVersion().version > sid;
-				LOGGER.trace("VAL "
-						+ ((VBoxField) readSet[i].field).getMetadata()
-						+ " "
-						+ ((VBoxField) readSet[i].field).getLastVersion().version
-						+ " " + sid + " -> " + res);
 				if (res)
 				{
 					return false;
@@ -129,7 +112,7 @@ public class SCOReReadSet implements Serializable
 			Group other = ((PartialReplicationOID) readSet[i].field
 					.getMetadata()).getGroup();
 
-			if (!/* TribuDSTM.groupIsAll(other) */other.isAll())
+			if (!other.isAll())
 			{ // never do union with the group ALL
 				resGroup = resGroup.union(other);
 			}
