@@ -23,7 +23,7 @@ public class PartialReplicationGroup implements Group
 		this.id = Group.NIL;
 		this.addrs = new HashSet<Address>();
 	}
-	
+
 	public PartialReplicationGroup(short id)
 	{
 		this.id = id;

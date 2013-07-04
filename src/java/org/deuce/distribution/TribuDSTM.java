@@ -1,6 +1,7 @@
 package org.deuce.distribution;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import org.apache.log4j.Logger;
 import org.deuce.distribution.groupcomm.Address;
@@ -9,7 +10,6 @@ import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
 import org.deuce.distribution.location.SimpleLocator;
 import org.deuce.distribution.replication.group.Group;
-import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.distribution.replication.partitioner.data.DataPartitioner;
 import org.deuce.distribution.replication.partitioner.group.GroupPartitioner;
 import org.deuce.objectweb.asm.Type;
@@ -36,7 +36,7 @@ public class TribuDSTM
 	 * XXX t.vale: we initialise an HashSet here because PartialReplicationGroup
 	 * uses HashSet. Most likely this isn't generic.
 	 */
-	final public static Group ALL = new PartialReplicationGroup();
+	final public static HashSet<Address> ALL = new HashSet<Address>();
 	public static String partialDefault = "false";
 
 	/*
@@ -361,7 +361,7 @@ public class TribuDSTM
 
 	public static final boolean groupIsAll(Group group)
 	{
-		return group/* .getAll() */.equals(ALL); // XXX posso mudar isto?
+		return group.getAll().equals(ALL); // XXX posso mudar isto?
 	}
 
 	public static final int getNumGroups()

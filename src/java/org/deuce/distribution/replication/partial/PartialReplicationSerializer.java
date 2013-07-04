@@ -115,7 +115,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		final Group toPublish = TribuDSTM.publishObjectTo(obj);
 		((PartialReplicationOID) meta).getPartialGroup().getAll()
 				.addAll(toPublish.getAll());
-		TribuDSTM.putObject(meta, obj); // XXX
+		// TribuDSTM.putObject(meta, obj); // XXX
 	}
 
 	public static final String CREATE_FULL_METADATA_METHOD_NAME = "createFullReplicationMetadata";
@@ -126,7 +126,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	{ // Generates metadata with the group assigned with ALL
 		ObjectMetadata meta = factory.generateFullReplicationOID();
 		obj.setMetadata(meta);
-		TribuDSTM.putObject(meta, obj); // XXX
+		// TribuDSTM.putObject(meta, obj); // XXX
 	}
 
 	public static final String BOOTSTRAP_METHOD_NAME = "createBootstrapOID";
@@ -139,7 +139,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		PartialReplicationOID meta = factory.generateFullReplicationOID(id);
 		obj.setMetadata(meta);
 		meta.publish();
-		TribuDSTM.putObject(meta, obj); // XXX
+		TribuDSTM.putObject(meta, obj);
 
 		LOGGER.info(String.format("! BootstrapOID %s id(%d) = %s", obj, id,
 				meta));

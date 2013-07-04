@@ -129,7 +129,7 @@ public class SCOReReadSet implements Serializable
 			Group other = ((PartialReplicationOID) readSet[i].field
 					.getMetadata()).getGroup();
 
-			if (!/*TribuDSTM.groupIsAll(other)*/other.isAll())
+			if (!/* TribuDSTM.groupIsAll(other) */other.isAll())
 			{ // never do union with the group ALL
 				resGroup = resGroup.union(other);
 			}
