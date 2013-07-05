@@ -39,9 +39,9 @@ public class NonVoting extends FullReplicationProtocol implements
 		if (src.isLocal())
 		{
 			ctx = contexts.get(ctxState.ctxID);
-			ctx.profiler.onTODelivery();
+			// ctx.profiler.onTODelivery();
 			PRProfiler.onLastVoteReceived(ctxState.ctxID);
-			ctx.profiler.newMsgRecv(payloadSize);
+			// ctx.profiler.newMsgRecv(payloadSize);
 			PRProfiler.newMsgRecv(payloadSize);
 		}
 		else
@@ -77,9 +77,9 @@ public class NonVoting extends FullReplicationProtocol implements
 		byte[] payload = ObjectSerializer.object2ByteArray(ctx.createState());
 		PRProfiler.onSerializationFinish(ctx.threadID);
 
-		ctx.profiler.onTOSend();
+		// ctx.profiler.onTOSend();
 		PRProfiler.onPrepSend(ctx.threadID);
-		ctx.profiler.newMsgSent(payload.length);
+		// ctx.profiler.newMsgSent(payload.length);
 		PRProfiler.newMsgSent(payload.length);
 
 		TribuDSTM.sendTotalOrdered(payload);

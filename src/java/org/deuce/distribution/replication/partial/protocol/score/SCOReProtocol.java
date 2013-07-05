@@ -1,13 +1,9 @@
 package org.deuce.distribution.replication.partial.protocol.score;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
@@ -159,13 +155,13 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		ReadDone read;
 		if (group.contains(TribuDSTM.getLocalAddress()))
-		{ // local read
+		{ // *LOCAL* read
 			PRProfiler.onTxLocalReadBegin(ctx.threadID);
 			read = doRead(sctx.sid, metadata);
 			PRProfiler.onTxLocalReadFinish(ctx.threadID);
 		}
 		else
-		{ // remote read
+		{ // *REMOTE* read
 			ReadReq req = new ReadReq(sctx.threadID, metadata, sctx.sid,
 					firstRead, sctx.requestVersion);
 
@@ -197,7 +193,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 
 		if (sctx.isUpdate() && !read.mostRecent)
-		{
+		{ // optimization: abort trx forced to see overwritten data
 			throw new TransactionException(); // abort transaction
 		}
 		// added to read set in onReadAccess context method
@@ -221,8 +217,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		while (commitId.get() < sid
 				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
 		{ // wait until (commitId.get() >= sid || ((InPlaceRWLock)
-			// field).isExclusiveUnlocked()
-		}
+		}// field).isExclusiveUnlocked()
 		long end = System.nanoTime();
 		PRProfiler.onWaitingReadFinish(end - st);
 
@@ -352,36 +347,20 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		if (rejectTrxs.contains(trxID))
 		{ // late PREPARE msg (already received DECIDE msg (NO) for this tx)
-			// rejectTrxs.remove(ctx.trxID); XXX
+			// rejectTrxs.remove(ctx.trxID); XXX why?
 			return;
 		}
 		receivedTrxs.put(trxID, ctx);
 
-		PRProfiler.onTxValidateBegin(ctxID);
-		boolean exclusiveLocks = false, sharedLocks = false, validate = false;
-		final SCOReWriteSet ws = (SCOReWriteSet) ctx.ws;
-		final SCOReReadSet rs = (SCOReReadSet) ctx.rs;
-		boolean outcome = (exclusiveLocks = ws.getExclusiveLocks(trxID))
-				&& (sharedLocks = rs.getSharedLocks(trxID))
-				&& (validate = rs.validate(ctx.sid));
-		PRProfiler.onTxValidateEnd(ctxID);
+		SCOReContext sctx = (SCOReContext) ContextDelegator.getInstance();
+		sctx.recreateContextFromState(ctx);
+		boolean outcome = sctx.validate();
 
 		int next = -1;
 		if (outcome) // valid trx
 		{
 			next = nextId.incrementAndGet();
 			pendQ.add(new Pair<String, Integer>(trxID, next));
-		}
-		else
-		{ // vote NO! do not need the locks
-			if (exclusiveLocks)
-			{
-				ws.releaseExclusiveLocks(trxID);
-			}
-			if (sharedLocks)
-			{
-				rs.releaseSharedLocks(trxID);
-			}
 		}
 
 		VoteMsg vote = new VoteMsg(outcome, next, ctxID, trxID);
@@ -405,7 +384,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		final String trxID = ctx.trxID;
 
 		if (rejectTrxs.contains(trxID) || !trxID_msg.equals(trxID))
-		{ // late vote. trx already aborted (no decide msg received yet)
+		{ // late vote. trx already/to be aborted
 			return;
 		}
 
@@ -443,18 +422,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	private void finalizeVoteStep(SCOReContext ctx, boolean outcome)
 	{ // I am the coordinator of this commit.
 		if (!outcome)
-		{ // ensures late votes checking
+		{ // ensures late vote checking
 			rejectTrxs.add(ctx.trxID);
 		}
 
-		int finalSid = -1;
-		try
-		{
-			finalSid = /* Collections.max(ctx.votes) */ctx.maxVote;
-		}
-		catch (NoSuchElementException e)
-		{ // collection is empty. ignore exception
-		}
+		int finalSid = ctx.maxVote;
 		ctx.sid = finalSid;
 
 		DecideMsg decide = new DecideMsg(ctx.threadID, ctx.trxID, finalSid,
@@ -496,38 +468,33 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		SCOReContextState tx = (SCOReContextState) receivedTrxs.get(trxID);
 		final int ctxID = msg.ctxID;
 		if (!result)
-		{ // DECIDE NO
+		{ // DECIDE NO (someone voted NO)
 			if (tx != null)
-			{ // received DECIDE msg *after* PREPARE msg (someone voted NO)
+			{ // received DECIDE msg *after* PREPARE msg
 				if (remove) // I only have the locks if I voted YES
 				{ // and put the tx in the pendQ
 					((SCOReReadSet) tx.rs).releaseSharedLocks(trxID);
 					((SCOReWriteSet) tx.ws).releaseExclusiveLocks(trxID);
 				}
 
-				SCOReContext ctx = null;
-				if (src.isLocal())
-				{ // context is local. access directly
-					ctx = (SCOReContext) ctxs.get(ctxID);
-					ctx.processed(false);
-				}
-
 				receivedTrxs.remove(trxID);
 			}
 			else
-			{ // received DECIDE msg *before* PREPARE msg (someone voted NO)
-				if (src.isLocal())
-				{ // context is local. access directly
-					SCOReContext ctx = (SCOReContext) ctxs.get(ctxID);
-					ctx.processed(false);
-				}
-
+			{ // received DECIDE msg *before* PREPARE msg
 				rejectTrxs.add(trxID);
+			}
+
+			if (src.isLocal())
+			{ // context is local. access directly
+				SCOReContext ctx = (SCOReContext) ctxs.get(ctxID);
+				ctx.processed(false); // XXX só preciso faze isto ao ctx
+										// local, certo? os outros
+										// desaparecem
 			}
 		}
 
-		LOGGER.debug("DEC (" + src + ") " + ctxID + ":" + tx.atomicBlockId
-				+ ":" + trxID.split("-")[0] + " " + msg.finalSid);
+		LOGGER.debug("DEC (" + src + ") " + ctxID + ":_:" + trxID.split("-")[0]
+				+ " " + msg.finalSid);
 	}
 
 	private synchronized void processTx()

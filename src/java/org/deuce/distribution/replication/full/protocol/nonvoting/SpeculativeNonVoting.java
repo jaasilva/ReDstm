@@ -60,7 +60,7 @@ public class SpeculativeNonVoting extends FullReplicationProtocol implements
 	{
 		SpeculativeContext ctx = (SpeculativeContext) obj;
 
-		ctx.profiler.onTODelivery();
+		// ctx.profiler.onTODelivery();
 
 		if (ctx.isAborted())
 		{
@@ -73,7 +73,7 @@ public class SpeculativeNonVoting extends FullReplicationProtocol implements
 			{
 				handleOutOfOrder(ctx);
 
-				ctx.profiler.txOutOfOrder();
+				// ctx.profiler.txOutOfOrder();
 			}
 			else
 			{
@@ -118,8 +118,8 @@ public class SpeculativeNonVoting extends FullReplicationProtocol implements
 			ctx.recreateContextFromState(ctxState);
 		}
 
-		ctx.profiler.onOptTODelivery();
-		ctx.profiler.newMsgRecv(payloadSize);
+		// ctx.profiler.onOptTODelivery();
+		// ctx.profiler.newMsgRecv(payloadSize);
 
 		optDelivered.add(ctx);
 
@@ -334,8 +334,8 @@ public class SpeculativeNonVoting extends FullReplicationProtocol implements
 			byte[] payload = ObjectSerializer.object2ByteArray(ctx
 					.createState());
 
-			ctx.profiler.onTOSend();
-			ctx.profiler.newMsgSent(payload.length);
+			// ctx.profiler.onTOSend();
+			// ctx.profiler.newMsgSent(payload.length);
 
 			TribuDSTM.sendTotalOrdered(payload);
 		}

@@ -1,7 +1,6 @@
 package org.deuce.transaction.speculative;
 
 import org.deuce.distribution.TribuDSTM;
-import org.deuce.profiling.Profiler;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.ReadSet;
 import org.deuce.transaction.TransactionException;
@@ -37,11 +36,11 @@ public abstract class SpeculativeContext extends DistributedContext
 	 */
 	final public boolean speculativeValidate()
 	{
-		profiler.onTxSpecValidateBegin();
+		// profiler.onTxSpecValidateBegin();
 
 		boolean valid = performSpeculativeValidation();
 
-		profiler.onTxSpecValidateEnd();
+		// profiler.onTxSpecValidateEnd();
 
 		return valid;
 	}
@@ -58,12 +57,12 @@ public abstract class SpeculativeContext extends DistributedContext
 	 */
 	final public void speculativeApplyWriteSet()
 	{
-		profiler.onTxSpecCommitStart();
+		// profiler.onTxSpecCommitStart();
 
 		applySpeculativeUpdates();
 
-		profiler.txSpecCommitted();
-		profiler.onTxSpecCommitEnd();
+		// profiler.txSpecCommitted();
+		// profiler.onTxSpecCommitEnd();
 	}
 
 	/**
@@ -84,12 +83,12 @@ public abstract class SpeculativeContext extends DistributedContext
 
 	final public void speculativeAbort()
 	{
-		profiler.onTxSpecAbortStart();
+		// profiler.onTxSpecAbortStart();
 
 		performSpeculativeAbort();
 
-		profiler.txSpecAborted();
-		profiler.onTxSpecAbortEnd();
+		// profiler.txSpecAborted();
+		// profiler.onTxSpecAbortEnd();
 	}
 
 	/**
@@ -107,13 +106,13 @@ public abstract class SpeculativeContext extends DistributedContext
 	 */
 	public boolean commit()
 	{
-		profiler.onTxAppCommit();
+		// profiler.onTxAppCommit();
 
 		if (writeSet.isEmpty())
 		{
 
-			if (Profiler.enabled)
-				profiler.txCommitted++;
+			// if (Profiler.enabled)
+			// profiler.txCommitted++;
 
 			TribuDSTM.onTxFinished(this, true);
 			return true;

@@ -1,6 +1,5 @@
 package org.deuce.transaction.score;
 
-import java.util.List;
 import java.util.concurrent.Semaphore;
 
 import org.deuce.LocalMetadata;
@@ -10,7 +9,6 @@ import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
 import org.deuce.distribution.replication.partial.protocol.score.ReadDone;
 import org.deuce.profiling.PRProfiler;
-import org.deuce.profiling.Profiler;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.TransactionException;
@@ -52,7 +50,6 @@ public class SCOReContext extends DistributedContext
 
 	public int sid;
 	public boolean firstReadDone;
-//	public List<Integer> votes;
 	public int maxVote;
 	public int receivedVotes;
 	public int expectedVotes;
@@ -298,8 +295,7 @@ public class SCOReContext extends DistributedContext
 
 		this.sid = 0;
 		this.firstReadDone = false;
-//		this.votes = null;
-		this.maxVote = 0;
+		this.maxVote = -1;
 		this.receivedVotes = 0;
 		this.expectedVotes = 0;
 		response = null;
@@ -313,7 +309,31 @@ public class SCOReContext extends DistributedContext
 	@Override
 	protected boolean performValidation()
 	{
-		return readSet.validate(sid);
+		boolean exclusiveLocks = false, sharedLocks = false, validate = false;
+		exclusiveLocks = writeSet.getExclusiveLocks(trxID);
+		if (exclusiveLocks)
+		{
+			sharedLocks = readSet.getSharedLocks(trxID);
+		}
+		if (sharedLocks)
+		{
+			validate = readSet.validate(sid);
+		}
+		boolean outcome = exclusiveLocks && sharedLocks && validate;
+
+		if (!outcome)
+		{ // vote NO! do not need the locks
+			if (exclusiveLocks)
+			{
+				writeSet.releaseExclusiveLocks(trxID);
+			}
+			if (sharedLocks)
+			{
+				readSet.releaseSharedLocks(trxID);
+			}
+		}
+
+		return outcome;
 	}
 
 	@Override
@@ -357,13 +377,13 @@ public class SCOReContext extends DistributedContext
 
 	public boolean commit()
 	{
-		profiler.onTxAppCommit();
+		// profiler.onTxAppCommit();
 		PRProfiler.onTxAppFinish(threadID);
 
 		if (writeSet.isEmpty())
 		{ // read-only transaction
-			if (Profiler.enabled)
-				profiler.txCommitted++;
+			// if (Profiler.enabled)
+			// profiler.txCommitted++;
 			PRProfiler.txProcessed(true);
 
 			TribuDSTM.onTxFinished(this, true);

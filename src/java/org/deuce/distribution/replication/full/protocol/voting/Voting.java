@@ -12,7 +12,6 @@ import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.full.FullReplicationProtocol;
-import org.deuce.profiling.Profiler;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
@@ -43,12 +42,12 @@ public class Voting extends FullReplicationProtocol implements
 			DistributedContextState ctxState = (DistributedContextState) obj;
 			PendingTx tx = new PendingTx(src, ctxState);
 
-			if (src.isLocal())
-			{
-				Profiler prof = contexts.get(ctxState.ctxID).profiler;
-				prof.onTODelivery();
-				prof.newMsgRecv(payloadSize);
-			}
+			// if (src.isLocal())
+			// {
+			// Profiler prof = contexts.get(ctxState.ctxID).profiler;
+			// prof.onTODelivery();
+			// prof.newMsgRecv(payloadSize);
+			// }
 
 			// Check for existing result
 			PendingResult pendingResult = null;
@@ -75,12 +74,12 @@ public class Voting extends FullReplicationProtocol implements
 		{
 			ResultMessage msg = (ResultMessage) obj;
 
-			if (src.isLocal())
-			{
-				Profiler prof = contexts.get(msg.ctxID).profiler;
-				prof.onURBDelivery();
-				prof.newMsgRecv(payloadSize);
-			}
+			// if (src.isLocal())
+			// {
+			// Profiler prof = contexts.get(msg.ctxID).profiler;
+			// prof.onURBDelivery();
+			// prof.newMsgRecv(payloadSize);
+			// }
 
 			// Check for existing tx
 			PendingTx pendingTx = null;
@@ -164,8 +163,8 @@ public class Voting extends FullReplicationProtocol implements
 						.object2ByteArray(new ResultMessage(tx.ctxState.ctxID,
 								valid));
 
-				ctx.profiler.onURBSend();
-				ctx.profiler.newMsgSent(payload.length);
+				// ctx.profiler.onURBSend();
+				// ctx.profiler.newMsgSent(payload.length);
 
 				TribuDSTM.sendReliably(payload);
 			}
@@ -182,8 +181,8 @@ public class Voting extends FullReplicationProtocol implements
 		ctxState.rs = null;
 		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
 
-		ctx.profiler.onTOSend();
-		ctx.profiler.newMsgSent(payload.length);
+		// ctx.profiler.onTOSend();
+		// ctx.profiler.newMsgSent(payload.length);
 
 		TribuDSTM.sendTotalOrdered(payload);
 	}

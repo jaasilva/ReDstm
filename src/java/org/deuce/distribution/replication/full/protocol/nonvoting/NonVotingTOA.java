@@ -38,8 +38,8 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 		if (src.isLocal())
 		{
 			ctx = contexts.get(ctxState.ctxID);
-			ctx.profiler.onTODelivery();
-			ctx.profiler.newMsgRecv(payloadSize);
+			// ctx.profiler.onTODelivery();
+			// ctx.profiler.newMsgRecv(payloadSize);
 		}
 		else
 		{
@@ -72,8 +72,8 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 	{
 		byte[] payload = ObjectSerializer.object2ByteArray(ctx.createState());
 
-		ctx.profiler.onTOSend();
-		ctx.profiler.newMsgSent(payload.length);
+		// ctx.profiler.onTOSend();
+		// ctx.profiler.newMsgSent(payload.length);
 
 		TribuDSTM.sendTotalOrdered(payload, new PartialReplicationGroup(
 				TribuDSTM.ALL));
