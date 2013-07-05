@@ -94,11 +94,11 @@ public class SCOReContext extends DistributedContext
 	{
 		SCOReWriteFieldAccess writeAccess = onReadAccess(field);
 		if (writeAccess == null)
-		{ // not in the writeSet. Do distributed read
+		{ // *NOT* in the writeSet. Do distributed read
 			return TribuDSTM.onTxRead(this, field);
 		}
 		else
-		{ // in the writeSet. Return value
+		{ // *IN* the writeSet. Return value
 			return writeAccess.getValue();
 		}
 	}
@@ -163,11 +163,6 @@ public class SCOReContext extends DistributedContext
 		return (Double) read(field);
 	}
 
-	private void addWriteAccess(SCOReWriteFieldAccess write)
-	{ // add to writeSet
-		writeSet.put(write);
-	}
-
 	private void checkGroupRestrictions(UniqueObject obj, TxField field)
 	{
 		Group txFieldGroup = ((PartialReplicationOID) field.getMetadata())
@@ -185,7 +180,7 @@ public class SCOReContext extends DistributedContext
 			obj.setMetadata(objMetadata);
 		}
 		else
-		{
+		{ // XXX check this
 			Group objGroup = objMetadata.getGroup();
 
 			if (objMetadata.isPublished() && !txFieldGroup.equals(objGroup))
@@ -196,6 +191,11 @@ public class SCOReContext extends DistributedContext
 			objGroup.set(txFieldGroup.getAll());
 			objMetadata.getPartialGroup().set(txFieldGroup.getAll());
 		}
+	}
+
+	private void addWriteAccess(SCOReWriteFieldAccess write)
+	{ // add to writeSet
+		writeSet.put(write);
 	}
 
 	private void write(Object value, TxField field)
@@ -311,7 +311,7 @@ public class SCOReContext extends DistributedContext
 	{
 		boolean exclusiveLocks = false, sharedLocks = false, validate = false;
 		exclusiveLocks = writeSet.getExclusiveLocks(trxID);
-		if (exclusiveLocks)
+		if (exclusiveLocks) // only continue validation if I can succeed
 		{
 			sharedLocks = readSet.getSharedLocks(trxID);
 		}
@@ -323,13 +323,13 @@ public class SCOReContext extends DistributedContext
 
 		if (!outcome)
 		{ // vote NO! do not need the locks
-			if (exclusiveLocks)
-			{
-				writeSet.releaseExclusiveLocks(trxID);
-			}
 			if (sharedLocks)
 			{
 				readSet.releaseSharedLocks(trxID);
+			}
+			if (exclusiveLocks)
+			{
+				writeSet.releaseExclusiveLocks(trxID);
 			}
 		}
 
@@ -363,6 +363,12 @@ public class SCOReContext extends DistributedContext
 		return !writeSet.isEmpty();
 	}
 
+	public void unlock()
+	{
+		readSet.releaseSharedLocks(trxID);
+		writeSet.releaseExclusiveLocks(trxID);
+	}
+
 	public Group getInvolvedNodes()
 	{ // !!! be careful when to call this
 		if (involvedNodes == null)
@@ -371,7 +377,6 @@ public class SCOReContext extends DistributedContext
 			Group group2 = writeSet.getInvolvedNodes();
 			involvedNodes = group1.union(group2);
 		}
-
 		return involvedNodes;
 	}
 

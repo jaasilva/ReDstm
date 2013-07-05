@@ -28,8 +28,6 @@ import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.TransactionException;
 import org.deuce.transaction.score.SCOReContext;
 import org.deuce.transaction.score.SCOReContextState;
-import org.deuce.transaction.score.SCOReReadSet;
-import org.deuce.transaction.score.SCOReWriteSet;
 import org.deuce.transaction.score.field.InPlaceRWLock;
 import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transaction.score.field.Version;
@@ -110,7 +108,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		Group resGroup = sctx.getInvolvedNodes();
 		int expVotes = resGroup.size();
 
-		// sctx.votes = new ArrayList<Integer>(expVotes);
 		sctx.maxVote = 0;
 		sctx.receivedVotes = 0;
 		sctx.expectedVotes = expVotes;
@@ -197,7 +194,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			throw new TransactionException(); // abort transaction
 		}
 		// added to read set in onReadAccess context method
-
 		PRProfiler.onTxCompleteReadFinish(ctx.threadID);
 		return read.value;
 	}
@@ -217,7 +213,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		while (commitId.get() < sid
 				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
 		{ // wait until (commitId.get() >= sid || ((InPlaceRWLock)
-		}// field).isExclusiveUnlocked()
+		}// field).isExclusiveUnlocked())
 		long end = System.nanoTime();
 		PRProfiler.onWaitingReadFinish(end - st);
 
@@ -389,7 +385,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 
 		final boolean outcome = msg.outcome;
-		// final List<Integer> votes = ctx.votes;
 		final int proposedTimestamp = msg.proposedTimestamp;
 		final int expectedVotes = ctx.expectedVotes;
 
@@ -406,7 +401,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			}
 			// votes.add(proposedTimestamp);
 
-			if (/* votes.size() */ctx.receivedVotes == expectedVotes)
+			if (ctx.receivedVotes == expectedVotes)
 			{ // last vote. Every vote was YES. send decide msg
 				PRProfiler.onLastVoteReceived(ctx.threadID);
 
@@ -473,8 +468,10 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			{ // received DECIDE msg *after* PREPARE msg
 				if (remove) // I only have the locks if I voted YES
 				{ // and put the tx in the pendQ
-					((SCOReReadSet) tx.rs).releaseSharedLocks(trxID);
-					((SCOReWriteSet) tx.ws).releaseExclusiveLocks(trxID);
+					SCOReContext sctx = (SCOReContext) ContextDelegator
+							.getInstance();
+					sctx.recreateContextFromState(tx);
+					sctx.unlock(); // release shared and exclusive locks
 				}
 
 				receivedTrxs.remove(trxID);
@@ -547,15 +544,13 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			ctx.sid = sTx.second;
 			if (ctx.sid > snId)
 			{ // this snapshot is fresher than snId, it is safe to make
-				commitId.set(snId); // previous snapshot visible
+				commitId.set(snId); // the previous snapshot visible
 			}
 			snId = ctx.sid;
 
 			ctx.applyWriteSet();
 
-			((SCOReReadSet) tx.rs).releaseSharedLocks(sTx.first);
-			((SCOReWriteSet) tx.ws).releaseExclusiveLocks(sTx.first);
-
+			ctx.unlock(); // release shared and exclusive locks
 			stableQ.poll(); // remove sTx
 			receivedTrxs.remove(sTx.first);
 
