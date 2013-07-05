@@ -36,7 +36,7 @@ public class TribuDSTM
 	 * XXX t.vale: we initialise an HashSet here because PartialReplicationGroup
 	 * uses HashSet. Most likely this isn't generic.
 	 */
-	final public static HashSet<Address> ALL = new HashSet<Address>();
+	final public static Collection<Address> ALL = new HashSet<Address>();
 	public static String partialDefault = "false";
 
 	/*

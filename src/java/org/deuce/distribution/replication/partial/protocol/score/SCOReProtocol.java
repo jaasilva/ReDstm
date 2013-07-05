@@ -114,7 +114,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		Group resGroup = sctx.getInvolvedNodes();
 		int expVotes = resGroup.size();
 
-		sctx.votes = new ArrayList<Integer>(expVotes);
+		// sctx.votes = new ArrayList<Integer>(expVotes);
+		sctx.maxVote = 0;
+		sctx.receivedVotes = 0;
 		sctx.expectedVotes = expVotes;
 
 		PRProfiler.onSerializationBegin(ctx.threadID);
@@ -408,7 +410,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 
 		final boolean outcome = msg.outcome;
-		final List<Integer> votes = ctx.votes;
+		// final List<Integer> votes = ctx.votes;
 		final int proposedTimestamp = msg.proposedTimestamp;
 		final int expectedVotes = ctx.expectedVotes;
 
@@ -418,9 +420,14 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 		else
 		{ // voted YES. Save proposed timestamp
-			votes.add(proposedTimestamp);
+			ctx.receivedVotes++;
+			if (proposedTimestamp > ctx.maxVote)
+			{
+				ctx.maxVote = proposedTimestamp;
+			}
+			// votes.add(proposedTimestamp);
 
-			if (votes.size() == expectedVotes)
+			if (/* votes.size() */ctx.receivedVotes == expectedVotes)
 			{ // last vote. Every vote was YES. send decide msg
 				PRProfiler.onLastVoteReceived(ctx.threadID);
 
@@ -443,7 +450,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		int finalSid = -1;
 		try
 		{
-			finalSid = Collections.max(ctx.votes);
+			finalSid = /* Collections.max(ctx.votes) */ctx.maxVote;
 		}
 		catch (NoSuchElementException e)
 		{ // collection is empty. ignore exception

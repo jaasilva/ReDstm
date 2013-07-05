@@ -52,7 +52,9 @@ public class SCOReContext extends DistributedContext
 
 	public int sid;
 	public boolean firstReadDone;
-	public List<Integer> votes;
+//	public List<Integer> votes;
+	public int maxVote;
+	public int receivedVotes;
 	public int expectedVotes;
 	public String trxID;
 	private Group involvedNodes;
@@ -296,7 +298,9 @@ public class SCOReContext extends DistributedContext
 
 		this.sid = 0;
 		this.firstReadDone = false;
-		this.votes = null;
+//		this.votes = null;
+		this.maxVote = 0;
+		this.receivedVotes = 0;
 		this.expectedVotes = 0;
 		response = null;
 		trxID = java.util.UUID.randomUUID().toString();

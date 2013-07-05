@@ -50,17 +50,4 @@ public class RoundRobinGroupPartitioner extends Partitioner implements
 
 		LOGGER.warn("> GROUPS:" + toString());
 	}
-
-	@Override
-	public String toString()
-	{
-		StringBuilder sb = new StringBuilder("{");
-		for (Group g : getGroups())
-		{
-			sb.append(g + " ");
-		}
-		sb.insert(sb.length() - 1, "}");
-
-		return sb.toString().trim();
-	}
 }

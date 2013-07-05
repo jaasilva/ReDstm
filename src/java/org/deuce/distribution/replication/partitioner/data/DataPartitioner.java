@@ -11,8 +11,7 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public interface DataPartitioner
 {
-	// is called always after the groups have been formed
-	public void init();
+	public void init(); // is called always after the groups have been formed
 
 	public Group publishTo(UniqueObject obj);
 }

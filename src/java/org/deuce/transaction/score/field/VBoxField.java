@@ -18,9 +18,9 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 	public volatile Version version;
 	public int type;
 
-	private transient volatile byte readLock = 0;
+	private transient volatile byte readLock = 0; // max 127 readers
 	private transient volatile boolean writeLock = false; // false -> unlocked
-	private transient volatile String lockHolder = null;
+	private transient volatile String lockHolder = null; // trxID
 
 	public VBoxField()
 	{
@@ -51,9 +51,9 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 	public void commit(Object newVal, int sid)
 	{
 		Version ver = new Version(Integer.MAX_VALUE, newVal, version);
-		this.version.value = read(type); // WEAK ISOLATION
+		this.version.value = read(type); // *WEAK ISOLATION*
 		this.version = ver;
-		write(ver.value, type); // WEAK ISOLATION
+		write(ver.value, type); // *WEAK ISOLATION*
 		this.version.version = sid;
 	}
 
@@ -64,7 +64,7 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 
 	public Version getLastVersion()
 	{
-		return version;
+		return this.version;
 	}
 
 	@Override

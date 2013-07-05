@@ -4,7 +4,6 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 
 import org.deuce.distribution.TribuDSTM;
-import org.deuce.distribution.UniqueObject;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 
@@ -42,7 +41,6 @@ public final class OID2Object implements Serializable
 	 */
 	protected Object readResolve() throws ObjectStreamException
 	{
-		UniqueObject object = TribuDSTM.getObject(oid);
-		return object;
+		return TribuDSTM.getObject(oid);
 	}
 }

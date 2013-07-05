@@ -19,7 +19,7 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	private boolean isPublished;
 
 	public PartialReplicationMetadata()
-	{ // Requires the insertion of the group later.
+	{
 		this.id = java.util.UUID.randomUUID();
 		this.group = null;
 		this.partialGroup = null;
@@ -35,7 +35,7 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	}
 
 	public PartialReplicationMetadata(int seed)
-	{ // Requires the insertion of the group later.
+	{
 		byte[] name = ByteBuffer.allocate(4).putInt(seed).array();
 		this.id = java.util.UUID.nameUUIDFromBytes(name);
 		this.group = null;
@@ -85,7 +85,7 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 
 	@Override
 	public boolean equals(Object obj)
-	{ // PRepMetadata only need to have the same id to be considered equal
+	{
 		return obj instanceof PartialReplicationMetadata
 				&& this.id.equals(((PartialReplicationMetadata) obj).id);
 	}

@@ -56,16 +56,16 @@ public class SCOReReadSet implements Serializable
 
 	public synchronized boolean releaseSharedLocks(String txID)
 	{ // assumes that these locks are held
-		boolean res = false;
+		boolean res = true;
 		for (int i = 0; i < next; i++)
 		{
-			res = ((InPlaceRWLock) readSet[i].field).sharedUnlock(txID);
+			res &= ((InPlaceRWLock) readSet[i].field).sharedUnlock(txID);
 		}
 		return res;
 	}
 
 	public synchronized boolean getSharedLocks(String txID)
-	{
+	{ // it locks *ALL* the TxFields in the RS (including non local ones)
 		boolean res = true;
 		int i = 0;
 		while (res && i < next)
@@ -86,14 +86,14 @@ public class SCOReReadSet implements Serializable
 	}
 
 	public synchronized boolean validate(int sid)
-	{ // validate only the TxFields that I replicate
+	{ // validate *ONLY* the TxFields that are local
 		for (int i = 0; i < next; i++)
 		{
-			if (((PartialReplicationOID) readSet[i].field.getMetadata())
-					.getPartialGroup().isLocal())
+			PartialReplicationOID meta = ((PartialReplicationOID) readSet[i].field
+					.getMetadata());
+			if (meta.getPartialGroup().isLocal())
 			{
-				boolean res = ((VBoxField) readSet[i].field).getLastVersion().version > sid;
-				if (res)
+				if (((VBoxField) readSet[i].field).getLastVersion().version > sid)
 				{
 					return false;
 				}
@@ -106,11 +106,10 @@ public class SCOReReadSet implements Serializable
 	public Group getInvolvedNodes()
 	{
 		Group resGroup = new PartialReplicationGroup();
-
 		for (int i = 0; i < next; i++)
 		{
 			Group other = ((PartialReplicationOID) readSet[i].field
-					.getMetadata()).getGroup();
+					.getMetadata()).getGroup(); // XXX é group ou partialGroup?
 
 			if (!other.isAll())
 			{ // never do union with the group ALL

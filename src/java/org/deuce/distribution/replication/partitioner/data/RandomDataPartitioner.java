@@ -32,7 +32,7 @@ public class RandomDataPartitioner implements DataPartitioner
 	@Override
 	public Group publishTo(UniqueObject obj)
 	{
-		int r = rand.nextInt(groups + 1);
+		int r = rand.nextInt(groups);
 		return TribuDSTM.getGroup(r);
 	}
 }

@@ -91,7 +91,6 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		msg.setDest(null);
 		msg.setBuffer(payload);
 		msg.setFlag(Message.NO_TOTAL_ORDER); // flag is deprecated
-
 		try
 		{
 			channel.send(msg);
@@ -108,7 +107,6 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	{
 		byte[] payload = msg.getRawBuffer();
 		Object obj = null;
-
 		try
 		{
 			obj = ObjectSerializer.byteArray2Object(payload);
@@ -156,11 +154,9 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		{ // assumes group has no duplicate addresses
 			addr.add((org.jgroups.Address) a.getSpecificAddress());
 		}
-
 		final Message msg = new Message();
 		msg.setDest(addr);
 		msg.setBuffer(payload);
-
 		try
 		{
 			channel.send(msg);

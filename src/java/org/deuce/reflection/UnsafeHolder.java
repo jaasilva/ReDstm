@@ -11,7 +11,6 @@ import sun.misc.Unsafe;
 @ExcludeTM
 public class UnsafeHolder
 {
-
 	final private static Logger logger = Logger
 			.getLogger("org.deuce.reflection");
 

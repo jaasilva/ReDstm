@@ -6,10 +6,9 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class SpreadAddress extends Address
 {
-	// private SpreadGroup addr;
 	private String addr;
 
-	public SpreadAddress(/* SpreadGroup */String addr)
+	public SpreadAddress(String addr)
 	{
 		this.addr = addr;
 	}

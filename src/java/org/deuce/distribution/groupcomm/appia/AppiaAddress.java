@@ -15,6 +15,7 @@ public class AppiaAddress extends Address
 		this.addr = addr;
 	}
 
+	@Override
 	public boolean equals(Object obj)
 	{
 		if (obj instanceof AppiaAddress)
@@ -28,6 +29,7 @@ public class AppiaAddress extends Address
 		}
 	}
 
+	@Override
 	public String toString()
 	{
 		return addr.toString();

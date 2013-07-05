@@ -15,6 +15,7 @@ import org.deuce.transform.ExcludeTM;
 import net.sf.appia.jgcs.AppiaGroup;
 import net.sf.appia.jgcs.AppiaProtocolFactory;
 import net.sf.appia.jgcs.AppiaService;
+import net.sf.jgcs.Annotation;
 import net.sf.jgcs.ClosedSessionException;
 import net.sf.jgcs.DataSession;
 import net.sf.jgcs.ExceptionListener;
@@ -245,15 +246,70 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 	@Override
 	public void sendTo(byte[] payload, Address addr)
 	{
-		System.err.println("Feature not implemented.");
-		System.exit(-1);
+		try
+		{
+			Message msg = dataSession.createMessage();
+			msg.setPayload(payload);
+			dataSession.send(msg, sendURBService, null,
+					(SocketAddress) addr.getSpecificAddress(),
+					(Annotation[]) null);
+		}
+		catch (ClosedSessionException e)
+		{
+			System.err.println("Couldn't send message.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		catch (UnsupportedServiceException e)
+		{
+			System.err.println("Couldn't send message.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		catch (IOException e)
+		{
+			System.err.println("Couldn't send message.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
 	}
 
 	@Override
 	public void sendToGroup(byte[] payload, Group group)
 	{
-		System.err.println("Feature not implemented.");
-		System.exit(-1);
+		Message msg = null;
+		try
+		{
+			msg = dataSession.createMessage();
+			msg.setPayload(payload);
+		}
+		catch (ClosedSessionException e)
+		{
+			System.err.println("Couldn't send message.");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		for (Address a : group.getAll())
+		{ // assumes group has no duplicate addresses
+			try
+			{
+				dataSession.send(msg, sendURBService, null,
+						(SocketAddress) a.getSpecificAddress(),
+						(Annotation[]) null);
+			}
+			catch (UnsupportedServiceException e)
+			{
+				System.err.println("Couldn't send message.");
+				e.printStackTrace();
+				System.exit(-1);
+			}
+			catch (IOException e)
+			{
+				System.err.println("Couldn't send message.");
+				e.printStackTrace();
+				System.exit(-1);
+			}
+		}
 	}
 
 	@Override

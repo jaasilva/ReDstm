@@ -39,8 +39,8 @@ public class SCOReWriteSet implements Serializable
 		for (SCOReWriteFieldAccess wfa : writeSet)
 		{
 			Group other = ((PartialReplicationOID) wfa.field.getMetadata())
-					.getGroup();
-			resGroup = resGroup.union(other); // XXX é o getGroup? ou o getPartialGroup?
+					.getGroup(); // XXX é o getGroup? ou o getPartialGroup?
+			resGroup = resGroup.union(other);
 		}
 
 		return resGroup;
@@ -60,11 +60,12 @@ public class SCOReWriteSet implements Serializable
 	}
 
 	public synchronized void apply(int sid)
-	{ // apply only the TxFields that I replicate
+	{ // apply *ONLY* the TxFields that I replicate
 		for (SCOReWriteFieldAccess a : writeSet)
 		{
-			if (((PartialReplicationOID) a.field.getMetadata())
-					.getPartialGroup().isLocal())
+			PartialReplicationOID meta = ((PartialReplicationOID) a.field
+					.getMetadata());
+			if (meta.getPartialGroup().isLocal())
 			{
 				a.put(sid);
 			}
@@ -73,16 +74,16 @@ public class SCOReWriteSet implements Serializable
 
 	public synchronized boolean releaseExclusiveLocks(String txID)
 	{ // assumes that these locks are held
-		boolean res = false;
+		boolean res = true;
 		for (SCOReWriteFieldAccess a : writeSet)
 		{
-			res = ((InPlaceRWLock) a.field).exclusiveUnlock(txID);
+			res &= ((InPlaceRWLock) a.field).exclusiveUnlock(txID);
 		}
 		return res;
 	}
 
 	public synchronized boolean getExclusiveLocks(String txID)
-	{
+	{ // it locks *ALL* the TxFields in the WS (including non local ones)
 		boolean res = true;
 		int i = 0;
 		Object[] ws = writeSet.toArray();

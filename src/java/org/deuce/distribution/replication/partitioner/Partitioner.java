@@ -34,4 +34,17 @@ public abstract class Partitioner
 	{
 		localGroup = group;
 	}
+
+	@Override
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder("{");
+		for (Group g : groups)
+		{
+			sb.append(g + " ");
+		}
+		sb.insert(sb.length() - 1, "}");
+
+		return sb.toString().trim();
+	}
 }
