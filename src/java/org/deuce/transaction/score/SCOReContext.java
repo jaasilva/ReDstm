@@ -169,28 +169,15 @@ public class SCOReContext extends DistributedContext
 				.getPartialGroup();
 		PartialReplicationOID objMetadata = (PartialReplicationOID) obj
 				.getMetadata();
+		Group objGroup = objMetadata.getGroup();
 
-		/* XXX t.vale: never happens now. */
-		if (objMetadata == null)
-		{ // normal object, no metadata (no TxField). first time written.
-			objMetadata = (PartialReplicationOID) TribuDSTM
-					.getObjectSerializer().createMetadata();
-			// group not defined. assign the same group as the txField
-			objMetadata.setGroup(txFieldGroup);
-			obj.setMetadata(objMetadata);
+		if (objMetadata.isPublished() && !txFieldGroup.equals(objGroup))
+		{ // different group. cannot happen (for now)
+			System.err.println("TxFieldGroup != objGroup. CANNOT HAPPEN!");
+			System.exit(-1);
 		}
-		else
-		{ // XXX check this
-			Group objGroup = objMetadata.getGroup();
-
-			if (objMetadata.isPublished() && !txFieldGroup.equals(objGroup))
-			{ // different group. cannot happen (for now)
-				System.err.println("TxFieldGroup != objGroup. CANNOT HAPPEN!");
-				System.exit(-1);
-			}
-			objGroup.set(txFieldGroup.getAll());
-			objMetadata.getPartialGroup().set(txFieldGroup.getAll());
-		}
+		objGroup.set(txFieldGroup.getAll());
+		objMetadata.getPartialGroup().set(txFieldGroup.getAll());
 	}
 
 	private void addWriteAccess(SCOReWriteFieldAccess write)

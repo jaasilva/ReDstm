@@ -484,9 +484,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			if (src.isLocal())
 			{ // context is local. access directly
 				SCOReContext ctx = (SCOReContext) ctxs.get(ctxID);
-				ctx.processed(false); // XXX só preciso faze isto ao ctx
-										// local, certo? os outros
-										// desaparecem
+				ctx.processed(false);
 			}
 		}
 
@@ -595,6 +593,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 					&& (this.first.equals(((Pair<?, ?>) other).first));
 		}
 
+		@Override
 		public String toString()
 		{
 			return "(" + first + "," + second + ")";

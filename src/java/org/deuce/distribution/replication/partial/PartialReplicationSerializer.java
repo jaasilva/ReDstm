@@ -104,7 +104,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		obj.setMetadata(meta);
 		final Group toPublish = TribuDSTM.publishObjectTo(obj);
 		((PartialReplicationOID) meta).getPartialGroup().getAll()
-				.addAll(toPublish.getAll()); // XXX porque não fazer setPGroup?
+				.addAll(toPublish.getAll());
 	}
 
 	public static final String CREATE_FULL_METADATA_METHOD_NAME = "createFullReplicationMetadata";

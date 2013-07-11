@@ -362,7 +362,7 @@ public class TribuDSTM
 
 	public static final boolean groupIsAll(Group group)
 	{
-		return group.getAll().equals(ALL); // XXX posso mudar isto?
+		return group.getAll().equals(ALL);
 	}
 
 	public static final int getNumGroups()
