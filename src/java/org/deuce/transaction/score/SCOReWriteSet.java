@@ -39,7 +39,7 @@ public class SCOReWriteSet implements Serializable
 		for (SCOReWriteFieldAccess wfa : writeSet)
 		{
 			Group other = ((PartialReplicationOID) wfa.field.getMetadata())
-					.getPartialGroup(); // XXX é o getGroup? ou o getPartialGroup?
+					.getPartialGroup();
 			resGroup = resGroup.union(other);
 		}
 

@@ -84,6 +84,8 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		}
 		else
 		{ // not for me to replicate this object
+			TribuDSTM.putObject(oid, obj); // to cache the object graph
+			// received from a read request during a transaction
 			return obj;
 		}
 	}
@@ -105,6 +107,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		final Group toPublish = TribuDSTM.publishObjectTo(obj);
 		((PartialReplicationOID) meta).getPartialGroup().getAll()
 				.addAll(toPublish.getAll());
+		TribuDSTM.putObject(meta, obj); // XXX
 	}
 
 	public static final String CREATE_FULL_METADATA_METHOD_NAME = "createFullReplicationMetadata";
@@ -115,6 +118,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	{ // id = rand(), group = partialGroup = ALL
 		ObjectMetadata meta = factory.generateFullReplicationOID();
 		obj.setMetadata(meta);
+		TribuDSTM.putObject(meta, obj); // XXX
 	}
 
 	public static final String BOOTSTRAP_METHOD_NAME = "createBootstrapOID";

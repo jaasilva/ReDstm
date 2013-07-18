@@ -1,5 +1,6 @@
 package org.deuce.transaction.score.field;
 
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 
 import org.deuce.transform.ExcludeTM;
@@ -48,5 +49,17 @@ public class SCOReReadFieldAccess implements Serializable
 	public String toString()
 	{
 		return field.getMetadata().toString();
+	}
+
+	protected Object readResolve() throws ObjectStreamException
+	{
+		if (field == null)
+		{
+			return null;
+		}
+		else
+		{
+			return this;
+		}
 	}
 }

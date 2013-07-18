@@ -494,7 +494,10 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 		while (size-- > 0)
 		{
 			E val = (E) in.readObject();
-			add(val);
+			if (val != null)
+			{
+				add(val);
+			}
 		}
 	}
 } // THashSet

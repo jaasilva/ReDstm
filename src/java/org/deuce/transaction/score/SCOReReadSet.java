@@ -59,7 +59,10 @@ public class SCOReReadSet implements Serializable
 		boolean res = true;
 		for (int i = 0; i < next; i++)
 		{
-			res &= ((InPlaceRWLock) readSet[i].field).sharedUnlock(txID);
+			if (readSet[i] != null)
+			{
+				res &= ((InPlaceRWLock) readSet[i].field).sharedUnlock(txID);
+			}
 		}
 		return res;
 	}
@@ -70,7 +73,10 @@ public class SCOReReadSet implements Serializable
 		int i = 0;
 		while (res && i < next)
 		{
-			res = ((InPlaceRWLock) readSet[i].field).sharedLock(txID);
+			if (readSet[i] != null)
+			{
+				res = ((InPlaceRWLock) readSet[i].field).sharedLock(txID);
+			}
 			i++;
 		}
 
@@ -78,7 +84,10 @@ public class SCOReReadSet implements Serializable
 		{
 			for (int j = 0; j < i - 1; j++)
 			{
-				((InPlaceRWLock) readSet[j].field).sharedUnlock(txID);
+				if (readSet[i] != null)
+				{
+					((InPlaceRWLock) readSet[j].field).sharedUnlock(txID);
+				}
 			}
 		}
 
@@ -89,13 +98,16 @@ public class SCOReReadSet implements Serializable
 	{ // validate *ONLY* the TxFields that are local
 		for (int i = 0; i < next; i++)
 		{
-			PartialReplicationOID meta = ((PartialReplicationOID) readSet[i].field
-					.getMetadata());
-			if (meta.getPartialGroup().isLocal())
+			if (readSet[i] != null)
 			{
-				if (((VBoxField) readSet[i].field).getLastVersion().version > sid)
+				PartialReplicationOID meta = ((PartialReplicationOID) readSet[i].field
+						.getMetadata());
+				if (meta.getPartialGroup().isLocal())
 				{
-					return false;
+					if (((VBoxField) readSet[i].field).getLastVersion().version > sid)
+					{
+						return false;
+					}
 				}
 			}
 		}
@@ -109,7 +121,7 @@ public class SCOReReadSet implements Serializable
 		for (int i = 0; i < next; i++)
 		{
 			Group other = ((PartialReplicationOID) readSet[i].field
-					.getMetadata()).getPartialGroup(); // XXX é group ou partialGroup?
+					.getMetadata()).getPartialGroup();
 
 			if (!other.isAll())
 			{ // never do union with the group ALL

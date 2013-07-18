@@ -5,7 +5,6 @@ import java.util.concurrent.CyclicBarrier;
 
 public class Barrier
 {
-
 	private static CyclicBarrier barrier;
 
 	public static void enterBarrier()
@@ -16,12 +15,10 @@ public class Barrier
 		}
 		catch (InterruptedException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (BrokenBarrierException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

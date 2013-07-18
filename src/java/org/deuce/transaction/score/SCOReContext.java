@@ -172,8 +172,10 @@ public class SCOReContext extends DistributedContext
 		Group objGroup = objMetadata.getGroup();
 
 		if (objMetadata.isPublished() && !txFieldGroup.equals(objGroup))
-		{ // different group. cannot happen (for now)
-			System.err.println("TxFieldGroup != objGroup. CANNOT HAPPEN!");
+		{ // different groups. cannot happen (for now...)
+			System.err.println(txFieldGroup + " vs " + objGroup);
+			System.err.println("#### TxFieldGroup != objGroup. CANNOT HAPPEN!");
+			System.err.println(field);
 			System.exit(-1);
 		}
 		objGroup.set(txFieldGroup.getAll());
@@ -369,13 +371,10 @@ public class SCOReContext extends DistributedContext
 
 	public boolean commit()
 	{
-		// profiler.onTxAppCommit();
 		PRProfiler.onTxAppFinish(threadID);
 
 		if (writeSet.isEmpty())
 		{ // read-only transaction
-			// if (Profiler.enabled)
-			// profiler.txCommitted++;
 			PRProfiler.txProcessed(true);
 
 			TribuDSTM.onTxFinished(this, true);

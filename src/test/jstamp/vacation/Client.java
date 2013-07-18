@@ -56,6 +56,7 @@ public class Client extends Thread
 	int numQueryPerTransaction;
 	int queryRange;
 	int percentUser;
+	int percentConsult;
 
 	public Client()
 	{
@@ -68,7 +69,8 @@ public class Client extends Thread
 	 * ===============================================
 	 */
 	public Client(int id, Manager managerPtr, int numOperation,
-			int numQueryPerTransaction, int queryRange, int percentUser)
+			int numQueryPerTransaction, int queryRange, int percentUser,
+			int percentConsult)
 	{
 		this.randomPtr = new Random();
 		// this.randomPtr.init_genrand(id);
@@ -79,6 +81,7 @@ public class Client extends Thread
 		this.numQueryPerTransaction = numQueryPerTransaction;
 		this.queryRange = queryRange;
 		this.percentUser = percentUser;
+		this.percentConsult = percentConsult;
 	}
 
 	/*
@@ -91,7 +94,15 @@ public class Client extends Thread
 	{
 		if (r < percentUser)
 		{
-			return Defines.ACTION_MAKE_RESERVATION;
+			int c = randomPtr.posrandom_generate() % 100;
+			if (c < percentConsult)
+			{
+				return Defines.ACTION_CONSULT;
+			}
+			else
+			{
+				return Defines.ACTION_MAKE_RESERVATION;
+			}
 		}
 		else if ((r & 1) == 1)
 		{
@@ -112,7 +123,6 @@ public class Client extends Thread
 	public void run()
 	{
 		Vacation.benchBarrier.join();
-		// Profiler.enabled = true;
 		PRProfiler.enabled = true;
 		Barrier.enterBarrier();
 		for (int i = 0; i < numOperation; i++)
@@ -120,7 +130,14 @@ public class Client extends Thread
 			int r = randomPtr.posrandom_generate() % 100;
 			int action = selectAction(r, percentUser);
 
-			if (action == Defines.ACTION_MAKE_RESERVATION)
+			if (action == Defines.ACTION_CONSULT)
+			{
+				int numQuery = randomPtr.posrandom_generate()
+						% numQueryPerTransaction + 1;
+
+				consult(managerPtr, numQuery);
+			}
+			else if (action == Defines.ACTION_MAKE_RESERVATION)
 			{
 				int numQuery = randomPtr.posrandom_generate()
 						% numQueryPerTransaction + 1;
@@ -267,6 +284,40 @@ public class Client extends Thread
 		{
 			managerPtr.manager_reserveRoom(customerId, maxIds_room);
 		}
+		return n;
+	}
+
+	@Atomic
+	private int consult(Manager managerPtr, int numQuery)
+	{
+		int n;
+		for (n = 0; n < numQuery; n++)
+		{
+			int t = randomPtr.random_generate() % Defines.NUM_RESERVATION_TYPE;
+			int id = (randomPtr.random_generate() % queryRange) + 1;
+
+			if (t == Defines.RESERVATION_CAR)
+			{
+				if (managerPtr.manager_queryCar(id) >= 0)
+				{
+					managerPtr.manager_queryCarPrice(id);
+				}
+			}
+			else if (t == Defines.RESERVATION_FLIGHT)
+			{
+				if (managerPtr.manager_queryFlight(id) >= 0)
+				{
+					managerPtr.manager_queryFlightPrice(id);
+				}
+			}
+			else if (t == Defines.RESERVATION_ROOM)
+			{
+				if (managerPtr.manager_queryRoom(id) >= 0)
+				{
+					managerPtr.manager_queryRoomPrice(id);
+				}
+			}
+		} /* for n */
 		return n;
 	}
 }

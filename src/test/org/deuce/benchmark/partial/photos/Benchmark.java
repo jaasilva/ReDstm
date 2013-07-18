@@ -396,7 +396,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 
 	public void initializeSet(RBTree photos, Random random, int initial)
 	{
-		int chunkSize = initial / 64;
+		int chunkSize = initial / 2;
 		for (int i = 0; i < initial; i += chunkSize)
 		{
 			addToSet(photos, random, chunkSize, m_max_range, m_min_range,

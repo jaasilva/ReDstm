@@ -100,6 +100,7 @@ public class Vacation
 	int RELATIONS;
 	int TRANSACTIONS;
 	int USER;
+	int USER_CONSULT;
 
 	public void setDefaultParams()
 	{
@@ -109,6 +110,7 @@ public class Vacation
 		RELATIONS = Defines.PARAM_DEFAULT_RELATIONS;
 		TRANSACTIONS = Defines.PARAM_DEFAULT_TRANSACTIONS;
 		USER = Defines.PARAM_DEFAULT_USER;
+		USER_CONSULT = Defines.PARAM_DEFAULT_USER_CONSULT;
 	}
 
 	/*
@@ -188,21 +190,38 @@ public class Vacation
 
 	@Atomic
 	public final void shuffleIds(final int begin, final int end,
-			final Random randomPtr, int numRelations)
+			final Random randomPtr, int numRelations, int base)
 	{
 		final int[] arr = ids;
 		for (int i = begin; i < end; i++)
 		{
-			int x = randomPtr.posrandom_generate() % numRelations;
-			int y = randomPtr.posrandom_generate() % numRelations;
+			int x = base + (randomPtr.posrandom_generate() % numRelations);
+			int y = base + (randomPtr.posrandom_generate() % numRelations);
 			int tmp = arr[x];
 			arr[x] = arr[y];
 			arr[y] = tmp;
 		}
 	}
 
+	public void initManager(int numRelations)
+	{
+		int i;
+		System.out.println("Initializing ids... ");
+
+		Random randomPtr = new Random();
+		randomPtr.random_alloc();
+
+		int chunk = numRelations / 2;
+		for (i = 0; i < numRelations; i += chunk + 1)
+		{
+			int end = i + chunk;
+			end = (end > numRelations ? numRelations : end);
+			initIds(i, end);
+		}
+	}
+
 	// @Atomic
-	public void populateManager()
+	public void populateManager(int base, int numRelations)
 	{
 		int i;
 		int t;
@@ -211,40 +230,29 @@ public class Vacation
 		Random randomPtr = new Random();
 		randomPtr.random_alloc();
 
-		int numRelation = RELATIONS;
-		int chunk = numRelation / 16;
-		for (i = 0; i < numRelation; i += chunk + 1)
-		{
-			int end = i + chunk;
-			end = (end > numRelation ? numRelation : end);
-			initIds(i, end);
-		}
-
 		for (t = 0; t < 4; t++)
 		{
-
 			/* Shuffle ids */
-			chunk = numRelation / 16;
-			for (i = 0; i < numRelation; i += chunk + 1)
+			int chunk = numRelations / 2;
+			for (i = base; i < base + numRelations; i += chunk)
 			{
 				int end = i + chunk;
-				end = (end > numRelation ? numRelation : end);
-				shuffleIds(i, end, randomPtr, numRelation);
+				end = (end > base + end ? base + end : end);
+				System.out.println("shuffleIds [" + i + ", " + end + "[");
+				shuffleIds(i, end, randomPtr, numRelations, base);
 			}
 
 			/* Populate table */
-			chunk = numRelation / 32;
-			for (i = 0; i < numRelation; i += chunk + 1)
+			chunk = numRelations / 2;
+			for (i = base; i < base + numRelations; i += chunk)
 			{
 				int end = i + chunk;
-				end = (end > numRelation ? numRelation : end);
+				end = (end > base + end ? base + end : end);
+				System.out.println("populateTable [" + i + ", " + end + "[");
 				populateTable(i, end, randomPtr, t);
 			}
-
 		} /* for t */
-
 		System.out.println("done.");
-
 	}
 
 	@Atomic
@@ -254,25 +262,24 @@ public class Vacation
 		/* Populate table */
 		for (i = 0; i < end; i++)
 		{
-			boolean status;
 			int id = arr[i];
 			int num = ((randomPtr.posrandom_generate() % 5) + 1) * 100;
 			int price = ((randomPtr.posrandom_generate() % 5) * 10) + 50;
 			if (t == 0)
 			{
-				status = managerPtr.manager_addCar(id, num, price);
+				managerPtr.manager_addCar(id, num, price);
 			}
 			else if (t == 1)
 			{
-				status = managerPtr.manager_addFlight(id, num, price);
+				managerPtr.manager_addFlight(id, num, price);
 			}
 			else if (t == 2)
 			{
-				status = managerPtr.manager_addRoom(id, num, price);
+				managerPtr.manager_addRoom(id, num, price);
 			}
 			else if (t == 3)
 			{
-				status = managerPtr.manager_addCustomer(id);
+				managerPtr.manager_addCustomer(id);
 			}
 			// assert(status);
 		}
@@ -297,6 +304,7 @@ public class Vacation
 		int percentQuery = QUERIES;
 		int queryRange;
 		int percentUser = USER;
+		int percentConsult = USER_CONSULT;
 
 		System.out.println("Initializing clients... ");
 
@@ -314,7 +322,8 @@ public class Vacation
 		{
 			clients[i] = new Client((Integer.getInteger("tribu.site") - 1)
 					* numClient + i, managerPtr, numTransactionPerClient,
-					numQueryPerTransaction, queryRange, percentUser);
+					numQueryPerTransaction, queryRange, percentUser,
+					percentConsult);
 		}
 
 		System.out.println("done.");
@@ -327,7 +336,8 @@ public class Vacation
 		System.out.println("    Relations           = " + numRelation);
 		System.out.println("    Query percent       = " + percentQuery);
 		System.out.println("    Query range         = " + queryRange);
-		System.out.println("    Percent user        = " + percentUser);
+		System.out.println("    Percent user        = " + percentUser + " ("
+				+ percentConsult + " read-only)");
 
 		return clients;
 	}
@@ -338,6 +348,8 @@ public class Vacation
 	 * ==================================================================
 	 * ===========
 	 */
+	@Bootstrap(id = 0)
+	static public org.deuce.benchmark.Barrier firstBarrier;
 	@Bootstrap(id = 1)
 	static public org.deuce.benchmark.Barrier setupBarrier;
 	@Bootstrap(id = 2)
@@ -350,6 +362,9 @@ public class Vacation
 	@Atomic
 	private static void initBarriers()
 	{
+		if (firstBarrier == null)
+			firstBarrier = new org.deuce.benchmark.Barrier(
+					Integer.getInteger("tribu.replicas"));
 		if (setupBarrier == null)
 			setupBarrier = new org.deuce.benchmark.Barrier(
 					Integer.getInteger("tribu.replicas"));
@@ -364,8 +379,29 @@ public class Vacation
 		benchBarrier = new org.deuce.benchmark.Barrier(numThreads);
 	}
 
+	public static int MAX, MIN;
+
 	public static void main(String argv[]) throws Exception
 	{
+		final int PR_GROUP_ID = TribuDSTM.getLocalGroup().getId();
+		final int NUM_GROUPS = TribuDSTM.getNumGroups();
+		final org.deuce.distribution.groupcomm.Address LOCAL_ADDR = TribuDSTM
+				.getLocalAddress();
+		final org.deuce.distribution.groupcomm.Address MASTER_ADDR = TribuDSTM
+				.getLocalGroup().getAll().iterator().next();
+		final boolean IS_GROUP_MASTER = LOCAL_ADDR.equals(MASTER_ADDR);
+		final int SITE = Integer.getInteger("tribu.site");
+
+		System.out.println("------------------------------------------------");
+		System.out.println("------------------------------------------------");
+		System.out.println("NODE: " + SITE + " | GROUP: " + PR_GROUP_ID
+				+ " of " + (NUM_GROUPS - 1));
+		System.out.println("ADDR: " + LOCAL_ADDR + " | MASTER ADDR: "
+				+ MASTER_ADDR);
+		System.out.println("AM I THE GROUP MASTER: " + IS_GROUP_MASTER);
+		System.out.println("------------------------------------------------");
+		System.out.println("------------------------------------------------");
+
 		// Manager managerPtr;
 		Client clients[];
 		long start;
@@ -378,11 +414,41 @@ public class Vacation
 		if (Integer.getInteger("tribu.site") == 1)
 		{
 			vac.initializeManager(vac.RELATIONS);
-			vac.populateManager();
-			initBenchBarrier(vac.CLIENTS * Integer.getInteger("tribu.replicas"));
+			vac.initManager(vac.RELATIONS);
 		}
 
 		initBarriers();
+		firstBarrier.join();
+
+		int sections = vac.RELATIONS;
+		int firstSection = 0;
+		int rest = 0;
+
+		if (NUM_GROUPS == 1)
+		{
+			firstSection = vac.RELATIONS;
+		}
+		else
+		{
+			sections = (int) Math.floor(vac.RELATIONS / NUM_GROUPS);
+			rest = vac.RELATIONS - (NUM_GROUPS * sections);
+			firstSection = sections + rest;
+		}
+		int size = PR_GROUP_ID == 0 ? firstSection : sections;
+		int base = PR_GROUP_ID == 0 ? PR_GROUP_ID * size : PR_GROUP_ID * size
+				+ rest;
+
+		MIN = base;
+		MAX = base + size;
+		System.out.println("base=" + base + " size=" + size + " [" + MIN + ", "
+				+ MAX + "[");
+
+		if (IS_GROUP_MASTER) // all group masters
+		{
+			vac.populateManager(base, size);
+			initBenchBarrier(vac.CLIENTS * Integer.getInteger("tribu.replicas"));
+		}
+
 		setupBarrier.join();
 
 		clients = vac.initializeClients(managerPtr);
@@ -413,16 +479,13 @@ public class Vacation
 		stop = System.currentTimeMillis();
 		diff = stop - start;
 		System.out.println("TIME2=" + diff);
-		// Profiler.enabled = false;
 		PRProfiler.enabled = false;
 
 		vac.checkTables(managerPtr);
 
 		/* Clean up */
-		System.out.println("Deallocating memory... ");
-		/*
-		 * TODO: The contents of the manager's table need to be deallocated.
-		 */
+		// System.out.println("Deallocating memory... ");
+
 		System.out.println("done.");
 
 		// Profiler.print();
@@ -540,7 +603,6 @@ public class Vacation
 		}
 		System.out.println("done.");
 	}
-
 }
 
 /*

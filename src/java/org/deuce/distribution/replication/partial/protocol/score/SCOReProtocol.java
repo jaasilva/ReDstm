@@ -1,8 +1,11 @@
 package org.deuce.distribution.replication.partial.protocol.score;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -73,6 +76,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	private final Executor pool = Executors.newFixedThreadPool(Math.max(
 			Integer.getInteger("tribu.replicas") - 1, minReadThreads));
 
+	private static final List<DistributedContextState> toBeProcessed = new ArrayList<DistributedContextState>();
+
 	public static final ThreadLocal<Boolean> serializationContext = new ThreadLocal<Boolean>()
 	{ // false -> *NOT* read context; true -> read context
 		@Override
@@ -106,6 +111,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		DistributedContextState ctxState = sctx.createState();
 
 		Group resGroup = sctx.getInvolvedNodes();
+		resGroup.add(TribuDSTM.getLocalAddress());// the coordinator needs to
+		// participate in this voting to release the context
 		int expVotes = resGroup.size();
 
 		sctx.maxVote = 0;
@@ -129,7 +136,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	public void onTxFinished(DistributedContext ctx, boolean committed)
 	{
 		SCOReContext sctx = (SCOReContext) ctx;
-
 		LOGGER.debug("FINISH " + sctx.threadID + ":" + sctx.atomicBlockId + ":"
 				+ sctx.trxID.split("-")[0] + "= " + committed);
 	}
@@ -142,7 +148,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		SCOReContext sctx = (SCOReContext) ctx;
 
 		boolean firstRead = !sctx.firstReadDone;
-		Group group = ((PartialReplicationOID) metadata).getPartialGroup();
+		Group p_group = ((PartialReplicationOID) metadata).getPartialGroup();
+		Group group = ((PartialReplicationOID) metadata).getGroup();
 
 		if (firstRead)
 		{ // first read of this transaction
@@ -151,7 +158,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 
 		ReadDone read;
-		if (group.contains(TribuDSTM.getLocalAddress()))
+		if (p_group.contains(TribuDSTM.getLocalAddress())
+				|| p_group.equals(group)) // if the groups are equal I have the
+		// graph from the partial txField down cached in the locator table
 		{ // *LOCAL* read
 			PRProfiler.onTxLocalReadBegin(ctx.threadID);
 			read = doRead(sctx.sid, metadata);
@@ -169,7 +178,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			PRProfiler.newMsgSent(payload.length);
 			PRProfiler.onTxRemoteReadBegin(ctx.threadID);
 
-			TribuDSTM.sendToGroup(payload, group);
+			TribuDSTM.sendToGroup(payload, p_group);
+
+			LOGGER.trace("SEND READ REQ " + sctx.trxID.split("-")[0]);
 
 			try
 			{ // wait for first response
@@ -191,6 +202,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		if (sctx.isUpdate() && !read.mostRecent)
 		{ // optimization: abort trx forced to see overwritten data
+			LOGGER.trace("Abort trx " + sctx.trxID.split("-")[0]);
 			throw new TransactionException(); // abort transaction
 		}
 		// added to read set in onReadAccess context method
@@ -348,8 +360,17 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 		receivedTrxs.put(trxID, ctx);
 
-		SCOReContext sctx = (SCOReContext) ContextDelegator.getInstance();
-		sctx.recreateContextFromState(ctx);
+		SCOReContext sctx = null;
+		if (src.isLocal())
+		{ // context is local. access directly
+			sctx = (SCOReContext) ctxs.get(ctxID);
+		}
+		else
+		{ // context is remote. recreate from state
+			sctx = (SCOReContext) ContextDelegator.getInstance();
+			sctx.recreateContextFromState(ctx);
+		}
+
 		boolean outcome = sctx.validate();
 
 		int next = -1;
@@ -388,6 +409,10 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		final int proposedTimestamp = msg.proposedTimestamp;
 		final int expectedVotes = ctx.expectedVotes;
 
+		LOGGER.debug("VOTE (" + src + ") " + ctx.threadID + ":"
+				+ ctx.atomicBlockId + ":" + trxID_msg.split("-")[0] + " "
+				+ msg.proposedTimestamp);
+
 		if (!outcome) // voted NO
 		{ // do not wait for more votes. abort trx
 			finalizeVoteStep(ctx, false);
@@ -408,10 +433,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 				finalizeVoteStep(ctx, true);
 			}
 		}
-
-		LOGGER.debug("VOTE (" + src + ") " + ctx.threadID + ":"
-				+ ctx.atomicBlockId + ":" + trxID_msg.split("-")[0] + " "
-				+ msg.proposedTimestamp);
 	}
 
 	private void finalizeVoteStep(SCOReContext ctx, boolean outcome)
@@ -444,6 +465,10 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		final String trxID = msg.trxID;
 		final boolean result = msg.result;
 		final int finalSid = msg.finalSid;
+		final int ctxID = msg.ctxID;
+
+		LOGGER.debug("DEC (" + src + ") " + ctxID + ":_:" + trxID.split("-")[0]
+				+ " " + msg.finalSid);
 
 		if (result)
 		{ // DECIDE YES
@@ -461,7 +486,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		advanceCommitId();
 
 		SCOReContextState tx = (SCOReContextState) receivedTrxs.get(trxID);
-		final int ctxID = msg.ctxID;
 		if (!result)
 		{ // DECIDE NO (someone voted NO)
 			if (tx != null)
@@ -487,9 +511,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 				ctx.processed(false);
 			}
 		}
-
-		LOGGER.debug("DEC (" + src + ") " + ctxID + ":_:" + trxID.split("-")[0]
-				+ " " + msg.finalSid);
 	}
 
 	private synchronized void processTx()
@@ -506,6 +527,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 				if (snId != -1)
 				{ // it is safe to make snapshot visible
 					commitId.set(snId);
+					releaseTrxs();
 				}
 				advanceCommitId();
 				return;
@@ -520,6 +542,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 				if (snId != -1)
 				{ // it is safe to make snapshot visible
 					commitId.set(snId);
+					releaseTrxs();
 				}
 				return;
 			}
@@ -540,9 +563,10 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			}
 
 			ctx.sid = sTx.second;
-			if (ctx.sid > snId)
+			if (snId != -1 && ctx.sid > snId)
 			{ // this snapshot is fresher than snId, it is safe to make
 				commitId.set(snId); // the previous snapshot visible
+				releaseTrxs();
 			}
 			snId = ctx.sid;
 
@@ -550,12 +574,27 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 			ctx.unlock(); // release shared and exclusive locks
 			stableQ.poll(); // remove sTx
-			receivedTrxs.remove(sTx.first);
+			toBeProcessed.add(receivedTrxs.remove(sTx.first));
 
 			LOGGER.debug("COMMIT " + ctx.threadID + ":" + ctx.atomicBlockId
 					+ ":" + ctx.trxID.split("-")[0] + " " + ctx.sid);
+		}
+	}
 
-			ctx.processed(true);
+	private void releaseTrxs()
+	{
+		Iterator<DistributedContextState> it = toBeProcessed.iterator();
+
+		while (it.hasNext())
+		{
+			SCOReContextState ctx = (SCOReContextState) it.next();
+			SCOReContext sctx = null;
+			if (((SCOReContextState) ctx).src.isLocal())
+			{ // context is local. access directly
+				sctx = (SCOReContext) ctxs.get(ctx.ctxID);
+				sctx.processed(true);
+			}
+			it.remove();
 		}
 	}
 
