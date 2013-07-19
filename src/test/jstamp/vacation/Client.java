@@ -132,6 +132,7 @@ public class Client extends Thread
 
 			if (action == Defines.ACTION_CONSULT)
 			{
+				Vacation.consults.incrementAndGet();
 				int numQuery = randomPtr.posrandom_generate()
 						% numQueryPerTransaction + 1;
 
@@ -139,6 +140,7 @@ public class Client extends Thread
 			}
 			else if (action == Defines.ACTION_MAKE_RESERVATION)
 			{
+				Vacation.reservations.incrementAndGet();
 				int numQuery = randomPtr.posrandom_generate()
 						% numQueryPerTransaction + 1;
 				int customerId = randomPtr.posrandom_generate() % queryRange
@@ -147,16 +149,20 @@ public class Client extends Thread
 			}
 			else if (action == Defines.ACTION_DELETE_CUSTOMER)
 			{
+				Vacation.deleteCustomers.incrementAndGet();
 				int customerId = randomPtr.posrandom_generate() % queryRange
 						+ 1;
 				deleteCustomer(managerPtr, customerId);
 			}
 			else if (action == Defines.ACTION_UPDATE_TABLES)
 			{
+				Vacation.updateTables.incrementAndGet();
 				int numUpdate = randomPtr.posrandom_generate()
 						% numQueryPerTransaction + 1;
 				updateTables(managerPtr, numUpdate);
 			}
+
+			System.out.println(i);
 		} /* for i */
 		Barrier.enterBarrier();
 	}

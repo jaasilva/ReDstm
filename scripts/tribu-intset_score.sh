@@ -45,6 +45,7 @@ COMM="org.deuce.distribution.groupcomm.${_COMM}GroupCommunication"
 REP="org.deuce.distribution.replication.partial.protocol.${_REP}"
 ZIP=true
 GROUP="${BENCHMARK}_${SIZE}_${WRITES}_${THREADS}_${_REP}_${REPLICAS}_${RUN}"
+DATA_PART=org.deuce.distribution.replication.partitioner.data.RandomDataPartitioner
 
 FNAME="${BENCHMARK}_i${SIZE}_w${WRITES}_t${THREADS}_${_REP}_${_COMM}_id${SITE}-${REPLICAS}_run${RUN}"
 LOG=logs/${FNAME}.res

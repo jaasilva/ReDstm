@@ -423,8 +423,34 @@ public class RBTree
 		if (p.l != null && p.r != null)
 		{
 			Node s = successor(p);
-			p.k = s.k;
-			p.v = s.v;
+
+			Node x = new Node();
+			x.k = s.k;
+			x.v = s.v;
+			x.c = p.c;
+
+			x.p = p.p;
+			x.l = p.l;
+			x.r = p.r;
+
+			p.l.p = x;
+			p.r.p = x;
+
+			Node pp = p.p;
+			if (pp != null)
+			{
+				if (pp.l == p)
+				{
+					pp.l = x;
+				}
+				else
+				{
+					pp.r = x;
+				}
+			}
+
+			// p.k = s.k;
+			// p.v = s.v;
 			p = s;
 		} /* p has 2 children */
 
@@ -570,6 +596,60 @@ public class RBTree
 		return a - b;
 	}
 
+	public void print()
+	{
+		printHelper(root, 0);
+	}
+
+	private static final int INDENT_STEP = 4;
+
+	private static void printHelper(Node n, int indent)
+	{
+		if (n == null)
+		{
+			System.out.print("<->");
+			return;
+		}
+		if (n.r != null)
+		{
+			printHelper(n.r, indent + INDENT_STEP);
+		}
+		for (int i = 0; i < indent; i++)
+			System.out.print(" ");
+		if (n.c == Defines.BLACK)
+			System.out.println(n.k);
+		else
+			System.out.println("<" + n.k + ">");
+		if (n.l != null)
+		{
+			printHelper(n.l, indent + INDENT_STEP);
+		}
+	}
+
+	public void printBinaryTree(Node root, int level)
+	{
+		if (root == null)
+			return;
+		printBinaryTree(root.r, level + 1);
+		if (level != 0)
+		{
+			for (int i = 0; i < level - 1; i++)
+				System.out.print("|\t");
+			if (root.c == Defines.BLACK)
+				System.out.println("|-------@" + root.k);
+			else
+				System.out.println("|-------O" + root.k);
+		}
+		else
+		{
+			if (root.c == Defines.BLACK)
+				System.out.println("@" + root.k);
+			else
+				System.out.println("O" + root.k);
+		}
+		printBinaryTree(root.l, level + 1);
+	}
+
 	/*****************************************
 	 * public methods
 	 *****************************************/
@@ -588,6 +668,8 @@ public class RBTree
 		}
 		if (verbose != 0)
 		{
+//			print();
+//			printBinaryTree(root, 0);
 			System.out.println("Integrity check: ");
 		}
 
@@ -641,7 +723,6 @@ public class RBTree
 		}
 
 		return vfy;
-
 	}
 
 	/*

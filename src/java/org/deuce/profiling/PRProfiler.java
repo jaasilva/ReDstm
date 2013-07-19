@@ -12,14 +12,15 @@ public class PRProfiler
 	/**
 	 * Transaction throughput related.
 	 */
-	private static long txCommitted, txAborted, txTimeout;
+	private static long txCommitted = 0, txAborted = 0, txTimeout = 0;
 
 	/**
 	 * Incremental average.
 	 */
-	private static long txDurationIt, txVotesIt, txValidateIt, txCommitIt,
-			msgSent, msgRecv, txRReadIt, txLReadIt, txCReadIt, serIt,
-			waitingReadIt, applyWsIt;
+	private static long txDurationIt = 0, txVotesIt = 0, txValidateIt = 0,
+			txCommitIt = 0, msgSent = 0, msgRecv = 0, txRReadIt = 0,
+			txLReadIt = 0, txCReadIt = 0, serIt = 0, waitingReadIt = 0,
+			applyWsIt = 0;
 
 	/**
 	 * Time related, in nanoseconds.
@@ -33,27 +34,28 @@ public class PRProfiler
 	private static long[] txCRead = new long[THREADS];
 	private static long[] serialization = new long[THREADS];
 	private static long[] applyWs = new long[THREADS];
-	private static long txAppDurationAvg, txAppDurationMax = Long.MIN_VALUE,
-			txAppDurationMin = Long.MAX_VALUE, txVotesAvg,
+	private static long txAppDurationAvg = 0,
+			txAppDurationMax = Long.MIN_VALUE,
+			txAppDurationMin = Long.MAX_VALUE, txVotesAvg = 0,
 			txVotesMax = Long.MIN_VALUE, txVotesMin = Long.MAX_VALUE,
-			txValidateAvg, txValidateMax = Long.MIN_VALUE,
-			txValidateMin = Long.MAX_VALUE, txCommitAvg,
+			txValidateAvg = 0, txValidateMax = Long.MIN_VALUE,
+			txValidateMin = Long.MAX_VALUE, txCommitAvg = 0,
 			txCommitMax = Long.MIN_VALUE, txCommitMin = Long.MAX_VALUE,
-			txRReadAvg, txRReadMax = Long.MIN_VALUE,
-			txRReadMin = Long.MAX_VALUE, txLReadAvg,
+			txRReadAvg = 0, txRReadMax = Long.MIN_VALUE,
+			txRReadMin = Long.MAX_VALUE, txLReadAvg = 0,
 			txLReadMax = Long.MIN_VALUE, txLReadMin = Long.MAX_VALUE,
-			txCReadAvg, txCReadMax = Long.MIN_VALUE,
-			txCReadMin = Long.MAX_VALUE, serAvg, serMax = Long.MIN_VALUE,
-			serMin = Long.MAX_VALUE, waitingReadAvg,
+			txCReadAvg = 0, txCReadMax = Long.MIN_VALUE,
+			txCReadMin = Long.MAX_VALUE, serAvg = 0, serMax = Long.MIN_VALUE,
+			serMin = Long.MAX_VALUE, waitingReadAvg = 0,
 			waitingReadMax = Long.MIN_VALUE, waitingReadMin = Long.MAX_VALUE,
-			applyWsAvg, applyWsMax = Long.MIN_VALUE,
-			applyWsMin = Long.MAX_VALUE;
+			applyWsAvg = 0, applyWsMax = Long.MIN_VALUE,
+			applyWsMin = Long.MAX_VALUE, txLocalRead = 0, txRemoteRead = 0;
 
 	/**
 	 * Network related, in bytes.
 	 */
-	private static long msgSentSizeAvg, msgSentSizeMax = Long.MIN_VALUE,
-			msgSentSizeMin = Long.MAX_VALUE, msgRecvSizeAvg,
+	private static long msgSentSizeAvg = 0, msgSentSizeMax = Long.MIN_VALUE,
+			msgSentSizeMin = Long.MAX_VALUE, msgRecvSizeAvg = 0,
 			msgRecvSizeMax = Long.MIN_VALUE, msgRecvSizeMin = Long.MAX_VALUE;
 
 	private static long incAvg(long currAvg, long value, long currIt)
@@ -273,6 +275,7 @@ public class PRProfiler
 	{
 		if (enabled)
 		{
+			txRemoteRead++;
 			long txReadStart = System.nanoTime();
 			txRRead[ctxID] = txReadStart;
 		}
@@ -306,6 +309,7 @@ public class PRProfiler
 	{
 		if (enabled)
 		{
+			txLocalRead++;
 			long txReadStart = System.nanoTime();
 			txLRead[ctxID] = txReadStart;
 		}
@@ -480,11 +484,11 @@ public class PRProfiler
 		stats.append("\t\tavg = " + txCReadAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + txCReadMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + txCReadMin / 1000 + " µs\n");
-		stats.append("\tRemote reads\n");
+		stats.append("\tRemote reads (" + txRemoteRead + ")\n");
 		stats.append("\t\tavg = " + txRReadAvg / 1000000 + " ms\n");
 		stats.append("\t\tmax = " + txRReadMax / 1000000 + " ms\n");
 		stats.append("\t\tmin = " + txRReadMin / 1000000 + " ms\n");
-		stats.append("\tLocal reads\n");
+		stats.append("\tLocal reads (" + txLocalRead + ")\n");
 		stats.append("\t\tavg = " + txLReadAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + txLReadMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + txLReadMin / 1000 + " µs\n");

@@ -97,11 +97,15 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	public void onTxContextCreation(DistributedContext ctx)
 	{
 		ctxs.put(ctx.threadID, ctx);
+		LOGGER.trace("Created DistributedContext: " + ctx.threadID);
 	}
 
 	@Override
 	public void onTxBegin(DistributedContext ctx)
 	{
+		SCOReContext sctx = (SCOReContext) ctx;
+		LOGGER.debug("BEGIN " + sctx.threadID + ":" + sctx.atomicBlockId + ":"
+				+ sctx.trxID.split("-")[0]);
 	}
 
 	@Override
@@ -157,42 +161,30 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			sctx.firstReadDone = true;
 		}
 
-		ReadDone read;
-		if (p_group.contains(TribuDSTM.getLocalAddress())
-				|| p_group.equals(group)) // if the groups are equal I have the
+		ReadDone read = null;
+		boolean local_read = p_group.contains(TribuDSTM.getLocalAddress());
+		boolean local_graph = p_group.equals(group);
+		LOGGER.debug("READ " + local_read + " " + local_graph);
+		if (local_read || local_graph) // if the groups are equal I have the
 		// graph from the partial txField down cached in the locator table
 		{ // *LOCAL* read
-			PRProfiler.onTxLocalReadBegin(ctx.threadID);
-			read = doRead(sctx.sid, metadata);
-			PRProfiler.onTxLocalReadFinish(ctx.threadID);
+			try
+			{
+				PRProfiler.onTxLocalReadBegin(ctx.threadID);
+				read = doRead(sctx.sid, metadata);
+				PRProfiler.onTxLocalReadFinish(ctx.threadID);
+			}
+			catch (NullPointerException e)
+			{
+				LOGGER.debug("%%%%%%% " + local_read + " " + local_graph + "\n"
+						+ metadata + "\n" + TribuDSTM.getObject(metadata));
+				// System.exit(-1);
+				read = remoteRead(sctx, metadata, firstRead, p_group);
+			}
 		}
 		else
 		{ // *REMOTE* read
-			ReadReq req = new ReadReq(sctx.threadID, metadata, sctx.sid,
-					firstRead, sctx.requestVersion);
-
-			PRProfiler.onSerializationBegin(ctx.threadID);
-			byte[] payload = ObjectSerializer.object2ByteArray(req);
-			PRProfiler.onSerializationFinish(ctx.threadID);
-
-			PRProfiler.newMsgSent(payload.length);
-			PRProfiler.onTxRemoteReadBegin(ctx.threadID);
-
-			TribuDSTM.sendToGroup(payload, p_group);
-
-			LOGGER.trace("SEND READ REQ " + sctx.trxID.split("-")[0]);
-
-			try
-			{ // wait for first response
-				sctx.syncMsg.acquire();
-			}
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-
-			PRProfiler.onTxRemoteReadFinish(ctx.threadID);
-			read = sctx.response;
+			read = remoteRead(sctx, metadata, firstRead, p_group);
 		}
 
 		if (firstRead && read.mostRecent)
@@ -202,12 +194,44 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		if (sctx.isUpdate() && !read.mostRecent)
 		{ // optimization: abort trx forced to see overwritten data
-			LOGGER.trace("Abort trx " + sctx.trxID.split("-")[0]);
+			LOGGER.debug("Forced to see overwritten data.\nAbort trx "
+					+ sctx.trxID.split("-")[0]);
 			throw new TransactionException(); // abort transaction
 		}
 		// added to read set in onReadAccess context method
 		PRProfiler.onTxCompleteReadFinish(ctx.threadID);
 		return read.value;
+	}
+
+	private ReadDone remoteRead(SCOReContext sctx, ObjectMetadata metadata,
+			boolean firstRead, Group p_group)
+	{
+		ReadReq req = new ReadReq(sctx.threadID, metadata, sctx.sid, firstRead,
+				sctx.requestVersion);
+
+		PRProfiler.onSerializationBegin(sctx.threadID);
+		byte[] payload = ObjectSerializer.object2ByteArray(req);
+		PRProfiler.onSerializationFinish(sctx.threadID);
+
+		PRProfiler.newMsgSent(payload.length);
+		PRProfiler.onTxRemoteReadBegin(sctx.threadID);
+
+		TribuDSTM.sendToGroup(payload, p_group);
+
+		LOGGER.debug("SEND READ REQ " + sctx.trxID.split("-")[0] + " "
+				+ sctx.requestVersion);
+
+		try
+		{ // wait for first response
+			sctx.syncMsg.acquire();
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+
+		PRProfiler.onTxRemoteReadFinish(sctx.threadID);
+		return sctx.response;
 	}
 
 	private ReadDone doRead(int sid, ObjectMetadata metadata)
@@ -225,14 +249,16 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		while (commitId.get() < sid
 				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
 		{ // wait until (commitId.get() >= sid || ((InPlaceRWLock)
-		}// field).isExclusiveUnlocked())
+			// field).isExclusiveUnlocked())
+			LOGGER.debug("doRead waiting: " + (commitId.get() < sid) + " "
+					+ !((InPlaceRWLock) field).isExclusiveUnlocked());
+		}
 		long end = System.nanoTime();
 		PRProfiler.onWaitingReadFinish(end - st);
 
 		Version ver = field.getLastVersion().get(sid);
 		boolean mostRecent = ver.equals(field.getLastVersion());
 		int lastCommitted = commitId.get();
-
 		return new ReadDone(ver.value, lastCommitted, mostRecent);
 	}
 
@@ -297,7 +323,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		TribuDSTM.sendTo(payload, src);
 		updateNodeTimestamps(msg.readSid);
 
-		LOGGER.debug("READ REQ (" + src + ")");
+		LOGGER.debug("READ REQ (" + src + ") "
+				+ msg.metadata.toString().split("-")[0]);
 	}
 
 	private void readReturn(ReadRet msg, Address src)
@@ -315,7 +342,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		sctx.syncMsg.release();
 
 		LOGGER.debug("READ RET (" + src + ") " + sctx.threadID + ":"
-				+ sctx.atomicBlockId + ":" + sctx.trxID.split("-")[0]);
+				+ sctx.atomicBlockId + ":" + sctx.trxID.split("-")[0] + " "
+				+ msg.msgVersion);
 	}
 
 	@Override
@@ -589,7 +617,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		{
 			SCOReContextState ctx = (SCOReContextState) it.next();
 			SCOReContext sctx = null;
-			if (((SCOReContextState) ctx).src.isLocal())
+			if (ctx.src.isLocal())
 			{ // context is local. access directly
 				sctx = (SCOReContext) ctxs.get(ctx.ctxID);
 				sctx.processed(true);

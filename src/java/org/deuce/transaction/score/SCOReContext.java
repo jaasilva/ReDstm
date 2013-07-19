@@ -11,6 +11,7 @@ import org.deuce.distribution.replication.partial.protocol.score.ReadDone;
 import org.deuce.profiling.PRProfiler;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
+import org.deuce.transaction.GroupsViolationException;
 import org.deuce.transaction.TransactionException;
 import org.deuce.transaction.pool.Pool;
 import org.deuce.transaction.pool.ResourceFactory;
@@ -165,21 +166,36 @@ public class SCOReContext extends DistributedContext
 
 	private void checkGroupRestrictions(UniqueObject obj, TxField field)
 	{
-		Group txFieldGroup = ((PartialReplicationOID) field.getMetadata())
-				.getPartialGroup();
+		PartialReplicationOID txFieldMetadata = (PartialReplicationOID) field
+				.getMetadata();
 		PartialReplicationOID objMetadata = (PartialReplicationOID) obj
 				.getMetadata();
+		Group txFieldPGroup = txFieldMetadata.getPartialGroup();
 		Group objGroup = objMetadata.getGroup();
 
-		if (objMetadata.isPublished() && !txFieldGroup.equals(objGroup))
-		{ // different groups. cannot happen (for now...)
-			System.err.println(txFieldGroup + " vs " + objGroup);
-			System.err.println("#### TxFieldGroup != objGroup. CANNOT HAPPEN!");
-			System.err.println(field);
-			System.exit(-1);
+		if (txFieldMetadata.isPublished() && objMetadata.isPublished())
+		{ // published(f) && published(o)
+			if (!txFieldPGroup.equals(objGroup))
+			{ // different groups. cannot happen (for now...)
+				// String log = txFieldPGroup + " vs " + objGroup + "\n";
+				// log += "!!!! TxFieldGroup != objGroup. CANNOT HAPPEN!\n";
+				// log += field.getMetadata() + "\n";
+				// log += objMetadata + "\n";
+				// log += obj;
+				// LOGGER.debug(log);
+				throw new GroupsViolationException("TxFieldPGroup != objGroup.");
+			}
 		}
-		objGroup.set(txFieldGroup.getAll());
-		objMetadata.getPartialGroup().set(txFieldGroup.getAll());
+		else if (txFieldMetadata.isPublished() && !objMetadata.isPublished())
+		{ // published(f) && ~published(o)
+			Group objPGroup = objMetadata.getPartialGroup();
+			objGroup.set(txFieldPGroup.getAll());
+			objPGroup.set(txFieldPGroup.getAll());
+		}
+		else
+		{ // (~published(f) && published(o)) || (~published(f) && ~published(o))
+			txFieldPGroup.set(objGroup.getAll());
+		}
 	}
 
 	private void addWriteAccess(SCOReWriteFieldAccess write)

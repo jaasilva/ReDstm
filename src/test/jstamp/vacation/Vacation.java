@@ -1,5 +1,7 @@
 package jstamp.vacation;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
@@ -238,17 +240,15 @@ public class Vacation
 			{
 				int end = i + chunk;
 				end = (end > base + end ? base + end : end);
-				System.out.println("shuffleIds [" + i + ", " + end + "[");
 				shuffleIds(i, end, randomPtr, numRelations, base);
 			}
 
 			/* Populate table */
-			chunk = numRelations / 2;
+			chunk = numRelations / 8;
 			for (i = base; i < base + numRelations; i += chunk)
 			{
 				int end = i + chunk;
 				end = (end > base + end ? base + end : end);
-				System.out.println("populateTable [" + i + ", " + end + "[");
 				populateTable(i, end, randomPtr, t);
 			}
 		} /* for t */
@@ -358,6 +358,8 @@ public class Vacation
 	static org.deuce.benchmark.Barrier benchBarrier;
 	@Bootstrap(id = 4)
 	static Manager managerPtr;
+	@Bootstrap(id = 2000)
+	static public org.deuce.benchmark.Barrier exitBarrier;
 
 	@Atomic
 	private static void initBarriers()
@@ -371,6 +373,9 @@ public class Vacation
 		if (finishBarrier == null)
 			finishBarrier = new org.deuce.benchmark.Barrier(
 					Integer.getInteger("tribu.replicas"));
+		if (exitBarrier == null)
+			exitBarrier = new org.deuce.benchmark.Barrier(
+					Integer.getInteger("tribu.replicas"));
 	}
 
 	@Atomic
@@ -380,6 +385,10 @@ public class Vacation
 	}
 
 	public static int MAX, MIN;
+	public static AtomicInteger reservations = new AtomicInteger(0),
+			deleteCustomers = new AtomicInteger(0),
+			updateTables = new AtomicInteger(0),
+			consults = new AtomicInteger(0);
 
 	public static void main(String argv[]) throws Exception
 	{
@@ -481,12 +490,25 @@ public class Vacation
 		System.out.println("TIME2=" + diff);
 		PRProfiler.enabled = false;
 
-		vac.checkTables(managerPtr);
+		System.out.println();
+		System.out.println("RESULTS:");
+		System.out.println(" Test duration (ms) = " + diff);
+		System.out.println(" Stats:");
+		System.out.println(" R=" + reservations + " C=" + consults + " D="
+				+ deleteCustomers + " U=" + updateTables);
+		System.out.println();
+
+		if (Integer.getInteger("tribu.site") == 1)
+		{
+			vac.checkTables(managerPtr);
+		}
+
+		exitBarrier.join();
 
 		/* Clean up */
 		// System.out.println("Deallocating memory... ");
 
-		System.out.println("done.");
+		// System.out.println("done.");
 
 		// Profiler.print();
 		PRProfiler.print();
@@ -496,6 +518,7 @@ public class Vacation
 		TribuDSTM.close();
 	}
 
+	@Atomic
 	void checkTables(Manager managerPtr)
 	{
 		int i;
