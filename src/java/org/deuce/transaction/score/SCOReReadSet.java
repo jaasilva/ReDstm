@@ -84,7 +84,7 @@ public class SCOReReadSet implements Serializable
 		{
 			for (int j = 0; j < i - 1; j++)
 			{
-				if (readSet[i] != null)
+				if (readSet[j] != null)
 				{
 					((InPlaceRWLock) readSet[j].field).sharedUnlock(txID);
 				}

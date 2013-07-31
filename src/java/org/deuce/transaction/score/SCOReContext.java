@@ -2,7 +2,6 @@ package org.deuce.transaction.score;
 
 import java.util.concurrent.Semaphore;
 
-import org.apache.log4j.Logger;
 import org.deuce.LocalMetadata;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
@@ -164,8 +163,6 @@ public class SCOReContext extends DistributedContext
 	{
 		return (Double) read(field);
 	}
-
-	private static final Logger LOGGER = Logger.getLogger(SCOReContext.class);
 
 	private void checkGroupRestrictions(UniqueObject obj, TxField field)
 	{
