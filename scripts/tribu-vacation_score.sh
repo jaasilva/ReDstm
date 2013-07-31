@@ -33,6 +33,7 @@ BENCHMARK=Vacation
 TASK_QUERIES=2
 PERC_QUERIED=90
 PERC_RESERVATION=98
+USER_CONSULT=90
 RELATIONS=128 #16384
 TASKS=8192 #16384 #8192 #4096
 # vacation-high   -n4 -q60 -u90 -r16384   -t4096
@@ -82,4 +83,4 @@ java -Xmx1g -Xms1g -cp $CP -javaagent:bin/deuceAgent.jar \
 	-Dtribu.groups=2 \
 	jstamp.vacation.Vacation -c $THREADS -q $PERC_QUERIED \
 		-u $PERC_RESERVATION -r $RELATIONS -t $REPLICA_TASKS \
-		-n $TASK_QUERIES
+		-n $TASK_QUERIES -uc $USER_CONSULT

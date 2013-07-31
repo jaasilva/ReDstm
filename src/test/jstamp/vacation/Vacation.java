@@ -141,6 +141,8 @@ public class Vacation
 				TRANSACTIONS = Integer.parseInt(argv[++i]);
 			else if (arg.equals("-u"))
 				USER = Integer.parseInt(argv[++i]);
+			else if (arg.equals("-uc"))
+				USER_CONSULT = Integer.parseInt(argv[++i]);
 			else
 				opterr++;
 		}
