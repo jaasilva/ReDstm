@@ -74,7 +74,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 	}
 
 	protected void initDistributionMetadata()
-	{
+	{ // it's the #metadata field of an UniqueObject
 		if (partial)
 		{
 			// stack: ... =>

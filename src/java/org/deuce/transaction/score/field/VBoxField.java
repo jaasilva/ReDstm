@@ -130,7 +130,7 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 	@Override
 	public boolean isExclusiveUnlocked()
 	{
-		return writeLock;
+		return !writeLock;
 	}
 
 	public void write(Object value, int type)

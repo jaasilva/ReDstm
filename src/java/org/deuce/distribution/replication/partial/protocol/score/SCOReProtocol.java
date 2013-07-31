@@ -175,7 +175,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 				PRProfiler.onTxLocalReadFinish(ctx.threadID);
 			}
 			catch (NullPointerException e)
-			{
+			{ // XXX check this
 				LOGGER.debug("%%%%%%% " + local_read + " " + local_graph + "\n"
 						+ metadata + "\n" + TribuDSTM.getObject(metadata));
 				// System.exit(-1);

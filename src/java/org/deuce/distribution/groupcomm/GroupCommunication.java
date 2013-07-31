@@ -30,6 +30,11 @@ public abstract class GroupCommunication
 		{
 			e.printStackTrace();
 		}
+
+		// defines node rank based in gcs' members list
+		System.setProperty("tribu.site",
+				"" + (getMembers().indexOf(getLocalAddress()) + 1));
+
 		System.err.println("-- Members arrived!");
 	}
 

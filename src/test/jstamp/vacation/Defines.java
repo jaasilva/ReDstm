@@ -19,7 +19,7 @@ public class Defines
 	public final static int PARAM_DEFAULT_RELATIONS = (1 << 16);
 	public final static int PARAM_DEFAULT_TRANSACTIONS = (1 << 19); // (1 << 26)
 	public final static int PARAM_DEFAULT_USER = (80);
-	public final static int PARAM_DEFAULT_USER_CONSULT = 10;
+	public final static int PARAM_DEFAULT_USER_CONSULT = 90;
 	public final static int PARAM_DEFAULT_REMOTE = 10;
 	public final static int RESERVATION_CAR = 0;
 	public final static int RESERVATION_FLIGHT = 1;

@@ -2,6 +2,7 @@ package org.deuce.transaction.score;
 
 import java.util.concurrent.Semaphore;
 
+import org.apache.log4j.Logger;
 import org.deuce.LocalMetadata;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
@@ -164,6 +165,8 @@ public class SCOReContext extends DistributedContext
 		return (Double) read(field);
 	}
 
+	private static final Logger LOGGER = Logger.getLogger(SCOReContext.class);
+
 	private void checkGroupRestrictions(UniqueObject obj, TxField field)
 	{
 		PartialReplicationOID txFieldMetadata = (PartialReplicationOID) field
@@ -177,13 +180,8 @@ public class SCOReContext extends DistributedContext
 		{ // published(f) && published(o)
 			if (!txFieldPGroup.equals(objGroup))
 			{ // different groups. cannot happen (for now...)
-				// String log = txFieldPGroup + " vs " + objGroup + "\n";
-				// log += "!!!! TxFieldGroup != objGroup. CANNOT HAPPEN!\n";
-				// log += field.getMetadata() + "\n";
-				// log += objMetadata + "\n";
-				// log += obj;
-				// LOGGER.debug(log);
-				throw new GroupsViolationException("TxFieldPGroup != objGroup.");
+				throw new GroupsViolationException(txFieldPGroup + " != "
+						+ objGroup);
 			}
 		}
 		else if (txFieldMetadata.isPublished() && !objMetadata.isPublished())
@@ -192,9 +190,16 @@ public class SCOReContext extends DistributedContext
 			objGroup.set(txFieldPGroup.getAll());
 			objPGroup.set(txFieldPGroup.getAll());
 		}
-		else
-		{ // (~published(f) && published(o)) || (~published(f) && ~published(o))
+		else if (!txFieldMetadata.isPublished() && objMetadata.isPublished())
+		{ // ~published(f) && published(o)
 			txFieldPGroup.set(objGroup.getAll());
+		}
+		else
+		{ // ~published(f) && ~published(o)
+			// txFieldPGroup.set(objGroup.getAll());
+			Group objPGroup = objMetadata.getPartialGroup();
+			objGroup.set(txFieldPGroup.getAll());
+			objPGroup.set(txFieldPGroup.getAll());
 		}
 	}
 

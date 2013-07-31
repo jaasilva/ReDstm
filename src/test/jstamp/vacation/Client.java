@@ -161,7 +161,7 @@ public class Client extends Thread
 						% numQueryPerTransaction + 1;
 				updateTables(managerPtr, numUpdate);
 			}
-
+			
 			System.out.println(i);
 		} /* for i */
 		Barrier.enterBarrier();
