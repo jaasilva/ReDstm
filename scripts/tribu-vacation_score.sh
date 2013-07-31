@@ -64,6 +64,9 @@ echo "Comm: ${_COMM}"
 echo `date +%H:%M`
 echo "#####"
 
+#-Dorg.deuce.verbose=true \
+#-Dtribu.site=$SITE \
+
 REPLICA_TASKS=`expr $TASKS / $REPLICAS`
 java -Xmx1g -Xms1g -cp $CP -javaagent:bin/deuceAgent.jar \
 	-Dlog=$5 \
@@ -71,8 +74,6 @@ java -Xmx1g -Xms1g -cp $CP -javaagent:bin/deuceAgent.jar \
 	-Dorg.deuce.exclude=$EXCLUDE \
 	-Dtribu.groupcommunication.class=$COMM \
 	-Dtribu.groupcommunication.group=$GROUP \
-	-Dtribu.site=$SITE \
-	-Dorg.deuce.verbose=true \
 	-Dtribu.replicas=$REPLICAS \
 	-Dtribu.distributed.protocolClass=$REP \
 	-Dtribu.serialization.compress=$ZIP \
