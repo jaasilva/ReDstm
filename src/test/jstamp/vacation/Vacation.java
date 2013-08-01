@@ -204,6 +204,8 @@ public class Vacation
 			int tmp = arr[x];
 			arr[x] = arr[y];
 			arr[y] = tmp;
+			
+			System.out.println(i);
 		}
 	}
 
@@ -284,6 +286,7 @@ public class Vacation
 				managerPtr.manager_addCustomer(id);
 			}
 			// assert(status);
+			System.out.println(i);
 		}
 	}
 
