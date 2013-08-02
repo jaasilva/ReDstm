@@ -6,6 +6,13 @@ import java.io.Serializable;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 
+/**
+ * Every distributed object must implement this interface. It represents a
+ * distributed object in the system.
+ * 
+ * @author tvale
+ * 
+ */
 @ExcludeTM
 public interface UniqueObject extends Serializable
 {
@@ -32,12 +39,23 @@ public interface UniqueObject extends Serializable
 	/**
 	 * Sets the object's global identifier.
 	 * 
-	 * @param oid
-	 *            The global object identifier.
+	 * @param oid The global object identifier.
 	 */
 	public void setMetadata(ObjectMetadata metadata);
 
+	/**
+	 * Returns the object after being deserialized.
+	 * 
+	 * @return the object after being deserialized.
+	 * @throws ObjectStreamException
+	 */
 	abstract Object writeReplace() throws ObjectStreamException;
 
+	/**
+	 * Returns the object to be serialized.
+	 * 
+	 * @return the object to be serialized.
+	 * @throws ObjectStreamException
+	 */
 	abstract Object readResolve() throws ObjectStreamException;
 }

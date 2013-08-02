@@ -32,10 +32,6 @@ public class TribuDSTM
 	private static Class<? extends DistributedContext> ctxClass;
 	private static int numGroups;
 	public static boolean PARTIAL; // check runtime mode
-	/*
-	 * XXX t.vale: we initialise an HashSet here because PartialReplicationGroup
-	 * uses HashSet. Most likely this isn't generic.
-	 */
 	final public static Collection<Address> ALL = new HashSet<Address>();
 	public static String partialDefault = "false";
 
@@ -330,7 +326,7 @@ public class TribuDSTM
 	}
 
 	public static final Collection<Address> getAllMembers()
-	{ // assumes members are always in the same order on
+	{ // assumes members are always in the same order in
 		return groupComm.getMembers(); // the collection (in every node)
 	}
 

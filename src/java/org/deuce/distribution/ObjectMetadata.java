@@ -5,6 +5,12 @@ import java.io.Serializable;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 
+/**
+ * Every metadata class must implement this interface.
+ * 
+ * @author tvale
+ * 
+ */
 @ExcludeTM
 public interface ObjectMetadata extends Serializable
 {

@@ -164,7 +164,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		ReadDone read = null;
 		boolean local_read = p_group.contains(TribuDSTM.getLocalAddress());
 		boolean local_graph = p_group.equals(group);
-		LOGGER.debug("READ " + local_read + " " + local_graph);
 		if (local_read || local_graph) // if the groups are equal I have the
 		// graph from the partial txField down cached in the locator table
 		{ // *LOCAL* read
@@ -176,9 +175,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			}
 			catch (NullPointerException e)
 			{ // XXX check this
-				LOGGER.debug("%%%%%%% " + local_read + " " + local_graph + "\n"
-						+ metadata + "\n" + TribuDSTM.getObject(metadata));
-				// System.exit(-1);
+				LOGGER.debug("% Null pointer while reading locally: "
+						+ local_read + " " + local_graph + "\n" + metadata
+						+ "\n" + TribuDSTM.getObject(metadata));
 				read = remoteRead(sctx, metadata, firstRead, p_group);
 			}
 		}

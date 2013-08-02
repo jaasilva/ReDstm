@@ -204,8 +204,6 @@ public class Vacation
 			int tmp = arr[x];
 			arr[x] = arr[y];
 			arr[y] = tmp;
-			
-			System.out.println(i);
 		}
 	}
 
@@ -264,7 +262,7 @@ public class Vacation
 	{
 		final int[] arr = ids;
 		/* Populate table */
-		for (i = 0; i < end; i++)
+		for (; i < end; i++)
 		{
 			int id = arr[i];
 			int num = ((randomPtr.posrandom_generate() % 5) + 1) * 100;

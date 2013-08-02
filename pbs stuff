@@ -1,0 +1,31 @@
+#PBS -N <job name>
+#PBS -l select=<num nodes>:ncpus=<num cpus>:mem=<mem>[MB|GB]
+#PBS -l place=excl
+#PBS -q <queue>
+#PBS -M jaa.silva@campus.fct.unl.pt
+#PBS -m abe
+#PBS -o <stdout file>
+#PBS -e <stderr file>
+
+echo "############################"
+echo "qsub host is"
+echo $PBS_O_HOST
+echo "original queue is"
+echo $PBS_O_QUEUE
+echo "qsub working directory absolute is"
+echo $PBS_O_WORKDIR
+echo "pbs environment is"
+echo $PBS_ENVIRONMENT
+echo "pbs batch id"
+echo $PBS_JOBID
+echo "pbs job name from me is"
+echo $PBS_JOBNAME
+echo "Name of file containing nodes is"
+echo $PBS_NODEFILE
+echo "contents of nodefile is"
+cat $PBS_NODEFILE
+echo "Name of queue to which job went is"
+echo $PBS_QUEUE
+echo "############################"
+
+
