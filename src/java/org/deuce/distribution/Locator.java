@@ -15,8 +15,6 @@ public interface Locator
 	 * Puts the new entry <K,V> in the locator table, where K is metadata and V
 	 * is obj.
 	 * 
-	 * the UniqueObject obj in the locator table, with the key metadata.
-	 * 
 	 * @param metadata - the key of the new entry in the locator table.
 	 * @param obj - the value of the new entry in the locator table.
 	 */

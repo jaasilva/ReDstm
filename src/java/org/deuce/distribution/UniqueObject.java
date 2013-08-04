@@ -39,7 +39,7 @@ public interface UniqueObject extends Serializable
 	/**
 	 * Sets the object's global identifier.
 	 * 
-	 * @param oid The global object identifier.
+	 * @param oid - the global object identifier.
 	 */
 	public void setMetadata(ObjectMetadata metadata);
 

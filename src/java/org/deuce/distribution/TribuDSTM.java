@@ -17,6 +17,14 @@ import org.deuce.transaction.DistributedContext;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
+/**
+ * This class uses the facade design pattern. It functions as the glue between
+ * all the other components in the system. It initializes and terminates the
+ * system.
+ * 
+ * @author tvale, jaasilva
+ * 
+ */
 @ExcludeTM
 public class TribuDSTM
 {
@@ -56,15 +64,18 @@ public class TribuDSTM
 		}
 	}
 
-	/*
-	 * Defer the initialisation of group communication until the actual
-	 * application is executing. Apparently, explicit class loading during the
-	 * execution of an agent is only supported in JDK 7.
-	 */
 	public static final String INIT_METHOD_NAME = "init";
 	public static final String INIT_METHOD_DESC = "()"
 			+ Type.VOID_TYPE.getDescriptor();
 
+	/**
+	 * Initializes a part of the system. The first initialization is done in the
+	 * static block. The initialization of the group communication system is
+	 * deferred until the actual application is executing because, apparently,
+	 * explicit class loading during the execution of an agent is only supported
+	 * in JDK 7. It also initializes some things related with group and data
+	 * partitioners and the distributed protocol.
+	 */
 	public static void init()
 	{
 		initGroupCommunication();
@@ -93,6 +104,10 @@ public class TribuDSTM
 	public static final String CLOSE_METHOD_DESC = "()"
 			+ Type.VOID_TYPE.getDescriptor();
 
+	/**
+	 * Closes the group communication system gracefully and terminates the
+	 * system.
+	 */
 	public static void close()
 	{
 		LOGGER.warn("#################################");
@@ -105,6 +120,9 @@ public class TribuDSTM
 		System.exit(0);
 	}
 
+	/**
+	 * Checks if the system will run in partial or total replication mode.
+	 */
 	private static void checkRuntimeMode()
 	{
 		PARTIAL = Boolean.parseBoolean(System.getProperty(
@@ -113,6 +131,9 @@ public class TribuDSTM
 		LOGGER.warn("> Partial replication mode: " + PARTIAL);
 	}
 
+	/**
+	 * Initializes the group communication system component.
+	 */
 	private static void initGroupCommunication()
 	{
 		String className = System
@@ -134,6 +155,9 @@ public class TribuDSTM
 		LOGGER.warn("> Group communication: " + className);
 	}
 
+	/**
+	 * Initializes the transaction context used by the system.
+	 */
 	@SuppressWarnings("unchecked")
 	private static void initTransactionContext()
 	{
@@ -154,6 +178,9 @@ public class TribuDSTM
 		LOGGER.info("> Transaction context: " + className);
 	}
 
+	/**
+	 * Initializes the distributed protocol component.
+	 */
 	private static void initReplicationProtocol()
 	{
 		String className = System
@@ -175,6 +202,9 @@ public class TribuDSTM
 		LOGGER.warn("> Replication protocol: " + className);
 	}
 
+	/**
+	 * Initializes both the group and data partitioners.
+	 */
 	private static void initPartitioners()
 	{
 		String groupPartClass = System
@@ -211,16 +241,34 @@ public class TribuDSTM
 	 * ################################################################
 	 */
 
+	/**
+	 * Returns the reference to the locator table.
+	 * 
+	 * @return the reference to the locator table.
+	 */
 	public static final Locator getLocator()
 	{
 		return locator;
 	}
 
+	/**
+	 * Returns the UniqueObject corresponding to the metadata.
+	 * 
+	 * @param metadata - the key to find in the locator table.
+	 * @return the corresponding UniqueObject.
+	 */
 	public static final UniqueObject getObject(ObjectMetadata metadata)
 	{
 		return locator.get(metadata);
 	}
 
+	/**
+	 * Puts the new entry <K,V> in the locator table, where K is metadata and V
+	 * is obj.
+	 * 
+	 * @param metadata - the key of the new entry in the locator table.
+	 * @param obj - the value of the new entry in the locator table.
+	 */
 	public static final void putObject(ObjectMetadata metadata, UniqueObject obj)
 	{
 		locator.put(metadata, obj);
@@ -236,6 +284,11 @@ public class TribuDSTM
 	public static final String GETSERIALIZER_METHOD_DESC = "()"
 			+ ObjectSerializer.DESC;
 
+	/**
+	 * Returns the object serializer used by the system's distributed protocol.
+	 * 
+	 * @return the object serializer.
+	 */
 	public static final ObjectSerializer getObjectSerializer()
 	{
 		return distProtocol.getObjectSerializer();
@@ -247,32 +300,67 @@ public class TribuDSTM
 	 * ################################################################
 	 */
 
+	/**
+	 * Returns the transaction context class used by the system.
+	 * 
+	 * @return the transaction context class.
+	 */
 	public static final Class<? extends DistributedContext> getContextClass()
 	{
 		return ctxClass;
 	}
 
+	/**
+	 * It calls the onContextCreation callback in the system's distributed
+	 * protocol.
+	 * 
+	 * @param ctx - the created transaction context.
+	 */
 	public static final void onContextCreation(DistributedContext ctx)
 	{
 		distProtocol.onTxContextCreation(ctx);
 	}
 
+	/**
+	 * It calls the onTxBegin callback in the system's distributed protocol.
+	 * 
+	 * @param ctx - the transaction context of the corresponding transaction.
+	 */
 	public static final void onTxBegin(DistributedContext ctx)
 	{
 		distProtocol.onTxBegin(ctx);
 	}
 
+	/**
+	 * It calls the onTxFinished callback in the system's distributed protocol.
+	 * 
+	 * @param ctx - the transaction context of the corresponding transaction.
+	 * @param committed - true if the transaction finished successfully, false
+	 *            otherwise.
+	 */
 	public static final void onTxFinished(DistributedContext ctx,
 			boolean committed)
 	{
 		distProtocol.onTxFinished(ctx, committed);
 	}
 
+	/**
+	 * It calls the onTxCommit callback in the system's distributed protocol.
+	 * 
+	 * @param ctx - the transaction context of the corresponding transaction.
+	 */
 	public static final void onTxCommit(DistributedContext ctx)
 	{
 		distProtocol.onTxCommit(ctx);
 	}
 
+	/**
+	 * It calls the onTxRead callback in the system's distributed protocol.
+	 * 
+	 * @param ctx - the transaction context of the corresponding transaction.
+	 * @param field - the TxField associated with the field being read.
+	 * @return the object written in that TxField.
+	 */
 	public static final Object onTxRead(DistributedContext ctx, TxField field)
 	{
 		return distProtocol.onTxRead(ctx, field);
@@ -284,52 +372,110 @@ public class TribuDSTM
 	 * ################################################################
 	 */
 
+	/**
+	 * Sends the payload totally ordered to all the cluster members.
+	 * 
+	 * @param payload - the byte array to be sent.
+	 */
 	public static final void sendTotalOrdered(byte[] payload)
 	{
 		groupComm.sendTotalOrdered(payload);
 	}
 
+	/**
+	 * Sends the payload reliably to all the cluster members.
+	 * 
+	 * @param payload - the byte array to be sent.
+	 */
 	public static final void sendReliably(byte[] payload)
 	{
 		groupComm.sendReliably(payload);
 	}
 
+	/**
+	 * Sends the payload totally ordered to the members of the group.
+	 * 
+	 * @param payload - the byte array to be sent.
+	 * @param group - the group of members that will receive the message.
+	 */
 	public static final void sendTotalOrdered(byte[] payload, Group group)
 	{
 		groupComm.sendTotalOrdered(payload, group);
 	}
 
+	/**
+	 * Sends the payload reliably to a specific member.
+	 * 
+	 * @param payload - the byte array to be sent.
+	 * @param addr - the specific member that will receive the message.
+	 */
 	public static final void sendTo(byte[] payload, Address addr)
 	{
 		groupComm.sendTo(payload, addr);
 	}
 
+	/**
+	 * Sends the payload reliably to the members of the group.
+	 * 
+	 * @param payload - the byte array to be sent.
+	 * @param group - the group of members that will receive the message.
+	 */
 	public static final void sendToGroup(byte[] payload, Group group)
 	{
 		groupComm.sendToGroup(payload, group);
 	}
 
+	/**
+	 * Determines if an address if local or not.
+	 * 
+	 * @param addr - the address to check.
+	 * @return true if the address is local, false otherwise.
+	 */
 	public static final boolean isLocalAddress(Address addr)
 	{
 		return groupComm.isLocal(addr);
 	}
 
+	/**
+	 * Subscribes a subscriber to receive messages from the group communication
+	 * system.
+	 * 
+	 * @param subscriber - the subscriber that will receive the messages.
+	 */
 	public static final void subscribeDeliveries(DeliverySubscriber subscriber)
 	{
 		groupComm.subscribeDelivery(subscriber);
 	}
 
+	/**
+	 * Subscribes a subscriber to receive messages from the group communication
+	 * system, optimistically.
+	 * 
+	 * @param subscriber- the subscriber that will receive the messages,
+	 *            optimistically.
+	 */
 	public static final void subscribeOptimisticDeliveries(
 			OptimisticDeliverySubscriber subscriber)
 	{
 		groupComm.subscribeOptimisticDelivery(subscriber);
 	}
 
+	/**
+	 * Returns a collection with all the members of the cluster. This collection
+	 * is in the same order in every node.
+	 * 
+	 * @return - the members list.
+	 */
 	public static final Collection<Address> getAllMembers()
 	{ // assumes members are always in the same order in
 		return groupComm.getMembers(); // the collection (in every node)
 	}
 
+	/**
+	 * Returns the address of this node.
+	 * 
+	 * @return - this node's address.
+	 */
 	public static final Address getLocalAddress()
 	{
 		return groupComm.getLocalAddress();
@@ -341,26 +487,54 @@ public class TribuDSTM
 	 * ################################################################
 	 */
 
+	/**
+	 * Returns the group where this node belongs.
+	 * 
+	 * @return - this node's group.
+	 */
 	public static final Group getLocalGroup()
 	{
 		return groupPart.getLocalGroup();
 	}
 
+	/**
+	 * Returns a group corresponding to a specific index.
+	 * 
+	 * @param id - the index of the group.
+	 * @return the corresponding group.
+	 */
 	public static final Group getGroup(int id)
 	{
 		return groupPart.getGroups().get(id);
 	}
 
+	/**
+	 * Determines if a group is local or not.
+	 * 
+	 * @param group - the group to check.
+	 * @return true if the group is local, false otherwise.
+	 */
 	public static final boolean isLocalGroup(Group group)
 	{
 		return group.contains(getLocalAddress());
 	}
 
+	/**
+	 * Determines if a group corresponds to the group ALL.
+	 * 
+	 * @param group - the group to check.
+	 * @return true if the group is ALL, false otherwise.
+	 */
 	public static final boolean groupIsAll(Group group)
 	{
 		return group.getAll().equals(ALL);
 	}
 
+	/**
+	 * Returns the number of group in the system.
+	 * 
+	 * @return the number of groups.
+	 */
 	public static final int getNumGroups()
 	{
 		return numGroups;
@@ -372,6 +546,13 @@ public class TribuDSTM
 	 * ################################################################
 	 */
 
+	/**
+	 * Returns the group where the object will be replicated, according to the
+	 * implemented data partitioner.
+	 * 
+	 * @param obj - the object to replicate.
+	 * @return the group where the object will be replicated.
+	 */
 	public static final Group publishObjectTo(UniqueObject obj)
 	{
 		return dataPart.publishTo(obj);

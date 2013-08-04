@@ -15,6 +15,13 @@ import org.deuce.distribution.serialization.GCPayloadException;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 
+/**
+ * This class represents the object serializer used to serialized and
+ * de-serialize objects to and from the network.
+ * 
+ * @author tvale
+ * 
+ */
 @ExcludeTM
 public abstract class ObjectSerializer
 {
@@ -26,6 +33,12 @@ public abstract class ObjectSerializer
 	final static public boolean COMPRESS = Boolean.parseBoolean(System
 			.getProperty("tribu.serialization.compress", "true"));
 
+	/**
+	 * Serializes the object given by parameter into an array of bytes.
+	 * 
+	 * @param obj - the object to be serialized.
+	 * @return the object serialized into an array of bytes.
+	 */
 	public static byte[] object2ByteArray(Object obj)
 	{
 		byte[] payload = null;
@@ -65,6 +78,14 @@ public abstract class ObjectSerializer
 		return payload;
 	}
 
+	/**
+	 * De-serializes an array of bytes into the corresponding object. This
+	 * returns a new object.
+	 * 
+	 * @param array - the array of bytes to be de-serialized.
+	 * @return the object de-serialized from an array of bytes.
+	 * @throws GCPayloadException
+	 */
 	public static Object byteArray2Object(byte[] array)
 			throws GCPayloadException
 	{
@@ -124,6 +145,14 @@ public abstract class ObjectSerializer
 	public static final String WRITE_METHOD_DESC = "(" + UniqueObject.DESC
 			+ ")" + Type.getDescriptor(Object.class);
 
+	/**
+	 * This method is used by every UniqueObject when the corresponding
+	 * writeReplace method is called by the Java serialization feature.
+	 * 
+	 * @param obj - the object to be serialized.
+	 * @return the corresponding object.
+	 * @throws ObjectStreamException
+	 */
 	public abstract Object writeReplaceHook(UniqueObject obj)
 			throws ObjectStreamException;
 
@@ -131,8 +160,21 @@ public abstract class ObjectSerializer
 	public static final String READ_METHOD_DESC = "(" + UniqueObject.DESC + ")"
 			+ Type.getDescriptor(Object.class);
 
+	/**
+	 * This method is used by every UniqueObject when the corresponding
+	 * readResolve method is called by the Java serialization feature.
+	 * 
+	 * @param obj - the object to be de-serialized.
+	 * @return the corresponding object.
+	 * @throws ObjectStreamException
+	 */
 	public abstract Object readResolveHook(UniqueObject obj)
 			throws ObjectStreamException;
 
+	/**
+	 * Creates an empty metadata object.
+	 * 
+	 * @return a new metadata object.
+	 */
 	public abstract ObjectMetadata createMetadata();
 }

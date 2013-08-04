@@ -42,8 +42,8 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 					"tribu.groupcommunication.spread.daemon", "localhost");
 			String privateName = "replica" + Integer.getInteger("tribu.site");
 
-			connection.connect(/* null */InetAddress.getByName(daemon), 0,
-					privateName, false, true);
+			connection.connect(InetAddress.getByName(daemon), 0, privateName,
+					false, true);
 			connection.add(this);
 			group.join(connection, System.getProperty(
 					"tribu.groupcommunication.group", "tvale"));
