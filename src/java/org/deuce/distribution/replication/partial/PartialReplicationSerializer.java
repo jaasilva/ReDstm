@@ -32,6 +32,14 @@ public class PartialReplicationSerializer extends ObjectSerializer
 
 	private PartialReplicationOIDFactory factory = new PartialReplicationMetadataFactory();
 
+	/**
+	 * In a read context I always have to send the object. Otherwise, if the
+	 * object is already published I can send a stub. If the object is not
+	 * published I publish the object and send it.
+	 * 
+	 * @return the object.
+	 * @throws ObjectStreamException
+	 */
 	@Override
 	public Object writeReplaceHook(UniqueObject obj)
 			throws ObjectStreamException
@@ -61,6 +69,17 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		return obj;
 	}
 
+	/**
+	 * If the group of the object is local I have to check my locator table for
+	 * a local copy. If I have a copy of the object in the locator table I
+	 * return it, otherwise I save it in my locator table and return the
+	 * received object. If the group is not local I just return the object (I
+	 * save the object in the locator table just to cache the received object
+	 * graph).
+	 * 
+	 * @return the object.
+	 * @throws ObjectStreamException
+	 */
 	@Override
 	public Object readResolveHook(UniqueObject obj)
 			throws ObjectStreamException
@@ -100,6 +119,12 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	public static final String CREATE_PARTIAL_METADATA_METHOD_DESC = "("
 			+ UniqueObject.DESC + ")" + Type.VOID_TYPE.getDescriptor();
 
+	/**
+	 * Creates a new partial replication metadata object.
+	 * 
+	 * @param obj - the UniqueObject that will be associated with the newly
+	 *            created metadata.
+	 */
 	public void createPartialReplicationMetadata(UniqueObject obj)
 	{ // id = rand(), group = ALL, partialGroup = [toPublish]
 		ObjectMetadata meta = factory.generateOID();
@@ -114,6 +139,12 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	public static final String CREATE_FULL_METADATA_METHOD_DESC = "("
 			+ UniqueObject.DESC + ")" + Type.VOID_TYPE.getDescriptor();
 
+	/**
+	 * Creates a new full replication metadata object.
+	 * 
+	 * @param obj - the UniqueObject that will be associated with the newly
+	 *            created metadata.
+	 */
 	public void createFullReplicationMetadata(UniqueObject obj)
 	{ // id = rand(), group = partialGroup = ALL
 		ObjectMetadata meta = factory.generateFullReplicationOID();
@@ -126,6 +157,13 @@ public class PartialReplicationSerializer extends ObjectSerializer
 			+ Type.INT_TYPE.getDescriptor() + ")"
 			+ Type.VOID_TYPE.getDescriptor();
 
+	/**
+	 * Creates a new bootstrap (full replication) metadata object.
+	 * 
+	 * @param obj - the UniqueObject that will be associated with the newly
+	 *            created metadata.
+	 * @param id - the id to force the UniqueObject id to be deterministic.
+	 */
 	public void createBootstrapOID(UniqueObject obj, int id)
 	{ // id = rand(oid), group = partialGroup = ALL
 		PartialReplicationOID meta = factory.generateFullReplicationOID(id);

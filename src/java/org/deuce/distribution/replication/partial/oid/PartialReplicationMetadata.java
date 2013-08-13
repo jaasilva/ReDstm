@@ -6,6 +6,12 @@ import org.deuce.distribution.replication.group.Group;
 import org.deuce.transform.ExcludeTM;
 
 /**
+ * This class implements the PartialReplicationOID interface. It represents a
+ * distribution metadata for partial replication.
+ * 
+ * *Every* metadata object is created with isPublished set to false. Every
+ * metadata start being not published.
+ * 
  * @author jaasilva
  * 
  */
@@ -18,6 +24,9 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 	private Group partialGroup;
 	private boolean isPublished;
 
+	/**
+	 * Creates a new PRepMetadata with both group and pGroup = null.
+	 */
 	public PartialReplicationMetadata()
 	{
 		this.id = java.util.UUID.randomUUID();
@@ -26,6 +35,12 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 		this.isPublished = false;
 	}
 
+	/**
+	 * Creates a new PRepMetadata with both group and pGroup defined by
+	 * parameter.
+	 * 
+	 * @param group - the defined group.
+	 */
 	public PartialReplicationMetadata(Group group)
 	{
 		this.id = java.util.UUID.randomUUID();
@@ -34,6 +49,12 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 		this.isPublished = false;
 	}
 
+	/**
+	 * Creates a new PRepMetadata with both group and pGroup = null. This
+	 * metadata id is created deterministically (with seed).
+	 * 
+	 * @param seed - the seed for the id creation.
+	 */
 	public PartialReplicationMetadata(int seed)
 	{
 		byte[] name = ByteBuffer.allocate(4).putInt(seed).array();
@@ -43,6 +64,13 @@ public class PartialReplicationMetadata implements PartialReplicationOID
 		this.isPublished = false;
 	}
 
+	/**
+	 * Creates a new PRepMetadata with both group and pGroup defined by
+	 * parameter. This metadata id is created deterministically (with seed).
+	 * 
+	 * @param seed - the seed for the id creation.
+	 * @param group - the defined group.
+	 */
 	public PartialReplicationMetadata(int seed, Group group)
 	{
 		byte[] name = ByteBuffer.allocate(4).putInt(seed).array();
