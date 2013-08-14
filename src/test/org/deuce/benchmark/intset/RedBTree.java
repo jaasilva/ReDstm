@@ -1,6 +1,7 @@
 package org.deuce.benchmark.intset;
 
 import org.deuce.Atomic;
+import org.deuce.distribution.replication.partial.Partial;
 
 /*
  * =============================================================================
@@ -59,6 +60,8 @@ public class RedBTree implements IntSet
 	public class Node
 	{
 		int k; // key
+		@Partial
+		Object v; // val
 		Node p; // parent
 		Node l; // left
 		Node r; // right
@@ -259,7 +262,7 @@ public class RedBTree implements IntSet
 		}
 	}
 
-	private Node insert(int k, Node n)
+	private Node insert(int k, Object v, Node n)
 	{
 		Node t = root;
 		if (t == null)
@@ -273,6 +276,7 @@ public class RedBTree implements IntSet
 			n.r = null;
 			n.p = null;
 			n.k = k;
+			n.v = v;
 			n.c = BLACK;
 			root = n;
 			return null;
@@ -297,6 +301,7 @@ public class RedBTree implements IntSet
 					n.l = null;
 					n.r = null;
 					n.k = k;
+					n.v = v;
 					n.p = t;
 					t.l = n;
 					fixAfterInsertion(n);
@@ -315,6 +320,7 @@ public class RedBTree implements IntSet
 					n.l = null;
 					n.r = null;
 					n.k = k;
+					n.v = v;
 					n.p = t;
 					t.r = n;
 					fixAfterInsertion(n);
@@ -669,7 +675,7 @@ public class RedBTree implements IntSet
 	public boolean add(int key)
 	{
 		Node node = new Node();
-		Node ex = insert(key, node);
+		Node ex = insert(key, key, node);
 		if (ex != null)
 		{
 			node = null;
@@ -694,6 +700,10 @@ public class RedBTree implements IntSet
 	public boolean contains(int key)
 	{
 		Node n = lookup(key);
+		if (n != null)
+		{
+			Object val = n.v;
+		}
 
 		return (n != null);
 	}

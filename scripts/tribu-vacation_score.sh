@@ -24,10 +24,10 @@ EXCLUDE="${EXCLUDE},spread.*"
 EXCLUDE="${EXCLUDE},org.deuce.trove.*"
 EXCLUDE="${EXCLUDE},jstamp.vacation.Random"
 
-SITE=$1
-THREADS=$2
-REPLICAS=$3
-RUN=$4
+THREADS=$1
+REPLICAS=$2
+RUN=$3
+GROUPS=$4
 
 BENCHMARK=Vacation
 TASK_QUERIES=2
@@ -35,7 +35,7 @@ PERC_QUERIED=90
 PERC_RESERVATION=98
 USER_CONSULT=90
 RELATIONS=128 #16384
-TASKS=8192 #16384 #8192 #4096
+TASKS=4096 #16384 #8192 #4096
 # vacation-high   -n4 -q60 -u90 -r16384   -t4096
 # vacation-high+  -n4 -q60 -u90 -r1048576 -t4096
 # vacation-high++ -n4 -q60 -u90 -r1048576 -t4194304
@@ -44,8 +44,10 @@ TASKS=8192 #16384 #8192 #4096
 # vacation-low++  -n2 -q90 -u98 -r1048576 -t4194304
 
 _STM=score.SCOReContext
-_REP=score.SCOReProtocol
-_COMM=jgroups.JGroups
+_REP=score.SCOReProtocol # score.SCOReProtocol score.SCOReProtocol_noReadOpt
+_COMM=jgroups.JGroups # jgroups.JGroups appia.Appia spread.Spread
+# RandomDataPartitioner SimpleDataPartitioner RoundRobinDataPartitioner
+_DATA_PART=SimpleDataPartitioner
 
 STM="org.deuce.transaction.${_STM}"
 COMM="org.deuce.distribution.groupcomm.${_COMM}GroupCommunication"
@@ -54,8 +56,7 @@ ZIP=true
 GROUP="${BENCHMARK}_${TASK_QUERIES}_${PERC_QUERIED}_${PERC_RESERVATION}_${RELATIONS}_${TASKS}_${THREADS}_${_REP}_${REPLICAS}_${RUN}"
 FNAME="${BENCHMARK}_n${TASK_QUERIES}_q${PERC_QUERIED}_u${PERC_RESERVATION}_r${RELATIONS}_t${TASKS}_t${THREADS}_${_REP}_${_COMM}_id${SITE}-${REPLICAS}_run${RUN}"
 LOG=logs/${FNAME}.res
-#DATA_PART=org.deuce.distribution.replication.partitioner.data.RandomDataPartitioner
-DATA_PART=org.deuce.distribution.replication.partitioner.data.SimpleDataPartitioner
+DATA_PART="org.deuce.distribution.replication.partitioner.data.${_DATA_PART}"
 
 echo "#####"
 echo "Benchmark: ${BENCHMARK}, run ${RUN}"
@@ -70,7 +71,6 @@ echo "#####"
 
 REPLICA_TASKS=`expr $TASKS / $REPLICAS`
 java -Xmx1g -Xms1g -cp $CP -javaagent:bin/deuceAgent.jar \
-	-Dlog=$5 \
 	-Dorg.deuce.transaction.contextClass=$STM \
 	-Dorg.deuce.exclude=$EXCLUDE \
 	-Dtribu.groupcommunication.class=$COMM \
@@ -80,7 +80,7 @@ java -Xmx1g -Xms1g -cp $CP -javaagent:bin/deuceAgent.jar \
 	-Dtribu.serialization.compress=$ZIP \
 	-Dtribu.distributed.DataPartitionerClass=$DATA_PART \
 	-Dtribu.distributed.PartialReplicationMode=true \
-	-Dtribu.groups=2 \
+	-Dtribu.groups=$GROUPS \
 	jstamp.vacation.Vacation -c $THREADS -q $PERC_QUERIED \
 		-u $PERC_RESERVATION -r $RELATIONS -t $REPLICA_TASKS \
 		-n $TASK_QUERIES -uc $USER_CONSULT

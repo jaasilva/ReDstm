@@ -5,7 +5,7 @@ tribu.distributed.protocolClass - org.deuce.distribution.replication.full.protoc
 tribu.groupcommunication.group - tvale
 tribu.replicas - XXX
 tribu.groupcommunication.spread.daemon - localhost
-tribu.site - XXX
+(tribu.site - XXX)
 org.deuce.exclude - XXX
 org.deuce.include - XXX
 -------------------------------------------------------------------------

@@ -540,6 +540,19 @@ public class TribuDSTM
 		return numGroups;
 	}
 
+	/**
+	 * Determines if this nodes is the master of its group.
+	 * 
+	 * @return true if this node is the group master, false otherwise.
+	 */
+	public static final boolean isGroupMaster()
+	{
+		Address local_addr = getLocalAddress();
+		Address master_addr = getLocalGroup().getAll().iterator().next();
+
+		return local_addr.equals(master_addr);
+	}
+
 	/*
 	 * ################################################################
 	 * ########### DATA ###############################################

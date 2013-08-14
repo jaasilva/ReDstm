@@ -397,19 +397,13 @@ public class Vacation
 	{
 		final int PR_GROUP_ID = TribuDSTM.getLocalGroup().getId();
 		final int NUM_GROUPS = TribuDSTM.getNumGroups();
-		final org.deuce.distribution.groupcomm.Address LOCAL_ADDR = TribuDSTM
-				.getLocalAddress();
-		final org.deuce.distribution.groupcomm.Address MASTER_ADDR = TribuDSTM
-				.getLocalGroup().getAll().iterator().next();
-		final boolean IS_GROUP_MASTER = LOCAL_ADDR.equals(MASTER_ADDR);
+		final boolean IS_GROUP_MASTER = TribuDSTM.isGroupMaster();
 		final int SITE = Integer.getInteger("tribu.site");
 
 		System.out.println("------------------------------------------------");
 		System.out.println("------------------------------------------------");
 		System.out.println("NODE: " + SITE + " | GROUP: " + PR_GROUP_ID
 				+ " of " + (NUM_GROUPS - 1));
-		System.out.println("ADDR: " + LOCAL_ADDR + " | MASTER ADDR: "
-				+ MASTER_ADDR);
 		System.out.println("AM I THE GROUP MASTER: " + IS_GROUP_MASTER);
 		System.out.println("------------------------------------------------");
 		System.out.println("------------------------------------------------");
