@@ -1,0 +1,45 @@
+set grid
+
+set xrange [0:3]
+set yrange [0:10]
+
+plot sin(x)
+rep cos(x) # faz hold ao graf anterior
+
+ou
+
+plot sin(x), \
+cos(x), \
+x
+
+plot sin(x) with points
+... with lines
+... with linespoints
+... with dots
+... with impulses
+
+plot "lol.txt" using 1:2 with lines # cols 1 e 2 com linhas
+
+set title "lol"
+set xlabel "aaa"
+set ylabel "bbb"
+
+# com grid define a grelha, sem grid define os tics
+set xtics 2
+set ytics 5
+set mxtics 1
+set mytics 2
+
+plot sin(x) 2"funcao 1" with points # define legenda da linha
+set key left bottom # define localização da legenda da linha
+set key right bottom
+set key left top box # mete uma borda
+set key right top
+
+set term postscript eps enhanced color 22
+set output "lol.eps"
+
+set autoscale
+
+set logscale y
+
