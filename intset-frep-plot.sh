@@ -9,13 +9,13 @@ RUNS=10
 DATA="${DIR}/${BENCH}_${COMM}.data"
 
 rm -f $DATA
-echo '"Replicas"	"1 thread"	"2 threads"	"4 threads"	"6 threads"	"8 threads"' >$DATA
+echo '"Replicas"	"1 thread"	"2 threads"	"4 threads"	"6 threads"' >$DATA
 
 for replicas in 2 4 6 8 #10 20 30 40 50 60 70 80 90 100
 do
 	echo -n "${replicas}" >>$DATA
 	
-	for threads in 1 2 4 6 8
+	for threads in 1 2 4 6
 	do
 		duration=0
 		run_its=()
@@ -101,8 +101,8 @@ echo "set output \"${eps}\"" >>$pscript
 echo "plot \"${DATA}\" using 1:2 with linespoints title columnhead(2), \\" >>$pscript
 echo "'' using 1:3 with linespoints title columnhead(3), \\" >>$pscript
 echo "'' using 1:4 with linespoints title columnhead(4), \\" >>$pscript
-echo "'' using 1:5 with linespoints title columnhead(5), \\" >>$pscript
-echo "'' using 1:6 with linespoints title columnhead(6)" >>$pscript
+echo "'' using 1:5 with linespoints title columnhead(5)" >>$pscript
+#echo "'' using 1:6 with linespoints title columnhead(6)" >>$pscript
 
 gnuplot $pscript
 epstopdf $eps
