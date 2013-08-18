@@ -30,7 +30,7 @@ set ytics 5
 set mxtics 1
 set mytics 2
 
-plot sin(x) 2"funcao 1" with points # define legenda da linha
+plot sin(x) t"funcao 1" with points # define legenda da linha
 set key left bottom # define localização da legenda da linha
 set key right bottom
 set key left top box # mete uma borda
