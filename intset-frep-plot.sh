@@ -101,7 +101,8 @@ echo "set output \"${eps}\"" >>$pscript
 echo "plot \"${DATA}\" using 1:2 with linespoints title columnhead(2), \\" >>$pscript
 echo "'' using 1:3 with linespoints title columnhead(3), \\" >>$pscript
 echo "'' using 1:4 with linespoints title columnhead(4), \\" >>$pscript
-echo "'' using 1:5 with linespoints title columnhead(5)" >>$pscript
+echo "'' using 1:5 with linespoints title columnhead(5), \\" >>$pscript
+echo "'' using 1:6 with linespoints title columnhead(6)" >>$pscript
 
 gnuplot $pscript
 epstopdf $eps
