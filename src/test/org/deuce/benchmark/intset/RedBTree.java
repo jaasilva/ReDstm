@@ -446,7 +446,34 @@ public class RedBTree implements IntSet
 		if (p.l != null && p.r != null)
 		{
 			Node s = successor(p);
-			p.k = s.k;
+
+			Node x = new Node();
+			x.k = s.k;
+			x.v = s.v;
+			x.c = p.c;
+
+			x.p = p.p;
+			x.l = p.l;
+			x.r = p.r;
+
+			p.l.p = x;
+			p.r.p = x;
+
+			Node pp = p.p;
+			if (pp != null)
+			{
+				if (pp.l == p)
+				{
+					pp.l = x;
+				}
+				else
+				{
+					pp.r = x;
+				}
+			}
+
+			// p.k = s.k;
+			// p.v = s.v;
 			p = s;
 		} /* p has 2 children */
 

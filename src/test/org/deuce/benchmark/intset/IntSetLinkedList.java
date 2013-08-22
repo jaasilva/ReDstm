@@ -1,6 +1,7 @@
 package org.deuce.benchmark.intset;
 
 import org.deuce.*;
+import org.deuce.distribution.replication.partial.Partial;
 
 /**
  * @author Pascal Felber
@@ -11,18 +12,26 @@ public class IntSetLinkedList implements IntSet
 
 	public class Node
 	{
-		final private int m_value;
+		final private int m_key;
+		@Partial
+		private int m_value;
 		private Node m_next;
 
 		public Node(int value, Node next)
 		{
+			m_key = value;
 			m_value = value;
 			m_next = next;
 		}
 
-		public Node(int value)
+		public Node(int key)
 		{
-			this(value, null);
+			this(key, null);
+		}
+
+		public int getKey()
+		{
+			return m_key;
 		}
 
 		public int getValue()
@@ -42,62 +51,62 @@ public class IntSetLinkedList implements IntSet
 
 		public String toString()
 		{
-			return Integer.toString(m_value);
+			return Integer.toString(m_key);
 		}
 	}
 
-	final private Node m_first;
+	final private Node m_head;
 
 	public IntSetLinkedList()
 	{
-		m_first = new Node(Integer.MIN_VALUE);
+		m_head = new Node(Integer.MIN_VALUE);
 		init();
 	}
 
 	@Atomic
 	private void init()
 	{
-		Node min = m_first;
+		Node min = m_head;
 		Node max = new Node(Integer.MAX_VALUE);
 		min.setNext(max);
 	}
 
 	@Atomic
-	public boolean add(int value)
+	public boolean add(int key)
 	{
 		boolean result;
 
-		Node previous = m_first;
+		Node previous = m_head;
 		Node next = previous.getNext();
 		int v;
-		while ((v = next.getValue()) < value)
+		while ((v = next.getKey()) < key)
 		{
 			previous = next;
 			next = previous.getNext();
 		}
-		result = v != value;
+		result = v != key;
 		if (result)
 		{
-			previous.setNext(new Node(value, next));
+			previous.setNext(new Node(key, next));
 		}
 
 		return result;
 	}
 
 	@Atomic
-	public boolean remove(int value)
+	public boolean remove(int key)
 	{
 		boolean result;
 
-		Node previous = m_first;
+		Node previous = m_head;
 		Node next = previous.getNext();
 		int v;
-		while ((v = next.getValue()) < value)
+		while ((v = next.getKey()) < key)
 		{
 			previous = next;
 			next = previous.getNext();
 		}
-		result = v == value;
+		result = v == key;
 		if (result)
 		{
 			previous.setNext(next.getNext());
@@ -107,19 +116,23 @@ public class IntSetLinkedList implements IntSet
 	}
 
 	@Atomic
-	public boolean contains(int value)
+	public boolean contains(int key)
 	{
 		boolean result;
 
-		Node previous = m_first;
+		Node previous = m_head;
 		Node next = previous.getNext();
 		int v;
-		while ((v = next.getValue()) < value)
+		while ((v = next.getKey()) < key)
 		{
 			previous = next;
 			next = previous.getNext();
 		}
-		result = (v == value);
+		result = (v == key);
+		if (result)
+		{
+			next.getValue();
+		}
 
 		return result;
 	}
@@ -127,7 +140,7 @@ public class IntSetLinkedList implements IntSet
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();
-		Node n = m_first;
+		Node n = m_head;
 		while (n != null)
 		{
 			sb.append(n);
