@@ -49,7 +49,8 @@ public class PRProfiler
 			serMin = Long.MAX_VALUE, waitingReadAvg = 0,
 			waitingReadMax = Long.MIN_VALUE, waitingReadMin = Long.MAX_VALUE,
 			applyWsAvg = 0, applyWsMax = Long.MIN_VALUE,
-			applyWsMin = Long.MAX_VALUE, txLocalRead = 0, txRemoteRead = 0;
+			applyWsMin = Long.MAX_VALUE, txLocalRead = 0, txRemoteRead = 0,
+			txReads = 0;
 
 	/**
 	 * Network related, in bytes.
@@ -343,6 +344,7 @@ public class PRProfiler
 	{
 		if (enabled)
 		{
+			txReads++;
 			long txReadStart = System.nanoTime();
 			txCRead[ctxID] = txReadStart;
 		}
@@ -480,7 +482,7 @@ public class PRProfiler
 		stats.append("\t\tavg = " + txCommitAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + txCommitMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + txCommitMin / 1000 + " µs\n");
-		stats.append("\tComplete reads\n");
+		stats.append("\tComplete reads (" + txReads + ")\n");
 		stats.append("\t\tavg = " + txCReadAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + txCReadMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + txCReadMin / 1000 + " µs\n");
