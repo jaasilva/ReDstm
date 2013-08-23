@@ -177,6 +177,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 	{
 		for (int i = 0; i < chunkSize; i++)
 		{
+			System.out.println(i);
 			while (!m_set.add(random.nextInt(m_range)))
 				;
 		}
