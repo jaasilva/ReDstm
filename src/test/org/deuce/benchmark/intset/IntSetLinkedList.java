@@ -14,8 +14,8 @@ public class IntSetLinkedList implements IntSet
 	{
 		final private int m_key;
 		@Partial
-		private int m_value;
-		private Node m_next;
+		int m_value;
+		Node m_next;
 
 		public Node(int value, Node next)
 		{
@@ -131,7 +131,7 @@ public class IntSetLinkedList implements IntSet
 		result = (v == key);
 		if (result)
 		{
-			next.getValue();
+			int x = next.m_value;
 		}
 
 		return result;

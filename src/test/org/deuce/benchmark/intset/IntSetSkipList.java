@@ -3,6 +3,7 @@ package org.deuce.benchmark.intset;
 import java.util.*;
 
 import org.deuce.*;
+import org.deuce.distribution.replication.partial.Partial;
 
 /**
  * @author Pascal Felber
@@ -13,23 +14,31 @@ public class IntSetSkipList implements IntSet
 
 	public class Node
 	{
-		final private int m_value;
+		final private int m_key;
+		@Partial
+		int m_value;
 		final private Node[] m_forward;
 
 		public Node(int level, int value)
 		{
+			m_key = value;
 			m_value = value;
 			m_forward = new Node[level + 1];
 		}
 
-		public int getValue()
+		public int getKey()
 		{
-			return m_value;
+			return m_key;
 		}
 
 		public int getLevel()
 		{
 			return m_forward.length - 1;
+		}
+
+		public int getValue()
+		{
+			return m_value;
 		}
 
 		public void setForward(int level, Node next)
@@ -45,12 +54,12 @@ public class IntSetSkipList implements IntSet
 		public String toString()
 		{
 			String result = "";
-			result += "<l=" + getLevel() + ",v=" + m_value + ">:";
+			result += "<l=" + getLevel() + ",v=" + m_key + ">:";
 			for (int i = 0; i <= getLevel(); i++)
 			{
 				result += " @[" + i + "]=";
 				if (m_forward[i] != null)
-					result += m_forward[i].getValue();
+					result += m_forward[i].getKey();
 				else
 					result += "null";
 			}
@@ -106,7 +115,7 @@ public class IntSetSkipList implements IntSet
 	}
 
 	@Atomic
-	public boolean add(int value)
+	public boolean add(int key)
 	{
 		boolean result;
 
@@ -116,7 +125,7 @@ public class IntSetSkipList implements IntSet
 		for (int i = m_level; i >= 0; i--)
 		{
 			Node next = node.getForward(i);
-			while (next.getValue() < value)
+			while (next.getKey() < key)
 			{
 				node = next;
 				next = node.getForward(i);
@@ -125,7 +134,7 @@ public class IntSetSkipList implements IntSet
 		}
 		node = node.getForward(0);
 
-		if (node.getValue() == value)
+		if (node.getKey() == key)
 		{
 			result = false;
 		}
@@ -138,7 +147,7 @@ public class IntSetSkipList implements IntSet
 					update[i] = m_head;
 				m_level = level;
 			}
-			node = new Node(level, value);
+			node = new Node(level, key);
 			for (int i = 0; i <= level; i++)
 			{
 				node.setForward(i, update[i].getForward(i));
@@ -151,7 +160,7 @@ public class IntSetSkipList implements IntSet
 	}
 
 	@Atomic
-	public boolean remove(int value)
+	public boolean remove(int key)
 	{
 		boolean result;
 
@@ -161,7 +170,7 @@ public class IntSetSkipList implements IntSet
 		for (int i = m_level; i >= 0; i--)
 		{
 			Node next = node.getForward(i);
-			while (next.getValue() < value)
+			while (next.getKey() < key)
 			{
 				node = next;
 				next = node.getForward(i);
@@ -170,7 +179,7 @@ public class IntSetSkipList implements IntSet
 		}
 		node = node.getForward(0);
 
-		if (node.getValue() != value)
+		if (node.getKey() != key)
 		{
 			result = false;
 		}
@@ -191,7 +200,7 @@ public class IntSetSkipList implements IntSet
 	}
 
 	@Atomic
-	public boolean contains(int value)
+	public boolean contains(int key)
 	{
 		boolean result;
 
@@ -200,7 +209,7 @@ public class IntSetSkipList implements IntSet
 		for (int i = m_level; i >= 0; i--)
 		{
 			Node next = node.getForward(i);
-			while (next.getValue() < value)
+			while (next.getKey() < key)
 			{
 				node = next;
 				next = node.getForward(i);
@@ -208,7 +217,11 @@ public class IntSetSkipList implements IntSet
 		}
 		node = node.getForward(0);
 
-		result = (node.getValue() == value);
+		result = (node.getKey() == key);
+		if (result)
+		{
+			int x = node.m_value;
+		}
 
 		return result;
 	}
@@ -225,7 +238,7 @@ public class IntSetSkipList implements IntSet
 		result += "Elements:\n";
 		int[] countLevel = new int[m_maxLevel + 1];
 		Node element = m_head.getForward(0);
-		while (element.getValue() < Integer.MAX_VALUE)
+		while (element.getKey() < Integer.MAX_VALUE)
 		{
 			countLevel[element.getLevel()]++;
 			result += "  " + element.toString() + "\n";

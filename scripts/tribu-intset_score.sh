@@ -37,10 +37,10 @@ RANGE=4096
 WRITES=10
 
 _STM=score.SCOReContext
-_REP=score.SCOReProtocol # score.SCOReProtocol score.SCOReProtocol_noReadOpt
+_REP=score.SCOReProtocol_noReadOpt # score.SCOReProtocol score.SCOReProtocol_noReadOpt
 _COMM=jgroups.JGroups # jgroups.JGroups appia.Appia spread.Spread
 # RandomDataPartitioner SimpleDataPartitioner RoundRobinDataPartitioner
-_DATA_PART=RandomDataPartitioner
+_DATA_PART=RoundRobinDataPartitioner
 
 STM="org.deuce.transaction.${_STM}"
 COMM="org.deuce.distribution.groupcomm.${_COMM}GroupCommunication"
@@ -65,7 +65,6 @@ java -Xmx1g -Xms1g -cp $CP -javaagent:bin/deuceAgent.jar \
 	-Dorg.deuce.exclude=$EXCLUDE \
 	-Dtribu.groupcommunication.class=$COMM \
 	-Dtribu.groupcommunication.group=$GROUP \
-	-Dtribu.site=$SITE \
 	-Dtribu.replicas=$REPLICAS \
 	-Dtribu.distributed.protocolClass=$REP \
 	-Dtribu.serialization.compress=$ZIP \
