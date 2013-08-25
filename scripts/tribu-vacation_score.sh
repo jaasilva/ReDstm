@@ -47,7 +47,7 @@ _STM=score.SCOReContext
 _REP=score.SCOReProtocol # score.SCOReProtocol score.SCOReProtocol_noReadOpt
 _COMM=jgroups.JGroups # jgroups.JGroups appia.Appia spread.Spread
 # RandomDataPartitioner SimpleDataPartitioner RoundRobinDataPartitioner
-_DATA_PART=SimpleDataPartitioner
+_DATA_PART=Simple
 
 STM="org.deuce.transaction.${_STM}"
 COMM="org.deuce.distribution.groupcomm.${_COMM}GroupCommunication"
@@ -56,7 +56,7 @@ ZIP=true
 GROUP="${BENCHMARK}_${TASK_QUERIES}_${PERC_QUERIED}_${PERC_RESERVATION}_${RELATIONS}_${TASKS}_${THREADS}_${_REP}_${REPLICAS}_${RUN}"
 FNAME="${BENCHMARK}_n${TASK_QUERIES}_q${PERC_QUERIED}_u${PERC_RESERVATION}_r${RELATIONS}_t${TASKS}_t${THREADS}_${_REP}_${_COMM}_id${SITE}-${REPLICAS}_run${RUN}"
 LOG=logs/${FNAME}.res
-DATA_PART="org.deuce.distribution.replication.partitioner.data.${_DATA_PART}"
+DATA_PART="org.deuce.distribution.replication.partitioner.data.${_DATA_PART}DataPartitioner"
 
 echo "#####"
 echo "Benchmark: ${BENCHMARK}, run ${RUN}"

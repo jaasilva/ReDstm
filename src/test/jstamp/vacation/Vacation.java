@@ -254,7 +254,7 @@ public class Vacation
 				populateTable(i, end, randomPtr, t);
 			}
 		} /* for t */
-		System.out.println("done.");
+		System.out.println("\ndone.");
 	}
 
 	@Atomic
@@ -284,7 +284,7 @@ public class Vacation
 				managerPtr.manager_addCustomer(id);
 			}
 			// assert(status);
-			System.out.println(i);
+			System.out.print("\r" + i);
 		}
 	}
 
