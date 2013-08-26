@@ -162,8 +162,9 @@ public class Client extends Thread
 				updateTables(managerPtr, numUpdate);
 			}
 
-			System.out.println(i);
+			System.out.print("\r" + i);
 		} /* for i */
+		System.out.println();
 		Barrier.enterBarrier();
 	}
 
