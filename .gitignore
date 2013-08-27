@@ -4,7 +4,7 @@
 #*.jar
 *.war
 *.ear
-/bin/classes
+/bin
 *.out
 *.log
 *.pdf
