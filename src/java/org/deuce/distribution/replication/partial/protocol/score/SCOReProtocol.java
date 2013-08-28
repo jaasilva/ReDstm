@@ -475,6 +475,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		DecideMsg decide = new DecideMsg(ctx.threadID, ctx.trxID, finalSid,
 				outcome);
 		Group group = ctx.getInvolvedNodes();
+		group.add(TribuDSTM.getLocalAddress()); // XXX new
 
 		PRProfiler.onSerializationBegin(ctx.threadID);
 		byte[] payload = ObjectSerializer.object2ByteArray(decide);
