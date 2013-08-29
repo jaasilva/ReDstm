@@ -64,7 +64,13 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 
 			System.err.println("Set created.");
 			
-			Thread.sleep(5000); // XXX new
+			try {
+				Thread.sleep(5000); // XXX new
+			}
+			catch (InterruptedException e)
+			{
+    				e.printStackTrace();
+			}
 			
 			long start = System.nanoTime();
 			initializeSet(new Random(), initial);
