@@ -168,10 +168,9 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 		int chunkSize = initial / 1024;
 		for (int i = 0; i < initial; i += chunkSize)
 		{
-			System.out.print("\r"+i);
+			System.out.println(i);
 			addToSet(random, chunkSize);
 		}
-		System.out.println();
 	}
 
 	@Atomic
