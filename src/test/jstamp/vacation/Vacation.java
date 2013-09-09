@@ -484,6 +484,7 @@ public class Vacation
 		long diff = stop - start;
 		System.out.println("TIME=" + diff);
 
+		System.err.println("### finishBarrier");
 		finishBarrier.join();
 		stop = System.currentTimeMillis();
 		diff = stop - start;
@@ -503,6 +504,7 @@ public class Vacation
 			vac.checkTables(managerPtr);
 		}
 
+		System.err.println("### exitBarrier");
 		exitBarrier.join();
 
 		/* Clean up */
