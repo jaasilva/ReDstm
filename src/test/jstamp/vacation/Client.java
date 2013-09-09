@@ -122,6 +122,7 @@ public class Client extends Thread
 	 */
 	public void run()
 	{
+		System.err.println("### benchBarrier: " + id);
 		Vacation.benchBarrier.join();
 		PRProfiler.enabled = true;
 		Barrier.enterBarrier();
