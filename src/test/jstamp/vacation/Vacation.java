@@ -384,7 +384,8 @@ public class Vacation
 	@Atomic
 	private static void initBenchBarrier(int numThreads)
 	{
-		benchBarrier = new org.deuce.benchmark.Barrier(numThreads);
+		if (benchBarrier == null)
+			benchBarrier = new org.deuce.benchmark.Barrier(numThreads);
 	}
 
 	public static int MAX, MIN;
@@ -424,6 +425,7 @@ public class Vacation
 		}
 
 		initBarriers();
+		System.err.println("### firstBarrier");
 		firstBarrier.join();
 
 		int sections = vac.RELATIONS;
@@ -455,6 +457,7 @@ public class Vacation
 			initBenchBarrier(vac.CLIENTS * Integer.getInteger("tribu.replicas"));
 		}
 
+		System.err.println("### setupBarrier");
 		setupBarrier.join();
 
 		clients = vac.initializeClients(managerPtr);
