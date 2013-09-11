@@ -226,101 +226,110 @@ public class Context extends DistributedContext
 
 	public Object onReadAccess(Object value, TxField field)
 	{
+		PRProfiler.onTxLocalReadBegin(threadID);
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
 
 		Object r = ((ObjectWriteFieldAccess) writeAccess).getValue();
-
+		PRProfiler.onTxLocalReadFinish(threadID);
 		return r;
 	}
 
 	public boolean onReadAccess(boolean value, TxField field)
 	{
+		PRProfiler.onTxLocalReadBegin(threadID);
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
 
 		boolean r = ((BooleanWriteFieldAccess) writeAccess).getValue();
-
+		PRProfiler.onTxLocalReadFinish(threadID);
 		return r;
 	}
 
 	public byte onReadAccess(byte value, TxField field)
 	{
+		PRProfiler.onTxLocalReadBegin(threadID);
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
 
 		byte r = ((ByteWriteFieldAccess) writeAccess).getValue();
-
+		PRProfiler.onTxLocalReadFinish(threadID);
 		return r;
 	}
 
 	public char onReadAccess(char value, TxField field)
 	{
+		PRProfiler.onTxLocalReadBegin(threadID);
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
 
 		char r = ((CharWriteFieldAccess) writeAccess).getValue();
-
+		PRProfiler.onTxLocalReadFinish(threadID);
 		return r;
 	}
 
 	public short onReadAccess(short value, TxField field)
 	{
+		PRProfiler.onTxLocalReadBegin(threadID);
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
 
 		short r = ((ShortWriteFieldAccess) writeAccess).getValue();
-
+		PRProfiler.onTxLocalReadFinish(threadID);
 		return r;
 
 	}
 
 	public int onReadAccess(int value, TxField field)
 	{
+		PRProfiler.onTxLocalReadBegin(threadID);
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
 
 		int r = ((IntWriteFieldAccess) writeAccess).getValue();
-
+		PRProfiler.onTxLocalReadFinish(threadID);
 		return r;
 	}
 
 	public long onReadAccess(long value, TxField field)
 	{
+		PRProfiler.onTxLocalReadBegin(threadID);
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
 
 		long r = ((LongWriteFieldAccess) writeAccess).getValue();
-
+		PRProfiler.onTxLocalReadFinish(threadID);
 		return r;
 	}
 
 	public float onReadAccess(float value, TxField field)
 	{
+		PRProfiler.onTxLocalReadBegin(threadID);
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
 
 		float r = ((FloatWriteFieldAccess) writeAccess).getValue();
-
+		PRProfiler.onTxLocalReadFinish(threadID);
 		return r;
 	}
 
 	public double onReadAccess(double value, TxField field)
 	{
+		PRProfiler.onTxLocalReadBegin(threadID);
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
 
 		double r = ((DoubleWriteFieldAccess) writeAccess).getValue();
-
+		PRProfiler.onTxLocalReadFinish(threadID);
 		return r;
 	}
 
