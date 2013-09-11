@@ -214,12 +214,13 @@ public class Context extends DistributedContext
 
 	public ArrayContainer onReadAccess(ArrayContainer value, TxField field)
 	{
+		PRProfiler.onTxLocalReadBegin(threadID);
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
 			return value;
 
 		ArrayContainer r = ((ArrayWriteFieldAccess) writeAccess).getValue();
-
+		PRProfiler.onTxLocalReadFinish(threadID);
 		return r;
 	}
 

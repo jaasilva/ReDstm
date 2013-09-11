@@ -33,6 +33,7 @@ public class NonVoting extends FullReplicationProtocol implements
 
 	public void onDelivery(Object obj, Address src, int payloadSize)
 	{
+		PRProfiler.newMsgRecv(payloadSize);
 		DistributedContextState ctxState = (DistributedContextState) obj;
 		DistributedContext ctx = null;
 
