@@ -100,6 +100,7 @@ public class SCOReContext extends DistributedContext
 		}
 		else
 		{ // *IN* the writeSet. Return value
+			PRProfiler.onTxWsRead(threadID);
 			return writeAccess.getValue();
 		}
 	}

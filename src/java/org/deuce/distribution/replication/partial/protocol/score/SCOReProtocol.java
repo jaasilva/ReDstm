@@ -111,6 +111,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	@Override
 	public void onTxCommit(DistributedContext ctx)
 	{ // I am the coordinator of this commit.
+		PRProfiler.onTxDistCommitBegin(ctx.threadID);
 		SCOReContext sctx = (SCOReContext) ctx;
 		DistributedContextState ctxState = sctx.createState();
 
@@ -127,8 +128,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
 		PRProfiler.onSerializationFinish(ctx.threadID);
 
-		PRProfiler.onPrepSend(ctx.threadID);
 		PRProfiler.newMsgSent(payload.length);
+		PRProfiler.onPrepSend(ctx.threadID);
 
 		TribuDSTM.sendToGroup(payload, resGroup);
 
@@ -620,6 +621,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			if (ctx.src.isLocal())
 			{ // context is local. access directly
 				sctx = (SCOReContext) ctxs.get(ctx.ctxID);
+				PRProfiler.onTxDistCommitFinish(sctx.threadID);
 				sctx.processed(true);
 			}
 			it.remove();

@@ -20,7 +20,7 @@ public class PRProfiler
 	private static long txDurationIt = 0, txVotesIt = 0, txValidateIt = 0,
 			txCommitIt = 0, msgSent = 0, msgRecv = 0, txRReadIt = 0,
 			txLReadIt = 0, txCReadIt = 0, serIt = 0, waitingReadIt = 0,
-			applyWsIt = 0;
+			applyWsIt = 0, distCommitIt = 0;
 
 	/**
 	 * Time related, in nanoseconds.
@@ -34,6 +34,7 @@ public class PRProfiler
 	private static long[] txCRead = new long[THREADS];
 	private static long[] serialization = new long[THREADS];
 	private static long[] applyWs = new long[THREADS];
+	private static long[] distCommit = new long[THREADS];
 	private static long txAppDurationAvg = 0,
 			txAppDurationMax = Long.MIN_VALUE,
 			txAppDurationMin = Long.MAX_VALUE, txVotesAvg = 0,
@@ -50,7 +51,8 @@ public class PRProfiler
 			waitingReadMax = Long.MIN_VALUE, waitingReadMin = Long.MAX_VALUE,
 			applyWsAvg = 0, applyWsMax = Long.MIN_VALUE,
 			applyWsMin = Long.MAX_VALUE, txLocalRead = 0, txRemoteRead = 0,
-			txReads = 0;
+			txReads = 0, txWsReads = 0, distCommitMax = Long.MIN_VALUE,
+			distCommitMin = Long.MAX_VALUE, distCommitAvg = 0;
 
 	/**
 	 * Network related, in bytes.
@@ -59,12 +61,13 @@ public class PRProfiler
 			msgSentSizeMin = Long.MAX_VALUE, msgRecvSizeAvg = 0,
 			msgRecvSizeMax = Long.MIN_VALUE, msgRecvSizeMin = Long.MAX_VALUE;
 
-	private static long incAvg(long currAvg, long value, long currIt)
+	private synchronized static long incAvg(long currAvg, long value,
+			long currIt)
 	{
 		return currAvg + ((value - currAvg) / (currIt + 1));
 	}
 
-	public static void txCommitted()
+	private synchronized static void txCommitted()
 	{
 		if (enabled)
 		{
@@ -72,7 +75,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void txAborted()
+	private synchronized static void txAborted()
 	{
 		if (enabled)
 		{
@@ -80,7 +83,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void txProcessed(boolean committed)
+	public synchronized static void txProcessed(boolean committed)
 	{
 		if (enabled)
 		{
@@ -95,7 +98,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void txTimeout()
+	public synchronized static void txTimeout()
 	{
 		if (enabled)
 		{
@@ -103,7 +106,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void onTxAppBegin(int ctxID)
+	public synchronized static void onTxAppBegin(int ctxID)
 	{
 		if (enabled)
 		{
@@ -112,7 +115,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void onTxAppFinish(int ctxID)
+	public synchronized static void onTxAppFinish(int ctxID)
 	{
 		if (enabled)
 		{
@@ -137,7 +140,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void onPrepSend(int ctxID)
+	public synchronized static void onPrepSend(int ctxID)
 	{
 		if (enabled)
 		{
@@ -146,7 +149,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void onLastVoteReceived(int ctxID)
+	public synchronized static void onLastVoteReceived(int ctxID)
 	{
 		if (enabled)
 		{
@@ -170,7 +173,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void onTxValidateBegin(int ctxID)
+	public synchronized static void onTxValidateBegin(int ctxID)
 	{
 		if (enabled)
 		{
@@ -179,7 +182,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void onTxValidateEnd(int ctxID)
+	public synchronized static void onTxValidateEnd(int ctxID)
 	{
 		if (enabled)
 		{
@@ -203,7 +206,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void onTxCommitBegin(int ctxID)
+	public synchronized static void onTxCommitBegin(int ctxID)
 	{
 		if (enabled)
 		{
@@ -212,7 +215,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void onTxCommitEnd(int ctxID)
+	public synchronized static void onTxCommitEnd(int ctxID)
 	{
 		if (enabled)
 		{
@@ -236,7 +239,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void newMsgSent(int bytes)
+	public synchronized static void newMsgSent(int bytes)
 	{
 		if (enabled)
 		{
@@ -254,7 +257,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void newMsgRecv(int bytes)
+	public synchronized static void newMsgRecv(int bytes)
 	{
 		if (enabled)
 		{
@@ -272,17 +275,17 @@ public class PRProfiler
 		}
 	}
 
-	public static void onTxRemoteReadBegin(int ctxID)
+	public synchronized static void onTxRemoteReadBegin(int ctxID)
 	{
 		if (enabled)
 		{
-			txRemoteRead++;
 			long txReadStart = System.nanoTime();
 			txRRead[ctxID] = txReadStart;
+			txRemoteRead++;
 		}
 	}
 
-	public static void onTxRemoteReadFinish(int ctxID)
+	public synchronized static void onTxRemoteReadFinish(int ctxID)
 	{
 		if (enabled)
 		{
@@ -306,17 +309,17 @@ public class PRProfiler
 		}
 	}
 
-	public static void onTxLocalReadBegin(int ctxID)
+	public synchronized static void onTxLocalReadBegin(int ctxID)
 	{
 		if (enabled)
 		{
-			txLocalRead++;
 			long txReadStart = System.nanoTime();
 			txLRead[ctxID] = txReadStart;
+			txLocalRead++;
 		}
 	}
 
-	public static void onTxLocalReadFinish(int ctxID)
+	public synchronized static void onTxLocalReadFinish(int ctxID)
 	{
 		if (enabled)
 		{
@@ -340,17 +343,17 @@ public class PRProfiler
 		}
 	}
 
-	public static void onTxCompleteReadBegin(int ctxID)
+	public synchronized static void onTxCompleteReadBegin(int ctxID)
 	{
 		if (enabled)
 		{
-			txReads++;
 			long txReadStart = System.nanoTime();
 			txCRead[ctxID] = txReadStart;
+			txReads++;
 		}
 	}
 
-	public static void onTxCompleteReadFinish(int ctxID)
+	public synchronized static void onTxCompleteReadFinish(int ctxID)
 	{
 		if (enabled)
 		{
@@ -374,7 +377,16 @@ public class PRProfiler
 		}
 	}
 
-	public static void onSerializationBegin(int ctxID)
+	public synchronized static void onTxWsRead(int ctxID)
+	{
+		if (enabled)
+		{
+			txReads++;
+			txWsReads++;
+		}
+	}
+
+	public synchronized static void onSerializationBegin(int ctxID)
 	{
 		if (enabled)
 		{
@@ -383,7 +395,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void onSerializationFinish(int ctxID)
+	public synchronized static void onSerializationFinish(int ctxID)
 	{
 		if (enabled)
 		{
@@ -407,7 +419,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void onWaitingReadFinish(long time)
+	public synchronized static void onWaitingReadFinish(long time)
 	{
 		if (enabled)
 		{
@@ -428,7 +440,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void onApplyWsBegin(int ctxID)
+	public synchronized static void onApplyWsBegin(int ctxID)
 	{
 		if (enabled)
 		{
@@ -437,7 +449,7 @@ public class PRProfiler
 		}
 	}
 
-	public static void onApplyWsFinish(int ctxID)
+	public synchronized static void onApplyWsFinish(int ctxID)
 	{
 		if (enabled)
 		{
@@ -461,7 +473,40 @@ public class PRProfiler
 		}
 	}
 
-	public static void print()
+	public synchronized static void onTxDistCommitBegin(int ctxID)
+	{
+		if (enabled)
+		{
+			long start = System.nanoTime();
+			distCommit[ctxID] = start;
+		}
+	}
+
+	public synchronized static void onTxDistCommitFinish(int ctxID)
+	{
+		if (enabled)
+		{
+			long end = System.nanoTime();
+			long elapsed = end - distCommit[ctxID];
+
+			synchronized (lock)
+			{
+				if (elapsed < distCommitMin)
+				{
+					distCommitMin = elapsed;
+				}
+				if (elapsed > distCommitMax)
+				{
+					distCommitMax = elapsed;
+				}
+
+				distCommitAvg = incAvg(distCommitAvg, elapsed, distCommitIt);
+				distCommitIt++;
+			}
+		}
+	}
+
+	public synchronized static void print()
 	{
 		StringBuffer stats = new StringBuffer();
 
@@ -482,15 +527,25 @@ public class PRProfiler
 		stats.append("\t\tavg = " + txCommitAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + txCommitMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + txCommitMin / 1000 + " µs\n");
+		stats.append("\tDistributed Commit (" + distCommitIt + ")\n");
+		stats.append("\t\tavg = " + distCommitAvg / 1000000 + " ms\n");
+		stats.append("\t\tmax = " + distCommitMax / 1000000 + " ms\n");
+		stats.append("\t\tmin = " + distCommitMin / 1000000 + " ms\n");
 		stats.append("\tComplete reads (" + txReads + ")\n");
+		stats.append("\tCORRECT: "
+				+ (txReads == (txWsReads + txRemoteRead + txLocalRead)) + "\n");
+		stats.append("\t\tWS hits = " + txWsReads + " ("
+				+ ((txRemoteRead * 100.0) / txReads) + ")\n");
 		stats.append("\t\tavg = " + txCReadAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + txCReadMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + txCReadMin / 1000 + " µs\n");
-		stats.append("\tRemote reads (" + txRemoteRead + ")\n");
+		stats.append("\tRemote reads (" + txRemoteRead + ") "
+				+ ((txRemoteRead * 100.0) / txReads) + "\n");
 		stats.append("\t\tavg = " + txRReadAvg / 1000000 + " ms\n");
 		stats.append("\t\tmax = " + txRReadMax / 1000000 + " ms\n");
 		stats.append("\t\tmin = " + txRReadMin / 1000000 + " ms\n");
-		stats.append("\tLocal reads (" + txLocalRead + ")\n");
+		stats.append("\tLocal reads (" + txLocalRead + ") "
+				+ ((txLocalRead * 100.0) / txReads) + "\n");
 		stats.append("\t\tavg = " + txLReadAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + txLReadMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + txLReadMin / 1000 + " µs\n");

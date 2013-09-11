@@ -168,7 +168,7 @@ public abstract class DistributedContext implements ContextMetadata
 	{
 		// if (Profiler.enabled)
 		// profiler.txAborted++;
-		PRProfiler.txAborted();
+		PRProfiler.txProcessed(false);
 
 		TribuDSTM.onTxFinished(this, false);
 	}
