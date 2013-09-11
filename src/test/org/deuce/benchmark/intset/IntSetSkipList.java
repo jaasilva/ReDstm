@@ -16,7 +16,7 @@ public class IntSetSkipList implements IntSet
 	{
 		final private int m_key;
 		@Partial
-		int m_value;
+		Object m_value;
 		final private Node[] m_forward;
 
 		public Node(int level, int value)
@@ -36,7 +36,7 @@ public class IntSetSkipList implements IntSet
 			return m_forward.length - 1;
 		}
 
-		public int getValue()
+		public Object getValue()
 		{
 			return m_value;
 		}
@@ -220,7 +220,7 @@ public class IntSetSkipList implements IntSet
 		result = (node.getKey() == key);
 		if (result)
 		{
-			int x = node.m_value;
+			Object x = node.m_value;
 		}
 
 		return result;

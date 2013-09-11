@@ -424,7 +424,23 @@ public class Vacation
 			vac.initManager(vac.RELATIONS);
 		}
 
+		try
+		{
+			Thread.sleep(new java.util.Random().nextInt(5000));
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 		initBarriers();
+		try
+		{
+			Thread.sleep(new java.util.Random().nextInt(5000));
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 		System.err.println("### firstBarrier");
 		firstBarrier.join();
 
@@ -457,6 +473,14 @@ public class Vacation
 			initBenchBarrier(vac.CLIENTS * Integer.getInteger("tribu.replicas"));
 		}
 
+		try
+		{
+			Thread.sleep(new java.util.Random().nextInt(5000));
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 		System.err.println("### setupBarrier");
 		setupBarrier.join();
 

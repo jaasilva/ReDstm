@@ -122,6 +122,14 @@ public class Client extends Thread
 	 */
 	public void run()
 	{
+		try
+		{
+			Thread.sleep(new java.util.Random().nextInt(5000));
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 		System.err.println("### benchBarrier: " + id);
 		Vacation.benchBarrier.join();
 		PRProfiler.enabled = true;
@@ -163,7 +171,7 @@ public class Client extends Thread
 				updateTables(managerPtr, numUpdate);
 			}
 
-//			System.out.print("\r" + i);
+			// System.out.print("\r" + i);
 		} /* for i */
 		System.out.println("client " + id + "done.");
 		Barrier.enterBarrier();

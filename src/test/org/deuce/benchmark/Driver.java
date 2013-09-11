@@ -1,10 +1,11 @@
 package org.deuce.benchmark;
 
+import java.util.Random;
+
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
 import org.deuce.profiling.PRProfiler;
-import org.deuce.profiling.Profiler;
 
 // import papi.j.PAPI_J;
 // import papi.j.CacheMonitor;
@@ -100,11 +101,26 @@ public class Driver
 
 		// System.err.println("-- Set created. Press enter to start threads.");
 		// new Scanner(System.in).nextLine();
+		try
+		{
+			Thread.sleep(new Random().nextInt(5000));
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 		initBarriers();
+		try
+		{
+			Thread.sleep(new Random().nextInt(5000));
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 		setupBarrier.join();
 
 		// Profiler.enabled = true;
-		PRProfiler.enabled = true;
 
 		BenchmarkThread[] bt = new BenchmarkThread[nb_threads];
 		for (int i = 0; i < bt.length; i++)
@@ -133,6 +149,7 @@ public class Driver
 		}
 		long wend = System.currentTimeMillis();
 
+		PRProfiler.enabled = true;
 		// System.out.print("End of warmup phase...");
 		for (int i = 0; i < bt.length; i++)
 		{
@@ -171,6 +188,8 @@ public class Driver
 			{
 			}
 		}
+		PRProfiler.enabled = false;
+
 		System.out.println();
 		System.out.println("All threads returned successfully");
 
@@ -189,7 +208,6 @@ public class Driver
 		// System.err.println("-- Benchmark finished. Press enter to exit.");
 		// new Scanner(System.in).nextLine();
 
-		PRProfiler.enabled = false;
 		// Profiler.enabled = false;
 		finishBarrier.join();
 
