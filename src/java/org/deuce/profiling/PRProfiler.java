@@ -535,7 +535,7 @@ public class PRProfiler
 		stats.append("\tCORRECT: "
 				+ (txReads == (txWsReads + txRemoteRead + txLocalRead)) + "\n");
 		stats.append("\t\tWS hits = " + txWsReads + " ("
-				+ ((txRemoteRead * 100.0) / txReads) + ")\n");
+				+ ((txWsReads * 100.0) / txReads) + ")\n");
 		stats.append("\t\tavg = " + txCReadAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + txCReadMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + txCReadMin / 1000 + " µs\n");
