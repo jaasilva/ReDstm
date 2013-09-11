@@ -1,5 +1,8 @@
 package org.deuce.profiling;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
@@ -534,18 +537,19 @@ public class PRProfiler
 		stats.append("\tComplete reads (" + txReads + ")\n");
 		stats.append("\tCORRECT: "
 				+ (txReads == (txWsReads + txRemoteRead + txLocalRead)) + "\n");
-		stats.append("\t\tWS hits = " + txWsReads + " ("
-				+ ((txWsReads * 100.0) / txReads) + ")\n");
+		NumberFormat formatter = new DecimalFormat("#.#####");
+		String percent = formatter.format((txWsReads * 100.0) / txReads);
+		stats.append("\t\tWS hits = " + txWsReads + " " + percent + "\n");
 		stats.append("\t\tavg = " + txCReadAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + txCReadMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + txCReadMin / 1000 + " µs\n");
-		stats.append("\tRemote reads (" + txRemoteRead + ") "
-				+ ((txRemoteRead * 100.0) / txReads) + "\n");
+		percent = formatter.format((txRemoteRead * 100.0) / txReads);
+		stats.append("\tRemote reads (" + txRemoteRead + ") " + percent + "\n");
 		stats.append("\t\tavg = " + txRReadAvg / 1000000 + " ms\n");
 		stats.append("\t\tmax = " + txRReadMax / 1000000 + " ms\n");
 		stats.append("\t\tmin = " + txRReadMin / 1000000 + " ms\n");
-		stats.append("\tLocal reads (" + txLocalRead + ") "
-				+ ((txLocalRead * 100.0) / txReads) + "\n");
+		percent = formatter.format((txLocalRead * 100.0) / txReads);
+		stats.append("\tLocal reads (" + txLocalRead + ") " + percent + "\n");
 		stats.append("\t\tavg = " + txLReadAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + txLReadMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + txLReadMin / 1000 + " µs\n");
