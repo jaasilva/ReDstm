@@ -511,9 +511,9 @@ public class Vacation
 		System.err.println("### finishBarrier");
 		finishBarrier.join();
 		stop = System.currentTimeMillis();
+		PRProfiler.enabled = false;
 		diff = stop - start;
 		System.out.println("TIME2=" + diff);
-		PRProfiler.enabled = false;
 
 		System.out.println();
 		System.out.println("RESULTS:");
@@ -523,10 +523,10 @@ public class Vacation
 				+ deleteCustomers + " U=" + updateTables);
 		System.out.println();
 
-		if (Integer.getInteger("tribu.site") == 1)
-		{
-			vac.checkTables(managerPtr);
-		}
+		// if (Integer.getInteger("tribu.site") == 1)
+		// {
+		// vac.checkTables(managerPtr);
+		// }
 
 		System.err.println("### exitBarrier");
 		exitBarrier.join();
