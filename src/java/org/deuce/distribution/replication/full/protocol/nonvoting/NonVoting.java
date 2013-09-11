@@ -44,6 +44,7 @@ public class NonVoting extends FullReplicationProtocol implements
 			PRProfiler.onLastVoteReceived(ctxState.ctxID);
 			// ctx.profiler.newMsgRecv(payloadSize);
 			PRProfiler.newMsgRecv(payloadSize);
+			PRProfiler.onTxDistCommitFinish(ctxState.ctxID);
 		}
 		else
 		{
@@ -74,6 +75,7 @@ public class NonVoting extends FullReplicationProtocol implements
 
 	public void onTxCommit(DistributedContext ctx)
 	{
+		PRProfiler.onTxDistCommitBegin(ctx.threadID);
 		PRProfiler.onSerializationBegin(ctx.threadID);
 		byte[] payload = ObjectSerializer.object2ByteArray(ctx.createState());
 		PRProfiler.onSerializationFinish(ctx.threadID);
