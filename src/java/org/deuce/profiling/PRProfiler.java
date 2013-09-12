@@ -9,6 +9,7 @@ import org.deuce.transform.ExcludeTM;
 public class PRProfiler
 {
 	public static boolean enabled = false;
+	private static Object lock = new Object();
 	private static final int THREADS = 16;
 
 	/**
@@ -125,18 +126,21 @@ public class PRProfiler
 			long txAppEnd = System.nanoTime();
 			long elapsed = txAppEnd - txAppDuration[ctxID];
 
-			if (elapsed < txAppDurationMin)
+			synchronized (lock)
 			{
-				txAppDurationMin = elapsed;
-			}
-			if (elapsed > txAppDurationMax)
-			{
-				txAppDurationMax = elapsed;
-			}
+				if (elapsed < txAppDurationMin)
+				{
+					txAppDurationMin = elapsed;
+				}
+				if (elapsed > txAppDurationMax)
+				{
+					txAppDurationMax = elapsed;
+				}
 
-			txAppDurationAvg = incAvg(txAppDurationAvg, elapsed, txDurationIt);
-			txDurationIt++;
-
+				txAppDurationAvg = incAvg(txAppDurationAvg, elapsed,
+						txDurationIt);
+				txDurationIt++;
+			}
 		}
 	}
 
@@ -156,18 +160,20 @@ public class PRProfiler
 			long txPrepEnd = System.nanoTime();
 			long elapsed = txPrepEnd - txVotes[ctxID];
 
-			if (elapsed < txVotesMin)
+			synchronized (lock)
 			{
-				txVotesMin = elapsed;
-			}
-			if (elapsed > txVotesMax)
-			{
-				txVotesMax = elapsed;
-			}
+				if (elapsed < txVotesMin)
+				{
+					txVotesMin = elapsed;
+				}
+				if (elapsed > txVotesMax)
+				{
+					txVotesMax = elapsed;
+				}
 
-			txVotesAvg = incAvg(txVotesAvg, elapsed, txVotesIt);
-			txVotesIt++;
-
+				txVotesAvg = incAvg(txVotesAvg, elapsed, txVotesIt);
+				txVotesIt++;
+			}
 		}
 	}
 
@@ -187,18 +193,20 @@ public class PRProfiler
 			long txValidateEnd = System.nanoTime();
 			long elapsed = txValidateEnd - txValidate[ctxID];
 
-			if (elapsed < txValidateMin)
+			synchronized (lock)
 			{
-				txValidateMin = elapsed;
-			}
-			if (elapsed > txValidateMax)
-			{
-				txValidateMax = elapsed;
-			}
+				if (elapsed < txValidateMin)
+				{
+					txValidateMin = elapsed;
+				}
+				if (elapsed > txValidateMax)
+				{
+					txValidateMax = elapsed;
+				}
 
-			txValidateAvg = incAvg(txValidateAvg, elapsed, txValidateIt);
-			txValidateIt++;
-
+				txValidateAvg = incAvg(txValidateAvg, elapsed, txValidateIt);
+				txValidateIt++;
+			}
 		}
 	}
 
@@ -218,17 +226,20 @@ public class PRProfiler
 			long txCommitEnd = System.nanoTime();
 			long elapsed = txCommitEnd - txCommit[ctxID];
 
-			if (elapsed < txCommitMin)
+			synchronized (lock)
 			{
-				txCommitMin = elapsed;
-			}
-			if (elapsed > txCommitMax)
-			{
-				txCommitMax = elapsed;
-			}
+				if (elapsed < txCommitMin)
+				{
+					txCommitMin = elapsed;
+				}
+				if (elapsed > txCommitMax)
+				{
+					txCommitMax = elapsed;
+				}
 
-			txCommitAvg = incAvg(txCommitAvg, elapsed, txCommitIt);
-			txCommitIt++;
+				txCommitAvg = incAvg(txCommitAvg, elapsed, txCommitIt);
+				txCommitIt++;
+			}
 		}
 	}
 
@@ -285,18 +296,20 @@ public class PRProfiler
 			long txReadEnd = System.nanoTime();
 			long elapsed = txReadEnd - txRRead[ctxID];
 
-			if (elapsed < txRReadMin)
+			synchronized (lock)
 			{
-				txRReadMin = elapsed;
-			}
-			if (elapsed > txRReadMax)
-			{
-				txRReadMax = elapsed;
-			}
+				if (elapsed < txRReadMin)
+				{
+					txRReadMin = elapsed;
+				}
+				if (elapsed > txRReadMax)
+				{
+					txRReadMax = elapsed;
+				}
 
-			txRReadAvg = incAvg(txRReadAvg, elapsed, txRReadIt);
-			txRReadIt++;
-
+				txRReadAvg = incAvg(txRReadAvg, elapsed, txRReadIt);
+				txRReadIt++;
+			}
 		}
 	}
 
@@ -317,18 +330,20 @@ public class PRProfiler
 			long txReadEnd = System.nanoTime();
 			long elapsed = txReadEnd - txLRead[ctxID];
 
-			if (elapsed < txLReadMin)
+			synchronized (lock)
 			{
-				txLReadMin = elapsed;
-			}
-			if (elapsed > txLReadMax)
-			{
-				txLReadMax = elapsed;
-			}
+				if (elapsed < txLReadMin)
+				{
+					txLReadMin = elapsed;
+				}
+				if (elapsed > txLReadMax)
+				{
+					txLReadMax = elapsed;
+				}
 
-			txLReadAvg = incAvg(txLReadAvg, elapsed, txLReadIt);
-			txLReadIt++;
-
+				txLReadAvg = incAvg(txLReadAvg, elapsed, txLReadIt);
+				txLReadIt++;
+			}
 		}
 	}
 
@@ -349,18 +364,20 @@ public class PRProfiler
 			long txReadEnd = System.nanoTime();
 			long elapsed = txReadEnd - txCRead[ctxID];
 
-			if (elapsed < txCReadMin)
+			synchronized (lock)
 			{
-				txCReadMin = elapsed;
-			}
-			if (elapsed > txCReadMax)
-			{
-				txCReadMax = elapsed;
-			}
+				if (elapsed < txCReadMin)
+				{
+					txCReadMin = elapsed;
+				}
+				if (elapsed > txCReadMax)
+				{
+					txCReadMax = elapsed;
+				}
 
-			txCReadAvg = incAvg(txCReadAvg, elapsed, txCReadIt);
-			txCReadIt++;
-
+				txCReadAvg = incAvg(txCReadAvg, elapsed, txCReadIt);
+				txCReadIt++;
+			}
 		}
 	}
 
@@ -389,17 +406,20 @@ public class PRProfiler
 			long serEnd = System.nanoTime();
 			long elapsed = serEnd - serialization[ctxID];
 
-			if (elapsed < serMin)
+			synchronized (lock)
 			{
-				serMin = elapsed;
-			}
-			if (elapsed > serMax)
-			{
-				serMax = elapsed;
-			}
+				if (elapsed < serMin)
+				{
+					serMin = elapsed;
+				}
+				if (elapsed > serMax)
+				{
+					serMax = elapsed;
+				}
 
-			serAvg = incAvg(serAvg, elapsed, serIt);
-			serIt++;
+				serAvg = incAvg(serAvg, elapsed, serIt);
+				serIt++;
+			}
 		}
 	}
 
@@ -407,17 +427,20 @@ public class PRProfiler
 	{
 		if (enabled)
 		{
-			if (time < waitingReadMin)
+			synchronized (lock)
 			{
-				waitingReadMin = time;
-			}
-			if (time > waitingReadMax)
-			{
-				waitingReadMax = time;
-			}
+				if (time < waitingReadMin)
+				{
+					waitingReadMin = time;
+				}
+				if (time > waitingReadMax)
+				{
+					waitingReadMax = time;
+				}
 
-			waitingReadAvg = incAvg(waitingReadAvg, time, waitingReadIt);
-			waitingReadIt++;
+				waitingReadAvg = incAvg(waitingReadAvg, time, waitingReadIt);
+				waitingReadIt++;
+			}
 		}
 	}
 
@@ -437,17 +460,20 @@ public class PRProfiler
 			long applyEnd = System.nanoTime();
 			long elapsed = applyEnd - applyWs[ctxID];
 
-			if (elapsed < applyWsMin)
+			synchronized (lock)
 			{
-				applyWsMin = elapsed;
-			}
-			if (elapsed > applyWsMax)
-			{
-				applyWsMax = elapsed;
-			}
+				if (elapsed < applyWsMin)
+				{
+					applyWsMin = elapsed;
+				}
+				if (elapsed > applyWsMax)
+				{
+					applyWsMax = elapsed;
+				}
 
-			applyWsAvg = incAvg(applyWsAvg, elapsed, applyWsIt);
-			applyWsIt++;
+				applyWsAvg = incAvg(applyWsAvg, elapsed, applyWsIt);
+				applyWsIt++;
+			}
 		}
 	}
 
@@ -457,7 +483,6 @@ public class PRProfiler
 		{
 			long start = System.nanoTime();
 			distCommit[ctxID] = start;
-			distCommits++;
 		}
 	}
 
@@ -468,17 +493,20 @@ public class PRProfiler
 			long end = System.nanoTime();
 			long elapsed = end - distCommit[ctxID];
 
-			if (elapsed < distCommitMin)
+			synchronized (lock)
 			{
-				distCommitMin = elapsed;
-			}
-			if (elapsed > distCommitMax)
-			{
-				distCommitMax = elapsed;
-			}
+				if (elapsed < distCommitMin)
+				{
+					distCommitMin = elapsed;
+				}
+				if (elapsed > distCommitMax)
+				{
+					distCommitMax = elapsed;
+				}
 
-			distCommitAvg = incAvg(distCommitAvg, elapsed, distCommitIt);
-			distCommitIt++;
+				distCommitAvg = incAvg(distCommitAvg, elapsed, distCommitIt);
+				distCommitIt++;
+			}
 		}
 	}
 
