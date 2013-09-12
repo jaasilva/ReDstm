@@ -24,6 +24,7 @@ import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partial.PartialReplicationProtocol;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
+import org.deuce.profiling.PRProfiler;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
@@ -41,10 +42,10 @@ import org.deuce.transform.localmetadata.type.TxField;
  * 
  */
 @ExcludeTM
-public class SCOReProtocol extends PartialReplicationProtocol implements
+public class SCOReProtocol_profiler extends PartialReplicationProtocol implements
 		DeliverySubscriber
 {
-	private static final Logger LOGGER = Logger.getLogger(SCOReProtocol.class);
+	private static final Logger LOGGER = Logger.getLogger(SCOReProtocol_profiler.class);
 	private Comparator<Pair<String, Integer>> comp = new Comparator<Pair<String, Integer>>()
 	{
 		@Override
@@ -110,6 +111,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	@Override
 	public void onTxCommit(DistributedContext ctx)
 	{ // I am the coordinator of this commit.
+		PRProfiler.onTxDistCommitBegin(ctx.threadID);
 		SCOReContext sctx = (SCOReContext) ctx;
 		DistributedContextState ctxState = sctx.createState();
 
@@ -117,12 +119,19 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		resGroup.add(TribuDSTM.getLocalAddress());// the coordinator needs to
 		// participate in this voting to release the context
 		int expVotes = resGroup.size();
+		PRProfiler.whatNodes(expVotes);
 
 		sctx.maxVote = 0;
 		sctx.receivedVotes = 0;
 		sctx.expectedVotes = expVotes;
 
+		PRProfiler.onSerializationBegin(ctx.threadID);
 		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
+		PRProfiler.onSerializationFinish(ctx.threadID);
+
+		PRProfiler.newMsgSent(payload.length);
+		PRProfiler.onPrepSend(ctx.threadID);
+
 		TribuDSTM.sendToGroup(payload, resGroup);
 
 		LOGGER.debug("SEND PREP " + sctx.threadID + ":" + sctx.atomicBlockId
@@ -140,6 +149,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	@Override
 	public Object onTxRead(DistributedContext ctx, TxField field)
 	{ // I am the coordinator of this read.
+		PRProfiler.onTxCompleteReadBegin(ctx.threadID);
 		ObjectMetadata metadata = field.getMetadata();
 		SCOReContext sctx = (SCOReContext) ctx;
 
@@ -161,7 +171,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		{ // *LOCAL* read
 			try
 			{
+				PRProfiler.onTxLocalReadBegin(ctx.threadID);
 				read = doRead(sctx.sid, metadata);
+				PRProfiler.onTxLocalReadFinish(ctx.threadID);
 			}
 			catch (NullPointerException e)
 			{ // XXX check this
@@ -188,6 +200,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			throw new TransactionException(); // abort transaction
 		}
 		// added to read set in onReadAccess context method
+		PRProfiler.onTxCompleteReadFinish(ctx.threadID);
 		return read.value;
 	}
 
@@ -197,7 +210,13 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		ReadReq req = new ReadReq(sctx.threadID, metadata, sctx.sid, firstRead,
 				sctx.requestVersion);
 
+		PRProfiler.onSerializationBegin(sctx.threadID);
 		byte[] payload = ObjectSerializer.object2ByteArray(req);
+		PRProfiler.onSerializationFinish(sctx.threadID);
+
+		PRProfiler.newMsgSent(payload.length);
+		PRProfiler.onTxRemoteReadBegin(sctx.threadID);
+
 		TribuDSTM.sendToGroup(payload, p_group);
 
 		LOGGER.debug("SEND READ REQ " + sctx.trxID.split("-")[0] + " "
@@ -212,6 +231,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			e.printStackTrace();
 		}
 
+		PRProfiler.onTxRemoteReadFinish(sctx.threadID);
 		return sctx.response;
 	}
 
@@ -226,6 +246,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		VBoxField field = (VBoxField) TribuDSTM.getObject(metadata);
 
+		long st = System.nanoTime();
 		while (commitId.get() < sid
 				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
 		{ // wait until (commitId.get() >= sid || ((InPlaceRWLock)
@@ -233,6 +254,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			LOGGER.debug("doRead waiting: " + (commitId.get() < sid) + " "
 					+ !((InPlaceRWLock) field).isExclusiveUnlocked());
 		}
+		long end = System.nanoTime();
+		PRProfiler.onWaitingReadFinish(end - st);
 
 		Version ver = field.getLastVersion().get(sid);
 		boolean mostRecent = ver.equals(field.getLastVersion());
@@ -291,10 +314,13 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		ReadDone read = doRead(newReadSid, msg.metadata);
 		ReadRet ret = new ReadRet(msg.ctxID, msg.msgVersion, read);
 
+		PRProfiler.onSerializationBegin(msg.ctxID);
 		serializationContext.set(true);
 		byte[] payload = ObjectSerializer.object2ByteArray(ret);
 		serializationContext.set(false);
+		PRProfiler.onSerializationFinish(msg.ctxID);
 
+		PRProfiler.newMsgSent(payload.length);
 		TribuDSTM.sendTo(payload, src);
 		updateNodeTimestamps(msg.readSid);
 
@@ -324,6 +350,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	@Override
 	public void onDelivery(Object obj, Address src, int size)
 	{
+		PRProfiler.newMsgRecv(size);
+
 		if (obj instanceof DistributedContextState) // Prepare Message
 		{
 			prepareMessage((SCOReContextState) obj, src);
@@ -383,7 +411,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		VoteMsg vote = new VoteMsg(outcome, next, ctxID, trxID);
 
+		PRProfiler.onSerializationBegin(ctxID);
 		byte[] payload = ObjectSerializer.object2ByteArray(vote);
+		PRProfiler.onSerializationFinish(ctxID);
+
+		PRProfiler.newMsgSent(payload.length);
 		TribuDSTM.sendTo(payload, src);
 
 		LOGGER.debug("PREP (" + src + ") " + ctxID + ":" + atomicBlockId + ":"
@@ -425,6 +457,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 			if (ctx.receivedVotes == expectedVotes)
 			{ // last vote. Every vote was YES. send decide msg
+				PRProfiler.onLastVoteReceived(ctx.threadID);
+
 				finalizeVoteStep(ctx, true);
 			}
 		}
@@ -445,7 +479,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		Group group = ctx.getInvolvedNodes();
 		group.add(TribuDSTM.getLocalAddress()); // XXX new
 
+		PRProfiler.onSerializationBegin(ctx.threadID);
 		byte[] payload = ObjectSerializer.object2ByteArray(decide);
+		PRProfiler.onSerializationFinish(ctx.threadID);
+
+		PRProfiler.newMsgSent(payload.length);
 		TribuDSTM.sendToGroup(payload, group);
 
 		LOGGER.debug("SEND DEC " + ctx.threadID + ":" + ctx.atomicBlockId + ":"
@@ -584,6 +622,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			if (ctx.src.isLocal())
 			{ // context is local. access directly
 				sctx = (SCOReContext) ctxs.get(ctx.ctxID);
+				PRProfiler.onTxDistCommitFinish(sctx.threadID);
 				sctx.processed(true);
 			}
 			it.remove();
