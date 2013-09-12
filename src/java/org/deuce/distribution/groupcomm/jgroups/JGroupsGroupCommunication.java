@@ -197,7 +197,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	{
 		if (group.size() == numNodes)
 		{
-			sendReliably(payload); // XXX new
+			sendReliably(payload); // XXX new. trying to optimize
 		}
 		else
 		{
