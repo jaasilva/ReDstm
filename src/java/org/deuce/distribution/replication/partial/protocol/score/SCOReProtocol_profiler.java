@@ -119,7 +119,7 @@ public class SCOReProtocol_profiler extends PartialReplicationProtocol implement
 		resGroup.add(TribuDSTM.getLocalAddress());// the coordinator needs to
 		// participate in this voting to release the context
 		int expVotes = resGroup.size();
-		PRProfiler.whatNodes(expVotes);
+//		PRProfiler.whatNodes(expVotes);
 
 		sctx.maxVote = 0;
 		sctx.receivedVotes = 0;
