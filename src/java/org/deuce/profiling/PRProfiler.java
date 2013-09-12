@@ -55,7 +55,7 @@ public class PRProfiler
 			applyWsAvg = 0, applyWsMax = Long.MIN_VALUE,
 			applyWsMin = Long.MAX_VALUE, txLocalRead = 0, txRemoteRead = 0,
 			txReads = 0, txWsReads = 0, distCommitMax = Long.MIN_VALUE,
-			distCommitMin = Long.MAX_VALUE, distCommitAvg = 0;
+			distCommitMin = Long.MAX_VALUE, distCommitAvg = 0, totalCommit = 0;
 
 	/**
 	 * Network related, in bytes.
@@ -509,6 +509,17 @@ public class PRProfiler
 		}
 	}
 
+	public synchronized static void whatNodes(int nodes)
+	{
+		if (enabled)
+		{
+			if (nodes == Integer.getInteger("tribu.replicas"))
+			{
+				totalCommit++;
+			}
+		}
+	}
+
 	public synchronized static void print()
 	{
 		StringBuffer stats = new StringBuffer();
@@ -530,7 +541,8 @@ public class PRProfiler
 		stats.append("\t\tavg = " + txCommitAvg / 1000 + " µs\n");
 		stats.append("\t\tmax = " + txCommitMax / 1000 + " µs\n");
 		stats.append("\t\tmin = " + txCommitMin / 1000 + " µs\n");
-		stats.append("\tDistributed Commit " + distCommitIt + "\n");
+		stats.append("\tDistributed Commit " + distCommitIt + " " + totalCommit
+				+ "\n");
 		stats.append("\t\tavg = " + distCommitAvg / 1000000 + " ms\n");
 		stats.append("\t\tmax = " + distCommitMax / 1000000 + " ms\n");
 		stats.append("\t\tmin = " + distCommitMin / 1000000 + " ms\n");

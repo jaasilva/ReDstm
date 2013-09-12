@@ -537,6 +537,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			if (src.isLocal())
 			{ // context is local. access directly
 				SCOReContext ctx = (SCOReContext) ctxs.get(ctxID);
+				PRProfiler.onTxDistCommitFinish(ctxID);
 				ctx.processed(false);
 			}
 		}
