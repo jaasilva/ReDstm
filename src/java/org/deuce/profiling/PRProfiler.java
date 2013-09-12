@@ -519,7 +519,7 @@ public class PRProfiler
 		stats.append("\t\tavg = " + distCommitAvg / 1000000 + " ms\n");
 		stats.append("\t\tmax = " + distCommitMax / 1000000 + " ms\n");
 		stats.append("\t\tmin = " + distCommitMin / 1000000 + " ms\n");
-		stats.append("\tComplete reads (" + txReads + ")\n");
+		stats.append("\tComplete reads " + txReads + "\n");
 		stats.append("\t\tCORRECT: "
 				+ (txReads == (txWsReads + txRemoteRead + txLocalRead)) + "\n");
 		NumberFormat formatter = new DecimalFormat("#.#####");
