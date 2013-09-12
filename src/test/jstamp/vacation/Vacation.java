@@ -284,7 +284,6 @@ public class Vacation
 				managerPtr.manager_addCustomer(id);
 			}
 			// assert(status);
-			System.out.print(i + " ");
 		}
 	}
 
