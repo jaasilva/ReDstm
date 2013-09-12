@@ -25,10 +25,12 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		Receiver
 {
 	private JChannel channel;
+	private int numNodes;
 
 	public JGroupsGroupCommunication()
 	{
 		super();
+		numNodes = Integer.getInteger("tribu.replicas");
 	}
 
 	public void init()
@@ -129,8 +131,8 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 
 	public void viewAccepted(View new_view)
 	{
-		if (new_view.getMembers().size() == Integer
-				.getInteger("tribu.replicas"))
+		System.err.println(new_view);
+		if (new_view.getMembers().size() == numNodes)
 			membersArrived();
 	}
 
@@ -193,18 +195,25 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	@Override
 	public void sendToGroup(byte[] payload, Group group)
 	{
-		for (Address a : group.getAll())
-		{ // assumes group has no duplicate addresses
-			try
-			{
-				channel.send((org.jgroups.Address) a.getSpecificAddress(),
-						payload);
-			}
-			catch (Exception e)
-			{
-				System.err.println("Couldn't send message.");
-				e.printStackTrace();
-				System.exit(-1);
+		if (group.size() == numNodes)
+		{
+			sendReliably(payload); // XXX new
+		}
+		else
+		{
+			for (Address a : group.getAll())
+			{ // assumes group has no duplicate addresses
+				try
+				{
+					channel.send((org.jgroups.Address) a.getSpecificAddress(),
+							payload);
+				}
+				catch (Exception e)
+				{
+					System.err.println("Couldn't send message.");
+					e.printStackTrace();
+					System.exit(-1);
+				}
 			}
 		}
 	}
