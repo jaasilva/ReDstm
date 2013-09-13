@@ -175,6 +175,7 @@ public class Driver
 			bt[i].setPhase(Benchmark.SHUTDOWN_PHASE);
 		}
 		// System.out.println();
+		System.err.println("done.");
 
 		// System.out.print("Waiting for threads to finish...");
 		for (int i = 0; i < t.length; i++)
@@ -189,6 +190,7 @@ public class Driver
 			}
 		}
 		PRProfiler.enabled = false;
+		System.err.println("done2.");
 
 		System.out.println();
 		System.out.println("All threads returned successfully");
