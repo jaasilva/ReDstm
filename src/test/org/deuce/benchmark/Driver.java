@@ -211,6 +211,14 @@ public class Driver
 		PRProfiler.print();
 		
 		// Profiler.enabled = false;
+		try
+		{
+			Thread.sleep(new Random().nextInt(2000));
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 		finishBarrier.join();
 
 		// Profiler.print();
