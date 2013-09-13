@@ -10,14 +10,12 @@ public class MyObjectBackend implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	final byte[] array;
-	private final static int max_range = 2048;
-	private final static int min_range = 1024;
+	private final static int max_range = 5242880; // 5 MB
+	private final static int min_range = 2097152; // 2 MB
 
 	public MyObjectBackend()
 	{
 		Random random = new Random();
-		int width = random.nextInt(max_range + 1) + min_range;
-		int height = random.nextInt(max_range + 1) + min_range;
-		array = new byte[width * height * 3];
+		array = new byte[random.nextInt(max_range + 1) + min_range];
 	}
 }
