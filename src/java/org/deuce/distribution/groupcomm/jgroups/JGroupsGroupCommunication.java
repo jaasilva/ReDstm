@@ -31,6 +31,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	{
 		super();
 		numNodes = Integer.getInteger("tribu.replicas");
+		System.err.println(">>>>>>> " + numNodes);
 	}
 
 	public void init()
