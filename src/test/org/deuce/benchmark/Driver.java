@@ -208,11 +208,12 @@ public class Driver
 		// System.err.println("-- Benchmark finished. Press enter to exit.");
 		// new Scanner(System.in).nextLine();
 
+		PRProfiler.print();
+		
 		// Profiler.enabled = false;
 		finishBarrier.join();
 
 		// Profiler.print();
-		PRProfiler.print();
 
 		// System.out.println(((org.deuce.benchmark.intset.Benchmark) b).m_set);
 

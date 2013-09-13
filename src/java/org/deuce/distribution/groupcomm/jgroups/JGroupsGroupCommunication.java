@@ -198,10 +198,12 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	{
 		if (group.size() == numNodes)
 		{
+			System.err.println("multicast1");
 			sendReliably(payload); // XXX new. trying to optimize
 		}
 		else
 		{
+			System.err.println("multicast2");
 			for (Address a : group.getAll())
 			{ // assumes group has no duplicate addresses
 				try
