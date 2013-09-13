@@ -196,12 +196,12 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	@Override
 	public void sendToGroup(byte[] payload, Group group)
 	{
-		if (group.size() == numNodes)
-		{
-			sendReliably(payload); // XXX new. trying to optimize
-		}
-		else
-		{
+		//if (group.size() == numNodes)
+	//	{
+	//		sendReliably(payload); // XXX new. trying to optimize
+		//}
+	//	else
+	//	{
 			for (Address a : group.getAll())
 			{ // assumes group has no duplicate addresses
 				try
@@ -216,7 +216,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 					System.exit(-1);
 				}
 			}
-		}
+	//	}
 	}
 
 	@Override
