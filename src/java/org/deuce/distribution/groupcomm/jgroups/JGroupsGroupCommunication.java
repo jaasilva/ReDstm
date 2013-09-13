@@ -131,8 +131,9 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 
 	public void viewAccepted(View new_view)
 	{
-//		System.err.println(new_view);
-		if (new_view.getMembers().size() == numNodes)
+		System.err.println(new_view);
+		if (new_view.getMembers().size() == Integer
+				.getInteger("tribu.replicas"))
 			membersArrived();
 	}
 
