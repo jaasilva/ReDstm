@@ -57,6 +57,7 @@ public class Client extends Thread
 	int queryRange;
 	int percentUser;
 	int percentConsult;
+	boolean vac2;
 
 	public Client()
 	{
@@ -70,7 +71,7 @@ public class Client extends Thread
 	 */
 	public Client(int id, Manager managerPtr, int numOperation,
 			int numQueryPerTransaction, int queryRange, int percentUser,
-			int percentConsult)
+			int percentConsult, boolean vac2)
 	{
 		this.randomPtr = new Random();
 		// this.randomPtr.init_genrand(id);
@@ -82,6 +83,7 @@ public class Client extends Thread
 		this.queryRange = queryRange;
 		this.percentUser = percentUser;
 		this.percentConsult = percentConsult;
+		this.vac2 = vac2;
 	}
 
 	/*
@@ -131,7 +133,16 @@ public class Client extends Thread
 			e.printStackTrace();
 		}
 		System.err.println("### benchBarrier: " + id);
-		Vacation.benchBarrier.join();
+		
+		if (vac2)
+		{
+			Vacation2.benchBarrier.join();
+		}
+		else
+		{
+			Vacation.benchBarrier.join();
+		}
+		
 		PRProfiler.enabled = true;
 		Barrier.enterBarrier();
 		for (int i = 0; i < numOperation; i++)
