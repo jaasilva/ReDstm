@@ -435,6 +435,14 @@ public class Vacation2
 		diff = stop - start;
 		System.out.println("TIME2=" + diff);
 
+		System.out.println();
+		System.out.println("RESULTS:");
+		System.out.println(" Test duration (ms) = " + diff);
+		System.out.println(" Stats:");
+		System.out.println(" R=" + reservations + " C=" + consults + " D="
+				+ deleteCustomers + " U=" + updateTables);
+		System.out.println();
+
 		// vac.checkTables(managerPtr);
 
 		/* Clean up */
