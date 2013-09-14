@@ -325,7 +325,7 @@ public class Vacation
 			clients[i] = new Client((Integer.getInteger("tribu.site") - 1)
 					* numClient + i, managerPtr, numTransactionPerClient,
 					numQueryPerTransaction, queryRange, percentUser,
-					percentConsult);
+					percentConsult, false);
 		}
 
 		System.out.println("done.");
