@@ -309,7 +309,7 @@ public class Vacation2
 			clients[i] = new Client((Integer.getInteger("tribu.site") - 1)
 					* numClient + i, managerPtr, numTransactionPerClient,
 					numQueryPerTransaction, queryRange, percentUser,
-					percentConsult);
+					percentConsult, true);
 		}
 
 		System.out.println("done.");
