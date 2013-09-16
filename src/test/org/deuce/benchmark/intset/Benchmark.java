@@ -175,7 +175,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 		int chunkSize = initial / 8;
 		for (int i = 0; i < initial; i += chunkSize)
 		{
-			System.err.println(i);
+			//System.err.println(i);
 			addToSet(random, chunkSize);
 		}
 	}
@@ -185,6 +185,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 	{
 		for (int i = 0; i < chunkSize; i++)
 		{
+			System.err.println(i);
 			while (!m_set.add(random.nextInt(m_range)))
 				;
 		}
