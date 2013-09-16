@@ -175,7 +175,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 		int chunkSize = initial / 8;
 		for (int i = 0; i < initial; i += chunkSize)
 		{
-			System.out.println(i);
+			System.err.println(i);
 			addToSet(random, chunkSize);
 		}
 	}
