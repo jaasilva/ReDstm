@@ -12,6 +12,7 @@ public class MyObjectBackend implements Serializable
 
 	public MyObjectBackend()
 	{
-		array = new byte[1048576]; // 1MB
+		// array = new byte[1048576]; // 1MB
+		array = new byte[3145728]; // 1MB
 	}
 }
