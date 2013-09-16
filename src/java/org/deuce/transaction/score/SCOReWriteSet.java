@@ -65,8 +65,10 @@ public class SCOReWriteSet implements Serializable
 		{
 			PartialReplicationOID meta = ((PartialReplicationOID) a.field
 					.getMetadata());
-			if (!meta.getPartialGroup().isLocal())
-				System.err.println("!!!!!!!!! ");
+			
+			if(!meta.getPartialGroup().isLocal())
+				System.err.println(">>>>> "+a.value);
+			
 			if (meta.getPartialGroup().isLocal())
 			{
 				a.put(sid);
