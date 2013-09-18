@@ -478,18 +478,6 @@ public class TribuDSTM
 	 */
 	public static final Address getLocalAddress()
 	{
-		if (groupComm == null)
-		{
-			try
-			{
-				Thread.sleep(5000);
-			}
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-		}
-		
 		return groupComm.getLocalAddress();
 	}
 

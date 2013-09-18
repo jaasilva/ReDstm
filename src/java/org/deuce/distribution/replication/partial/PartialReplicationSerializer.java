@@ -87,7 +87,16 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		PartialReplicationOID oid = (PartialReplicationOID) obj.getMetadata();
 		Group group = oid.getGroup();
 
-		if (group.isLocal())
+		boolean isLocalGroup = true;
+		try
+		{
+			isLocalGroup = group.isLocal();
+		}
+		catch (NullPointerException e)
+		{
+		}
+
+		if (isLocalGroup)
 		{ // it is my group
 			UniqueObject object = TribuDSTM.getObject(oid);
 
