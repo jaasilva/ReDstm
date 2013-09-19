@@ -87,7 +87,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		PartialReplicationOID oid = (PartialReplicationOID) obj.getMetadata();
 		Group group = oid.getGroup();
 
-		boolean isLocalGroup = true;
+		boolean isLocalGroup = true; // XXX TODO FIXME
 		try
 		{
 			isLocalGroup = group.isLocal();

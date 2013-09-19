@@ -1,12 +1,11 @@
 package jstamp.vacation;
 
-import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
-import org.deuce.profiling.Profiler;
+import org.deuce.profiling.PRProfiler;
 
 /*
  * =============================================================================
@@ -431,7 +430,7 @@ public class Vacation2
 		System.err.println("### finishBarrier");
 		finishBarrier.join();
 		stop = System.currentTimeMillis();
-		Profiler.enabled = false;
+		PRProfiler.enabled = false;
 		diff = stop - start;
 		System.out.println("TIME2=" + diff);
 
@@ -452,7 +451,7 @@ public class Vacation2
 		 */
 		System.out.println("done.");
 
-		Profiler.print();
+		PRProfiler.print();
 
 		// Thread.sleep(5000);
 
