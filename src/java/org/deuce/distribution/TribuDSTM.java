@@ -99,7 +99,14 @@ public class TribuDSTM
 		LOGGER.warn("> TribuDSTM initialized...");
 		LOGGER.warn("#################################");
 
-		System.out.println(">>GROUP: " + getLocalGroup().getId());
+		try
+		{
+			System.out.println(">>GROUP: " + getLocalGroup().getId());
+		}
+		catch (NullPointerException e)
+		{
+
+		}
 	}
 
 	public static final String CLOSE_METHOD_NAME = "close";
