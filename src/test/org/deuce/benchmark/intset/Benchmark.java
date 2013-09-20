@@ -118,6 +118,13 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 				m_set = new RedBTreeX();
 			}
 		}
+		else if (type.equals("RedBTreeZ"))
+		{
+			if (m_set == null)
+			{
+				m_set = new RedBTreeZ();
+			}
+		}
 		else if (type.equals("SkipList"))
 		{
 			if (m_set == null)
