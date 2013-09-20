@@ -711,7 +711,32 @@ public class RedBTree implements IntSet
 	}
 
 	@Atomic
+	public boolean add2(int key)
+	{
+		Node node = new Node();
+		Node ex = insert(key, key, node);
+		if (ex != null)
+		{
+			node = null;
+		}
+		return ex == null;
+	}
+
+	@Atomic
 	public boolean remove(int key)
+	{
+		Node node = null;
+		node = lookup(key);
+
+		if (node != null)
+		{
+			node = deleteNode(node);
+		}
+		return node != null;
+	}
+
+	@Atomic
+	public boolean remove2(int key)
 	{
 		Node node = null;
 		node = lookup(key);

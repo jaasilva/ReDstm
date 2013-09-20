@@ -1,7 +1,6 @@
 package org.deuce.benchmark.intset;
 
 import org.deuce.Atomic;
-import org.deuce.distribution.replication.partial.Partial;
 
 /*
  * =============================================================================
@@ -57,21 +56,21 @@ public class RedBTreeX implements IntSet
 	public final static int RED = 0;
 	public final static int BLACK = 1;
 
-//	public class _Node
-//	{
-//		int k; // key
-//		@Partial
-//		Object v; // val
-//		_Node p; // parent
-//		_Node l; // left
-//		_Node r; // right
-//		int c; // color
-//
-//		public _Node()
-//		{
-//		}
-//
-//	}
+	// public class _Node
+	// {
+	// int k; // key
+	// @Partial
+	// Object v; // val
+	// _Node p; // parent
+	// _Node l; // left
+	// _Node r; // right
+	// int c; // color
+	//
+	// public _Node()
+	// {
+	// }
+	//
+	// }
 
 	_Node root;
 
@@ -712,7 +711,33 @@ public class RedBTreeX implements IntSet
 	}
 
 	@Atomic
+	public boolean add2(int key)
+	{
+		_Node node = new _Node();
+		Object x = new MyObject();
+		_Node ex = insert(key, x, node);
+		if (ex != null)
+		{
+			node = null;
+		}
+		return ex == null;
+	}
+
+	@Atomic
 	public boolean remove(int key)
+	{
+		_Node node = null;
+		node = lookup(key);
+
+		if (node != null)
+		{
+			node = deleteNode(node);
+		}
+		return node != null;
+	}
+
+	@Atomic
+	public boolean remove2(int key)
 	{
 		_Node node = null;
 		node = lookup(key);

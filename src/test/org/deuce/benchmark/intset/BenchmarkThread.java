@@ -39,29 +39,14 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 				// if (m_set.add(m_last)) {
 				m_write = false;
 				// }
-				if (m_random.nextInt(100) < 10)
-				{
-					m_set.add(m_random.nextInt(m_range));
-				}
-				else
-				{
-					m_set.add2(m_random.nextInt(m_range));
-				}
 
+				m_set.add2(m_random.nextInt(m_range));
 				if (phase == Benchmark.TEST_PHASE)
 					m_nb_add++;
 			}
 			else
 			{
-				if (m_random.nextInt(100) < 10)
-				{
-					m_set.remove(m_random.nextInt(m_range));
-				}
-				else
-				{
-					m_set.remove2(m_random.nextInt(m_range));
-				}
-
+				m_set.remove2(m_random.nextInt(m_range));
 				if (phase == Benchmark.TEST_PHASE)
 					m_nb_remove++;
 				m_write = true;
