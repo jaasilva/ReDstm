@@ -98,6 +98,8 @@ public class TribuDSTM
 
 		LOGGER.warn("> TribuDSTM initialized...");
 		LOGGER.warn("#################################");
+
+		System.out.println(">>GROUP: " + getLocalGroup().getId());
 	}
 
 	public static final String CLOSE_METHOD_NAME = "close";
