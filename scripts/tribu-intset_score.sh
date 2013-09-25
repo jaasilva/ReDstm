@@ -37,7 +37,7 @@ RANGE=4096
 WRITES=10
 
 _STM=score.SCOReContext
-_REP=score.SCOReProtocol_noReadOpt # score.SCOReProtocol score.SCOReProtocol_noReadOpt
+_REP=score.SCOReProtocol #_noReadOpt # score.SCOReProtocol score.SCOReProtocol_noReadOpt
 _COMM=jgroups.JGroups # jgroups.JGroups appia.Appia spread.Spread
 # RandomDataPartitioner SimpleDataPartitioner RoundRobinDataPartitioner
 _DATA_PART=RoundRobinDataPartitioner
@@ -69,7 +69,7 @@ java -Xmx1g -Xms1g -cp $CP -javaagent:bin/deuceAgent.jar \
 	-Dtribu.distributed.protocolClass=$REP \
 	-Dtribu.serialization.compress=$ZIP \
 	-Dtribu.distributed.PartialReplicationMode=true \
-	-Dtribu.groups=2 \
+	-Dtribu.groups=$6 \
 	org.deuce.benchmark.Driver -n $THREADS -d $DURATION -w $WARMUP \
 		org.deuce.benchmark.intset.Benchmark $BENCHMARK -r $RANGE -i $SIZE \
 		-w $WRITES

@@ -126,7 +126,7 @@ public class Client extends Thread
 	{
 		try
 		{
-			Thread.sleep(new java.util.Random().nextInt(5000));
+			Thread.sleep(new java.util.Random().nextInt(3000));
 		}
 		catch (InterruptedException e)
 		{

@@ -24,10 +24,9 @@ EXCLUDE="${EXCLUDE},org.deuce.trove.*"
 WARMUP=0
 DURATION=10000
 
-SITE=$3
-THREADS=$4
-REPLICAS=$5
-RUN=$6
+THREADS=$2
+REPLICAS=$3
+RUN=$4
 
 BENCHMARK=$1
 SIZE=1024 # 2^10
@@ -36,7 +35,7 @@ WRITES=10
 
 _STM=tl2.Context
 _REP=nonvoting.NonVoting
-_COMM=$2
+_COMM=jgroups.JGroups
 
 STM="org.deuce.transaction.${_STM}"
 COMM="org.deuce.distribution.groupcomm.${_COMM}GroupCommunication"
@@ -56,12 +55,10 @@ echo `date +%H:%M`
 echo "#####"
 
 java -Xmx1g -Xms1g -cp $CP -javaagent:bin/deuceAgent.jar \
-	-Dlog=$7 \
 	-Dorg.deuce.transaction.contextClass=$STM \
 	-Dorg.deuce.exclude=$EXCLUDE \
 	-Dtribu.groupcommunication.class=$COMM \
 	-Dtribu.groupcommunication.group=$GROUP \
-	-Dtribu.site=$SITE \
 	-Dtribu.replicas=$REPLICAS \
 	-Dtribu.distributed.protocolClass=$REP \
 	-Dtribu.serialization.compress=$ZIP \
