@@ -101,23 +101,23 @@ public class Driver
 
 		// System.err.println("-- Set created. Press enter to start threads.");
 		// new Scanner(System.in).nextLine();
-		// try
-		// {
-		// 	Thread.sleep(new Random().nextInt(5000));
-		// }
-		// catch (InterruptedException e)
-		// {
-		// 	e.printStackTrace();
-		// }
+		 try
+		 {
+		 	Thread.sleep(new Random().nextInt(5000));
+		 }
+		 catch (InterruptedException e)
+		 {
+			e.printStackTrace();
+		 }
 		initBarriers();
-		// try
-		// {
-		// 	Thread.sleep(new Random().nextInt(5000));
-		// }
-		// catch (InterruptedException e)
-		// {
-		// 	e.printStackTrace();
-		// }
+		 try
+		 {
+		 	Thread.sleep(new Random().nextInt(5000));
+		 }
+		 catch (InterruptedException e)
+		 {
+		 	e.printStackTrace();
+		 }
 		setupBarrier.join();
 
 		// Profiler.enabled = true;
