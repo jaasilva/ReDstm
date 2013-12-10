@@ -7,7 +7,6 @@ import org.deuce.transform.localmetadata.type.TxField;
 
 /**
  * @author jaasilva
- * 
  */
 @ExcludeTM
 public class VBoxField extends TxField implements InPlaceRWLock,
@@ -137,35 +136,35 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 	{
 		switch (type)
 		{
-			case Type.BYTE:
-				writeByte((Byte) value);
-				break;
-			case Type.BOOLEAN:
-				writeBoolean((Boolean) value);
-				break;
-			case Type.CHAR:
-				writeChar((Character) value);
-				break;
-			case Type.SHORT:
-				writeShort((Short) value);
-				break;
-			case Type.INT:
-				writeInt((Integer) value);
-				break;
-			case Type.LONG:
-				writeLong((Long) value);
-				break;
-			case Type.FLOAT:
-				writeFloat((Float) value);
-				break;
-			case Type.DOUBLE:
-				writeDouble((Double) value);
-				break;
-			case Type.OBJECT:
-				writeObject(value);
-				break;
-			case Type.ARRAY:
-				writeArray((ArrayContainer) value);
+		case Type.BYTE:
+			writeByte((Byte) value);
+			break;
+		case Type.BOOLEAN:
+			writeBoolean((Boolean) value);
+			break;
+		case Type.CHAR:
+			writeChar((Character) value);
+			break;
+		case Type.SHORT:
+			writeShort((Short) value);
+			break;
+		case Type.INT:
+			writeInt((Integer) value);
+			break;
+		case Type.LONG:
+			writeLong((Long) value);
+			break;
+		case Type.FLOAT:
+			writeFloat((Float) value);
+			break;
+		case Type.DOUBLE:
+			writeDouble((Double) value);
+			break;
+		case Type.OBJECT:
+			writeObject(value);
+			break;
+		case Type.ARRAY:
+			writeArray((ArrayContainer) value);
 		}
 	}
 
@@ -173,26 +172,26 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 	{
 		switch (type)
 		{
-			case Type.BYTE:
-				return readByte();
-			case Type.BOOLEAN:
-				return readBoolean();
-			case Type.CHAR:
-				return readChar();
-			case Type.SHORT:
-				return readShort();
-			case Type.INT:
-				return readInt();
-			case Type.LONG:
-				return readLong();
-			case Type.FLOAT:
-				return readFloat();
-			case Type.DOUBLE:
-				return readDouble();
-			case Type.OBJECT:
-				return readObject();
-			case Type.ARRAY:
-				return readArray();
+		case Type.BYTE:
+			return readByte();
+		case Type.BOOLEAN:
+			return readBoolean();
+		case Type.CHAR:
+			return readChar();
+		case Type.SHORT:
+			return readShort();
+		case Type.INT:
+			return readInt();
+		case Type.LONG:
+			return readLong();
+		case Type.FLOAT:
+			return readFloat();
+		case Type.DOUBLE:
+			return readDouble();
+		case Type.OBJECT:
+			return readObject();
+		case Type.ARRAY:
+			return readArray();
 		}
 		return null;
 	}

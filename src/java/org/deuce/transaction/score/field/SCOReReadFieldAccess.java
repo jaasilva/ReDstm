@@ -8,7 +8,6 @@ import org.deuce.transform.localmetadata.type.TxField;
 
 /**
  * @author jaasilva
- * 
  */
 @ExcludeTM
 public class SCOReReadFieldAccess implements Serializable

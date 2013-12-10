@@ -9,7 +9,6 @@ import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
- * 
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.CLASS)

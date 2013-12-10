@@ -9,5 +9,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LocalMetadata
 {
-	String metadataClass() default "org.deuce.transform.localmetadata.type.TxField";
+	String metadataClass() default Defaults.LOCAL_METADATA;
 }

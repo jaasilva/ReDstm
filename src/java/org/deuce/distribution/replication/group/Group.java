@@ -11,7 +11,6 @@ import org.deuce.transform.ExcludeTM;
  * This interface represents a group of addresses.
  * 
  * @author jaasilva
- * 
  */
 @ExcludeTM
 public interface Group extends Serializable

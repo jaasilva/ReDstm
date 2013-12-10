@@ -6,7 +6,6 @@ import org.deuce.transform.ExcludeTM;
  * Represents the locator table. It maps metadata to UniqueObjects.
  * 
  * @author tvale
- * 
  */
 @ExcludeTM
 public interface Locator

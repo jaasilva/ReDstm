@@ -39,13 +39,13 @@ import org.deuce.transform.localmetadata.type.TxField;
 
 /**
  * @author jaasilva
- * 
  */
 @ExcludeTM
-public class SCOReProtocol_profiler extends PartialReplicationProtocol implements
-		DeliverySubscriber
+public class SCOReProtocol_profiler extends PartialReplicationProtocol
+		implements DeliverySubscriber
 {
-	private static final Logger LOGGER = Logger.getLogger(SCOReProtocol_profiler.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(SCOReProtocol_profiler.class);
 	private Comparator<Pair<String, Integer>> comp = new Comparator<Pair<String, Integer>>()
 	{
 		@Override
@@ -119,7 +119,7 @@ public class SCOReProtocol_profiler extends PartialReplicationProtocol implement
 		resGroup.add(TribuDSTM.getLocalAddress());// the coordinator needs to
 		// participate in this voting to release the context
 		int expVotes = resGroup.size();
-//		PRProfiler.whatNodes(expVotes);
+		// PRProfiler.whatNodes(expVotes);
 
 		sctx.maxVote = 0;
 		sctx.receivedVotes = 0;
@@ -241,8 +241,7 @@ public class SCOReProtocol_profiler extends PartialReplicationProtocol implement
 		do
 		{
 			origNextId = nextId.get();
-		}
-		while (!nextId.compareAndSet(origNextId, Math.max(origNextId, sid)));
+		} while (!nextId.compareAndSet(origNextId, Math.max(origNextId, sid)));
 
 		VBoxField field = (VBoxField) TribuDSTM.getObject(metadata);
 
@@ -269,16 +268,14 @@ public class SCOReProtocol_profiler extends PartialReplicationProtocol implement
 		do
 		{
 			origNextId = nextId.get();
-		}
-		while (!nextId.compareAndSet(origNextId,
+		} while (!nextId.compareAndSet(origNextId,
 				Math.max(origNextId, lastCommitted)));
 
 		int origMaxSeenId;
 		do
 		{
 			origMaxSeenId = maxSeenId.get();
-		}
-		while (!maxSeenId.compareAndSet(origMaxSeenId,
+		} while (!maxSeenId.compareAndSet(origMaxSeenId,
 				Math.max(origMaxSeenId, lastCommitted)));
 		advanceCommitId();
 	}
@@ -506,8 +503,7 @@ public class SCOReProtocol_profiler extends PartialReplicationProtocol implement
 			do
 			{
 				origNextId = nextId.get();
-			}
-			while (!nextId.compareAndSet(origNextId,
+			} while (!nextId.compareAndSet(origNextId,
 					Math.max(origNextId, finalSid)));
 			stableQ.add(new Pair<String, Integer>(trxID, finalSid));
 		}
@@ -641,8 +637,7 @@ public class SCOReProtocol_profiler extends PartialReplicationProtocol implement
 			{
 				return;
 			}
-		}
-		while (!commitId.compareAndSet(origCommitId, maxSeenId.get()));
+		} while (!commitId.compareAndSet(origCommitId, maxSeenId.get()));
 	}
 
 	@ExcludeTM

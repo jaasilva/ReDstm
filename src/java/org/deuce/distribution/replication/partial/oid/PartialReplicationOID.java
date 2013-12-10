@@ -9,7 +9,6 @@ import org.deuce.transform.ExcludeTM;
  * Represents a partial replication object identifier.
  * 
  * @author jaasilva
- * 
  */
 @ExcludeTM
 public interface PartialReplicationOID extends OID

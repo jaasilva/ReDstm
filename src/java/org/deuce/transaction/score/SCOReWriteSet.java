@@ -13,7 +13,6 @@ import org.deuce.trove.THashSet;
 
 /**
  * @author jaasilva
- * 
  */
 @ExcludeTM
 public class SCOReWriteSet implements Serializable

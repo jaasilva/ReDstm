@@ -7,13 +7,11 @@ import org.deuce.transform.ExcludeTM;
 
 /**
  * This class implements the PartialReplicationOID interface. It represents a
- * distribution metadata for partial replication.
- * 
- * *Every* metadata object is created with isPublished set to false. Every
- * metadata start being not published.
+ * distribution metadata for partial replication. *Every* metadata object is
+ * created with isPublished set to false. Every metadata start being not
+ * published.
  * 
  * @author jaasilva
- * 
  */
 @ExcludeTM
 public class PartialReplicationMetadata implements PartialReplicationOID

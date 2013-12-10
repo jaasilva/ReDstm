@@ -9,7 +9,6 @@ import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
- * 
  */
 @ExcludeTM
 public class RoundRobinDataPartitioner implements DataPartitioner

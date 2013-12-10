@@ -6,7 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * 
  * @author Guy Korland
  * @since 1.0
  */
@@ -14,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 public @interface Atomic
 {
-	int retries() default Integer.MAX_VALUE;
+	int retries() default Defaults.MAX_RETRIES;
 
-	String metainf() default "";
+	String metainf() default Defaults.METAINF;
 }

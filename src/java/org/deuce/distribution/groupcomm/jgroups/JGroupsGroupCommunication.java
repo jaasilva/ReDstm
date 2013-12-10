@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deuce.Defaults;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
@@ -25,12 +26,10 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		Receiver
 {
 	private JChannel channel;
-	private int numNodes;
 
 	public JGroupsGroupCommunication()
 	{
 		super();
-		numNodes = Integer.getInteger("tribu.replicas");
 	}
 
 	public void init()
@@ -47,8 +46,8 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 			}
 
 			channel.setReceiver(this);
-			channel.connect(System.getProperty(
-					"tribu.groupcommunication.group", "tvale"));
+			channel.connect(System.getProperty(Defaults._COMM_GROUP,
+					Defaults.COMM_GROUP));
 
 			myAddress = new JGroupsAddress(channel.getAddress());
 		}
@@ -133,7 +132,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	{
 		System.err.println(new_view);
 		if (new_view.getMembers().size() == Integer
-				.getInteger("tribu.replicas"))
+				.getInteger(Defaults._REPLICAS))
 			membersArrived();
 	}
 
@@ -196,27 +195,27 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	@Override
 	public void sendToGroup(byte[] payload, Group group)
 	{
-		//if (group.size() == numNodes)
-	//	{
-	//		sendReliably(payload); // XXX new. trying to optimize
-		//}
-	//	else
-	//	{
-			for (Address a : group.getAll())
-			{ // assumes group has no duplicate addresses
-				try
-				{
-					channel.send((org.jgroups.Address) a.getSpecificAddress(),
-							payload);
-				}
-				catch (Exception e)
-				{
-					System.err.println("Couldn't send message.");
-					e.printStackTrace();
-					System.exit(-1);
-				}
+		// if (group.size() == numNodes)
+		// {
+		// sendReliably(payload); // XXX trying to optimize
+		// }
+		// else
+		// {
+		for (Address a : group.getAll())
+		{ // assumes group has no duplicate addresses
+			try
+			{
+				channel.send((org.jgroups.Address) a.getSpecificAddress(),
+						payload);
 			}
-	//	}
+			catch (Exception e)
+			{
+				System.err.println("Couldn't send message.");
+				e.printStackTrace();
+				System.exit(-1);
+			}
+		}
+		// }
 	}
 
 	@Override

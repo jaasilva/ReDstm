@@ -7,7 +7,6 @@ import org.deuce.transform.ExcludeTM;
  * This factory class constructs new partial replication distribution metadata.
  * 
  * @author jaasilva
- * 
  */
 @ExcludeTM
 public interface PartialReplicationOIDFactory extends OIDFactory

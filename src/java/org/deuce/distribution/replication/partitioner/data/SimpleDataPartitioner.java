@@ -7,7 +7,6 @@ import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
- * 
  */
 @ExcludeTM
 public class SimpleDataPartitioner implements DataPartitioner

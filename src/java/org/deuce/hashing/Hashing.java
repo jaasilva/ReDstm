@@ -4,7 +4,6 @@ import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
- * 
  */
 @ExcludeTM
 public interface Hashing

@@ -1,7 +1,6 @@
 package org.deuce.transaction.score.field;
 
 /**
- * 
  * @author jaasilva
  */
 public interface InPlaceRWLock

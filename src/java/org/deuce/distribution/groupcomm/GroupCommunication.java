@@ -3,6 +3,7 @@ package org.deuce.distribution.groupcomm;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import org.deuce.Defaults;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
 import org.deuce.distribution.replication.group.Group;
@@ -32,7 +33,7 @@ public abstract class GroupCommunication
 		}
 
 		// defines node rank based in gcs' members list
-		System.setProperty("tribu.site",
+		System.setProperty(Defaults._SITE,
 				"" + (getMembers().indexOf(getLocalAddress()) + 1));
 
 		System.err.println("-- Members arrived!");

@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import org.deuce.Defaults;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
@@ -38,15 +39,15 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		group = new SpreadGroup();
 		try
 		{
-			String daemon = System.getProperty(
-					"tribu.groupcommunication.spread.daemon", "localhost");
-			String privateName = "replica" + Integer.getInteger("tribu.site");
+			String daemon = System.getProperty(Defaults._COMM_SPREAD_DAEMON,
+					Defaults.COMM_SPREAD_DAEMON);
+			String privateName = "replica" + Integer.getInteger(Defaults._SITE);
 
 			connection.connect(InetAddress.getByName(daemon), 0, privateName,
 					false, true);
 			connection.add(this);
-			group.join(connection, System.getProperty(
-					"tribu.groupcommunication.group", "tvale"));
+			group.join(connection, System.getProperty(Defaults._COMM_GROUP,
+					Defaults.COMM_GROUP));
 			myAddress = new SpreadAddress(connection.getPrivateGroup()
 					.toString());
 		}
@@ -145,7 +146,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		if (message.isMembership()
 				&& message.getMembershipInfo().isRegularMembership()
 				&& (members = message.getMembershipInfo().getMembers()).length == Integer
-						.getInteger("tribu.replicas").intValue())
+						.getInteger(Defaults._REPLICAS).intValue())
 		{
 			this.members = members;
 			membersArrived();

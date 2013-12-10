@@ -6,7 +6,6 @@ import org.deuce.transaction.DistributedContextState;
 
 /**
  * @author jaasilva
- * 
  */
 public class SCOReContextState extends DistributedContextState
 {

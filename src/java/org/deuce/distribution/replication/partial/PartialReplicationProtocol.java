@@ -7,7 +7,6 @@ import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
- * 
  */
 @ExcludeTM
 public abstract class PartialReplicationProtocol implements DistributedProtocol

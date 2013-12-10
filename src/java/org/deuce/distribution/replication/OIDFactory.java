@@ -21,8 +21,7 @@ public interface OIDFactory
 	/**
 	 * Generates a deterministic OID.
 	 * 
-	 * @param oid
-	 *            The desired OID.
+	 * @param oid The desired OID.
 	 * @return A deterministically generated OID.
 	 */
 	/*

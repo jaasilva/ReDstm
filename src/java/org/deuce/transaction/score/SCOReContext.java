@@ -2,6 +2,7 @@ package org.deuce.transaction.score;
 
 import java.util.concurrent.Semaphore;
 
+import org.deuce.Defaults;
 import org.deuce.LocalMetadata;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
@@ -35,7 +36,6 @@ import org.deuce.transform.localmetadata.type.TxField;
  * timestamp less or equal to T.sid, as in classical MVCC algorithms.
  * 
  * @author jaasilva
- * 
  */
 @ExcludeTM
 @LocalMetadata(metadataClass = "org.deuce.transaction.score.field.VBoxField")
@@ -43,8 +43,9 @@ public class SCOReContext extends DistributedContext
 {
 	public static final TransactionException VERSION_UNAVAILABLE_EXCEPTION = new TransactionException(
 			"Fail on retrieveing an older or unexistent version.");
-	public static int MAX_VERSIONS = Integer.getInteger(
-			"org.deuce.transaction.score.versions", 16);
+	public static int MAX_VERSIONS = Integer
+			.getInteger(Defaults._SCORE_MVCC_MAX_VERSIONS,
+					Defaults.SCORE_MVCC_MAX_VERSIONS);
 
 	public SCOReReadSet readSet;
 	public SCOReWriteSet writeSet;

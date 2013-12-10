@@ -6,7 +6,6 @@ import com.google.common.hash.Hashing;
 
 /**
  * @author jaasilva
- * 
  */
 @ExcludeTM
 public class SHA1GuavaHashFunction implements org.deuce.hashing.Hashing

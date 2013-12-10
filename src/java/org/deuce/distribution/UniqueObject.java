@@ -11,7 +11,6 @@ import org.deuce.transform.ExcludeTM;
  * distributed object in the system.
  * 
  * @author tvale
- * 
  */
 @ExcludeTM
 public interface UniqueObject extends Serializable

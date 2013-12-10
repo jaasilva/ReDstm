@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.deuce.distribution.replication.partial.protocol.score;
 
 import java.io.Serializable;
@@ -9,7 +6,6 @@ import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
- * 
  */
 @ExcludeTM
 public class ReadRet implements Serializable

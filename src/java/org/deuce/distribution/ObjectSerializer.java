@@ -11,6 +11,7 @@ import java.io.ObjectStreamException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.deuce.Defaults;
 import org.deuce.distribution.serialization.GCPayloadException;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
@@ -20,7 +21,6 @@ import org.deuce.transform.ExcludeTM;
  * de-serialize objects to and from the network.
  * 
  * @author tvale
- * 
  */
 @ExcludeTM
 public abstract class ObjectSerializer
@@ -31,7 +31,7 @@ public abstract class ObjectSerializer
 			.getDescriptor(ObjectSerializer.class);
 
 	final static public boolean COMPRESS = Boolean.parseBoolean(System
-			.getProperty("tribu.serialization.compress", "true"));
+			.getProperty(Defaults._SER_COMPRESS, Defaults.SER_COMPRESS));
 
 	/**
 	 * Serializes the object given by parameter into an array of bytes.

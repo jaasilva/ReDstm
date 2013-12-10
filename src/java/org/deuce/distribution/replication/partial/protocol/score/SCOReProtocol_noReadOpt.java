@@ -16,6 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
+import org.deuce.Defaults;
 import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
@@ -39,11 +40,10 @@ import org.deuce.transform.localmetadata.type.TxField;
 
 /**
  * @author jaasilva
- * 
  */
 @ExcludeTM
-public class SCOReProtocol_noReadOpt extends PartialReplicationProtocol implements
-		DeliverySubscriber
+public class SCOReProtocol_noReadOpt extends PartialReplicationProtocol
+		implements DeliverySubscriber
 {
 	private static final Logger LOGGER = Logger
 			.getLogger(SCOReProtocol_noReadOpt.class);
@@ -64,9 +64,9 @@ public class SCOReProtocol_noReadOpt extends PartialReplicationProtocol implemen
 
 	private final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 	private final Queue<Pair<String, Integer>> pendQ = new PriorityQueue<Pair<String, Integer>>(
-			50, comp); // accessed ONLY by bottom threads
+			1000, comp); // accessed ONLY by bottom threads
 	private final Queue<Pair<String, Integer>> stableQ = new PriorityQueue<Pair<String, Integer>>(
-			50, comp); // accessed ONLY by bottom threads
+			1000, comp); // accessed ONLY by bottom threads
 
 	// accessed ONLY by bottom threads
 	private final Map<String, DistributedContextState> receivedTrxs = new HashMap<String, DistributedContextState>();
@@ -75,7 +75,7 @@ public class SCOReProtocol_noReadOpt extends PartialReplicationProtocol implemen
 
 	private static final int minReadThreads = 1;
 	private final Executor pool = Executors.newFixedThreadPool(Math.max(
-			Integer.getInteger("tribu.replicas") - 1, minReadThreads));
+			Integer.getInteger(Defaults._REPLICAS) - 1, minReadThreads));
 
 	private static final List<DistributedContextState> toBeProcessed = new ArrayList<DistributedContextState>();
 
@@ -237,8 +237,7 @@ public class SCOReProtocol_noReadOpt extends PartialReplicationProtocol implemen
 		do
 		{
 			origNextId = nextId.get();
-		}
-		while (!nextId.compareAndSet(origNextId, Math.max(origNextId, sid)));
+		} while (!nextId.compareAndSet(origNextId, Math.max(origNextId, sid)));
 
 		VBoxField field = (VBoxField) TribuDSTM.getObject(metadata);
 
@@ -265,16 +264,14 @@ public class SCOReProtocol_noReadOpt extends PartialReplicationProtocol implemen
 		do
 		{
 			origNextId = nextId.get();
-		}
-		while (!nextId.compareAndSet(origNextId,
+		} while (!nextId.compareAndSet(origNextId,
 				Math.max(origNextId, lastCommitted)));
 
 		int origMaxSeenId;
 		do
 		{
 			origMaxSeenId = maxSeenId.get();
-		}
-		while (!maxSeenId.compareAndSet(origMaxSeenId,
+		} while (!maxSeenId.compareAndSet(origMaxSeenId,
 				Math.max(origMaxSeenId, lastCommitted)));
 		advanceCommitId();
 	}
@@ -501,8 +498,7 @@ public class SCOReProtocol_noReadOpt extends PartialReplicationProtocol implemen
 			do
 			{
 				origNextId = nextId.get();
-			}
-			while (!nextId.compareAndSet(origNextId,
+			} while (!nextId.compareAndSet(origNextId,
 					Math.max(origNextId, finalSid)));
 			stableQ.add(new Pair<String, Integer>(trxID, finalSid));
 		}
@@ -634,8 +630,7 @@ public class SCOReProtocol_noReadOpt extends PartialReplicationProtocol implemen
 			{
 				return;
 			}
-		}
-		while (!commitId.compareAndSet(origCommitId, maxSeenId.get()));
+		} while (!commitId.compareAndSet(origCommitId, maxSeenId.get()));
 	}
 
 	@ExcludeTM

@@ -5,6 +5,7 @@ import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deuce.Defaults;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
@@ -51,8 +52,8 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 	public void init()
 	{
 		config = new AppiaGroup();
-		config.setGroupName(System.getProperty(
-				"tribu.groupcommunication.group", "tvale"));
+		config.setGroupName(System.getProperty(Defaults._COMM_GROUP,
+				Defaults.COMM_GROUP));
 		config.setConfigFileName("etc/appia-tob.xml");
 		try
 		{
@@ -148,7 +149,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		{
 			membership = controlSession.getMembership();
 			if (membership.getMembershipList().size() == Integer.getInteger(
-					"tribu.replicas").intValue())
+					Defaults._REPLICAS).intValue())
 				membersArrived();
 		}
 		catch (NotJoinedException e)

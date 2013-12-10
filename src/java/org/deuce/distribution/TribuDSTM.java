@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.apache.log4j.Logger;
+import org.deuce.Defaults;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
@@ -23,7 +24,6 @@ import org.deuce.transform.localmetadata.type.TxField;
  * system.
  * 
  * @author tvale, jaasilva
- * 
  */
 @ExcludeTM
 public class TribuDSTM
@@ -41,7 +41,6 @@ public class TribuDSTM
 	private static int numGroups;
 	public static boolean PARTIAL; // check runtime mode
 	final public static Collection<Address> ALL = new HashSet<Address>();
-	public static String partialDefault = "false";
 
 	/*
 	 * ################################################################
@@ -82,7 +81,7 @@ public class TribuDSTM
 
 		if (PARTIAL)
 		{
-			numGroups = Integer.getInteger("tribu.groups", 1);
+			numGroups = Integer.getInteger(Defaults._GROUPS, Defaults.GROUPS);
 
 			LOGGER.warn("> Groups: " + numGroups);
 
@@ -99,14 +98,14 @@ public class TribuDSTM
 		LOGGER.warn("> TribuDSTM initialized...");
 		LOGGER.warn("#################################");
 
-		try
-		{
-			System.out.println(">>GROUP: " + getLocalGroup().getId());
-		}
-		catch (NullPointerException e)
-		{
-
-		}
+		// try
+		// {
+		System.out.println(">>GROUP: " + getLocalGroup().getId());
+		// }
+		// catch (NullPointerException e)
+		// {
+		//
+		// }
 	}
 
 	public static final String CLOSE_METHOD_NAME = "close";
@@ -135,7 +134,7 @@ public class TribuDSTM
 	private static void checkRuntimeMode()
 	{
 		PARTIAL = Boolean.parseBoolean(System.getProperty(
-				"tribu.distributed.PartialReplicationMode", partialDefault));
+				Defaults._PARTIAL_MODE, Defaults.PARTIAL_MODE));
 
 		LOGGER.warn("> Partial replication mode: " + PARTIAL);
 	}
@@ -145,9 +144,8 @@ public class TribuDSTM
 	 */
 	private static void initGroupCommunication()
 	{
-		String className = System
-				.getProperty("tribu.groupcommunication.class",
-						"org.deuce.distribution.groupcomm.jgroups.JGroupsGroupCommunication");
+		String className = System.getProperty(Defaults._COMM_CLASS,
+				Defaults.COMM_CLASS);
 		try
 		{
 			@SuppressWarnings("unchecked")
@@ -170,9 +168,8 @@ public class TribuDSTM
 	@SuppressWarnings("unchecked")
 	private static void initTransactionContext()
 	{
-		String className = System.getProperty(
-				"org.deuce.transaction.contextClass",
-				"org.deuce.transaction.tl2.Context");
+		String className = System.getProperty(Defaults._CTX_CLASS,
+				Defaults.CTX_CLASS);
 		try
 		{
 			ctxClass = (Class<? extends DistributedContext>) Class
@@ -192,9 +189,8 @@ public class TribuDSTM
 	 */
 	private static void initReplicationProtocol()
 	{
-		String className = System
-				.getProperty("tribu.distributed.protocolClass",
-						"org.deuce.distribution.replication.full.protocol.nonvoting.NonVoting");
+		String className = System.getProperty(Defaults._PROTO_CLASS,
+				Defaults.PROTO_CLASS);
 		try
 		{
 			@SuppressWarnings("unchecked")
@@ -216,13 +212,10 @@ public class TribuDSTM
 	 */
 	private static void initPartitioners()
 	{
-		String groupPartClass = System
-				.getProperty(
-						"tribu.distributed.GroupPartitionerClass",
-						"org.deuce.distribution.replication.partitioner.group.RoundRobinGroupPartitioner");
-		String dataPartClass = System
-				.getProperty("tribu.distributed.DataPartitionerClass",
-						"org.deuce.distribution.replication.partitioner.data.SimpleDataPartitioner");
+		String groupPartClass = System.getProperty(Defaults._GP_CLASS,
+				Defaults.GP_CLASS);
+		String dataPartClass = System.getProperty(Defaults._DP_CLASS,
+				Defaults.DP_CLASS);
 		try
 		{
 			@SuppressWarnings("unchecked")
@@ -460,7 +453,7 @@ public class TribuDSTM
 	 * Subscribes a subscriber to receive messages from the group communication
 	 * system, optimistically.
 	 * 
-	 * @param subscriber- the subscriber that will receive the messages,
+	 * @param subscriber - the subscriber that will receive the messages,
 	 *            optimistically.
 	 */
 	public static final void subscribeOptimisticDeliveries(

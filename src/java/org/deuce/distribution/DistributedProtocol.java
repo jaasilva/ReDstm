@@ -12,7 +12,6 @@ import org.deuce.transform.localmetadata.type.TxField;
  * called by the corresponding transaction context when certain events occur.
  * 
  * @author tvale
- * 
  */
 @ExcludeTM
 public interface DistributedProtocol

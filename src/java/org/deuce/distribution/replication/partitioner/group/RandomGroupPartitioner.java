@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.deuce.Defaults;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
@@ -13,7 +14,6 @@ import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
- * 
  */
 @ExcludeTM
 public class RandomGroupPartitioner extends Partitioner implements
@@ -27,9 +27,8 @@ public class RandomGroupPartitioner extends Partitioner implements
 	{
 		super();
 
-		String className = System.getProperty(
-				"tribu.distributed.GroupPartitionerHashClass",
-				"org.deuce.hashing.MD5GuavaHashFunction");
+		String className = System.getProperty(Defaults._GP_HASH_CLASS,
+				Defaults.GP_HASH_CLASS);
 		try
 		{
 			@SuppressWarnings("unchecked")

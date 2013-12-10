@@ -39,7 +39,6 @@ import org.deuce.transform.localmetadata.type.TxField;
 
 /**
  * @author jaasilva
- * 
  */
 @ExcludeTM
 public class SCOReProtocol extends PartialReplicationProtocol implements
@@ -241,8 +240,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		do
 		{
 			origNextId = nextId.get();
-		}
-		while (!nextId.compareAndSet(origNextId, Math.max(origNextId, sid)));
+		} while (!nextId.compareAndSet(origNextId, Math.max(origNextId, sid)));
 
 		VBoxField field = (VBoxField) TribuDSTM.getObject(metadata);
 
@@ -269,16 +267,14 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		do
 		{
 			origNextId = nextId.get();
-		}
-		while (!nextId.compareAndSet(origNextId,
+		} while (!nextId.compareAndSet(origNextId,
 				Math.max(origNextId, lastCommitted)));
 
 		int origMaxSeenId;
 		do
 		{
 			origMaxSeenId = maxSeenId.get();
-		}
-		while (!maxSeenId.compareAndSet(origMaxSeenId,
+		} while (!maxSeenId.compareAndSet(origMaxSeenId,
 				Math.max(origMaxSeenId, lastCommitted)));
 		advanceCommitId();
 	}
@@ -506,8 +502,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			do
 			{
 				origNextId = nextId.get();
-			}
-			while (!nextId.compareAndSet(origNextId,
+			} while (!nextId.compareAndSet(origNextId,
 					Math.max(origNextId, finalSid)));
 			stableQ.add(new Pair<String, Integer>(trxID, finalSid));
 		}
@@ -641,8 +636,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			{
 				return;
 			}
-		}
-		while (!commitId.compareAndSet(origCommitId, maxSeenId.get()));
+		} while (!commitId.compareAndSet(origCommitId, maxSeenId.get()));
 	}
 
 	@ExcludeTM
