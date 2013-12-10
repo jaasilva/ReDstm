@@ -182,4 +182,16 @@ public class IntSetHash implements IntSet
 		}
 	}
 
+	@Override
+	public boolean add2(int nextInt) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean remove2(int value) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
