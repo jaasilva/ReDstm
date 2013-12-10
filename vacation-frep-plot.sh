@@ -10,24 +10,32 @@ tasks=4096
 for comm in jgroups.JGroups #spread.Spread appia.Appia
 do
 
-	data="logs/${DIR}${benchmark}_n${task_queries}_q${perc_queries}_u${perc_reservation}_r${relations}_t${tasks}_${comm}.data"
+	data="${DIR}/${benchmark}_n${task_queries}_q${perc_queries}_u${perc_reservation}_r${relations}_t${tasks}_${comm}.data"
+	data2="$data.rr"
 	rm -f $data
+	rm -f $data2
 
 	sites=8
 	thread=4
 	_data=Simple
 	
 	echo '"Groups"	"readOpt"	"noReadOpt"' >${data}
+	echo '"Groups"	"readOpt"	"noReadOpt"' >${data2}
 
 	for groups in 1 2 4 8
 	do
 	
 	echo -n "${groups}" >>${data}
+	echo -n "${groups}" >>${data2}
 	
 	for protocol in score.SCOReProtocol score.SCOReProtocol_noReadOpt
 	do
 		elapsed=0
+		sum_complete=0
+		sum_remote=0
 		run_durations=()
+		run_complete=()
+		run_remote=()
 		max=1
 		min=1
 		runs=5
@@ -35,13 +43,21 @@ do
 			for (( run = 1; run <= $runs; run++ ))
 			do
 				run_durations[$run]=0
+				run_complete[$run]=0
+				run_remote[$run]=0
 				ok=0
 				for (( site = 1; site <= $sites; site++ ))
 				do
 					# -- PERF --
-					log="logs/${benchmark}_n${task_queries}_q${perc_queries}_u${perc_reservation}_r${relations}_t${tasks}_t${thread}_${protocol}_${comm}_id${site}-${sites}_run${run}_g${groups}_${_data}.res"
+					log="${DIR}/${benchmark}_n${task_queries}_q${perc_queries}_u${perc_reservation}_r${relations}_t${tasks}_t${thread}_${protocol}_${comm}_id${site}-${sites}_run${run}_g${groups}_${_data}.res"
 					duration=`grep "TIME2=" ${log} | awk 'BEGIN { FS="=" } { i = $2 } END { printf "%d", i/1000 }'`
+					complete=`grep "Complete reads" ${log} | awk -F "[()]" '{printf "%d", $2}'`
+			        remote=`grep "Remote reads" ${log} | awk -F "[()]" '{printf "%d", $2}'`
+			        
+			        
 					run_durations[$run]=`expr ${run_durations[$run]} + ${duration}`
+					run_complete[$run]=`expr ${run_complete[$run]} + ${complete}`
+					run_remote[$run]=`expr ${run_remote[$run]} + ${remote}`
 				done
 				run_durations[$run]=`expr ${run_durations[$run]} / ${sites}`
 	
@@ -66,6 +82,8 @@ do
 					if [[ $i -ne $min && $i -ne $max ]]
 					then
 						elapsed=`expr ${elapsed} + ${run_durations[$i]}`
+						sum_complete=`expr ${sum_complete} + ${run_complete[$i]}`
+						sum_remote=`expr ${sum_remote} + ${run_remote[$i]}`
 					fi
 			done
 			
@@ -77,12 +95,18 @@ do
 				fi
 			echo "	runs: ${rs}"
 			elapsed=`expr ${elapsed} / ${rs}`
+			sum_complete=`expr ${sum_complete} / ${rs}`
+			sum_remote=`expr ${sum_remote} / ${rs}`
 			echo "	elapsed: ${elapsed}"
+			rem=`echo "scale=3; ($sum_remote * 100) / $sum_complete" | bc`
+			echo "	remote: ${rem}%"
+			
 			echo -n "	${elapsed}" >>$data
-	
+			echo -n "	${rem}" >>$data2
 		
 	done
 		echo "" >>$data
+		echo "" >>$data2
 	done
 	
 	# -- PERF --

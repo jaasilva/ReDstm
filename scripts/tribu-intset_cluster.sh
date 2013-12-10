@@ -22,51 +22,62 @@ EXCLUDE="${EXCLUDE},flanagan.*"
 EXCLUDE="${EXCLUDE},org.apache.log4j.*"
 EXCLUDE="${EXCLUDE},spread.*"
 EXCLUDE="${EXCLUDE},org.deuce.trove.*"
+EXCLUDE="${EXCLUDE},org.deuce.benchmark.intset.MyObjectBackend"
 
 WARMUP=0
 DURATION=10000
 
-SITE=$3
-THREADS=$4
-REPLICAS=$5
-RUN=$6
+SITE=`hostname | cut -c 5-`
+THREADS=$2
+REPLICAS=$3
+RUN=$4
 
 BENCHMARK=$1
-SIZE=32768 # 2^15
-RANGE=131072 # SIZE*4
-WRITES=10
+SIZE=1024 #32768 #1024 #32768 # 2^15
+RANGE=4096 #131072 #4096 #131072 # SIZE*4
+WRITES=$5
 
 _STM=tl2.Context
-_REP=nonvoting.$7
-_COMM=$2
+_REP=nonvoting.NonVoting
+_COMM=jgroups.JGroups
 
 STM="org.deuce.transaction.${_STM}"
 COMM="org.deuce.distribution.groupcomm.${_COMM}GroupCommunication"
 REP="org.deuce.distribution.replication.full.protocol.${_REP}"
 ZIP=true
 GROUP="${BENCHMARK}_${SIZE}_${WRITES}_${THREADS}_${_REP}_${REPLICAS}_${RUN}"
-
 FNAME="${BENCHMARK}_i${SIZE}_w${WRITES}_t${THREADS}_${_REP}_${_COMM}_id${SITE}-${REPLICAS}_run${RUN}"
 LOG=logs/${FNAME}.res
+MEM=${LOG}.mem
 
 echo "#####"
 echo "Benchmark: ${BENCHMARK} -i ${SIZE} -w ${WRITES}, run ${RUN}"
 echo "Threads: ${THREADS}"
 echo "Protocol: ${_REP}, site ${SITE} of ${REPLICAS}"
 echo "Comm: ${_COMM}"
-echo `date +%H:%M`
+echo `date +'%F %H:%M:%S'`
 echo "#####"
 
+#dstat -m -M topmem > $MEM &
+#PID2=$!
+#sleep 1
+#-Xmx8g -Xms8g
 java -Xmx8g -Xms8g -cp $CP -javaagent:bin/deuceAgent.jar \
-	-Dlog=$8 \
 	-Dorg.deuce.transaction.contextClass=$STM \
 	-Dorg.deuce.exclude=$EXCLUDE \
 	-Dtribu.groupcommunication.class=$COMM \
 	-Dtribu.groupcommunication.group=$GROUP \
-	-Dtribu.site=$SITE \
 	-Dtribu.replicas=$REPLICAS \
 	-Dtribu.distributed.protocolClass=$REP \
 	-Dtribu.serialization.compress=$ZIP \
+	-Djgroups.bind_addr=`hostname` \
+	-Djava.net.preferIPv4Stack=true \
 	org.deuce.benchmark.Driver -n $THREADS -d $DURATION -w $WARMUP \
 		org.deuce.benchmark.intset.Benchmark $BENCHMARK -r $RANGE -i $SIZE \
-		-w $WRITES >$LOG
+		-w $WRITES > $LOG
+
+echo "ended: `date +'%F %H:%M:%S'`"
+#sleep 1
+#kill $PID2 
+#wait $PID2 2> /dev/null
+

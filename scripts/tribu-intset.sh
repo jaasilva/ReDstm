@@ -65,6 +65,7 @@ java -Xmx1g -Xms1g -cp $CP -javaagent:bin/deuceAgent.jar \
 	-Dtribu.replicas=$REPLICAS \
 	-Dtribu.distributed.protocolClass=$REP \
 	-Dtribu.serialization.compress=$ZIP \
+	-Djava.net.preferIPv4Stack=true \
 	org.deuce.benchmark.Driver -n $THREADS -d $DURATION -w $WARMUP \
 		org.deuce.benchmark.intset.Benchmark $BENCHMARK -r $RANGE -i $SIZE \
 		-w $WRITES 

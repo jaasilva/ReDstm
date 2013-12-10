@@ -22,45 +22,49 @@ EXCLUDE="${EXCLUDE},flanagan.*"
 EXCLUDE="${EXCLUDE},org.apache.log4j.*"
 EXCLUDE="${EXCLUDE},spread.*"
 EXCLUDE="${EXCLUDE},org.deuce.trove.*"
+EXCLUDE="${EXCLUDE},org.deuce.benchmark.intset.MyObjectBackend"
 
 WARMUP=0
 DURATION=10000
 
-SITE=$2
-THREADS=$3
-REPLICAS=$4
+SITE=`hostname | cut -c 5-`
+THREADS=$2
+REPLICAS=$3
+_GROUPS=$4
 RUN=$5
 
 BENCHMARK=$1
 SIZE=1024
 RANGE=4096
-WRITES=10
+WRITES=0
 
 _STM=score.SCOReContext
-_REP=score.SCOReProtocol_noReadOpt # score.SCOReProtocol score.SCOReProtocol_noReadOpt
+_REP=score.SCOReProtocol #_noReadOpt # score.SCOReProtocol score.SCOReProtocol_noReadOpt
 _COMM=jgroups.JGroups # jgroups.JGroups appia.Appia spread.Spread
 # RandomDataPartitioner SimpleDataPartitioner RoundRobinDataPartitioner
-_DATA_PART=RoundRobinDataPartitioner
+_DATA_PART=Random
 
 STM="org.deuce.transaction.${_STM}"
 COMM="org.deuce.distribution.groupcomm.${_COMM}GroupCommunication"
 REP="org.deuce.distribution.replication.partial.protocol.${_REP}"
 ZIP=true
 GROUP="${BENCHMARK}_${SIZE}_${WRITES}_${THREADS}_${_REP}_${REPLICAS}_${RUN}"
-DATA_PART="org.deuce.distribution.replication.partitioner.data.${_DATA_PART}"
-
-FNAME="${BENCHMARK}_i${SIZE}_w${WRITES}_t${THREADS}_${_REP}_${_COMM}_id${SITE}-${REPLICAS}_run${RUN}"
+FNAME="${BENCHMARK}_i${SIZE}_w${WRITES}_t${THREADS}_${_REP}_${_COMM}_id${SITE}-${REPLICAS}_run${RUN}_g${_GROUPS}_${_DATA_PART}"
 LOG=logs/${FNAME}.res
+DATA_PART="org.deuce.distribution.replication.partitioner.data.${_DATA_PART}DataPartitioner"
 
 echo "#####"
 echo "Benchmark: ${BENCHMARK} -i ${SIZE} -w ${WRITES}, run ${RUN}"
 echo "Threads: ${THREADS}"
 echo "Protocol: ${_REP}, site ${SITE} of ${REPLICAS}"
 echo "Comm: ${_COMM}"
-echo `date +%H:%M`
+echo `date +'%F %H:%M:%S'`
 echo "#####"
 
-java -Xmx1g -Xms1g -cp $CP -javaagent:bin/deuceAgent.jar \
+#dstat -m -M topmem > $LOG.mem &
+#PID2=$!
+
+java -Xmx8g -Xms8g -cp $CP -javaagent:bin/deuceAgent.jar \
 	-Dorg.deuce.transaction.contextClass=$STM \
 	-Dorg.deuce.exclude=$EXCLUDE \
 	-Dtribu.groupcommunication.class=$COMM \
@@ -68,8 +72,17 @@ java -Xmx1g -Xms1g -cp $CP -javaagent:bin/deuceAgent.jar \
 	-Dtribu.replicas=$REPLICAS \
 	-Dtribu.distributed.protocolClass=$REP \
 	-Dtribu.serialization.compress=$ZIP \
+	-Dtribu.distributed.DataPartitionerClass=$DATA_PART \
 	-Dtribu.distributed.PartialReplicationMode=true \
-	-Dtribu.groups=2 \
+	-Dtribu.groups=$_GROUPS \
+	-Djgroups.bind_addr=`hostname` \
+	-Djava.net.preferIPv4Stack=true \
 	org.deuce.benchmark.Driver -n $THREADS -d $DURATION -w $WARMUP \
 		org.deuce.benchmark.intset.Benchmark $BENCHMARK -r $RANGE -i $SIZE \
 		-w $WRITES
+
+echo "ended: `date +'%F %H:%M:%S'`"
+#sleep 1
+#kill $PID2 
+#wait $PID2 2> /dev/null
+
