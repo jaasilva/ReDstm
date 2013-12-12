@@ -7,9 +7,6 @@ import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
 import org.deuce.profiling.PRProfiler;
 
-// import papi.j.PAPI_J;
-// import papi.j.CacheMonitor;
-
 /**
  * @author Pascal Felber
  * @since 0.1
@@ -31,8 +28,6 @@ public class Driver
 		String benchmark = null;
 		boolean error = false;
 		int arg;
-
-		// initBarriers();
 
 		for (arg = 0; arg < args.length && !error; arg++)
 		{
@@ -80,11 +75,6 @@ public class Driver
 			System.exit(1);
 		}
 
-		// if (PAPI_J.PAPI_library_init() != PAPI_J.PAPI_OK) {
-		// System.out.println("Error in PAPI initialization");
-		// System.exit(-1);
-		// }
-
 		Benchmark b = null;
 		try
 		{
@@ -99,28 +89,24 @@ public class Driver
 
 		b.init(args);
 
-		// System.err.println("-- Set created. Press enter to start threads.");
-		// new Scanner(System.in).nextLine();
-		 try
-		 {
-		 	Thread.sleep(new Random().nextInt(5000));
-		 }
-		 catch (InterruptedException e)
-		 {
-			e.printStackTrace();
-		 }
+		// try
+		// {
+		// Thread.sleep(new Random().nextInt(5000));
+		// }
+		// catch (InterruptedException e)
+		// {
+		// e.printStackTrace();
+		// }
 		initBarriers();
-		 try
-		 {
-		 	Thread.sleep(new Random().nextInt(5000));
-		 }
-		 catch (InterruptedException e)
-		 {
-		 	e.printStackTrace();
-		 }
+		// try
+		// {
+		// Thread.sleep(new Random().nextInt(5000));
+		// }
+		// catch (InterruptedException e)
+		// {
+		// e.printStackTrace();
+		// }
 		setupBarrier.join();
-
-		// Profiler.enabled = true;
 
 		BenchmarkThread[] bt = new BenchmarkThread[nb_threads];
 		for (int i = 0; i < bt.length; i++)
@@ -130,14 +116,11 @@ public class Driver
 		for (int i = 0; i < t.length; i++)
 			t[i] = new Thread(bt[i]);
 
-		// System.out.print("Starting threads...");
 		for (int i = 0; i < t.length; i++)
 		{
-			// System.out.print(" " + i);
 			bt[i].setPhase(Benchmark.WARMUP_PHASE);
 			t[i].start();
 		}
-		// System.out.println();
 
 		long wstart = System.currentTimeMillis();
 		try
@@ -150,13 +133,10 @@ public class Driver
 		long wend = System.currentTimeMillis();
 
 		PRProfiler.enabled = true;
-		// System.out.print("End of warmup phase...");
 		for (int i = 0; i < bt.length; i++)
 		{
-			// System.out.print(" " + i);
 			bt[i].setPhase(Benchmark.TEST_PHASE);
 		}
-		// System.out.println();
 
 		long tstart = System.currentTimeMillis();
 		try
@@ -168,22 +148,17 @@ public class Driver
 		}
 		long tend = System.currentTimeMillis();
 
-		// System.out.print("End of test phase...");
 		for (int i = 0; i < bt.length; i++)
 		{
-			// System.out.print(" " + i);
 			bt[i].setPhase(Benchmark.SHUTDOWN_PHASE);
 		}
-		// System.out.println();
 		System.err.println("done.");
 
-		// System.out.print("Waiting for threads to finish...");
 		for (int i = 0; i < t.length; i++)
 		{
 			try
 			{
 				t[i].join();
-				// System.out.print(" " + i);
 			}
 			catch (InterruptedException e)
 			{
@@ -207,25 +182,20 @@ public class Driver
 		for (int i = 0; i < bt.length; i++)
 			System.out.println("    " + i + " : " + bt[i].getSteps() + " ("
 					+ bt[i].getStats() + ")");
-		// System.err.println("-- Benchmark finished. Press enter to exit.");
-		// new Scanner(System.in).nextLine();
 
 		PRProfiler.print();
-		
-		// Profiler.enabled = false;
+
 		// try
 		// {
-		// 	Thread.sleep(new Random().nextInt(2000));
+		// Thread.sleep(new Random().nextInt(2000));
 		// }
 		// catch (InterruptedException e)
 		// {
-		// 	e.printStackTrace();
+		// e.printStackTrace();
 		// }
 		finishBarrier.join();
-
-		// Profiler.print();
-
-		// System.out.println(((org.deuce.benchmark.intset.Benchmark) b).m_set);
+		
+		System.out.println("VALID: " + b.validate());
 
 		TribuDSTM.close();
 	}

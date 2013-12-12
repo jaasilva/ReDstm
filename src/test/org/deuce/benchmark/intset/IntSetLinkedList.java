@@ -9,7 +9,6 @@ import org.deuce.distribution.replication.partial.Partial;
  */
 public class IntSetLinkedList implements IntSet
 {
-
 	public class Node
 	{
 		final private int m_key;
@@ -152,13 +151,8 @@ public class IntSetLinkedList implements IntSet
 	}
 
 	@Override
-	public boolean add2(int nextInt) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean remove2(int value) {
+	public boolean validate()
+	{
 		// TODO Auto-generated method stub
 		return false;
 	}

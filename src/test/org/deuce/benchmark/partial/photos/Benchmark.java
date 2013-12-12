@@ -460,4 +460,11 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 		return "A=" + add + ", R=" + remove + ", C(r)=" + contains_remote
 				+ ", C(l)=" + contains_local;
 	}
+
+	@Override
+	public boolean validate()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

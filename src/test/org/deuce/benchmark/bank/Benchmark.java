@@ -10,7 +10,6 @@ import org.deuce.distribution.replication.Bootstrap;
  */
 public class Benchmark implements org.deuce.benchmark.Benchmark
 {
-
 	int m_max = 10;
 	int m_read_frequency = 0;
 	int m_write_frequency = 0;
@@ -173,5 +172,12 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 
 		return "T=" + transfers + ", R=" + reads + ", W=" + writes + ", TOTAL="
 				+ total + sb.toString();
+	}
+
+	@Override
+	public boolean validate()
+	{
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

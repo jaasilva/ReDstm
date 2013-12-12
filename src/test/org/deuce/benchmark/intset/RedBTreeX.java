@@ -1,6 +1,8 @@
 package org.deuce.benchmark.intset;
 
 import org.deuce.Atomic;
+import org.deuce.benchmark.intset.RedBTree.Node;
+import org.deuce.distribution.replication.partial.Partial;
 
 /*
  * =============================================================================
@@ -52,38 +54,78 @@ import org.deuce.Atomic;
 
 public class RedBTreeX implements IntSet
 {
-
 	public final static int RED = 0;
 	public final static int BLACK = 1;
 
-	// public class _Node
-	// {
-	// int k; // key
-	// @Partial
-	// Object v; // val
-	// _Node p; // parent
-	// _Node l; // left
-	// _Node r; // right
-	// int c; // color
-	//
-	// public _Node()
-	// {
-	// }
-	//
-	// }
+	public class Node
+	{
+		int k; // key
+		@Partial
+		Object v; // val
+		Node p; // parent
+		Node l; // left
+		Node r; // right
+		int c; // color
 
-	_Node root;
+		public Node()
+		{
+		}
+
+		@Override
+		public Node clone()
+		{ // Replaces 'this' with a fresh node
+			Node x = new Node();
+			x.k = this.k;
+			x.v = this.v;
+			x.p = this.p;
+			x.l = this.l;
+			x.r = this.r;
+			x.c = this.c;
+
+			if (x.p != null)
+			{ // replace parent pointer
+				if (x.p.l == this)
+				{ // 'this' is p's left child
+					x.p.l = x;
+				}
+				else
+				{ // 'this' is p's right child
+					x.p.r = x;
+				}
+			}
+			else
+			{ // if 'this' is the root I have to update the reference
+				root = x;
+			}
+
+			// replace children pointers
+			if (x.l != null)
+			{
+				x.l.p = x;
+			}
+			if (x.r != null)
+			{
+				x.r.p = x;
+			}
+
+			return x;
+		}
+	}
+
+	Node root;
 
 	public RedBTreeX()
 	{
 		root = null;
 	}
 
-	/* private Methods */
-	/* lookup */
-	private _Node lookup(int k)
+	/*****************************************
+	 * private methods
+	 *****************************************/
+
+	private Node lookup(int k)
 	{
-		_Node p = root;
+		Node p = root;
 
 		while (p != null)
 		{
@@ -98,18 +140,17 @@ public class RedBTreeX implements IntSet
 		return null;
 	}
 
-	/* rotateLeft */
-	private void rotateLeft(_Node x)
+	private void rotateLeft(Node x)
 	{
-		_Node r = x.r;
-		_Node rl = r.l;
+		Node r = x.r;
+		Node rl = r.l;
 		x.r = rl;
 		if (rl != null)
 		{
 			rl.p = x;
 		}
 
-		_Node xp = x.p;
+		Node xp = x.p;
 		r.p = xp;
 		if (xp == null)
 		{
@@ -127,17 +168,16 @@ public class RedBTreeX implements IntSet
 		x.p = r;
 	}
 
-	/* rotateRight */
-	private void rotateRight(_Node x)
+	private void rotateRight(Node x)
 	{
-		_Node l = x.l;
-		_Node lr = l.r;
+		Node l = x.l;
+		Node lr = l.r;
 		x.l = lr;
 		if (lr != null)
 		{
 			lr.p = x;
 		}
-		_Node xp = x.p;
+		Node xp = x.p;
 		l.p = xp;
 		if (xp == null)
 		{
@@ -156,32 +196,27 @@ public class RedBTreeX implements IntSet
 		x.p = l;
 	}
 
-	/* parentOf */
-	private _Node parentOf(_Node n)
+	private Node parentOf(Node n)
 	{
 		return ((n != null) ? n.p : null);
 	}
 
-	/* leftOf */
-	private _Node leftOf(_Node n)
+	private Node leftOf(Node n)
 	{
 		return ((n != null) ? n.l : null);
 	}
 
-	/* rightOf */
-	private _Node rightOf(_Node n)
+	private Node rightOf(Node n)
 	{
 		return ((n != null) ? n.r : null);
 	}
 
-	/* colorOf */
-	private int colorOf(_Node n)
+	private int colorOf(Node n)
 	{
 		return ((n != null) ? n.c : BLACK);
 	}
 
-	/* setColor */
-	private void setColor(_Node n, int c)
+	private void setColor(Node n, int c)
 	{
 		if (n != null)
 		{
@@ -189,14 +224,13 @@ public class RedBTreeX implements IntSet
 		}
 	}
 
-	/* fixAfterInsertion */
-	private void fixAfterInsertion(_Node x)
+	private void fixAfterInsertion(Node x)
 	{
 		x.c = RED;
 
 		while (x != null && x != root)
 		{
-			_Node xp = x.p;
+			Node xp = x.p;
 			if (xp.c != RED)
 			{
 				break;
@@ -204,7 +238,7 @@ public class RedBTreeX implements IntSet
 
 			if (parentOf(x) == leftOf(parentOf(parentOf(x))))
 			{
-				_Node y = rightOf(parentOf(parentOf(x)));
+				Node y = rightOf(parentOf(parentOf(x)));
 				if (colorOf(y) == RED)
 				{
 					setColor(parentOf(x), BLACK);
@@ -229,7 +263,7 @@ public class RedBTreeX implements IntSet
 			}
 			else
 			{
-				_Node y = leftOf(parentOf(parentOf(x)));
+				Node y = leftOf(parentOf(parentOf(x)));
 				if (colorOf(y) == RED)
 				{
 					setColor(parentOf(x), BLACK);
@@ -254,16 +288,16 @@ public class RedBTreeX implements IntSet
 			}
 		}
 
-		_Node ro = root;
+		Node ro = root;
 		if (ro.c != BLACK)
 		{
 			ro.c = BLACK;
 		}
 	}
 
-	private _Node insert(int k, Object v, _Node n)
+	private Node insert(int k, Object v, Node n)
 	{
-		_Node t = root;
+		Node t = root;
 		if (t == null)
 		{
 			if (n == null)
@@ -290,7 +324,7 @@ public class RedBTreeX implements IntSet
 			}
 			else if (cmp < 0)
 			{
-				_Node tl = t.l;
+				Node tl = t.l;
 				if (tl != null)
 				{
 					t = tl;
@@ -309,7 +343,7 @@ public class RedBTreeX implements IntSet
 			}
 			else
 			{ /* cmp > 0 */
-				_Node tr = t.r;
+				Node tr = t.r;
 				if (tr != null)
 				{
 					t = tr;
@@ -329,8 +363,7 @@ public class RedBTreeX implements IntSet
 		}
 	}
 
-	/* successor */
-	private _Node successor(_Node t)
+	private Node successor(Node t)
 	{
 		if (t == null)
 		{
@@ -338,7 +371,7 @@ public class RedBTreeX implements IntSet
 		}
 		else if (t.r != null)
 		{
-			_Node p = t.r;
+			Node p = t.r;
 			while (p.l != null)
 			{
 				p = p.l;
@@ -347,8 +380,8 @@ public class RedBTreeX implements IntSet
 		}
 		else
 		{
-			_Node p = t.p;
-			_Node ch = t;
+			Node p = t.p;
+			Node ch = t;
 			while (p != null && ch == p.r)
 			{
 				ch = p;
@@ -359,14 +392,13 @@ public class RedBTreeX implements IntSet
 
 	}
 
-	/* fixAfterDeletion */
-	private void fixAfterDeletion(_Node x)
+	private void fixAfterDeletion(Node x)
 	{
 		while (x != root && colorOf(x) == BLACK)
 		{
 			if (x == leftOf(parentOf(x)))
 			{
-				_Node sib = rightOf(parentOf(x));
+				Node sib = rightOf(parentOf(x));
 				if (colorOf(sib) == RED)
 				{
 					setColor(sib, BLACK);
@@ -398,7 +430,7 @@ public class RedBTreeX implements IntSet
 			}
 			else
 			{ /* symmetric */
-				_Node sib = leftOf(parentOf(x));
+				Node sib = leftOf(parentOf(x));
 				if (colorOf(sib) == RED)
 				{
 					setColor(sib, BLACK);
@@ -436,7 +468,7 @@ public class RedBTreeX implements IntSet
 		}
 	}
 
-	private _Node deleteNode(_Node p)
+	private Node deleteNode(Node p)
 	{
 		/*
 		 * If strictly internal, copy successor's element to p and then make p
@@ -444,32 +476,11 @@ public class RedBTreeX implements IntSet
 		 */
 		if (p.l != null && p.r != null)
 		{
-			_Node s = successor(p);
+			Node s = successor(p);
 
-			_Node x = new _Node();
+			Node x = p.clone();
 			x.k = s.k;
 			x.v = s.v;
-			x.c = p.c;
-
-			x.p = p.p;
-			x.l = p.l;
-			x.r = p.r;
-
-			p.l.p = x;
-			p.r.p = x;
-
-			_Node pp = p.p;
-			if (pp != null)
-			{
-				if (pp.l == p)
-				{
-					pp.l = x;
-				}
-				else
-				{
-					pp.r = x;
-				}
-			}
 
 			// p.k = s.k;
 			// p.v = s.v;
@@ -477,13 +488,13 @@ public class RedBTreeX implements IntSet
 		} /* p has 2 children */
 
 		/* Start fixup at replacement node, if it exists */
-		_Node replacement = (p.l != null) ? p.l : p.r;
+		Node replacement = (p.l != null) ? p.l : p.r;
 
 		if (replacement != null)
 		{
 			/* Link replacement to parent */
 			replacement.p = p.p;
-			_Node pp = p.p;
+			Node pp = p.p;
 			if (pp == null)
 			{
 				root = replacement;
@@ -518,7 +529,7 @@ public class RedBTreeX implements IntSet
 			{
 				fixAfterDeletion(p);
 			}
-			_Node pp = p.p;
+			Node pp = p.p;
 			if (pp != null)
 			{
 				if (p == pp.l)
@@ -535,15 +546,13 @@ public class RedBTreeX implements IntSet
 		return p;
 	}
 
-	/*
-	 * Diagnostic section
-	 */
+	/*****************************************
+	 * diagnostic section
+	 *****************************************/
 
-	/* firstEntry */
-
-	private _Node firstEntry()
+	private Node firstEntry()
 	{
-		_Node p = root;
+		Node p = root;
 		if (p != null)
 		{
 			while (p.l != null)
@@ -554,9 +563,7 @@ public class RedBTreeX implements IntSet
 		return p;
 	}
 
-	/* verifyRedBlack */
-
-	private int verifyRedBlack(_Node root, int depth)
+	private int verifyRedBlack(Node root, int depth)
 	{
 		int height_left;
 		int height_right;
@@ -612,7 +619,6 @@ public class RedBTreeX implements IntSet
 		return (height_left + 1);
 	}
 
-	/* compareKeysDefault */
 	private int compare(int a, int b)
 	{
 		return a - b;
@@ -622,12 +628,6 @@ public class RedBTreeX implements IntSet
 	 * public methods
 	 *****************************************/
 
-	/*
-	 * ==========================================================================
-	 * === rbtree_verify
-	 * ========================================================
-	 * ===================== long rbtree_verify (rbtree_t* s, long verbose);
-	 */
 	public int verify(int verbose)
 	{
 		if (root == null)
@@ -653,11 +653,11 @@ public class RedBTreeX implements IntSet
 
 		/* Weak check of binary-tree property */
 		int ctr = 0;
-		_Node its = firstEntry();
+		Node its = firstEntry();
 		while (its != null)
 		{
 			ctr++;
-			_Node child = its.l;
+			Node child = its.l;
 			if (child != null && child.p != its)
 			{
 				System.out.println("bad parent");
@@ -667,7 +667,7 @@ public class RedBTreeX implements IntSet
 			{
 				System.out.println("Bad parent");
 			}
-			_Node nxt = successor(its);
+			Node nxt = successor(its);
 			if (nxt == null)
 			{
 				break;
@@ -691,6 +691,7 @@ public class RedBTreeX implements IntSet
 
 	}
 
+	@Override
 	public boolean validate()
 	{
 		int r = verify(1);
@@ -700,22 +701,9 @@ public class RedBTreeX implements IntSet
 	@Atomic
 	public boolean add(int key)
 	{
-		_Node node = new _Node();
+		Node node = new Node();
 		Object x = new MyObject();
-		_Node ex = insert(key, x, node);
-		if (ex != null)
-		{
-			node = null;
-		}
-		return ex == null;
-	}
-
-	@Atomic
-	public boolean add2(int key)
-	{
-		_Node node = new _Node();
-		Object x = new MyObject();
-		_Node ex = insert(key, x, node);
+		Node ex = insert(key, x, node);
 		if (ex != null)
 		{
 			node = null;
@@ -726,20 +714,7 @@ public class RedBTreeX implements IntSet
 	@Atomic
 	public boolean remove(int key)
 	{
-		_Node node = null;
-		node = lookup(key);
-
-		if (node != null)
-		{
-			node = deleteNode(node);
-		}
-		return node != null;
-	}
-
-	@Atomic
-	public boolean remove2(int key)
-	{
-		_Node node = null;
+		Node node = null;
 		node = lookup(key);
 
 		if (node != null)
@@ -752,7 +727,7 @@ public class RedBTreeX implements IntSet
 	@Atomic
 	public boolean contains(int key)
 	{
-		_Node n = lookup(key);
+		Node n = lookup(key);
 		if (n != null)
 		{
 			Object val = n.v;
@@ -766,15 +741,8 @@ public class RedBTreeX implements IntSet
 		return size(root);
 	}
 
-	protected int size(_Node n)
+	protected int size(Node n)
 	{
 		return n != null ? size(n.l) + size(n.r) + 1 : 0;
 	}
-
 }
-
-/*
- * =============================================================================
- * End of rbtree.java
- * =============================================================================
- */

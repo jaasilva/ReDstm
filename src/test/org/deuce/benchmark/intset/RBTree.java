@@ -35,7 +35,6 @@ import org.deuce.Atomic;
  */
 public class RBTree implements IntSet
 {
-
 	/**
 	 * Each node has one of two colors.
 	 */
@@ -112,8 +111,7 @@ public class RBTree implements IntSet
 	/**
 	 * Inserts an element into the tree, if it is not already present.
 	 * 
-	 * @param key
-	 *            element to insert
+	 * @param key element to insert
 	 * @return true iff item was not there already
 	 */
 	@Atomic
@@ -166,8 +164,7 @@ public class RBTree implements IntSet
 	 * Tests whether item is present.
 	 * 
 	 * @return whether the item was present</returns>
-	 * @param key
-	 *            item to search for
+	 * @param key item to search for
 	 */
 	@Atomic
 	public boolean contains(int key)
@@ -198,8 +195,7 @@ public class RBTree implements IntSet
 	 * Remove item if present.
 	 * 
 	 * @return whether the item was removed</returns>
-	 * @param key
-	 *            item to remove
+	 * @param key item to remove
 	 */
 	@Atomic
 	public boolean remove(int key)
@@ -238,8 +234,7 @@ public class RBTree implements IntSet
 	 * red black properties still hold. If the deleted node is black, the tree
 	 * needs rebalancing
 	 * 
-	 * @param z
-	 *            start at this node
+	 * @param z start at this node
 	 */
 	private void delete(RBNode z)
 	{
@@ -301,8 +296,7 @@ public class RBTree implements IntSet
 	 * red-black properties. Examine the tree and restore. Rotations are
 	 * normally required to restore it
 	 * 
-	 * @param x
-	 *            start here
+	 * @param x start here
 	 */
 	private void restoreAfterDelete(RBNode x)
 	{
@@ -384,8 +378,7 @@ public class RBTree implements IntSet
 	 * Insertions may destroy the red-black properties. Examine the tree and
 	 * rotate as needed to restore the property.
 	 * 
-	 * @param x
-	 *            start here
+	 * @param x start here
 	 */
 	private void restoreAfterInsert(RBNode x)
 	{
@@ -459,8 +452,7 @@ public class RBTree implements IntSet
 	/**
 	 * rotateLeft Rebalance the tree by rotating the nodes to the left
 	 * 
-	 * @param x
-	 *            start here
+	 * @param x start here
 	 */
 	public void rotateLeft(RBNode x)
 	{
@@ -500,8 +492,7 @@ public class RBTree implements IntSet
 	/**
 	 * rotateRight Rebalance the tree by rotating the nodes to the right
 	 * 
-	 * @param x
-	 *            start here
+	 * @param x start here
 	 */
 	public void rotateRight(RBNode x)
 	{
@@ -541,8 +532,7 @@ public class RBTree implements IntSet
 	/**
 	 * returns number of black nodes akibg root to leaf path
 	 * 
-	 * @param root
-	 *            tree root
+	 * @param root tree root
 	 * @return number of black nodes in left-most path
 	 */
 	private int countBlackNodes(RBNode root)
@@ -558,8 +548,7 @@ public class RBTree implements IntSet
 	/**
 	 * counts nodes in tree
 	 * 
-	 * @param root
-	 *            tree root
+	 * @param root tree root
 	 * @return number of nodes in tree
 	 */
 	private int count(RBNode root)
@@ -572,12 +561,9 @@ public class RBTree implements IntSet
 	/**
 	 * Checks internal consistency.
 	 * 
-	 * @param root
-	 *            tree root
-	 * @param blackNodes
-	 *            number of black nodes expected in leaf-to-root path
-	 * @param soFar
-	 *            number of black nodes seen in path so far
+	 * @param root tree root
+	 * @param blackNodes number of black nodes expected in leaf-to-root path
+	 * @param soFar number of black nodes seen in path so far
 	 */
 	private void recursiveValidate(RBNode root, int blackNodes, int soFar)
 	{
@@ -676,8 +662,7 @@ public class RBTree implements IntSet
 		/**
 		 * sets node value
 		 * 
-		 * @param newValue
-		 *            new value for node
+		 * @param newValue new value for node
 		 */
 		public void setValue(int newValue)
 		{
@@ -697,8 +682,7 @@ public class RBTree implements IntSet
 		/**
 		 * mark or unmark node
 		 * 
-		 * @param newMarked
-		 *            new value for marked flag
+		 * @param newMarked new value for marked flag
 		 */
 		;
 
@@ -720,8 +704,7 @@ public class RBTree implements IntSet
 		/**
 		 * change node's color
 		 * 
-		 * @param newColor
-		 *            new color
+		 * @param newColor new color
 		 */
 
 		public void setColor(/* Color */int newColor)
@@ -742,8 +725,7 @@ public class RBTree implements IntSet
 		/**
 		 * change node's parent
 		 * 
-		 * @param newParent
-		 *            new parent
+		 * @param newParent new parent
 		 */
 		public void setParent(RBNode newParent)
 		{
@@ -763,8 +745,7 @@ public class RBTree implements IntSet
 		/**
 		 * change node's right child
 		 * 
-		 * @param newLeft
-		 *            new left child
+		 * @param newLeft new left child
 		 */
 		public void setLeft(RBNode newLeft)
 		{
@@ -784,8 +765,7 @@ public class RBTree implements IntSet
 		/**
 		 * change node's left child
 		 * 
-		 * @param newRight
-		 *            new right child
+		 * @param newRight new right child
 		 */
 		public void setRight(RBNode newRight)
 		{
@@ -860,13 +840,8 @@ public class RBTree implements IntSet
 	}
 
 	@Override
-	public boolean add2(int nextInt) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean remove2(int value) {
+	public boolean validate()
+	{
 		// TODO Auto-generated method stub
 		return false;
 	}

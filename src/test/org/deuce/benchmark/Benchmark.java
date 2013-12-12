@@ -16,4 +16,6 @@ public interface Benchmark
 	public BenchmarkThread createThread(int i, int nb);
 
 	public String getStats(BenchmarkThread[] threads);
+	
+	public boolean validate();
 }

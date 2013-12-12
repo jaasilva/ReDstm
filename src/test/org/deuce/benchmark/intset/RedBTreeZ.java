@@ -1,7 +1,7 @@
 package org.deuce.benchmark.intset;
 
 import org.deuce.Atomic;
-import org.deuce.distribution.replication.Bootstrap;
+import org.deuce.benchmark.intset.RedBTree.Node;
 import org.deuce.distribution.replication.partial.Partial;
 
 /*
@@ -54,7 +54,6 @@ import org.deuce.distribution.replication.partial.Partial;
 
 public class RedBTreeZ implements IntSet
 {
-
 	public final static int RED = 0;
 	public final static int BLACK = 1;
 
@@ -62,7 +61,7 @@ public class RedBTreeZ implements IntSet
 	{
 		int k; // key
 		@Partial
-		int v; // val
+		Object v; // val
 		Node p; // parent
 		Node l; // left
 		Node r; // right
@@ -70,6 +69,46 @@ public class RedBTreeZ implements IntSet
 
 		public Node()
 		{
+		}
+
+		@Override
+		public Node clone()
+		{ // Replaces 'this' with a fresh node
+			Node x = new Node();
+			x.k = this.k;
+			x.v = this.v;
+			x.p = this.p;
+			x.l = this.l;
+			x.r = this.r;
+			x.c = this.c;
+
+			if (x.p != null)
+			{ // replace parent pointer
+				if (x.p.l == this)
+				{ // 'this' is p's left child
+					x.p.l = x;
+				}
+				else
+				{ // 'this' is p's right child
+					x.p.r = x;
+				}
+			}
+			else
+			{ // if 'this' is the root I have to update the reference
+				root = x;
+			}
+
+			// replace children pointers
+			if (x.l != null)
+			{
+				x.l.p = x;
+			}
+			if (x.r != null)
+			{
+				x.r.p = x;
+			}
+
+			return x;
 		}
 	}
 
@@ -80,8 +119,10 @@ public class RedBTreeZ implements IntSet
 		root = null;
 	}
 
-	/* private Methods */
-	/* lookup */
+	/*****************************************
+	 * private methods
+	 *****************************************/
+
 	private Node lookup(int k)
 	{
 		Node p = root;
@@ -99,7 +140,6 @@ public class RedBTreeZ implements IntSet
 		return null;
 	}
 
-	/* rotateLeft */
 	private void rotateLeft(Node x)
 	{
 		Node r = x.r;
@@ -128,7 +168,6 @@ public class RedBTreeZ implements IntSet
 		x.p = r;
 	}
 
-	/* rotateRight */
 	private void rotateRight(Node x)
 	{
 		Node l = x.l;
@@ -157,31 +196,26 @@ public class RedBTreeZ implements IntSet
 		x.p = l;
 	}
 
-	/* parentOf */
 	private Node parentOf(Node n)
 	{
 		return ((n != null) ? n.p : null);
 	}
 
-	/* leftOf */
 	private Node leftOf(Node n)
 	{
 		return ((n != null) ? n.l : null);
 	}
 
-	/* rightOf */
 	private Node rightOf(Node n)
 	{
 		return ((n != null) ? n.r : null);
 	}
 
-	/* colorOf */
 	private int colorOf(Node n)
 	{
 		return ((n != null) ? n.c : BLACK);
 	}
 
-	/* setColor */
 	private void setColor(Node n, int c)
 	{
 		if (n != null)
@@ -190,7 +224,6 @@ public class RedBTreeZ implements IntSet
 		}
 	}
 
-	/* fixAfterInsertion */
 	private void fixAfterInsertion(Node x)
 	{
 		x.c = RED;
@@ -262,7 +295,7 @@ public class RedBTreeZ implements IntSet
 		}
 	}
 
-	private Node insert(int k, int v, Node n)
+	private Node insert(int k, Object v, Node n)
 	{
 		Node t = root;
 		if (t == null)
@@ -330,7 +363,6 @@ public class RedBTreeZ implements IntSet
 		}
 	}
 
-	/* successor */
 	private Node successor(Node t)
 	{
 		if (t == null)
@@ -360,7 +392,6 @@ public class RedBTreeZ implements IntSet
 
 	}
 
-	/* fixAfterDeletion */
 	private void fixAfterDeletion(Node x)
 	{
 		while (x != root && colorOf(x) == BLACK)
@@ -447,30 +478,9 @@ public class RedBTreeZ implements IntSet
 		{
 			Node s = successor(p);
 
-			Node x = new Node();
+			Node x = p.clone();
 			x.k = s.k;
 			x.v = s.v;
-			x.c = p.c;
-
-			x.p = p.p;
-			x.l = p.l;
-			x.r = p.r;
-
-			p.l.p = x;
-			p.r.p = x;
-
-			Node pp = p.p;
-			if (pp != null)
-			{
-				if (pp.l == p)
-				{
-					pp.l = x;
-				}
-				else
-				{
-					pp.r = x;
-				}
-			}
 
 			// p.k = s.k;
 			// p.v = s.v;
@@ -536,11 +546,9 @@ public class RedBTreeZ implements IntSet
 		return p;
 	}
 
-	/*
-	 * Diagnostic section
-	 */
-
-	/* firstEntry */
+	/*****************************************
+	 * diagnostic section
+	 *****************************************/
 
 	private Node firstEntry()
 	{
@@ -554,8 +562,6 @@ public class RedBTreeZ implements IntSet
 		}
 		return p;
 	}
-
-	/* verifyRedBlack */
 
 	private int verifyRedBlack(Node root, int depth)
 	{
@@ -613,7 +619,6 @@ public class RedBTreeZ implements IntSet
 		return (height_left + 1);
 	}
 
-	/* compareKeysDefault */
 	private int compare(int a, int b)
 	{
 		return a - b;
@@ -623,12 +628,6 @@ public class RedBTreeZ implements IntSet
 	 * public methods
 	 *****************************************/
 
-	/*
-	 * ==========================================================================
-	 * === rbtree_verify
-	 * ========================================================
-	 * ===================== long rbtree_verify (rbtree_t* s, long verbose);
-	 */
 	public int verify(int verbose)
 	{
 		if (root == null)
@@ -692,6 +691,7 @@ public class RedBTreeZ implements IntSet
 
 	}
 
+	@Override
 	public boolean validate()
 	{
 		int r = verify(1);
@@ -701,18 +701,13 @@ public class RedBTreeZ implements IntSet
 	@Atomic
 	public boolean add(int key)
 	{
-		Node node = new Node();
-		Node ex = insert(key, key, node);
-		if (ex != null)
-		{
-			node = null;
-		}
-		return ex == null;
-	}
-
-	@Atomic
-	public boolean add2(int key)
-	{
+		// Node node = new Node();
+		// Node ex = insert(key, key, node);
+		// if (ex != null)
+		// {
+		// node = null;
+		// }
+		// return ex == null;
 		Node p = root;
 		java.util.Random rand = new java.util.Random();
 		int down = rand.nextInt((int) (Math.log10(32768) / Math.log10(2)));
@@ -734,31 +729,18 @@ public class RedBTreeZ implements IntSet
 
 		if (p == null)
 		{
-			prev.v++;
+			prev.v = rand.nextInt();
 		}
 		else
 		{
-			p.v++;
+			p.v = rand.nextInt();
 		}
 
 		return true;
 	}
-	
-	@Atomic
-	public boolean remove(int key)
-	{
-		 Node node = null;
-		 node = lookup(key);
-		
-		 if (node != null)
-		 {
-		 node = deleteNode(node);
-		 }
-		 return node != null;
-	}
 
 	@Atomic
-	public boolean remove2(int key)
+	public boolean remove(int key)
 	{
 		// Node node = null;
 		// node = lookup(key);
@@ -789,11 +771,11 @@ public class RedBTreeZ implements IntSet
 
 		if (p == null)
 		{
-			prev.v--;
+			prev.v = rand.nextInt();
 		}
 		else
 		{
-			p.v--;
+			p.v = rand.nextInt();
 		}
 
 		return true;
@@ -820,11 +802,4 @@ public class RedBTreeZ implements IntSet
 	{
 		return n != null ? size(n.l) + size(n.r) + 1 : 0;
 	}
-
 }
-
-/*
- * =============================================================================
- * End of rbtree.java
- * =============================================================================
- */

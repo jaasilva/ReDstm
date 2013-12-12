@@ -4,7 +4,6 @@ import org.deuce.Atomic;
 
 public class IntSetHash implements IntSet
 {
-
 	private int[] set = new int[13];
 	private byte[] states = new byte[13];
 	private int free = states.length;
@@ -80,8 +79,7 @@ public class IntSetHash implements IntSet
 				{
 					index += length;
 				}
-			}
-			while (states[index] != FREE
+			} while (states[index] != FREE
 					&& (states[index] == REMOVED || set[index] != value));
 		}
 
@@ -115,8 +113,7 @@ public class IntSetHash implements IntSet
 					{
 						index += length;
 					}
-				}
-				while (states[index] == FULL && set[index] != value);
+				} while (states[index] == FULL && set[index] != value);
 			}
 			if (states[index] == REMOVED)
 			{
@@ -183,15 +180,9 @@ public class IntSetHash implements IntSet
 	}
 
 	@Override
-	public boolean add2(int nextInt) {
+	public boolean validate()
+	{
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-	@Override
-	public boolean remove2(int value) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

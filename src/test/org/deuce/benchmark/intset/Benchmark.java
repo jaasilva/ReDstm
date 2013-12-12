@@ -16,6 +16,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 	int m_range = 1 << 16;
 	int m_rate = 20;
 
+	@Override
 	public void init(String[] args)
 	{
 		boolean error = false;
@@ -52,8 +53,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 		if (Integer.getInteger("tribu.site") == 1)
 		{
 			error = initSet(args[0]);
-			// else
-			// waitForSet();
 
 			if (error)
 			{
@@ -63,27 +62,19 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			}
 
 			System.err.println("Set created.");
+
 			long start = System.nanoTime();
 			initializeSet(new Random(), initial);
 			long end = System.nanoTime();
-			System.err.println("Set populated: " + (end - start) / 1000000
-					+ " ms");
+			System.err.println("Set populated: " + (end - start) / 1000000000.0
+					+ " s");
 
-			// for (int i = 0; i < initial; i++)
-			// m_set.add(random.nextInt(m_range));
-
-			System.out.println("Initial size        = " + initial);
-			System.out.println("Range               = " + m_range);
-			System.out.println("Write rate          = " + m_rate + "%");
+			System.out.println("Initial size  = " + initial);
+			System.out.println("Range         = " + m_range);
+			System.out.println("Write rate    = " + m_rate + "%");
 			System.out.println();
 		}
 	}
-
-	// @Atomic
-	// private void waitForSet() {
-	// if (m_set == null)
-	// throw new TransactionException("Waiting for set");
-	// }
 
 	@Atomic
 	private boolean initSet(String type)
@@ -93,7 +84,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			if (m_set == null)
 			{
 				m_set = new IntSetLinkedList();
-				// initializeSet(random, initial);
 			}
 		}
 		else if (type.equals("RBTree"))
@@ -101,25 +91,24 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			if (m_set == null)
 			{
 				m_set = new RBTree();
-				// initializeSet(random, initial);
 			}
 		}
 		else if (type.equals("RedBTree"))
-		{ // XXX supposed good red black tree
+		{ // supposed good red black tree
 			if (m_set == null)
 			{
 				m_set = new RedBTree();
 			}
 		}
 		else if (type.equals("RedBTreeX"))
-		{
+		{ // memory benchmark
 			if (m_set == null)
 			{
 				m_set = new RedBTreeX();
 			}
 		}
 		else if (type.equals("RedBTreeZ"))
-		{
+		{ // partial replication benchmark
 			if (m_set == null)
 			{
 				m_set = new RedBTreeZ();
@@ -130,7 +119,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			if (m_set == null)
 			{
 				m_set = new IntSetSkipList();
-				// initializeSet(random, initial);
 			}
 		}
 		else if (type.equals("IntSetHash"))
@@ -138,7 +126,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			if (m_set == null)
 			{
 				m_set = new IntSetHash();
-				// initializeSet(random, initial);
 			}
 		}
 		else if (type.equals("IntJavaHashSet"))
@@ -146,7 +133,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			if (m_set == null)
 			{
 				m_set = new IntJavaHashSet();
-				// initializeSet(random, initial);
 			}
 		}
 		else if (type.equals("IntJavaConcurrentHashSet"))
@@ -154,7 +140,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			if (m_set == null)
 			{
 				m_set = new IntJavaConcurrentHashSet();
-				// initializeSet(random, initial);
 			}
 		}
 		else
@@ -165,24 +150,12 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 		return false;
 	}
 
-	// @Atomic
-	// public void initializeSet(Random random, int initial) {
-	// // for (int i = 0; i < initial; i++) {
-	// // m_set.add(random.nextInt(m_range));
-	// // }
-	// int i = 0;
-	// while (i < initial) {
-	// if (m_set.add(random.nextInt(m_range)))
-	// i++;
-	// }
-	// }
-
 	public void initializeSet(Random random, int initial)
 	{
 		int chunkSize = initial / 8;
 		for (int i = 0; i < initial; i += chunkSize)
 		{
-			System.err.println(i);
+			System.err.println("[" + i + "-" + (i + chunkSize) + "]");
 			addToSet(random, chunkSize);
 		}
 	}
@@ -192,18 +165,18 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 	{
 		for (int i = 0; i < chunkSize; i++)
 		{
-			//System.err.println(i);
 			while (!m_set.add(random.nextInt(m_range)))
 				;
 		}
-
 	}
 
+	@Override
 	public org.deuce.benchmark.BenchmarkThread createThread(int i, int nb)
 	{
 		return new BenchmarkThread(m_set, m_range, m_rate);
 	}
 
+	@Override
 	public String getStats(org.deuce.benchmark.BenchmarkThread[] threads)
 	{
 		int add = 0;
@@ -216,5 +189,11 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			contains += ((BenchmarkThread) threads[i]).m_nb_contains;
 		}
 		return "A=" + add + ", R=" + remove + ", C=" + contains;
+	}
+
+	@Override
+	public boolean validate()
+	{
+		return m_set.validate();
 	}
 }

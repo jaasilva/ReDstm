@@ -6,14 +6,11 @@ package org.deuce.benchmark.intset;
  */
 public interface IntSet
 {
-
 	public boolean add(int value);
 
 	public boolean remove(int value);
 
 	public boolean contains(int value);
-
-	public boolean add2(int nextInt);
 	
-	public boolean remove2(int value);
+	public boolean validate();
 }

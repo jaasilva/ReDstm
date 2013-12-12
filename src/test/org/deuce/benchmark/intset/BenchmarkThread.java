@@ -15,7 +15,6 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 	int m_nb_contains;
 	final private int m_rate;
 	boolean m_write;
-	// int m_last;
 	final private Random m_random;
 
 	public BenchmarkThread(IntSet set, int range, int rate)
@@ -35,18 +34,14 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 		{
 			if (m_write)
 			{
-				// m_last = m_random.nextInt(m_range);
-				// if (m_set.add(m_last)) {
-				m_write = false;
-				// }
-
-				m_set.add2(m_random.nextInt(m_range));
+				m_set.add(m_random.nextInt(m_range));
 				if (phase == Benchmark.TEST_PHASE)
 					m_nb_add++;
+				m_write = false;
 			}
 			else
 			{
-				m_set.remove2(m_random.nextInt(m_range));
+				m_set.remove(m_random.nextInt(m_range));
 				if (phase == Benchmark.TEST_PHASE)
 					m_nb_remove++;
 				m_write = true;

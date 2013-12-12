@@ -28,7 +28,8 @@ _EXCLUDE="${_EXCLUDE},org.deuce.trove.*"
 _EXCLUDE="${_EXCLUDE},org.deuce.benchmark.intset.MyObjectBackend"
 
 _WARMUP=0
-_DURATION=10000
+#_DURATION=10000
+_DURATION=30000
 
 _SITE=`hostname | cut -c 5-`
 _THREADS=$2
@@ -36,8 +37,10 @@ _REPLICAS=$3
 _RUN=$4
 
 _BENCH=$1
-_SIZE=1024 #32768 # 2^15
-_RANGE=4096 #131072 # SIZE*4
+_SIZE=1024
+#_SIZE=32768 # 2^15
+_RANGE=4096
+#_RANGE=131072 # SIZE*4
 _WRITES=$5
 
 _CTX=tl2.Context
