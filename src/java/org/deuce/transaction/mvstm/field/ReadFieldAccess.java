@@ -1,5 +1,7 @@
 package org.deuce.transaction.mvstm.field;
 
+import java.io.Serializable;
+
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
@@ -7,8 +9,9 @@ import org.deuce.transform.localmetadata.type.TxField;
  * @author Ricardo Dias <ricardo.dias@campus.fct.unl.pt>
  */
 @ExcludeTM
-public class ReadFieldAccess
+public class ReadFieldAccess implements Serializable
 {
+	private static final long serialVersionUID = 1L;
 	public TxField field;
 	public Version version;
 

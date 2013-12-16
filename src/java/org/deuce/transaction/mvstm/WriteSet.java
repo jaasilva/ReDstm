@@ -1,5 +1,7 @@
 package org.deuce.transaction.mvstm;
 
+import java.io.Serializable;
+
 import org.deuce.transaction.mvstm.field.ReadFieldAccess;
 import org.deuce.transaction.mvstm.field.WriteFieldAccess;
 import org.deuce.transform.ExcludeTM;
@@ -13,8 +15,9 @@ import org.deuce.trove.TObjectProcedure;
  * @since 0.7
  */
 @ExcludeTM
-public class WriteSet
+public class WriteSet implements Serializable
 {
+	private static final long serialVersionUID = 1L;
 	final private THashSet<WriteFieldAccess> writeSet = new THashSet<WriteFieldAccess>(
 			16);
 

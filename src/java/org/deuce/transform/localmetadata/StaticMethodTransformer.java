@@ -277,9 +277,8 @@ public class StaticMethodTransformer extends MethodAdapter
 			// stack: ..., TxField =>
 			super.visitInsn(Opcodes.DUP);
 			// stack: ..., TxField, TxField =>
-			super.visitInsn(Opcodes.DUP);
-			// stack: ..., TxField, TxField, TxField =>
-			super.visitTypeInsn(Opcodes.CHECKCAST, VBoxField.NAME);
+			super.visitTypeInsn(Opcodes.CHECKCAST,
+					org.deuce.transaction.mvstm.field.VBoxField.NAME);
 			// stack: ..., TxField, TxField, VBoxField =>
 			switch (field.getOriginalType().getSort())
 			{
@@ -315,9 +314,11 @@ public class StaticMethodTransformer extends MethodAdapter
 				break;
 			}
 			// stack: ..., TxField, VBoxField, Type =>
-			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, VBoxField.NAME,
-					VBoxField.SET_TYPE_METHOD_NAME,
-					VBoxField.SET_TYPE_METHOD_DESC);
+			mv.visitMethodInsn(
+					Opcodes.INVOKEVIRTUAL,
+					org.deuce.transaction.mvstm.field.VBoxField.NAME,
+					org.deuce.transaction.mvstm.field.VBoxField.SET_TYPE_METHOD_NAME,
+					org.deuce.transaction.mvstm.field.VBoxField.SET_TYPE_METHOD_DESC);
 			// stack: ..., TxField =>
 		}
 

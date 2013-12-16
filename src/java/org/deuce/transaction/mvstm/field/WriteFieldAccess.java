@@ -1,6 +1,5 @@
 package org.deuce.transaction.mvstm.field;
 
-import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
@@ -12,6 +11,7 @@ import org.deuce.transform.localmetadata.type.TxField;
 @ExcludeTM
 public class WriteFieldAccess extends ReadFieldAccess
 {
+	private static final long serialVersionUID = 1L;
 	public Object value;
 
 	public void put(int txNumber)

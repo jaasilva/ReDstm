@@ -359,7 +359,8 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 			mv.visitFieldInsn(Opcodes.GETFIELD, fieldsHolderName, field
 					.getFieldNameAddress(), field.getType().getDescriptor());
 			// stack: ..., TxField =>
-			mv.visitTypeInsn(Opcodes.CHECKCAST, VBoxField.NAME);
+			mv.visitTypeInsn(Opcodes.CHECKCAST,
+					org.deuce.transaction.mvstm.field.VBoxField.NAME);
 			// stack: ..., VBoxField =>
 			switch (field.getOriginalType().getSort())
 			{
@@ -395,9 +396,11 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 				break;
 			}
 			// stack: ..., VBoxField, Type =>
-			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, VBoxField.NAME,
-					VBoxField.SET_TYPE_METHOD_NAME,
-					VBoxField.SET_TYPE_METHOD_DESC);
+			mv.visitMethodInsn(
+					Opcodes.INVOKEVIRTUAL,
+					org.deuce.transaction.mvstm.field.VBoxField.NAME,
+					org.deuce.transaction.mvstm.field.VBoxField.SET_TYPE_METHOD_NAME,
+					org.deuce.transaction.mvstm.field.VBoxField.SET_TYPE_METHOD_DESC);
 			// stack: ... =>
 		}
 	}
@@ -442,8 +445,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 				int nParams = new Method(name, desc).getArgumentTypes().length;
 
 				// With that number, we go down the stack #params and check
-				// what's
-				// there
+				// what's there
 				Object stackObj = stack.get(stack.size() - nParams - 1);
 
 				// Is it <this>, uninitialized?

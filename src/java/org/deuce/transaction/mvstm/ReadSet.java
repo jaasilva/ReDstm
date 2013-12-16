@@ -1,5 +1,7 @@
 package org.deuce.transaction.mvstm;
 
+import java.io.Serializable;
+
 import org.deuce.transaction.TransactionException;
 import org.deuce.transaction.mvstm.field.ReadFieldAccess;
 import org.deuce.transaction.mvstm.field.VBoxField;
@@ -13,8 +15,9 @@ import org.deuce.transform.ExcludeTM;
  * @since 0.7
  */
 @ExcludeTM
-public class ReadSet
+public class ReadSet implements Serializable
 {
+	private static final long serialVersionUID = 1L;
 	private static final int DEFAULT_CAPACITY = 1024;
 	private ReadFieldAccess[] readSet = new ReadFieldAccess[DEFAULT_CAPACITY];
 	private int nextAvaliable = 0;
