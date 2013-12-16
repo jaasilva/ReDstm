@@ -1,7 +1,5 @@
 package org.deuce.benchmark;
 
-import java.util.Random;
-
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
@@ -19,6 +17,7 @@ public class Driver
 	static public Barrier finishBarrier;
 
 	static public int n_threads;
+	static public int partial_ops = 0;
 
 	public static void main(String[] args)
 	{
@@ -28,6 +27,7 @@ public class Driver
 		String benchmark = null;
 		boolean error = false;
 		int arg;
+		int partial_ops_priv = 0;
 
 		for (arg = 0; arg < args.length && !error; arg++)
 		{
@@ -52,6 +52,15 @@ public class Driver
 			{
 				if (++arg < args.length)
 					warmup = Integer.parseInt(args[arg]);
+				else
+					error = true;
+			}
+			else if (args[arg].equals("-po"))
+			{
+				if (++arg < args.length)
+				{
+					partial_ops_priv = Integer.parseInt(args[arg]);
+				}
 				else
 					error = true;
 			}
@@ -88,6 +97,7 @@ public class Driver
 		}
 
 		b.init(args);
+		partial_ops = partial_ops_priv; // partial replication related
 
 		// try
 		// {
@@ -194,7 +204,7 @@ public class Driver
 		// e.printStackTrace();
 		// }
 		finishBarrier.join();
-		
+
 		System.out.println("VALID: " + b.validate());
 
 		TribuDSTM.close();

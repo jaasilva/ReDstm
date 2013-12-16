@@ -15,12 +15,12 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 	public IntSet m_set;
 	int m_range = 1 << 16;
 	int m_rate = 20;
+	int initial = 32768; // 2^15
 
 	@Override
 	public void init(String[] args)
 	{
 		boolean error = false;
-		int initial = 256;
 
 		if (args.length == 0)
 			error = true;
@@ -111,7 +111,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 		{ // partial replication benchmark
 			if (m_set == null)
 			{
-				m_set = new RedBTreeZ();
+				m_set = new RedBTreeZ(initial);
 			}
 		}
 		else if (type.equals("SkipList"))

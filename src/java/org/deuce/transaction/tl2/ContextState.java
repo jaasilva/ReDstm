@@ -1,8 +1,6 @@
 package org.deuce.transaction.tl2;
 
 import org.deuce.transaction.DistributedContextState;
-import org.deuce.transaction.ReadSet;
-import org.deuce.transaction.WriteSet;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
@@ -17,5 +15,4 @@ public class ContextState extends DistributedContextState
 		super(rs, ws, ctxID, atomicBlockId);
 		this.rv = rv;
 	}
-
 }

@@ -1,7 +1,9 @@
 package org.deuce.benchmark.intset;
 
+import java.util.Random;
+
 import org.deuce.Atomic;
-import org.deuce.benchmark.intset.RedBTree.Node;
+import org.deuce.benchmark.Driver;
 import org.deuce.distribution.replication.partial.Partial;
 
 /*
@@ -113,10 +115,14 @@ public class RedBTreeZ implements IntSet
 	}
 
 	Node root;
+	Random rand;
+	private int initial;
 
-	public RedBTreeZ()
+	public RedBTreeZ(int initial)
 	{
 		root = null;
+		rand = new Random();
+		this.initial = initial;
 	}
 
 	/*****************************************
@@ -701,84 +707,94 @@ public class RedBTreeZ implements IntSet
 	@Atomic
 	public boolean add(int key)
 	{
-		// Node node = new Node();
-		// Node ex = insert(key, key, node);
-		// if (ex != null)
-		// {
-		// node = null;
-		// }
-		// return ex == null;
-		Node p = root;
-		java.util.Random rand = new java.util.Random();
-		int down = rand.nextInt((int) (Math.log10(32768) / Math.log10(2)));
-		Node prev = p;
+		if (rand.nextInt(100) < Driver.partial_ops)
+		{ // partial operation
+			Node p = root;
+			int down = rand
+					.nextInt((int) (Math.log10(initial) / Math.log10(2)));
+			Node prev = p;
 
-		while (p != null && down > 0)
-		{
-			prev = p;
-			if (rand.nextBoolean())
+			while (p != null && down > 0)
 			{
-				p = p.l;
+				prev = p;
+				if (rand.nextBoolean())
+				{
+					p = p.l;
+				}
+				else
+				{
+					p = p.r;
+				}
+				down--;
+			}
+
+			if (p == null)
+			{
+				prev.v = rand.nextInt();
 			}
 			else
 			{
-				p = p.r;
+				p.v = rand.nextInt();
 			}
-			down--;
-		}
-
-		if (p == null)
-		{
-			prev.v = rand.nextInt();
+			return true;
 		}
 		else
-		{
-			p.v = rand.nextInt();
+		{ // full operation
+			Node node = new Node();
+			Node ex = insert(key, key, node);
+			if (ex != null)
+			{
+				node = null;
+			}
+			return ex == null;
 		}
-
-		return true;
 	}
 
 	@Atomic
 	public boolean remove(int key)
 	{
-		// Node node = null;
-		// node = lookup(key);
-		//
-		// if (node != null)
-		// {
-		// node = deleteNode(node);
-		// }
-		// return node != null;
-		Node p = root;
-		java.util.Random rand = new java.util.Random();
-		int down = rand.nextInt((int) (Math.log10(32768) / Math.log10(2)));
-		Node prev = p;
+		if (rand.nextInt(100) < Driver.partial_ops)
+		{ // partial operation
+			Node p = root;
+			int down = rand
+					.nextInt((int) (Math.log10(initial) / Math.log10(2)));
+			Node prev = p;
 
-		while (p != null && down > 0)
-		{
-			prev = p;
-			if (rand.nextBoolean())
+			while (p != null && down > 0)
 			{
-				p = p.l;
+				prev = p;
+				if (rand.nextBoolean())
+				{
+					p = p.l;
+				}
+				else
+				{
+					p = p.r;
+				}
+				down--;
+			}
+
+			if (p == null)
+			{
+				prev.v = rand.nextInt();
 			}
 			else
 			{
-				p = p.r;
+				p.v = rand.nextInt();
 			}
-			down--;
-		}
-
-		if (p == null)
-		{
-			prev.v = rand.nextInt();
+			return true;
 		}
 		else
-		{
-			p.v = rand.nextInt();
-		}
+		{ // full operation
+			Node node = null;
+			node = lookup(key);
 
-		return true;
+			if (node != null)
+			{
+				node = deleteNode(node);
+			}
+			return node != null;
+		}
 	}
 
 	@Atomic

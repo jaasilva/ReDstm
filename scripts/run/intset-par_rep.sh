@@ -1,6 +1,6 @@
 #!/bin/sh
 ###############################################################################
-# <benchmark> <threads> <replicas> <run> <writes> <groups>
+# <benchmark> <threads> <replicas> <run> <writes> <groups> <partial_ops>
 ###############################################################################
 
 _CP="bin/classes"
@@ -40,6 +40,7 @@ _BENCH=$1
 _SIZE=1024 #32768 # 2^15
 _RANGE=4096 #131072 # SIZE*4
 _WRITES=$5
+_PARTIAL_OPS=$7
 
 _CTX=score.SCOReContext
 _PROTO=score.SCOReProtocol
@@ -56,9 +57,9 @@ _COMM="org.deuce.distribution.groupcomm.${_GCS}GroupCommunication"
 _REP="org.deuce.distribution.replication.partial.protocol.${_PROTO}"
 _DATAPART="org.deuce.distribution.replication.partitioner.data.${_DPART}DataPartitioner"
 
-_GROUPCOMM="${_BENCH}_${_SIZE}_${_WRITES}_${_THREADS}_${_PROTO}_${_CTX}_${_REPLICAS}_${_RUN}"
+_GROUPCOMM="${_BENCH}_${_SIZE}_${_WRITES}_${_THREADS}_${_PROTO}_${_CTX}_${_REPLICAS}_${_RUN}_${_PARTIAL_OPS}"
 
-_FNAME="${_BENCH}_i${_SIZE}_w${_WRITES}_t${_THREADS}_${_PROTO}_${_CTX}_${_GCS}_id${_SITE}-${_REPLICAS}_run${_RUN}_g${_GROUPS}_${_DPART}"
+_FNAME="${_BENCH}_i${_SIZE}_w${_WRITES}_t${_THREADS}_${_PROTO}_${_CTX}_${_GCS}_id${_SITE}-${_REPLICAS}_run${_RUN}_g${_GROUPS}_${_DPART}_${_PARTIAL_OPS}"
 
 _LOG=logs/${_FNAME}.res
 _MEM=${_LOG}.mem
@@ -92,7 +93,7 @@ java -Xmx8g -cp $_CP -javaagent:bin/deuceAgent.jar \
 	-Dtribu.groups=$_GROUPS \
 	-Djgroups.bind_addr=`hostname` \
 	-Djava.net.preferIPv4Stack=true \
-	org.deuce.benchmark.Driver -n $_THREADS -d $_DURATION -w $_WARMUP \
+	org.deuce.benchmark.Driver -n $_THREADS -d $_DURATION -w $_WARMUP -po $_PARTIAL_OPS \
 		org.deuce.benchmark.intset.Benchmark $_BENCH -r $_RANGE -i $_SIZE \
 		-w $_WRITES 2>&1 | tee $_LOG
 

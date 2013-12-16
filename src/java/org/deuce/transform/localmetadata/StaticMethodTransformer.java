@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.deuce.Defaults;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.full.FullReplicationSerializer;
 import org.deuce.distribution.replication.partial.PartialReplicationSerializer;
@@ -157,36 +158,36 @@ public class StaticMethodTransformer extends MethodAdapter
 			// stack: ..., TxField, VBoxField =>
 			switch (field.getOriginalType().getSort())
 			{
-				case Type.BYTE:
-					super.visitLdcInsn(Type.BYTE);
-					break;
-				case Type.BOOLEAN:
-					super.visitLdcInsn(Type.BOOLEAN);
-					break;
-				case Type.CHAR:
-					super.visitLdcInsn(Type.CHAR);
-					break;
-				case Type.SHORT:
-					super.visitLdcInsn(Type.SHORT);
-					break;
-				case Type.INT:
-					super.visitLdcInsn(Type.INT);
-					break;
-				case Type.LONG:
-					super.visitLdcInsn(Type.LONG);
-					break;
-				case Type.FLOAT:
-					super.visitLdcInsn(Type.FLOAT);
-					break;
-				case Type.DOUBLE:
-					super.visitLdcInsn(Type.DOUBLE);
-					break;
-				case Type.OBJECT:
-					super.visitLdcInsn(Type.OBJECT);
-					break;
-				case Type.ARRAY:
-					super.visitLdcInsn(Type.ARRAY);
-					break;
+			case Type.BYTE:
+				super.visitLdcInsn(Type.BYTE);
+				break;
+			case Type.BOOLEAN:
+				super.visitLdcInsn(Type.BOOLEAN);
+				break;
+			case Type.CHAR:
+				super.visitLdcInsn(Type.CHAR);
+				break;
+			case Type.SHORT:
+				super.visitLdcInsn(Type.SHORT);
+				break;
+			case Type.INT:
+				super.visitLdcInsn(Type.INT);
+				break;
+			case Type.LONG:
+				super.visitLdcInsn(Type.LONG);
+				break;
+			case Type.FLOAT:
+				super.visitLdcInsn(Type.FLOAT);
+				break;
+			case Type.DOUBLE:
+				super.visitLdcInsn(Type.DOUBLE);
+				break;
+			case Type.OBJECT:
+				super.visitLdcInsn(Type.OBJECT);
+				break;
+			case Type.ARRAY:
+				super.visitLdcInsn(Type.ARRAY);
+				break;
 			}
 			// stack: ..., TxField, VBoxField, Type =>
 			super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, VBoxField.NAME,
@@ -265,6 +266,59 @@ public class StaticMethodTransformer extends MethodAdapter
 						FullReplicationSerializer.BOOTSTRAP_METHOD_DESC);
 				// stack: ..., TxField =>
 			}
+		}
+
+		String className = System.getProperty(Defaults._CTX_CLASS,
+				Defaults.CTX_CLASS);
+		if (className.equals(org.deuce.transaction.mvstm.Context.class
+				.getName()))
+		{ // XXX pedreiro style
+			// ##### setType (VBoxField)
+			// stack: ..., TxField =>
+			super.visitInsn(Opcodes.DUP);
+			// stack: ..., TxField, TxField =>
+			super.visitInsn(Opcodes.DUP);
+			// stack: ..., TxField, TxField, TxField =>
+			super.visitTypeInsn(Opcodes.CHECKCAST, VBoxField.NAME);
+			// stack: ..., TxField, TxField, VBoxField =>
+			switch (field.getOriginalType().getSort())
+			{
+			case Type.BYTE:
+				super.visitLdcInsn(Type.BYTE);
+				break;
+			case Type.BOOLEAN:
+				super.visitLdcInsn(Type.BOOLEAN);
+				break;
+			case Type.CHAR:
+				super.visitLdcInsn(Type.CHAR);
+				break;
+			case Type.SHORT:
+				super.visitLdcInsn(Type.SHORT);
+				break;
+			case Type.INT:
+				super.visitLdcInsn(Type.INT);
+				break;
+			case Type.LONG:
+				super.visitLdcInsn(Type.LONG);
+				break;
+			case Type.FLOAT:
+				super.visitLdcInsn(Type.FLOAT);
+				break;
+			case Type.DOUBLE:
+				super.visitLdcInsn(Type.DOUBLE);
+				break;
+			case Type.OBJECT:
+				super.visitLdcInsn(Type.OBJECT);
+				break;
+			case Type.ARRAY:
+				super.visitLdcInsn(Type.ARRAY);
+				break;
+			}
+			// stack: ..., TxField, VBoxField, Type =>
+			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, VBoxField.NAME,
+					VBoxField.SET_TYPE_METHOD_NAME,
+					VBoxField.SET_TYPE_METHOD_DESC);
+			// stack: ..., TxField =>
 		}
 
 		// stack: ..., TxField =>

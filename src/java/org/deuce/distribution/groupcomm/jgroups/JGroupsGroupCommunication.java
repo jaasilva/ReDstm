@@ -36,13 +36,12 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	{
 		try
 		{
+			channel = new JChannel("etc/jgroups.xml");
+
 			if (TribuDSTM.PARTIAL)
-			{
-				channel = new JChannel("etc/jgroups-partial.xml");
-			}
-			else
-			{
-				channel = new JChannel("etc/jgroups.xml");
+			{ // XXX Partial Replication Mode (increase receiver threads)
+				channel.getProtocolStack().findProtocol("UDP")
+						.setValue("thread_pool.max_threads", 1);
 			}
 
 			channel.setReceiver(this);

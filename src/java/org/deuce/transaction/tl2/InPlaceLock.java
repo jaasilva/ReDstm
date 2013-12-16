@@ -6,7 +6,6 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public interface InPlaceLock
 {
-
 	boolean lock(DistributedContext locker);
 
 	int checkLock(int clock);
@@ -20,5 +19,4 @@ public interface InPlaceLock
 	void unLock();
 
 	void setAndReleaseLock(int newClock);
-
 }

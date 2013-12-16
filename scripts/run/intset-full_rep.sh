@@ -1,6 +1,6 @@
 #!/bin/sh
 ###############################################################################
-# <benchmark> <threads> <replicas> <run> <writes>
+# <benchmark> <threads> <replicas> <run> <writes> <partial_ops>
 ###############################################################################
 
 _CP="bin/classes"
@@ -42,6 +42,7 @@ _SIZE=1024
 _RANGE=4096
 #_RANGE=131072 # SIZE*4
 _WRITES=$5
+_PARTIAL_OPS=$6
 
 _CTX=tl2.Context
 _PROTO=nonvoting.NonVoting
@@ -54,9 +55,9 @@ _STM="org.deuce.transaction.${_CTX}"
 _COMM="org.deuce.distribution.groupcomm.${_GCS}GroupCommunication"
 _REP="org.deuce.distribution.replication.full.protocol.${_PROTO}"
 
-_GROUPCOMM="${_BENCH}_${_SIZE}_${_WRITES}_${_THREADS}_${_PROTO}_${_CTX}_${_REPLICAS}_${_RUN}"
+_GROUPCOMM="${_BENCH}_${_SIZE}_${_WRITES}_${_THREADS}_${_PROTO}_${_CTX}_${_REPLICAS}_${_RUN}_${_PARTIAL_OPS}"
 
-_FNAME="${_BENCH}_i${_SIZE}_w${_WRITES}_t${_THREADS}_${_PROTO}_${_CTX}_${_GCS}_id${_SITE}-${_REPLICAS}_run${_RUN}"
+_FNAME="${_BENCH}_i${_SIZE}_w${_WRITES}_t${_THREADS}_${_PROTO}_${_CTX}_${_GCS}_id${_SITE}-${_REPLICAS}_run${_RUN}_${_PARTIAL_OPS}"
 
 _LOG=logs/${_FNAME}.res
 _MEM=${_LOG}.mem
@@ -87,7 +88,7 @@ java -Xmx8g -cp $_CP -javaagent:bin/deuceAgent.jar \
 	-Dtribu.distributed.protocolClass=$_REP \
 	-Djgroups.bind_addr=`hostname` \
 	-Djava.net.preferIPv4Stack=true \
-	org.deuce.benchmark.Driver -n $_THREADS -d $_DURATION -w $_WARMUP \
+	org.deuce.benchmark.Driver -n $_THREADS -d $_DURATION -w $_WARMUP -po $_PARTIAL_OPS \
 		org.deuce.benchmark.intset.Benchmark $_BENCH -r $_RANGE -i $_SIZE \
 		-w $_WRITES 2>&1 | tee $_LOG
 

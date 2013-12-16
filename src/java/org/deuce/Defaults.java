@@ -12,6 +12,14 @@ public class Defaults
 	public static final String METAINF = "";
 	public static final String LOCAL_METADATA = "org.deuce.transform.localmetadata.type.TxField";
 
+	public static final String TL2_TX_LOAD_OPT = "org.deuce.transaction.tl2.txload.opt";
+
+	public static final int SCORE_MVCC_MAX_VERSIONS = 16;
+	public static final String _SCORE_MVCC_MAX_VERSIONS = "org.deuce.transaction.score.versions";
+
+	public static final int MVSTM_MVCC_MAX_VERSIONS = 16;
+	public static final String _MVSTM_MVCC_MAX_VERSIONS = "org.deuce.transaction.mvstm.versions";
+
 	public static final String SER_COMPRESS = "true";
 	public static final String _SER_COMPRESS = "tribu.serialization.compress";
 	public static final String COMM_CLASS = "org.deuce.distribution.groupcomm.jgroups.JGroupsGroupCommunication";
@@ -43,8 +51,6 @@ public class Defaults
 	public static final String _DP_CLASS = "tribu.distributed.DataPartitionerClass";
 	public static final String GP_HASH_CLASS = "org.deuce.hashing.MD5GuavaHashFunction";
 	public static final String _GP_HASH_CLASS = "tribu.distributed.GroupPartitionerHashClass";
-	public static final int SCORE_MVCC_MAX_VERSIONS = 16;
-	public static final String _SCORE_MVCC_MAX_VERSIONS = "org.deuce.transaction.score.versions";
 	// public static final String LOG = "";
 	// public static final String _LOG = "log";
 }

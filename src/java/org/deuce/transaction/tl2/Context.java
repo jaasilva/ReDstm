@@ -2,26 +2,25 @@ package org.deuce.transaction.tl2;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.deuce.Defaults;
 import org.deuce.LocalMetadata;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.profiling.PRProfiler;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
-import org.deuce.transaction.ReadSet;
 import org.deuce.transaction.TransactionException;
-import org.deuce.transaction.WriteSet;
-import org.deuce.transaction.field.ArrayWriteFieldAccess;
-import org.deuce.transaction.field.BooleanWriteFieldAccess;
-import org.deuce.transaction.field.ByteWriteFieldAccess;
-import org.deuce.transaction.field.CharWriteFieldAccess;
-import org.deuce.transaction.field.DoubleWriteFieldAccess;
-import org.deuce.transaction.field.FloatWriteFieldAccess;
-import org.deuce.transaction.field.IntWriteFieldAccess;
-import org.deuce.transaction.field.LongWriteFieldAccess;
-import org.deuce.transaction.field.ObjectWriteFieldAccess;
-import org.deuce.transaction.field.ReadFieldAccess;
-import org.deuce.transaction.field.ShortWriteFieldAccess;
-import org.deuce.transaction.field.WriteFieldAccess;
+import org.deuce.transaction.tl2.field.ArrayWriteFieldAccess;
+import org.deuce.transaction.tl2.field.BooleanWriteFieldAccess;
+import org.deuce.transaction.tl2.field.ByteWriteFieldAccess;
+import org.deuce.transaction.tl2.field.CharWriteFieldAccess;
+import org.deuce.transaction.tl2.field.DoubleWriteFieldAccess;
+import org.deuce.transaction.tl2.field.FloatWriteFieldAccess;
+import org.deuce.transaction.tl2.field.IntWriteFieldAccess;
+import org.deuce.transaction.tl2.field.LongWriteFieldAccess;
+import org.deuce.transaction.tl2.field.ObjectWriteFieldAccess;
+import org.deuce.transaction.tl2.field.ReadFieldAccess;
+import org.deuce.transaction.tl2.field.ShortWriteFieldAccess;
+import org.deuce.transaction.tl2.field.WriteFieldAccess;
 import org.deuce.transaction.pool.Pool;
 import org.deuce.transaction.pool.ResourceFactory;
 import org.deuce.transform.ExcludeTM;
@@ -39,46 +38,34 @@ import org.deuce.trove.TObjectProcedure;
 @LocalMetadata(metadataClass = "org.deuce.transaction.tl2.TL2Field")
 public class Context extends DistributedContext
 {
-
-	/**
-	 * The transaction's read set.
-	 */
-	protected ReadSet readSet;
-
-	/**
-	 * The transaction's write set.
-	 */
-	protected WriteSet writeSet;
-
 	private static final boolean TX_LOAD_OPT = Boolean
-			.getBoolean("org.deuce.transaction.tl2.txload.opt");
+			.getBoolean(Defaults.TL2_TX_LOAD_OPT);
 
-	final static AtomicInteger clock = new AtomicInteger(0);
+	protected ReadSet readSet;
+	protected WriteSet writeSet;
 
 	private ReadFieldAccess currentReadFieldAccess = null;
 
+	final static AtomicInteger clock = new AtomicInteger(0);
 	// Marked on beforeRead, used for the double lock check
 	private int localClock;
 	private int lastReadLock;
 
 	final private LockProcedure lockProcedure = new LockProcedure(this);
-
 	final private TObjectProcedure<WriteFieldAccess> putProcedure = new TObjectProcedure<WriteFieldAccess>()
 	{
-
 		public boolean execute(WriteFieldAccess writeField)
 		{
 			writeField.put();
 			return true;
 		}
-
 	};
 
 	public Context()
 	{
 		super();
 
-		readSet = new TL2ReadSet();
+		readSet = new ReadSet();
 		writeSet = new WriteSet();
 
 		localClock = clock.get();
@@ -93,7 +80,7 @@ public class Context extends DistributedContext
 
 		localClock = ((ContextState) ctxState).rv;
 
-		atomicBlockId = -1;
+		atomicBlockId = -1; // Remote tx
 
 		currentReadFieldAccess = null;
 		arrayPool.clear();
@@ -106,15 +93,6 @@ public class Context extends DistributedContext
 		longPool.clear();
 		floatPool.clear();
 		doublePool.clear();
-
-		// boolean done = false;
-		// do {
-		// int c = clock.get();
-		// if (localClock > c)
-		// done = clock.compareAndSet(c, localClock);
-		// else
-		// done = true;
-		// } while (!done);
 	}
 
 	public DistributedContextState createState()
@@ -128,8 +106,9 @@ public class Context extends DistributedContext
 		readSet.clear();
 		writeSet.clear();
 
-		currentReadFieldAccess = null;
 		localClock = clock.get();
+
+		currentReadFieldAccess = null;
 		arrayPool.clear();
 		objectPool.clear();
 		booleanPool.clear();
@@ -145,13 +124,12 @@ public class Context extends DistributedContext
 	protected boolean performValidation()
 	{
 		try
-		{
-			// pre commit validation phase
+		{ // pre commit validation phase
 			writeSet.forEach(lockProcedure);
-			((TL2ReadSet) readSet).checkClock(localClock, this);
+			readSet.checkClock(localClock, this);
 		}
 		catch (TransactionException exception)
-		{
+		{ // Abort tx. Release locks
 			writeSet.forEach(lockProcedure.unlockProcedure);
 			return false;
 		}
@@ -160,11 +138,10 @@ public class Context extends DistributedContext
 	}
 
 	protected void applyUpdates()
-	{
-		// commit new values and release locks
+	{ // commit new values and release locks
 		writeSet.forEach(putProcedure);
 
-		lockProcedure.setAndUnlockProcedure.retrieveNewClock();
+		lockProcedure.setAndUnlockProcedure.retrieveNewClock(); // clock++
 		writeSet.forEach(lockProcedure.setAndUnlockProcedure);
 
 		lockProcedure.clear();
@@ -172,30 +149,29 @@ public class Context extends DistributedContext
 
 	private WriteFieldAccess onReadAccess0(TxField field)
 	{
+		ReadFieldAccess current = null;
+
 		if (!TX_LOAD_OPT)
 		{
-			ReadFieldAccess current = currentReadFieldAccess;
+			current = currentReadFieldAccess;
 
 			// Check the read is still valid
 			((InPlaceLock) field).checkLock(localClock, lastReadLock);
-
-			// Check if it is already included in the write set
-			return writeSet.contains(current);
 		}
 		else
 		{
-			ReadFieldAccess current = readSet.getNext();
+			current = readSet.getNext();
 			current.init(field);
 
 			((InPlaceLock) field).checkLock2(localClock);
-
-			return writeSet.contains(current);
 		}
+
+		// Check if it is already included in the write set
+		return writeSet.contains(current);
 	}
 
 	private void addWriteAccess0(WriteFieldAccess write)
-	{
-		// Add to write set
+	{ // Add to write set
 		writeSet.put(write);
 	}
 
@@ -212,215 +188,253 @@ public class Context extends DistributedContext
 		}
 	}
 
+	/***************************************
+	 * ON READ ACCESS
+	 **************************************/
+
 	public ArrayContainer onReadAccess(ArrayContainer value, TxField field)
 	{
 		PRProfiler.onTxLocalReadBegin(threadID);
+		ArrayContainer res = null;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
-			return value;
-
-		ArrayContainer r = ((ArrayWriteFieldAccess) writeAccess).getValue();
+		{
+			res = value;
+		}
+		else
+		{
+			res = ((ArrayWriteFieldAccess) writeAccess).getValue();
+		}
 		PRProfiler.onTxLocalReadFinish(threadID);
-		return r;
+		return res;
 	}
 
 	public Object onReadAccess(Object value, TxField field)
 	{
 		PRProfiler.onTxLocalReadBegin(threadID);
+		Object res = null;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
-			return value;
-
-		Object r = ((ObjectWriteFieldAccess) writeAccess).getValue();
+		{
+			res = value;
+		}
+		else
+		{
+			res = ((ObjectWriteFieldAccess) writeAccess).getValue();
+		}
 		PRProfiler.onTxLocalReadFinish(threadID);
-		return r;
+		return res;
 	}
 
 	public boolean onReadAccess(boolean value, TxField field)
 	{
 		PRProfiler.onTxLocalReadBegin(threadID);
+		boolean res = false;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
-			return value;
-
-		boolean r = ((BooleanWriteFieldAccess) writeAccess).getValue();
+		{
+			res = value;
+		}
+		else
+		{
+			res = ((BooleanWriteFieldAccess) writeAccess).getValue();
+		}
 		PRProfiler.onTxLocalReadFinish(threadID);
-		return r;
+		return res;
 	}
 
 	public byte onReadAccess(byte value, TxField field)
 	{
 		PRProfiler.onTxLocalReadBegin(threadID);
+		byte res = -1;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
-			return value;
-
-		byte r = ((ByteWriteFieldAccess) writeAccess).getValue();
+		{
+			res = value;
+		}
+		else
+		{
+			res = ((ByteWriteFieldAccess) writeAccess).getValue();
+		}
 		PRProfiler.onTxLocalReadFinish(threadID);
-		return r;
+		return res;
 	}
 
 	public char onReadAccess(char value, TxField field)
 	{
 		PRProfiler.onTxLocalReadBegin(threadID);
+		char res = ' ';
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
-			return value;
-
-		char r = ((CharWriteFieldAccess) writeAccess).getValue();
+		{
+			res = value;
+		}
+		else
+		{
+			res = ((CharWriteFieldAccess) writeAccess).getValue();
+		}
 		PRProfiler.onTxLocalReadFinish(threadID);
-		return r;
+		return res;
 	}
 
 	public short onReadAccess(short value, TxField field)
 	{
 		PRProfiler.onTxLocalReadBegin(threadID);
+		short res = -1;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
-			return value;
-
-		short r = ((ShortWriteFieldAccess) writeAccess).getValue();
+		{
+			res = value;
+		}
+		else
+		{
+			res = ((ShortWriteFieldAccess) writeAccess).getValue();
+		}
 		PRProfiler.onTxLocalReadFinish(threadID);
-		return r;
+		return res;
 
 	}
 
 	public int onReadAccess(int value, TxField field)
 	{
 		PRProfiler.onTxLocalReadBegin(threadID);
+		int res = -1;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
-			return value;
-
-		int r = ((IntWriteFieldAccess) writeAccess).getValue();
+		{
+			res = value;
+		}
+		else
+		{
+			res = ((IntWriteFieldAccess) writeAccess).getValue();
+		}
 		PRProfiler.onTxLocalReadFinish(threadID);
-		return r;
+		return res;
 	}
 
 	public long onReadAccess(long value, TxField field)
 	{
 		PRProfiler.onTxLocalReadBegin(threadID);
+		long res = -1;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
-			return value;
-
-		long r = ((LongWriteFieldAccess) writeAccess).getValue();
+		{
+			res = value;
+		}
+		else
+		{
+			res = ((LongWriteFieldAccess) writeAccess).getValue();
+		}
 		PRProfiler.onTxLocalReadFinish(threadID);
-		return r;
+		return res;
 	}
 
 	public float onReadAccess(float value, TxField field)
 	{
 		PRProfiler.onTxLocalReadBegin(threadID);
+		float res = -1;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
-			return value;
-
-		float r = ((FloatWriteFieldAccess) writeAccess).getValue();
+		{
+			res = value;
+		}
+		else
+		{
+			res = ((FloatWriteFieldAccess) writeAccess).getValue();
+		}
 		PRProfiler.onTxLocalReadFinish(threadID);
-		return r;
+		return res;
 	}
 
 	public double onReadAccess(double value, TxField field)
 	{
 		PRProfiler.onTxLocalReadBegin(threadID);
+		double res = -1;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
-			return value;
-
-		double r = ((DoubleWriteFieldAccess) writeAccess).getValue();
+		{
+			res = value;
+		}
+		else
+		{
+			res = ((DoubleWriteFieldAccess) writeAccess).getValue();
+		}
 		PRProfiler.onTxLocalReadFinish(threadID);
-		return r;
+		return res;
 	}
+
+	/***************************************
+	 * ON WRITE ACCESS
+	 **************************************/
 
 	public void onWriteAccess(ArrayContainer value, TxField field)
 	{
-
 		ArrayWriteFieldAccess next = arrayPool.getNext();
 		next.set(value, field);
 		addWriteAccess0(next);
-
 	}
 
 	public void onWriteAccess(Object value, TxField field)
 	{
-
 		ObjectWriteFieldAccess next = objectPool.getNext();
 		next.set(value, field);
 		addWriteAccess0(next);
-
 	}
 
 	public void onWriteAccess(boolean value, TxField field)
 	{
-
 		BooleanWriteFieldAccess next = booleanPool.getNext();
 		next.set(value, field);
 		addWriteAccess0(next);
-
 	}
 
 	public void onWriteAccess(byte value, TxField field)
 	{
-
 		ByteWriteFieldAccess next = bytePool.getNext();
 		next.set(value, field);
 		addWriteAccess0(next);
-
 	}
 
 	public void onWriteAccess(char value, TxField field)
 	{
-
 		CharWriteFieldAccess next = charPool.getNext();
 		next.set(value, field);
 		addWriteAccess0(next);
-
 	}
 
 	public void onWriteAccess(short value, TxField field)
 	{
-
 		ShortWriteFieldAccess next = shortPool.getNext();
 		next.set(value, field);
 		addWriteAccess0(next);
-
 	}
 
 	public void onWriteAccess(int value, TxField field)
 	{
-
 		IntWriteFieldAccess next = intPool.getNext();
 		next.set(value, field);
 		addWriteAccess0(next);
-
 	}
 
 	public void onWriteAccess(long value, TxField field)
 	{
-
 		LongWriteFieldAccess next = longPool.getNext();
 		next.set(value, field);
 		addWriteAccess0(next);
-
 	}
 
 	public void onWriteAccess(float value, TxField field)
 	{
-
 		FloatWriteFieldAccess next = floatPool.getNext();
 		next.set(value, field);
 		addWriteAccess0(next);
-
 	}
 
 	public void onWriteAccess(double value, TxField field)
 	{
-
 		DoubleWriteFieldAccess next = doublePool.getNext();
 		next.set(value, field);
 		addWriteAccess0(next);
-
 	}
 
 	private static class ArrayResourceFactory implements
@@ -553,14 +567,10 @@ public class Context extends DistributedContext
 	 */
 	public boolean commit()
 	{
-		// profiler.onTxAppCommit();
 		PRProfiler.onTxAppFinish(threadID);
 
 		if (writeSet.isEmpty())
 		{
-
-			// if (Profiler.enabled)
-			// profiler.txCommitted++;
 			PRProfiler.txProcessed(true);
 
 			TribuDSTM.onTxFinished(this, true);

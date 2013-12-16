@@ -4,26 +4,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.deuce.LocalMetadata;
 import org.deuce.transaction.DistributedContextState;
-import org.deuce.transaction.ReadSet;
 import org.deuce.transaction.TransactionException;
-import org.deuce.transaction.WriteSet;
-import org.deuce.transaction.field.ReadFieldAccess;
-import org.deuce.transaction.field.WriteFieldAccess;
-import org.deuce.transaction.field.speculative.SpeculativeArrayWriteFieldAccess;
-import org.deuce.transaction.field.speculative.SpeculativeBooleanWriteFieldAccess;
-import org.deuce.transaction.field.speculative.SpeculativeByteWriteFieldAccess;
-import org.deuce.transaction.field.speculative.SpeculativeCharWriteFieldAccess;
-import org.deuce.transaction.field.speculative.SpeculativeDoubleWriteFieldAccess;
-import org.deuce.transaction.field.speculative.SpeculativeFloatWriteFieldAccess;
-import org.deuce.transaction.field.speculative.SpeculativeIntWriteFieldAccess;
-import org.deuce.transaction.field.speculative.SpeculativeLongWriteFieldAccess;
-import org.deuce.transaction.field.speculative.SpeculativeObjectWriteFieldAccess;
-import org.deuce.transaction.field.speculative.SpeculativeShortWriteFieldAccess;
-import org.deuce.transaction.field.speculative.SpeculativeWriteFieldAccess;
 import org.deuce.transaction.pool.Pool;
 import org.deuce.transaction.pool.ResourceFactory;
 import org.deuce.transaction.speculative.SpeculativeContextState;
 import org.deuce.transaction.tl2.InPlaceLock;
+import org.deuce.transaction.tl2.ReadSet;
+import org.deuce.transaction.tl2.WriteSet;
+import org.deuce.transaction.tl2.field.ReadFieldAccess;
+import org.deuce.transaction.tl2.field.WriteFieldAccess;
+import org.deuce.transaction.tl2.speculative.field.SpeculativeArrayWriteFieldAccess;
+import org.deuce.transaction.tl2.speculative.field.SpeculativeBooleanWriteFieldAccess;
+import org.deuce.transaction.tl2.speculative.field.SpeculativeByteWriteFieldAccess;
+import org.deuce.transaction.tl2.speculative.field.SpeculativeCharWriteFieldAccess;
+import org.deuce.transaction.tl2.speculative.field.SpeculativeDoubleWriteFieldAccess;
+import org.deuce.transaction.tl2.speculative.field.SpeculativeFloatWriteFieldAccess;
+import org.deuce.transaction.tl2.speculative.field.SpeculativeIntWriteFieldAccess;
+import org.deuce.transaction.tl2.speculative.field.SpeculativeLongWriteFieldAccess;
+import org.deuce.transaction.tl2.speculative.field.SpeculativeObjectWriteFieldAccess;
+import org.deuce.transaction.tl2.speculative.field.SpeculativeShortWriteFieldAccess;
+import org.deuce.transaction.tl2.speculative.field.SpeculativeWriteFieldAccess;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.array.ArrayContainer;
 import org.deuce.transform.localmetadata.type.TxField;
@@ -40,6 +40,9 @@ import org.deuce.trove.TObjectProcedure;
 final public class SpeculativeContext extends
 		org.deuce.transaction.speculative.SpeculativeContext
 {
+	protected ReadSet readSet;
+	protected WriteSet writeSet;
+
 	public static final TransactionException RO_WRITE = new TransactionException(
 			"Read-only transaction tried to write");
 	private static final boolean TX_LOAD_OPT = Boolean
@@ -62,13 +65,11 @@ final public class SpeculativeContext extends
 
 	final private TObjectProcedure<WriteFieldAccess> putProcedure = new TObjectProcedure<WriteFieldAccess>()
 	{
-
 		public boolean execute(WriteFieldAccess writeField)
 		{
 			writeField.put();
 			return true;
 		}
-
 	};
 	/*
 	 * FIXMEs: Refactor. Speculative put procedure.
@@ -723,5 +724,12 @@ final public class SpeculativeContext extends
 	public void onIrrevocableAccess()
 	{
 
+	}
+
+	@Override
+	public boolean commit()
+	{
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

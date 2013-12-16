@@ -15,33 +15,23 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public abstract class DistributedContext implements ContextMetadata
 {
-	// final public Profiler profiler;
-
-	/**
+	/*
 	 * There's a 1:1 mapping between DistributedContext (DCtx) instances and
 	 * worker threads on a site. This counter acts as an unique identifier
 	 * generator for DCtx instances in the same site.
 	 */
 	final static private AtomicInteger threadIDCounter = new AtomicInteger(0);
 
-	/**
-	 * Uniquely identifies a DCtx instance of a specific site.
-	 */
+	// Uniquely identifies a DCtx instance of a specific site.
 	final public int threadID;
 
-	/**
-	 * Uniquely identifies the atomic block being executed.
-	 */
+	// Uniquely identifies the atomic block being executed.
 	public int atomicBlockId;
 
-	/**
-	 * Semaphore on which a DCtx waits for the distributed commit to take place.
-	 */
+	// Semaphore on which a DCtx waits for the distributed commit to take place.
 	protected Semaphore trxProcessed;
 
-	/**
-	 * Result of the distributed commit.
-	 */
+	// Result of the distributed commit.
 	protected boolean committed;
 
 	public DistributedContext()
@@ -50,8 +40,6 @@ public abstract class DistributedContext implements ContextMetadata
 		committed = false;
 		trxProcessed = new Semaphore(0);
 
-		// profiler = new Profiler(false);
-		// Profiler.addProfiler(profiler);
 		TribuDSTM.onContextCreation(this);
 	}
 
@@ -61,8 +49,6 @@ public abstract class DistributedContext implements ContextMetadata
 	 */
 	public void recreateContextFromState(DistributedContextState ctxState)
 	{
-		// profiler.remote = true;
-		// Profiler.txRemote++;
 	}
 
 	/**
@@ -83,8 +69,7 @@ public abstract class DistributedContext implements ContextMetadata
 
 		initialise(atomicBlockId, metainf);
 		TribuDSTM.onTxBegin(this);
-		// profiler.txLocal++;
-		// profiler.onTxBegin();
+
 		PRProfiler.onTxAppBegin(threadID);
 	}
 
@@ -92,11 +77,9 @@ public abstract class DistributedContext implements ContextMetadata
 	 * Template method that performs the state reset on the concrente instance
 	 * to begin a new transaction.
 	 * 
-	 * @param atomicBlockId
-	 *            unique identifier of the atomic block describing the
+	 * @param atomicBlockId unique identifier of the atomic block describing the
 	 *            transaction to be executed (on a per-site basis)
-	 * @param metainf
-	 *            meta information passed by Deuce
+	 * @param metainf meta information passed by Deuce
 	 */
 	abstract protected void initialise(int atomicBlockId, String metainf);
 
@@ -107,13 +90,11 @@ public abstract class DistributedContext implements ContextMetadata
 	 */
 	public boolean validate()
 	{
-		// profiler.onTxValidateBegin();
 		PRProfiler.onTxValidateBegin(threadID);
 
 		boolean valid = performValidation();
 
 		PRProfiler.onTxValidateEnd(threadID);
-		// profiler.onTxValidateEnd();
 
 		return valid;
 	}
@@ -129,13 +110,11 @@ public abstract class DistributedContext implements ContextMetadata
 	 */
 	public void applyWriteSet()
 	{
-		// profiler.onTxCommitStart();
 		PRProfiler.onTxCommitBegin(threadID);
 
 		applyUpdates();
 
 		PRProfiler.onTxCommitEnd(threadID);
-		// profiler.onTxCommitEnd();
 	}
 
 	/**
@@ -147,27 +126,19 @@ public abstract class DistributedContext implements ContextMetadata
 	/**
 	 * Notifies that the distributed commit has finished processing.
 	 * 
-	 * @param committed
-	 *            if the distributed commit was sucessful
+	 * @param committed if the distributed commit was sucessful
 	 */
 	public void processed(boolean committed)
 	{
 		this.committed = committed;
 
 		PRProfiler.txProcessed(committed);
-		// if (Profiler.enabled)
-		// if (committed)
-		// profiler.txCommitted++;
-		// else
-		// profiler.txAborted++;
 
-		trxProcessed.release();
+		trxProcessed.release(); // Release semaphore
 	}
 
 	public void rollback()
 	{
-		// if (Profiler.enabled)
-		// profiler.txAborted++;
 		PRProfiler.txProcessed(false);
 
 		TribuDSTM.onTxFinished(this, false);

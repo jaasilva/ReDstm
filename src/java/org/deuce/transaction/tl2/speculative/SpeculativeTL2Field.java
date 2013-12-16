@@ -66,10 +66,9 @@ public class SpeculativeTL2Field extends SpeculativeTxField implements
 		if (clock < (l & LockTable.UNLOCK))
 			throw LockTable.FAILURE_EXCEPTION;
 
-		// already locked, and not by lockChecker
 		if (((l & LockTable.LOCK) != 0)
 				&& (lh != (SpeculativeContext) lockChecker))
-		{
+		{ // already locked, and not by lockChecker
 			throw LockTable.FAILURE_EXCEPTION;
 		}
 
@@ -127,6 +126,5 @@ public class SpeculativeTL2Field extends SpeculativeTxField implements
 		{
 			throw LockTable.FAILURE_EXCEPTION;
 		}
-
 	}
 }

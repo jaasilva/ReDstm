@@ -1,12 +1,10 @@
 package org.deuce.transaction.tl2.speculative;
 
 import java.util.NoSuchElementException;
-
-import org.deuce.transaction.ReadSet;
 import org.deuce.transaction.TransactionException;
-import org.deuce.transaction.field.ReadFieldAccess;
 import org.deuce.transaction.speculative.SpeculativeContext;
 import org.deuce.transaction.tl2.InPlaceLock;
+import org.deuce.transaction.tl2.ReadSet;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.speculative.SpeculativeTxField;
 
@@ -29,16 +27,17 @@ public class SpeculativeTL2ReadSet extends ReadSet
 			InPlaceLock field = (InPlaceLock) readSet[i].field;
 			if (field == null)
 			{
-				// This means we received a TxField that has already been
-				// garbage collected in this node. This implies that its owner
-				// has also already been collected. Therefore, the owner has
-				// been removed by some previous transaction and therefore it is
-				// safe to abort this one.
+				/*
+				 * This means we received a TxField that has already been
+				 * garbage collected in this node. This implies that its owner
+				 * has also already been collected. Therefore, the owner has
+				 * been removed by some previous transaction and therefore it is
+				 * safe to abort this one.
+				 */
 				throw new TransactionException(
 						"Received already collected metadata.");
 			}
 			field.checkLock(clock);
-			// readSet[i].clear();
 		}
 	}
 
@@ -50,11 +49,13 @@ public class SpeculativeTL2ReadSet extends ReadSet
 
 			if (field == null)
 			{
-				// This means we received a TxField that has already been
-				// garbage collected in this node. This implies that its owner
-				// has also already been collected. Therefore, the owner has
-				// been removed by some previous transaction and therefore it is
-				// safe to abort this one.
+				/*
+				 * This means we received a TxField that has already been
+				 * garbage collected in this node. This implies that its owner
+				 * has also already been collected. Therefore, the owner has
+				 * been removed by some previous transaction and therefore it is
+				 * safe to abort this one.
+				 */
 				throw new TransactionException(
 						"Received already collected metadata.");
 			}
@@ -69,7 +70,6 @@ public class SpeculativeTL2ReadSet extends ReadSet
 			}
 			catch (NoSuchElementException e)
 			{
-				// System.out.println("-- speculativeList was empty, and lock was not taken.");
 			}
 			finally
 			{

@@ -18,10 +18,7 @@ public class TL2Field extends TxField implements InPlaceLock,
 			__LOCK_FIELD__ = AddressUtil.getAddress(TL2Field.class
 					.getDeclaredField("lock"));
 		}
-		catch (SecurityException e)
-		{
-		}
-		catch (NoSuchFieldException e)
+		catch (Exception e)
 		{
 		}
 	}
@@ -47,14 +44,8 @@ public class TL2Field extends TxField implements InPlaceLock,
 	public int checkLock(int clock)
 	{
 		int l = lock;
-		if (clock < (l & LockTable.UNLOCK))
-		{
-			// System.out.println(this+" has already been updated.");
-			throw LockTable.FAILURE_EXCEPTION;
-		}
-		if ((l & LockTable.LOCK) != 0)
-		{
-			// System.out.println(this+" locked by "+lockHolder);
+		if ((clock < (l & LockTable.UNLOCK)) || ((l & LockTable.LOCK) != 0))
+		{ // Abort tx. (if already updated or locked)
 			throw LockTable.FAILURE_EXCEPTION;
 		}
 
@@ -68,14 +59,11 @@ public class TL2Field extends TxField implements InPlaceLock,
 
 		if (clock < (l & LockTable.UNLOCK))
 		{
-			// System.out.println(this+" has already been updated.");
 			throw LockTable.FAILURE_EXCEPTION;
 		}
 
-		// already locked, and not by lockChecker
 		if (((l & LockTable.LOCK) != 0) && (lh != (Context) lockChecker))
-		{
-			// System.out.println(this+" locked by "+lockHolder);
+		{ // already locked, and not by lockChecker
 			throw LockTable.FAILURE_EXCEPTION;
 		}
 
@@ -87,12 +75,10 @@ public class TL2Field extends TxField implements InPlaceLock,
 		int l = lock;
 		if (l != expected || clock < (l & LockTable.UNLOCK))
 		{
-			// System.out.println(this+" has already been updated.");
 			throw LockTable.FAILURE_EXCEPTION;
 		}
 		if ((l & LockTable.LOCK) != 0)
 		{
-			// System.out.println(this+" locked by "+lockHolder);
 			throw LockTable.FAILURE_EXCEPTION;
 		}
 	}
@@ -102,8 +88,7 @@ public class TL2Field extends TxField implements InPlaceLock,
 		int l = lock;
 
 		if ((l & LockTable.LOCK) != 0)
-		{
-			// System.out.println(this+" locked by "+lockHolder);
+		{ // already locked
 			throw LockTable.FAILURE_EXCEPTION;
 		}
 
@@ -112,7 +97,6 @@ public class TL2Field extends TxField implements InPlaceLock,
 
 		if (!isLocked)
 		{
-			// System.out.println(this+" locked by "+lockHolder);
 			throw LockTable.FAILURE_EXCEPTION;
 		}
 
@@ -139,12 +123,10 @@ public class TL2Field extends TxField implements InPlaceLock,
 
 		if (clock < (l & LockTable.UNLOCK))
 		{
-			System.out.println(this + " has already been updated.");
 			throw LockTable.FAILURE_EXCEPTION;
 		}
 		if ((l & LockTable.LOCK) != 0)
 		{
-			System.out.println(this + " locked by " + lockHolder);
 			throw LockTable.FAILURE_EXCEPTION;
 		}
 	}

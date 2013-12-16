@@ -13,10 +13,8 @@ public interface IContext
 	/**
 	 * Called before the transaction was started
 	 * 
-	 * @param atomicBlockId
-	 *            a unique id for atomic block
-	 * @param metainf
-	 *            a meta information on the current atomic block.
+	 * @param atomicBlockId a unique id for atomic block
+	 * @param metainf a meta information on the current atomic block.
 	 */
 	public abstract void init(int atomicBlockId, String metainf);
 

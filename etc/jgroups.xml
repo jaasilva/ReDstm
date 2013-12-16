@@ -1,22 +1,41 @@
+<!--
+Default stack using IP multicasting. It is similar to the "udp"
+stack in stacks.xml, but doesn't use streaming state transfer and flushing
+author: Bela Ban
+
+I added the UDP properties and the TOA protocol.
+author: jaasilva
+-->
+
 <config xmlns="urn:org:jgroups"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/JGroups-3.1.xsd">
-    <UDP ucast_recv_buf_size="25M"
-         ucast_send_buf_size="640K"
-         mcast_recv_buf_size="25M"
-         mcast_send_buf_size="640K" />
-    <PING/>
-    <MERGE2/>
-    <FD_SOCK/>
-    <VERIFY_SUSPECT/>
-    <BARRIER/>
-    <pbcast.NAKACK2/>
-    <UNICAST3/>
-    <pbcast.STABLE/>
-    <pbcast.GMS/>
-    <UFC/>
-    <MFC/>
-    <SEQUENCER/>
-    <FRAG2/>
-    <pbcast.STATE_TRANSFER/>
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/JGroups-3.3.xsd">
+	<UDP
+		ucast_recv_buf_size="25M"
+		ucast_send_buf_size="640K"
+		mcast_recv_buf_size="25M"
+		mcast_send_buf_size="640K"
+		
+		thread_pool.enabled="true"
+		thread_pool.min_threads="1"
+		thread_pool.max_threads="1"
+		oob_thread_pool.enabled="false"/>
+	<PING/>
+	<MERGE2/>
+	<FD_SOCK/>
+	<FD_ALL/>
+	<VERIFY_SUSPECT/>
+	<BARRIER/>
+	<pbcast.NAKACK2/>
+	<UNICAST3/>
+	<pbcast.STABLE/>
+	<pbcast.GMS/>
+	<UFC/>
+	<MFC/>
+	<!-- SEQUENCER could also be placed just under GMS, if messages and 
+	views need to be totally ordered -->
+	<SEQUENCER/>
+	<FRAG2/>
+	<tom.TOA/>
+	<pbcast.STATE_TRANSFER/>
 </config>
