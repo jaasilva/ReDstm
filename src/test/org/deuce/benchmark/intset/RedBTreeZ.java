@@ -634,6 +634,7 @@ public class RedBTreeZ implements IntSet
 	 * public methods
 	 *****************************************/
 
+	@Atomic
 	public int verify(int verbose)
 	{
 		if (root == null)

@@ -14,7 +14,7 @@ public class Reservation_Info
 	}
 
 	/**
-	 * reservation_info_compare -- Returns -1 if A < B, 0 if A = B, 1 if A > B
+	 * Returns -1 if A < B, 0 if A = B, 1 if A > B
 	 */
 	public static int reservation_info_compare(Reservation_Info aPtr,
 			Reservation_Info bPtr)

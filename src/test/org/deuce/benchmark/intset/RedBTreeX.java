@@ -1,7 +1,6 @@
 package org.deuce.benchmark.intset;
 
 import org.deuce.Atomic;
-import org.deuce.benchmark.intset.RedBTree.Node;
 import org.deuce.distribution.replication.partial.Partial;
 
 /*
@@ -628,6 +627,7 @@ public class RedBTreeX implements IntSet
 	 * public methods
 	 *****************************************/
 
+	@Atomic
 	public int verify(int verbose)
 	{
 		if (root == null)

@@ -49,14 +49,14 @@ import org.deuce.profiling.PRProfiler;
 
 public class Client extends Thread
 {
-	int id;
-	Manager managerPtr;
-	Random randomPtr;
-	int numOperation;
-	int numQueryPerTransaction;
-	int queryRange;
-	int percentUser;
-	int percentConsult;
+	private int id;
+	private Manager managerPtr;
+	private Random randomPtr;
+	private int numOperation;
+	private int numQueryPerTransaction;
+	private int queryRange;
+	private int percentUser;
+	private int percentConsult;
 
 	public Client()
 	{
@@ -71,6 +71,7 @@ public class Client extends Thread
 	{
 		this.randomPtr = new Random();
 		this.randomPtr.random_alloc();
+
 		this.id = id;
 		this.managerPtr = managerPtr;
 		this.numOperation = numOperation;
@@ -109,16 +110,7 @@ public class Client extends Thread
 	 */
 	public void run()
 	{
-		// try
-		// {
-		// Thread.sleep(new java.util.Random().nextInt(3000));
-		// }
-		// catch (InterruptedException e)
-		// {
-		// e.printStackTrace();
-		// }
 		System.err.println("### benchBarrier: " + id);
-
 		Vacation.benchBarrier.join();
 
 		PRProfiler.enabled = true;
@@ -159,10 +151,8 @@ public class Client extends Thread
 						% numQueryPerTransaction + 1;
 				updateTables(managerPtr, numUpdate);
 			}
-
-			// System.out.print("\r" + i);
 		}
-		System.out.println("client " + id + "done.");
+		System.out.println("> Client " + id + "done.");
 		Barrier.enterBarrier();
 	}
 
