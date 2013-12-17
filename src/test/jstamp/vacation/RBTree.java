@@ -1,5 +1,7 @@
 package jstamp.vacation;
 
+import org.deuce.distribution.replication.partial.Partial;
+
 /*
  * =============================================================================
  * rbtree.java -- Red-black balanced binary search tree
@@ -13,17 +15,17 @@ package jstamp.vacation;
  * =============================================================================
  * For the license of bayes/sort.h and bayes/sort.c, please see the header of
  * the files.
- * ------------------------------------------------------------------------ For
- * the license of kmeans, please see kmeans/LICENSE.kmeans
- * ------------------------------------------------------------------------ For
- * the license of ssca2, please see ssca2/COPYRIGHT
- * ------------------------------------------------------------------------ For
- * the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the header of
- * the files.
- * ------------------------------------------------------------------------ For
- * the license of lib/rbtree.h and lib/rbtree.c, please see
+ * ----------------------------------------------------------------------------
+ * For the license of kmeans, please see kmeans/LICENSE.kmeans
+ * ----------------------------------------------------------------------------
+ * For the license of ssca2, please see ssca2/COPYRIGHT
+ * ----------------------------------------------------------------------------
+ * For the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the header
+ * of the files.
+ * ----------------------------------------------------------------------------
+ * For the license of lib/rbtree.h and lib/rbtree.c, please see
  * lib/LEGALNOTICE.rbtree and lib/LICENSE.rbtree
- * ------------------------------------------------------------------------
+ * ----------------------------------------------------------------------------
  * Unless otherwise noted, the following license applies to STAMP files:
  * Copyright (c) 2007, Stanford University All rights reserved. Redistribution
  * and use in source and binary forms, with or without modification, are
@@ -50,6 +52,61 @@ package jstamp.vacation;
 
 public class RBTree
 {
+	public class Node
+	{
+		int k; // key
+		@Partial
+		Object v; // val
+		Node p; // parent
+		Node l; // left
+		Node r; // right
+		int c; // color
+
+		public Node()
+		{
+		}
+
+		@Override
+		public Node clone()
+		{ // Replaces 'this' with a fresh node
+			Node x = new Node();
+			x.k = this.k;
+			x.v = this.v;
+			x.p = this.p;
+			x.l = this.l;
+			x.r = this.r;
+			x.c = this.c;
+
+			if (x.p != null)
+			{ // replace parent pointer
+				if (x.p.l == this)
+				{ // 'this' is p's left child
+					x.p.l = x;
+				}
+				else
+				{ // 'this' is p's right child
+					x.p.r = x;
+				}
+			}
+			else
+			{ // if 'this' is the root I have to update the reference
+				root = x;
+			}
+
+			// replace children pointers
+			if (x.l != null)
+			{
+				x.l.p = x;
+			}
+			if (x.r != null)
+			{
+				x.r.p = x;
+			}
+
+			return x;
+		}
+	}
+
 	Node root;
 	int compID;
 
@@ -57,8 +114,10 @@ public class RBTree
 	{
 	}
 
-	/* private Methods */
-	/* lookup */
+	/*****************************************
+	 * private methods
+	 *****************************************/
+
 	private Node lookup(int k)
 	{
 		Node p = root;
@@ -76,7 +135,6 @@ public class RBTree
 		return null;
 	}
 
-	/* rotateLeft */
 	private void rotateLeft(Node x)
 	{
 		Node r = x.r;
@@ -105,7 +163,6 @@ public class RBTree
 		x.p = r;
 	}
 
-	/* rotateRight */
 	private void rotateRight(Node x)
 	{
 		Node l = x.l;
@@ -134,31 +191,26 @@ public class RBTree
 		x.p = l;
 	}
 
-	/* parentOf */
 	private Node parentOf(Node n)
 	{
 		return ((n != null) ? n.p : null);
 	}
 
-	/* leftOf */
 	private Node leftOf(Node n)
 	{
 		return ((n != null) ? n.l : null);
 	}
 
-	/* rightOf */
 	private Node rightOf(Node n)
 	{
 		return ((n != null) ? n.r : null);
 	}
 
-	/* colorOf */
 	private int colorOf(Node n)
 	{
 		return ((n != null) ? n.c : Defines.BLACK);
 	}
 
-	/* setColor */
 	private void setColor(Node n, int c)
 	{
 		if (n != null)
@@ -167,7 +219,6 @@ public class RBTree
 		}
 	}
 
-	/* fixAfterInsertion */
 	private void fixAfterInsertion(Node x)
 	{
 		x.c = Defines.RED;
@@ -307,7 +358,6 @@ public class RBTree
 		}
 	}
 
-	/* successor */
 	private Node successor(Node t)
 	{
 		if (t == null)
@@ -337,7 +387,6 @@ public class RBTree
 
 	}
 
-	/* fixAfterDeletion */
 	private void fixAfterDeletion(Node x)
 	{
 		while (x != root && colorOf(x) == Defines.BLACK)
@@ -424,30 +473,9 @@ public class RBTree
 		{
 			Node s = successor(p);
 
-			Node x = new Node();
+			Node x = p.clone();
 			x.k = s.k;
 			x.v = s.v;
-			x.c = p.c;
-
-			x.p = p.p;
-			x.l = p.l;
-			x.r = p.r;
-
-			p.l.p = x;
-			p.r.p = x;
-
-			Node pp = p.p;
-			if (pp != null)
-			{
-				if (pp.l == p)
-				{
-					pp.l = x;
-				}
-				else
-				{
-					pp.r = x;
-				}
-			}
 
 			// p.k = s.k;
 			// p.v = s.v;
@@ -513,11 +541,9 @@ public class RBTree
 		return p;
 	}
 
-	/*
-	 * Diagnostic section
-	 */
-
-	/* firstEntry */
+	/*****************************************
+	 * diagnostic section
+	 *****************************************/
 
 	private Node firstEntry()
 	{
@@ -531,8 +557,6 @@ public class RBTree
 		}
 		return p;
 	}
-
-	/* verifyRedBlack */
 
 	private int verifyRedBlack(Node root, int depth)
 	{
@@ -590,7 +614,6 @@ public class RBTree
 		return (height_left + 1);
 	}
 
-	/* compareKeysDefault */
 	private int compare(int a, int b)
 	{
 		return a - b;
@@ -654,12 +677,6 @@ public class RBTree
 	 * public methods
 	 *****************************************/
 
-	/*
-	 * ==========================================================================
-	 * === rbtree_verify
-	 * ========================================================
-	 * ===================== long rbtree_verify (rbtree_t* s, long verbose);
-	 */
 	public int verify(int verbose)
 	{
 		if (root == null)
@@ -668,8 +685,6 @@ public class RBTree
 		}
 		if (verbose != 0)
 		{
-//			print();
-//			printBinaryTree(root, 0);
 			System.out.println("Integrity check: ");
 		}
 
@@ -725,13 +740,6 @@ public class RBTree
 		return vfy;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === rbtree_alloc
-	 * ==========================================================
-	 * =================== rbtree_t* rbtree_alloc (long (*compare)(const void*,
-	 * const void*));
-	 */
 	public static RBTree alloc(int compID)
 	{
 		RBTree n = new RBTree();
@@ -744,20 +752,6 @@ public class RBTree
 		return n;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === rbtree_free
-	 * ==========================================================
-	 * =================== void rbtree_free (rbtree_t* r);
-	 */
-
-	/*
-	 * ==========================================================================
-	 * === rbtree_insert -- Returns TRUE on success
-	 * ==============================
-	 * =============================================== bool_t rbtree_insert
-	 * (rbtree_t* r, void* key, void* val);
-	 */
 	public boolean insert(int key, Object val)
 	{
 		Node node = new Node();
@@ -769,12 +763,6 @@ public class RBTree
 		return ex == null;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === rbtree_delete
-	 * ========================================================
-	 * ===================== bool_t rbtree_delete (rbtree_t* r, void* key);
-	 */
 	public boolean remove(int key)
 	{
 		Node node = null;
@@ -784,19 +772,9 @@ public class RBTree
 		{
 			node = deleteNode(node);
 		}
-		// if(node != null) {
-		// this should do a release
-		// }
 		return node != null;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === rbtree_update -- Return FALSE if had to insert node first
-	 * ============
-	 * ================================================================= bool_t
-	 * rbtree_update (rbtree_t* r, void* key, void* val);
-	 */
 	public boolean update(int key, Object val)
 	{
 		Node nn = new Node();
@@ -810,12 +788,6 @@ public class RBTree
 		return false;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === rbtree_get
-	 * ============================================================
-	 * ================= void* rbtree_get (rbtree_t* r, void* key);
-	 */
 	public Object find(int key)
 	{
 		Node n = lookup(key);
@@ -827,23 +799,10 @@ public class RBTree
 		return null;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === rbtree_contains
-	 * ======================================================
-	 * ======================= bool_t rbtree_contains (rbtree_t* r, void* key);
-	 */
 	public boolean contains(int key)
 	{
 		Node n = lookup(key);
 
 		return (n != null);
 	}
-
 }
-
-/*
- * =============================================================================
- * End of rbtree.java
- * =============================================================================
- */

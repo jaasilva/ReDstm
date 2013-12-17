@@ -12,17 +12,17 @@ import org.deuce.profiling.PRProfiler;
  * =============================================================================
  * For the license of bayes/sort.h and bayes/sort.c, please see the header of
  * the files.
- * ------------------------------------------------------------------------ For
- * the license of kmeans, please see kmeans/LICENSE.kmeans
- * ------------------------------------------------------------------------ For
- * the license of ssca2, please see ssca2/COPYRIGHT
- * ------------------------------------------------------------------------ For
- * the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the header of
- * the files.
- * ------------------------------------------------------------------------ For
- * the license of lib/rbtree.h and lib/rbtree.c, please see
+ * ----------------------------------------------------------------------------
+ * For the license of kmeans, please see kmeans/LICENSE.kmeans
+ * ----------------------------------------------------------------------------
+ * For the license of ssca2, please see ssca2/COPYRIGHT
+ * ----------------------------------------------------------------------------
+ * For the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the header
+ * of the files.
+ * ----------------------------------------------------------------------------
+ * For the license of lib/rbtree.h and lib/rbtree.c, please see
  * lib/LEGALNOTICE.rbtree and lib/LICENSE.rbtree
- * ------------------------------------------------------------------------
+ * ----------------------------------------------------------------------------
  * Unless otherwise noted, the following license applies to STAMP files:
  * Copyright (c) 2007, Stanford University All rights reserved. Redistribution
  * and use in source and binary forms, with or without modification, are
@@ -57,24 +57,19 @@ public class Client extends Thread
 	int queryRange;
 	int percentUser;
 	int percentConsult;
-	boolean vac2;
 
 	public Client()
 	{
 	}
 
-	/*
-	 * ==========================================================================
-	 * === client_alloc -- Returns NULL on failure
-	 * ==============================
-	 * ===============================================
+	/**
+	 * Returns NULL on failure
 	 */
 	public Client(int id, Manager managerPtr, int numOperation,
 			int numQueryPerTransaction, int queryRange, int percentUser,
-			int percentConsult, boolean vac2)
+			int percentConsult)
 	{
 		this.randomPtr = new Random();
-		// this.randomPtr.init_genrand(id);
 		this.randomPtr.random_alloc();
 		this.id = id;
 		this.managerPtr = managerPtr;
@@ -83,15 +78,8 @@ public class Client extends Thread
 		this.queryRange = queryRange;
 		this.percentUser = percentUser;
 		this.percentConsult = percentConsult;
-		this.vac2 = vac2;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === selectAction
-	 * ==========================================================
-	 * ===================
-	 */
 	public int selectAction(int r, int percentUser)
 	{
 		if (r < percentUser)
@@ -116,33 +104,23 @@ public class Client extends Thread
 		}
 	}
 
-	/*
-	 * ==========================================================================
-	 * === client_run -- Execute list operations on the database
-	 * ================
-	 * =============================================================
+	/**
+	 * Execute list operations on the database
 	 */
 	public void run()
 	{
-		try
-		{
-			Thread.sleep(new java.util.Random().nextInt(3000));
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
+		// try
+		// {
+		// Thread.sleep(new java.util.Random().nextInt(3000));
+		// }
+		// catch (InterruptedException e)
+		// {
+		// e.printStackTrace();
+		// }
 		System.err.println("### benchBarrier: " + id);
-		
-		if (vac2)
-		{
-			Vacation2.benchBarrier.join();
-		}
-		else
-		{
-			Vacation.benchBarrier.join();
-		}
-		
+
+		Vacation.benchBarrier.join();
+
 		PRProfiler.enabled = true;
 		Barrier.enterBarrier();
 		for (int i = 0; i < numOperation; i++)
@@ -183,7 +161,7 @@ public class Client extends Thread
 			}
 
 			// System.out.print("\r" + i);
-		} /* for i */
+		}
 		System.out.println("client " + id + "done.");
 		Barrier.enterBarrier();
 	}
@@ -199,7 +177,7 @@ public class Client extends Thread
 			int id = (randomPtr.posrandom_generate() % queryRange) + 1;
 			int doAdd = randomPtr.posrandom_generate() % 2;
 			if (doAdd == 1)
-			{
+			{ // do add
 				int newPrice = ((randomPtr.posrandom_generate() % 5) * 10) + 50;
 				if (t == Defines.RESERVATION_CAR)
 				{
@@ -215,7 +193,7 @@ public class Client extends Thread
 				}
 			}
 			else
-			{ /* do delete */
+			{ // do delete
 				if (t == Defines.RESERVATION_CAR)
 				{
 					managerPtr.manager_deleteCar(id, 100);
@@ -294,7 +272,7 @@ public class Client extends Thread
 					isFound = true;
 				}
 			}
-		} /* for n */
+		}
 		if (isFound)
 		{
 			managerPtr.manager_addCustomer(customerId);
@@ -344,14 +322,7 @@ public class Client extends Thread
 					managerPtr.manager_queryRoomPrice(id);
 				}
 			}
-		} /* for n */
+		}
 		return n;
 	}
 }
-
-/*
- * =============================================================================
- * End of client.c
- * =============================================================================
- */
-

@@ -16,17 +16,17 @@ import org.deuce.profiling.PRProfiler;
  * =============================================================================
  * For the license of bayes/sort.h and bayes/sort.c, please see the header of
  * the files.
- * ------------------------------------------------------------------------ For
- * the license of kmeans, please see kmeans/LICENSE.kmeans
- * ------------------------------------------------------------------------ For
- * the license of ssca2, please see ssca2/COPYRIGHT
- * ------------------------------------------------------------------------ For
- * the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the header of
- * the files.
- * ------------------------------------------------------------------------ For
- * the license of lib/rbtree.h and lib/rbtree.c, please see
+ * ----------------------------------------------------------------------------
+ * For the license of kmeans, please see kmeans/LICENSE.kmeans
+ * ----------------------------------------------------------------------------
+ * For the license of ssca2, please see ssca2/COPYRIGHT
+ * ----------------------------------------------------------------------------
+ * For the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the header
+ * of the files.
+ * ----------------------------------------------------------------------------
+ * For the license of lib/rbtree.h and lib/rbtree.c, please see
  * lib/LEGALNOTICE.rbtree and lib/LICENSE.rbtree
- * ------------------------------------------------------------------------
+ * ----------------------------------------------------------------------------
  * Unless otherwise noted, the following license applies to STAMP files:
  * Copyright (c) 2007, Stanford University All rights reserved. Redistribution
  * and use in source and binary forms, with or without modification, are
@@ -53,12 +53,6 @@ import org.deuce.profiling.PRProfiler;
 
 public class Vacation
 {
-	/*
-	 * ==========================================================================
-	 * === displayUsage
-	 * ==========================================================
-	 * ===================
-	 */
 	public Vacation()
 	{
 	}
@@ -89,13 +83,6 @@ public class Vacation
 		System.exit(1);
 	}
 
-	/*
-	 * ==========================================================================
-	 * === setDefaultParams
-	 * ======================================================
-	 * =======================
-	 */
-
 	int CLIENTS;
 	int NUMBER;
 	int QUERIES;
@@ -115,16 +102,9 @@ public class Vacation
 		USER_CONSULT = Defines.PARAM_DEFAULT_USER_CONSULT;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === parseArgs
-	 * ============================================================
-	 * =================
-	 */
 	public void parseArgs(String argv[])
 	{
 		int opterr = 0;
-
 		setDefaultParams();
 		for (int i = 0; i < argv.length; i++)
 		{
@@ -153,24 +133,12 @@ public class Vacation
 		}
 	}
 
-	/*
-	 * ==========================================================================
-	 * === addCustomer -- Wrapper function
-	 * ======================================
-	 * =======================================
-	 */
 	public static boolean addCustomer(Manager managerPtr, int id, int num,
 			int price)
 	{
 		return managerPtr.manager_addCustomer(id);
 	}
 
-	/*
-	 * ==========================================================================
-	 * === initializeManager
-	 * ====================================================
-	 * =========================
-	 */
 	@Bootstrap(id = 5)
 	static int[] ids;
 
@@ -253,7 +221,7 @@ public class Vacation
 				end = (end > base + end ? base + end : end);
 				populateTable(i, end, randomPtr, t);
 			}
-		} /* for t */
+		}
 		System.out.println("\ndone.");
 	}
 
@@ -261,9 +229,8 @@ public class Vacation
 	public void populateTable(int i, int end, Random randomPtr, int t)
 	{
 		final int[] arr = ids;
-		/* Populate table */
 		for (; i < end; i++)
-		{
+		{ // Populate table
 			int id = arr[i];
 			int num = ((randomPtr.posrandom_generate() % 5) + 1) * 100;
 			int price = ((randomPtr.posrandom_generate() % 5) * 10) + 50;
@@ -283,16 +250,9 @@ public class Vacation
 			{
 				managerPtr.manager_addCustomer(id);
 			}
-			// assert(status);
 		}
 	}
 
-	/*
-	 * ==========================================================================
-	 * === initializeClients
-	 * ====================================================
-	 * =========================
-	 */
 	public Client[] initializeClients(Manager managerPtr)
 	{
 		Random randomPtr;
@@ -325,7 +285,7 @@ public class Vacation
 			clients[i] = new Client((Integer.getInteger("tribu.site") - 1)
 					* numClient + i, managerPtr, numTransactionPerClient,
 					numQueryPerTransaction, queryRange, percentUser,
-					percentConsult, false);
+					percentConsult);
 		}
 
 		System.out.println("done.");
@@ -344,12 +304,6 @@ public class Vacation
 		return clients;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === main
-	 * ==================================================================
-	 * ===========
-	 */
 	@Bootstrap(id = 0)
 	static public org.deuce.benchmark.Barrier firstBarrier;
 	@Bootstrap(id = 1)
@@ -408,7 +362,6 @@ public class Vacation
 		System.out.println("------------------------------------------------");
 		System.out.println("------------------------------------------------");
 
-		// Manager managerPtr;
 		Client clients[];
 		long start;
 		long stop;
@@ -423,23 +376,23 @@ public class Vacation
 			vac.initManager(vac.RELATIONS);
 		}
 
-		try
-		{
-			Thread.sleep(new java.util.Random().nextInt(5000));
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
+		// try
+		// {
+		// Thread.sleep(new java.util.Random().nextInt(5000));
+		// }
+		// catch (InterruptedException e)
+		// {
+		// e.printStackTrace();
+		// }
 		initBarriers();
-		try
-		{
-			Thread.sleep(new java.util.Random().nextInt(5000));
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
+		// try
+		// {
+		// Thread.sleep(new java.util.Random().nextInt(5000));
+		// }
+		// catch (InterruptedException e)
+		// {
+		// e.printStackTrace();
+		// }
 		System.err.println("### firstBarrier");
 		firstBarrier.join();
 
@@ -472,14 +425,14 @@ public class Vacation
 			initBenchBarrier(vac.CLIENTS * Integer.getInteger("tribu.replicas"));
 		}
 
-		try
-		{
-			Thread.sleep(new java.util.Random().nextInt(5000));
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
+		// try
+		// {
+		// Thread.sleep(new java.util.Random().nextInt(5000));
+		// }
+		// catch (InterruptedException e)
+		// {
+		// e.printStackTrace();
+		// }
 		System.err.println("### setupBarrier");
 		setupBarrier.join();
 
@@ -527,14 +480,14 @@ public class Vacation
 		// vac.checkTables(managerPtr);
 		// }
 
-		try
-		{
-			Thread.sleep(new java.util.Random().nextInt(2000));
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
+		// try
+		// {
+		// Thread.sleep(new java.util.Random().nextInt(2000));
+		// }
+		// catch (InterruptedException e)
+		// {
+		// e.printStackTrace();
+		// }
 		System.err.println("### exitBarrier");
 		exitBarrier.join();
 
@@ -562,58 +515,25 @@ public class Vacation
 		tables[1] = managerPtr.flightTablePtr;
 		tables[2] = managerPtr.roomTablePtr;
 		int numTable = 3;
-
 		int t;
 
-		// System.out.println("Printing tables...");
-		// System.out.println("Customers");
-		// Iterator<Node> it = customerTablePtr.iterator();
-		// while (it.hasNext()) {
-		// Node node = it.next();
-		// System.out.println(" ("+node.k+","+node.v+")");
-		// }
-		// System.out.println();
-		// System.out.println("Cars");
-		// it = tables[0].iterator();
-		// while (it.hasNext()) {
-		// Node node = it.next();
-		// System.out.println(" ("+node.k+","+node.v+")");
-		// }
-		// System.out.println();
-		// System.out.println("Flights");
-		// it = tables[1].iterator();
-		// while (it.hasNext()) {
-		// Node node = it.next();
-		// System.out.println(" ("+node.k+","+node.v+")");
-		// }
-		// System.out.println();
-		// System.out.println("Rooms");
-		// it = tables[2].iterator();
-		// while (it.hasNext()) {
-		// Node node = it.next();
-		// System.out.println(" ("+node.k+","+node.v+")");
-		// }
-		// System.out.println();
-		// System.out.println("done.");
-
 		System.out.println("Checking tables... ");
-
 		for (t = 0; t < 4; t++)
 		{
 			switch (t)
 			{
-				case 0:
-					System.out.println("Verifying cars...");
-					break;
-				case 1:
-					System.out.println("Verifying flights...");
-					break;
-				case 2:
-					System.out.println("Verifying rooms...");
-					break;
-				case 3:
-					System.out.println("Verifying customers...");
-					break;
+			case 0:
+				System.out.println("Verifying cars...");
+				break;
+			case 1:
+				System.out.println("Verifying flights...");
+				break;
+			case 2:
+				System.out.println("Verifying rooms...");
+				break;
+			case 3:
+				System.out.println("Verifying customers...");
+				break;
 			}
 			final RBTree tree = (t < 3 ? tables[t]
 					: managerPtr.customerTablePtr);
@@ -660,10 +580,3 @@ public class Vacation
 		System.out.println("done.");
 	}
 }
-
-/*
- * =============================================================================
- * End of vacation.c
- * =============================================================================
- */
-

@@ -1,6 +1,5 @@
 package jstamp.vacation;
 
-import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
 public class Barrier
@@ -13,11 +12,7 @@ public class Barrier
 		{
 			barrier.await();
 		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-		catch (BrokenBarrierException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -40,6 +35,5 @@ public class Barrier
 		{
 			System.out.println("Barrier is clear.");
 		}
-
 	}
 }

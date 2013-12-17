@@ -10,17 +10,17 @@ package jstamp.vacation;
  * =============================================================================
  * For the license of bayes/sort.h and bayes/sort.c, please see the header of
  * the files.
- * ------------------------------------------------------------------------ For
- * the license of kmeans, please see kmeans/LICENSE.kmeans
- * ------------------------------------------------------------------------ For
- * the license of ssca2, please see ssca2/COPYRIGHT
- * ------------------------------------------------------------------------ For
- * the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the header of
- * the files.
- * ------------------------------------------------------------------------ For
- * the license of lib/rbtree.h and lib/rbtree.c, please see
+ * ----------------------------------------------------------------------------
+ * For the license of kmeans, please see kmeans/LICENSE.kmeans
+ * ----------------------------------------------------------------------------
+ * For the license of ssca2, please see ssca2/COPYRIGHT
+ * ----------------------------------------------------------------------------
+ * For the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the header
+ * of the files.
+ * ----------------------------------------------------------------------------
+ * For the license of lib/rbtree.h and lib/rbtree.c, please see
  * lib/LEGALNOTICE.rbtree and lib/LICENSE.rbtree
- * ------------------------------------------------------------------------
+ * ----------------------------------------------------------------------------
  * Unless otherwise noted, the following license applies to STAMP files:
  * Copyright (c) 2007, Stanford University All rights reserved. Redistribution
  * and use in source and binary forms, with or without modification, are
@@ -47,7 +47,6 @@ package jstamp.vacation;
 
 public class List_t
 {
-
 	public List_Node head;
 	int size;
 
@@ -56,19 +55,12 @@ public class List_t
 		head = new List_Node();
 	}
 
-	/*
-	 * =======================================================================
-	 * allocNode -- Returns null on failure
-	 * =======================================================================
+	/**
+	 * Returns null on failure
 	 */
 	private List_Node allocNode(Object dataPtr)
 	{
 		List_Node nodePtr = new List_Node();
-
-		if (nodePtr == null)
-		{
-			return null;
-		}
 
 		nodePtr.dataPtr = dataPtr;
 		nodePtr.nextPtr = null;
@@ -76,23 +68,9 @@ public class List_t
 		return nodePtr;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === list_alloc -- If NULL passed for 'compare' function, will compare
-	 * data pointer addresses -- Returns NULL on failure
-	 * ========================
-	 * ===================================================== list_t* list_alloc
-	 * (long (*compare)(const void*, const void*));
-	 */
-
 	public static List_t alloc()
 	{
 		List_t listPtr = new List_t();
-
-		if (listPtr == null)
-		{
-			return null;
-		}
 
 		listPtr.head.dataPtr = null;
 		listPtr.head.nextPtr = null;
@@ -101,51 +79,27 @@ public class List_t
 		return listPtr;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === list_free -- If NULL passed for 'compare' function, will compare data
-	 * pointer addresses -- Returns NULL on failure
-	 * ==============================
-	 * =============================================== void list_free (list_t*
-	 * listPtr);
-	 */
 	public static void free(List_t listPtr)
 	{
 		listPtr = null;
 	}
 
-	// privae freeList
-
-	/*
-	 * ==========================================================================
-	 * === list_isEmpty -- Return TRUE if list is empty, else FALSE
-	 * ==============
-	 * =============================================================== bool_t
-	 * list_isEmpty (list_t* listPtr);
+	/**
+	 * Return TRUE if list is empty, else FALSE
 	 */
 	public boolean isEmpty()
 	{
 		return (head.nextPtr == null);
 	}
 
-	/*
-	 * ==========================================================================
-	 * === list_getSize -- Returns size of list
-	 * ==================================
-	 * =========================================== long list_getSize (list_t*
-	 * listPtr);
+	/**
+	 * Returns size of list
 	 */
 	public int getSize()
 	{
 		return size;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === findPrevious
-	 * ==========================================================
-	 * =================== void* list_find (list_t* listPtr, void* dataPtr);
-	 */
 	private List_Node findPrevious(Object dataPtr)
 	{
 		List_Node prevPtr = head;
@@ -163,12 +117,8 @@ public class List_t
 		return prevPtr;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === list_find -- Returns NULL if not found, else returns pointer to data
-	 * ==
-	 * ========================================================================
-	 * === void* list_find (list_t* listPtr, void* dataPtr);
+	/**
+	 * Returns NULL if not found, else returns pointer to data
 	 */
 	public Object find(Object dataPtr)
 	{
@@ -196,12 +146,8 @@ public class List_t
 		return ((typeDiff != 0) ? (typeDiff) : (aPtr.id - bPtr.id));
 	}
 
-	/*
-	 * ==========================================================================
-	 * === list_insert -- Return TRUE on success, else FALSE
-	 * ====================
-	 * ========================================================= bool_t
-	 * list_insert (list_t* listPtr, void* dataPtr);
+	/**
+	 * Return TRUE on success, else FALSE
 	 */
 	public boolean insert(Object dataPtr)
 	{
@@ -213,10 +159,6 @@ public class List_t
 		currPtr = prevPtr.nextPtr;
 
 		nodePtr = allocNode(dataPtr);
-		if (nodePtr == null)
-		{
-			return false;
-		}
 
 		nodePtr.nextPtr = currPtr;
 		prevPtr.nextPtr = nodePtr;
@@ -225,12 +167,8 @@ public class List_t
 		return true;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === list_remove -- Returns TRUE if successful, else FALSE
-	 * ================
-	 * ============================================================= bool_t
-	 * list_remove (list_t* listPtr, void* dataPtr);
+	/**
+	 * Returns TRUE if successful, else FALSE
 	 */
 	public boolean remove(Object dataPtr)
 	{
@@ -259,26 +197,12 @@ public class List_t
 		return 1;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === list_clear -- Removes all elements
-	 * ====================================
-	 * ========================================= void list_clear (list_t*
-	 * listPtr);
+	/**
+	 * Removes all elements
 	 */
 	public void clear()
 	{
 		head = new List_Node();
 		size = 0;
 	}
-
-	/*
-	 * ==========================================================================
-	 * === End of list.java
-	 * ======================================================
-	 * =======================
-	 */
-
-	/* Test list */
-
 }

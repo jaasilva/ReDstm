@@ -9,17 +9,17 @@ package jstamp.vacation;
  * =============================================================================
  * For the license of bayes/sort.h and bayes/sort.c, please see the header of
  * the files.
- * ------------------------------------------------------------------------ For
- * the license of kmeans, please see kmeans/LICENSE.kmeans
- * ------------------------------------------------------------------------ For
- * the license of ssca2, please see ssca2/COPYRIGHT
- * ------------------------------------------------------------------------ For
- * the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the header of
- * the files.
- * ------------------------------------------------------------------------ For
- * the license of lib/rbtree.h and lib/rbtree.c, please see
+ * ----------------------------------------------------------------------------
+ * For the license of kmeans, please see kmeans/LICENSE.kmeans
+ * ----------------------------------------------------------------------------
+ * For the license of ssca2, please see ssca2/COPYRIGHT
+ * ----------------------------------------------------------------------------
+ * For the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the header
+ * of the files.
+ * ----------------------------------------------------------------------------
+ * For the license of lib/rbtree.h and lib/rbtree.c, please see
  * lib/LEGALNOTICE.rbtree and lib/LICENSE.rbtree
- * ------------------------------------------------------------------------
+ * ----------------------------------------------------------------------------
  * Unless otherwise noted, the following license applies to STAMP files:
  * Copyright (c) 2007, Stanford University All rights reserved. Redistribution
  * and use in source and binary forms, with or without modification, are
@@ -46,65 +46,40 @@ package jstamp.vacation;
 
 public class Customer
 {
-
-	/*
-	 * ==========================================================================
-	 * === compareReservationInfo
-	 * ================================================
-	 * =============================
-	 */
 	int id;
 	List_t reservationInfoListPtr;
 
-	/*
-	 * ==========================================================================
-	 * === customer_alloc
-	 * ========================================================
-	 * =====================
-	 */
 	public Customer(int id)
 	{
 		this.id = id;
 		reservationInfoListPtr = new List_t();
 	}
 
-	/*
-	 * ==========================================================================
-	 * === customer_compare -- Returns -1 if A < B, 0 if A = B, 1 if A > B
-	 * ======
-	 * =======================================================================
+	/**
+	 * Returns -1 if A < B, 0 if A = B, 1 if A > B
 	 */
 	int customer_compare(Customer aPtr, Customer bPtr)
 	{
 		return (aPtr.id - bPtr.id);
 	}
 
-	/*
-	 * ==========================================================================
-	 * === customer_addReservationInfo -- Returns true if success, else FALSE
-	 * ====
-	 * =========================================================================
+	/**
+	 * Returns true if success, else FALSE
 	 */
 	boolean customer_addReservationInfo(int type, int id, int price)
 	{
 		Reservation_Info reservationInfoPtr = new Reservation_Info(type, id,
 				price);
-		// assert(reservationInfoPtr != NULL);
 
 		return reservationInfoListPtr.insert(reservationInfoPtr);
 	}
 
-	/*
-	 * ==========================================================================
-	 * === customer_removeReservationInfo -- Returns true if success, else FALSE
-	 * ==
-	 * ========================================================================
-	 * ===
+	/**
+	 * Returns true if success, else FALSE
 	 */
 	boolean customer_removeReservationInfo(int type, int id)
 	{
 		Reservation_Info findReservationInfo = new Reservation_Info(type, id, 0);
-
 		Reservation_Info reservationInfoPtr = (Reservation_Info) reservationInfoListPtr
 				.find(findReservationInfo);
 
@@ -113,15 +88,12 @@ public class Customer
 			return false;
 		}
 
-		boolean status = reservationInfoListPtr.remove(findReservationInfo);
+		reservationInfoListPtr.remove(findReservationInfo);
 		return true;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === customer_getBill -- Returns total cost of reservations
-	 * ================
-	 * =============================================================
+	/**
+	 * Returns total cost of reservations
 	 */
 	int customer_getBill()
 	{

@@ -9,17 +9,17 @@ package jstamp.vacation;
  * =============================================================================
  * For the license of bayes/sort.h and bayes/sort.c, please see the header of
  * the files.
- * ------------------------------------------------------------------------ For
- * the license of kmeans, please see kmeans/LICENSE.kmeans
- * ------------------------------------------------------------------------ For
- * the license of ssca2, please see ssca2/COPYRIGHT
- * ------------------------------------------------------------------------ For
- * the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the header of
- * the files.
- * ------------------------------------------------------------------------ For
- * the license of lib/rbtree.h and lib/rbtree.c, please see
+ * ----------------------------------------------------------------------------
+ * For the license of kmeans, please see kmeans/LICENSE.kmeans
+ * ----------------------------------------------------------------------------
+ * For the license of ssca2, please see ssca2/COPYRIGHT
+ * ----------------------------------------------------------------------------
+ * For the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the header
+ * of the files.
+ * ----------------------------------------------------------------------------
+ * For the license of lib/rbtree.h and lib/rbtree.c, please see
  * lib/LEGALNOTICE.rbtree and lib/LICENSE.rbtree
- * ------------------------------------------------------------------------
+ * ----------------------------------------------------------------------------
  * Unless otherwise noted, the following license applies to STAMP files:
  * Copyright (c) 2007, Stanford University All rights reserved. Redistribution
  * and use in source and binary forms, with or without modification, are
@@ -62,12 +62,10 @@ public class Reservation
 	int numTotal;
 	int price;
 
-	/*
-	 * ==========================================================================
-	 * === checkReservation -- Check if consistent
-	 * ==============================
-	 * ===============================================
+	/**
+	 * Check if consistent
 	 */
+	@SuppressWarnings("unused")
 	public void checkReservation()
 	{
 		int numUsed = this.numUsed;
@@ -76,12 +74,9 @@ public class Reservation
 		int price = this.price;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === reservation_addToTotal -- Adds if 'num' > 0, removes if 'num' < 0; --
-	 * Returns TRUE on success, else FALSE
-	 * ======================================
-	 * =======================================
+	/**
+	 * Adds if 'num' > 0, removes if 'num' < 0; -- Returns TRUE on success, else
+	 * FALSE
 	 */
 	boolean reservation_addToTotal(int num)
 	{
@@ -96,11 +91,8 @@ public class Reservation
 		return true;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === reservation_make -- Returns TRUE on success, else FALSE
-	 * ==============
-	 * ===============================================================
+	/**
+	 * Returns TRUE on success, else FALSE
 	 */
 	public boolean reservation_make()
 	{
@@ -114,11 +106,8 @@ public class Reservation
 		return true;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === reservation_cancel -- Returns TRUE on success, else FALSE
-	 * ============
-	 * =================================================================
+	/**
+	 * Returns TRUE on success, else FALSE
 	 */
 	boolean reservation_cancel()
 	{
@@ -132,12 +121,8 @@ public class Reservation
 		return true;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === reservation_updatePrice -- Failure if 'price' < 0 -- Returns TRUE on
-	 * success, else FALSE
-	 * ======================================================
-	 * =======================
+	/**
+	 * Failure if 'price' < 0 -- Returns TRUE on success, else FALSE
 	 */
 	boolean reservation_updatePrice(int newPrice)
 	{
@@ -151,26 +136,16 @@ public class Reservation
 		return true;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === reservation_compare -- Returns -1 if A < B, 0 if A = B, 1 if A > B
-	 * ====
-	 * =========================================================================
+	/**
+	 * Returns -1 if A < B, 0 if A = B, 1 if A > B
 	 */
 	int reservation_compare(Reservation aPtr, Reservation bPtr)
 	{
 		return aPtr.id - bPtr.id;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === reservation_hash
-	 * ======================================================
-	 * =======================
-	 */
 	int reservation_hash()
 	{
 		return id;
 	}
-
 }

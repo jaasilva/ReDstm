@@ -16,17 +16,17 @@ import org.deuce.profiling.PRProfiler;
  * =============================================================================
  * For the license of bayes/sort.h and bayes/sort.c, please see the header of
  * the files.
- * ------------------------------------------------------------------------ For
- * the license of kmeans, please see kmeans/LICENSE.kmeans
- * ------------------------------------------------------------------------ For
- * the license of ssca2, please see ssca2/COPYRIGHT
- * ------------------------------------------------------------------------ For
- * the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the header of
- * the files.
- * ------------------------------------------------------------------------ For
- * the license of lib/rbtree.h and lib/rbtree.c, please see
+ * ----------------------------------------------------------------------------
+ * For the license of kmeans, please see kmeans/LICENSE.kmeans
+ * ----------------------------------------------------------------------------
+ * For the license of ssca2, please see ssca2/COPYRIGHT
+ * ----------------------------------------------------------------------------
+ * For the license of lib/mt19937ar.c and lib/mt19937ar.h, please see the header
+ * of the files.
+ * ----------------------------------------------------------------------------
+ * For the license of lib/rbtree.h and lib/rbtree.c, please see
  * lib/LEGALNOTICE.rbtree and lib/LICENSE.rbtree
- * ------------------------------------------------------------------------
+ * ----------------------------------------------------------------------------
  * Unless otherwise noted, the following license applies to STAMP files:
  * Copyright (c) 2007, Stanford University All rights reserved. Redistribution
  * and use in source and binary forms, with or without modification, are
@@ -53,12 +53,6 @@ import org.deuce.profiling.PRProfiler;
 
 public class Vacation2
 {
-	/*
-	 * ==========================================================================
-	 * === displayUsage
-	 * ==========================================================
-	 * ===================
-	 */
 	public Vacation2()
 	{
 	}
@@ -89,13 +83,6 @@ public class Vacation2
 		System.exit(1);
 	}
 
-	/*
-	 * ==========================================================================
-	 * === setDefaultParams
-	 * ======================================================
-	 * =======================
-	 */
-
 	int CLIENTS;
 	int NUMBER;
 	int QUERIES;
@@ -115,12 +102,6 @@ public class Vacation2
 		USER_CONSULT = Defines.PARAM_DEFAULT_USER_CONSULT;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === parseArgs
-	 * ============================================================
-	 * =================
-	 */
 	public void parseArgs(String argv[])
 	{
 		int opterr = 0;
@@ -153,24 +134,12 @@ public class Vacation2
 		}
 	}
 
-	/*
-	 * ==========================================================================
-	 * === addCustomer -- Wrapper function
-	 * ======================================
-	 * =======================================
-	 */
 	public static boolean addCustomer(Manager managerPtr, int id, int num,
 			int price)
 	{
 		return managerPtr.manager_addCustomer(id);
 	}
 
-	/*
-	 * ==========================================================================
-	 * === initializeManager
-	 * ====================================================
-	 * =========================
-	 */
 	@Atomic
 	public void initializeManager()
 	{
@@ -270,12 +239,6 @@ public class Vacation2
 		}
 	}
 
-	/*
-	 * ==========================================================================
-	 * === initializeClients
-	 * ====================================================
-	 * =========================
-	 */
 	public Client[] initializeClients(Manager managerPtr)
 	{
 		Random randomPtr;
@@ -327,12 +290,6 @@ public class Vacation2
 		return clients;
 	}
 
-	/*
-	 * ==========================================================================
-	 * === main
-	 * ==================================================================
-	 * ===========
-	 */
 	@Bootstrap(id = 1)
 	static public org.deuce.benchmark.Barrier setupBarrier;
 	@Bootstrap(id = 2)
@@ -468,39 +425,7 @@ public class Vacation2
 		tables[1] = managerPtr.flightTablePtr;
 		tables[2] = managerPtr.roomTablePtr;
 		int numTable = 3;
-
 		int t;
-
-		// System.out.println("Printing tables...");
-		// System.out.println("Customers");
-		// Iterator<Node> it = customerTablePtr.iterator();
-		// while (it.hasNext()) {
-		// Node node = it.next();
-		// System.out.println(" ("+node.k+","+node.v+")");
-		// }
-		// System.out.println();
-		// System.out.println("Cars");
-		// it = tables[0].iterator();
-		// while (it.hasNext()) {
-		// Node node = it.next();
-		// System.out.println(" ("+node.k+","+node.v+")");
-		// }
-		// System.out.println();
-		// System.out.println("Flights");
-		// it = tables[1].iterator();
-		// while (it.hasNext()) {
-		// Node node = it.next();
-		// System.out.println(" ("+node.k+","+node.v+")");
-		// }
-		// System.out.println();
-		// System.out.println("Rooms");
-		// it = tables[2].iterator();
-		// while (it.hasNext()) {
-		// Node node = it.next();
-		// System.out.println(" ("+node.k+","+node.v+")");
-		// }
-		// System.out.println();
-		// System.out.println("done.");
 
 		System.out.println("Checking tables... ");
 
@@ -543,12 +468,4 @@ public class Vacation2
 		}
 		System.out.println("done.");
 	}
-
 }
-
-/*
- * =============================================================================
- * End of vacation.c
- * =============================================================================
- */
-

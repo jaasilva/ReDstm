@@ -5,11 +5,10 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class Random implements java.io.Serializable
 {
+	private static final long serialVersionUID = 1L;
 	long[] mt;
 	int mti;
 	int RANDOM_DEFAULT_SEED;
-
-	/* period parameter */
 
 	public Random()
 	{
@@ -22,17 +21,17 @@ public class Random implements java.io.Serializable
 		init_genrand(this.RANDOM_DEFAULT_SEED);
 	}
 
-	/* initializes mt[N] with a seed */
 	public void init_genrand(int s)
-	{
+	{ // initializes mt[N] with a seed
 		mt[0] = ((long) s) & 0xFFFFFFFFL;
 		for (int mti = 1; mti < 624; mti++)
 		{
 			mt[mti] = (1812433253L * (mt[mti - 1] ^ (mt[mti - 1] >> 30)) + ((long) mti));
-			/* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
-			/* In the previous versions, MSBs of the seed affect */
-			/* only MSBs of the array mt[]. */
-			/* 2002/01/09 modified by Makoto Matsumoto */
+			/*
+			 * See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. In the
+			 * previous versions, MSBs of the seed affect only MSBs of the array
+			 * mt[]. 2002/01/09 modified by Makoto Matsumoto
+			 */
 			mt[mti] &= 0xFFFFFFFFL;
 			/* for >32 bit machines */
 		}
