@@ -11,14 +11,12 @@ _CP="${_CP}:lib/appia-test-4.1.2.jar"
 _CP="${_CP}:lib/flanagan.jar"
 _CP="${_CP}:lib/jgcs-0.6.1.jar"
 _CP="${_CP}:lib/jgroups-3.4.1.Final.jar"
-_CP="${_CP}:lib/guava-14.0.jar"
 _CP="${_CP}:lib/junit-4.6.jar"
 _CP="${_CP}:lib/log4j-1.2.14.jar"
 _CP="${_CP}:lib/spread-4.2.0.jar"
 
 _EXCLUDE="java.*,sun.*,org.eclipse.*,org.junit.*,junit.*,com.sun.*"
 _EXCLUDE="${_EXCLUDE},net.sf.appia.*"
-_EXCLUDE="${_EXCLUDE},com.google.*"
 _EXCLUDE="${_EXCLUDE},net.sf.jgcs.*"
 _EXCLUDE="${_EXCLUDE},org.jgroups.*"
 _EXCLUDE="${_EXCLUDE},flanagan.*"
@@ -49,10 +47,10 @@ fi
 
 _USER_CONSULT=0
 #_USER_CONSULT=90
-_RELATIONS=1048576
-#_RELATIONS=16384
-_TASKS=4194304
-#_TASKS=4096
+#_RELATIONS=1048576
+_RELATIONS=16384
+#_TASKS=4194304
+_TASKS=4096
 
 # vacation-high   -n4 -q60 -u90 -r16384   -t4096
 # vacation-high+  -n4 -q60 -u90 -r1048576 -t4096

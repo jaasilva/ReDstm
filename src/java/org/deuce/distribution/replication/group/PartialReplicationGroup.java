@@ -15,7 +15,7 @@ public class PartialReplicationGroup implements Group
 {
 	private static final long serialVersionUID = 1L;
 	private Collection<Address> addrs;
-	private short id;
+	private int id;
 
 	public PartialReplicationGroup()
 	{
@@ -23,7 +23,7 @@ public class PartialReplicationGroup implements Group
 		this.addrs = new HashSet<Address>();
 	}
 
-	public PartialReplicationGroup(short id)
+	public PartialReplicationGroup(int id)
 	{
 		this.id = id;
 		this.addrs = new HashSet<Address>();

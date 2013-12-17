@@ -49,8 +49,6 @@ public class Defaults
 	public static final String _GP_CLASS = "tribu.distributed.GroupPartitionerClass";
 	public static final String DP_CLASS = "org.deuce.distribution.replication.partitioner.data.SimpleDataPartitioner";
 	public static final String _DP_CLASS = "tribu.distributed.DataPartitionerClass";
-	public static final String GP_HASH_CLASS = "org.deuce.hashing.MD5GuavaHashFunction";
-	public static final String _GP_HASH_CLASS = "tribu.distributed.GroupPartitionerHashClass";
 	// public static final String LOG = "";
 	// public static final String _LOG = "log";
 }

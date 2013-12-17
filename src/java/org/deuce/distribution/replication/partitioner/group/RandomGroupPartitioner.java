@@ -2,14 +2,13 @@ package org.deuce.distribution.replication.partitioner.group;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
-import org.deuce.Defaults;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.distribution.replication.partitioner.Partitioner;
-import org.deuce.hashing.Hashing;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -21,28 +20,12 @@ public class RandomGroupPartitioner extends Partitioner implements
 {
 	private static final Logger LOGGER = Logger
 			.getLogger(RandomGroupPartitioner.class);
-	private Hashing hash;
+	private Random rand;
 
 	public RandomGroupPartitioner()
 	{
 		super();
-
-		String className = System.getProperty(Defaults._GP_HASH_CLASS,
-				Defaults.GP_HASH_CLASS);
-		try
-		{
-			@SuppressWarnings("unchecked")
-			Class<? extends Hashing> hashClass = (Class<? extends Hashing>) Class
-					.forName(className);
-			hash = hashClass.newInstance();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			System.exit(-1);
-		}
-
-		LOGGER.warn("> Group Partitioner hash class: " + className);
+		rand = new Random();
 	}
 
 	@Override
@@ -51,12 +34,12 @@ public class RandomGroupPartitioner extends Partitioner implements
 		List<Group> g = super.getGroups();
 		for (int i = 0; i < groups; i++)
 		{
-			g.add(new PartialReplicationGroup((short) i));
+			g.add(new PartialReplicationGroup(i));
 		}
 
 		for (Address a : members)
 		{
-			int selected = hash.consistentHash(a.toString(), groups);
+			int selected = rand.nextInt() % groups;
 			Group selectedGroup = g.get(selected);
 			selectedGroup.add(a);
 
