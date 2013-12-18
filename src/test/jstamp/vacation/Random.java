@@ -6,9 +6,9 @@ import org.deuce.transform.ExcludeTM;
 public class Random implements java.io.Serializable
 {
 	private static final long serialVersionUID = 1L;
-	long[] mt;
-	int mti;
-	int RANDOM_DEFAULT_SEED;
+	private long[] mt;
+	private int mti;
+	private int RANDOM_DEFAULT_SEED;
 
 	public Random()
 	{

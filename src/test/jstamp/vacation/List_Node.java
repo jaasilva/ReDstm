@@ -2,8 +2,8 @@ package jstamp.vacation;
 
 public class List_Node
 {
-	Object dataPtr;
-	List_Node nextPtr;
+	protected Object dataPtr;
+	protected List_Node nextPtr;
 
 	public List_Node()
 	{

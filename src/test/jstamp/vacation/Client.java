@@ -152,7 +152,7 @@ public class Client extends Thread
 				updateTables(managerPtr, numUpdate);
 			}
 		}
-		System.out.println("> Client " + id + "done.");
+		System.out.println("> Client " + id + " done.");
 		Barrier.enterBarrier();
 	}
 

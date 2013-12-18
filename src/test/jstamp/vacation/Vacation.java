@@ -53,6 +53,38 @@ import org.deuce.profiling.PRProfiler;
 
 public class Vacation
 {
+	private int CLIENTS;
+	private int NUMBER;
+	private int QUERIES;
+	private int RELATIONS;
+	private int TRANSACTIONS;
+	private int USER;
+	private int USER_CONSULT;
+
+	@Bootstrap(id = 0)
+	public static org.deuce.benchmark.Barrier firstBarrier;
+	@Bootstrap(id = 1)
+	public static org.deuce.benchmark.Barrier setupBarrier;
+	@Bootstrap(id = 2)
+	public static org.deuce.benchmark.Barrier finishBarrier;
+	@Bootstrap(id = 3)
+	public static org.deuce.benchmark.Barrier benchBarrier;
+	@Bootstrap(id = 2000)
+	public static org.deuce.benchmark.Barrier exitBarrier;
+	@Bootstrap(id = 2001)
+	public static org.deuce.benchmark.Barrier shuffleBarrier;
+	@Bootstrap(id = 4)
+	public static Manager managerPtr;
+	@Bootstrap(id = 5)
+	public static int[] ids;
+
+	public static int MAX, MIN;
+	public static AtomicInteger reservations = new AtomicInteger(0),
+			deleteCustomers = new AtomicInteger(0),
+			updateTables = new AtomicInteger(0),
+			consults = new AtomicInteger(0);
+	private static boolean _partial = TribuDSTM.PARTIAL;
+
 	public Vacation()
 	{
 	}
@@ -82,14 +114,6 @@ public class Vacation
 						+ Defines.PARAM_DEFAULT_USER);
 		System.exit(1);
 	}
-
-	int CLIENTS;
-	int NUMBER;
-	int QUERIES;
-	int RELATIONS;
-	int TRANSACTIONS;
-	int USER;
-	int USER_CONSULT;
 
 	public void setDefaultParams()
 	{
@@ -139,52 +163,18 @@ public class Vacation
 		return managerPtr.manager_addCustomer(id);
 	}
 
-	@Bootstrap(id = 5)
-	static int[] ids;
-
 	@Atomic
 	public void initializeManager(int numRelations)
 	{
 		System.out.println("Initializing manager... ");
 		managerPtr = new Manager();
-		ids = new int[numRelations];
-	}
-
-	@Atomic
-	public final void initIds(final int begin, final int end)
-	{
-		final int[] arr = ids;
-		for (int i = begin; i < end; i++)
-		{
-			arr[i] = i + 1;
-		}
-	}
-
-	@Atomic
-	public final void shuffleIds(final int begin, final int end,
-			final Random randomPtr, int numRelations, int base)
-	{
-		final int[] arr = ids;
-		for (int i = begin; i < end; i++)
-		{
-			int x = base + (randomPtr.posrandom_generate() % numRelations);
-			int y = base + (randomPtr.posrandom_generate() % numRelations);
-			int tmp = arr[x];
-			arr[x] = arr[y];
-			arr[y] = tmp;
-		}
-	}
-
-	public void initManager(int numRelations)
-	{
-		int i;
-		System.out.println("Initializing ids... ");
 
 		Random randomPtr = new Random();
 		randomPtr.random_alloc();
 
-		int chunk = numRelations / 2;
-		for (i = 0; i < numRelations; i += chunk + 1)
+		ids = new int[numRelations];
+		int chunk = numRelations / 8; // Initializing ids
+		for (int i = 0; i < numRelations; i += chunk)
 		{
 			int end = i + chunk;
 			end = (end > numRelations ? numRelations : end);
@@ -192,62 +182,78 @@ public class Vacation
 		}
 	}
 
-	// @Atomic
-	public void populateManager(int base, int numRelations)
+	@Atomic
+	public final void initIds(final int begin, final int end)
 	{
-		int i;
-		int t;
-		System.out.println("Populating manager... ");
+		for (int i = begin; i < end; i++)
+		{
+			ids[i] = i + 1;
+		}
+	}
+
+	public void populateManager(int base, int numRelations, int pr_group_id,
+			int totalRelations)
+	{
+		System.out.println("Populating manager...");
 
 		Random randomPtr = new Random();
 		randomPtr.random_alloc();
 
-		for (t = 0; t < 4; t++)
+		for (int t = 0; t < 4; t++)
 		{
-			/* Shuffle ids */
-			int chunk = numRelations / 2;
-			for (i = base; i < base + numRelations; i += chunk)
-			{
-				int end = i + chunk;
-				end = (end > base + end ? base + end : end);
-				shuffleIds(i, end, randomPtr, numRelations, base);
+			if (pr_group_id == 0)
+			{ // Shuffle ids
+				shuffleIds(totalRelations, randomPtr);
 			}
+			shuffleBarrier.join();
 
 			/* Populate table */
-			chunk = numRelations / 8;
-			for (i = base; i < base + numRelations; i += chunk)
+			int chunk = numRelations / 2;
+			for (int i = base; i < base + numRelations; i += chunk)
 			{
 				int end = i + chunk;
-				end = (end > base + end ? base + end : end);
+				end = (end > base + numRelations ? base + numRelations : end);
 				populateTable(i, end, randomPtr, t);
 			}
 		}
-		System.out.println("\ndone.");
+		System.out.println("done.");
 	}
 
 	@Atomic
-	public void populateTable(int i, int end, Random randomPtr, int t)
+	public final void shuffleIds(int totalRelations, final Random randomPtr)
 	{
-		final int[] arr = ids;
-		for (; i < end; i++)
-		{ // Populate table
-			int id = arr[i];
+		System.out.println("Suffling ids...");
+		int numRelations = totalRelations;
+		for (int i = 0; i < 2 * numRelations; i++)
+		{
+			int x = randomPtr.posrandom_generate() % numRelations;
+			int y = randomPtr.posrandom_generate() % numRelations;
+			int tmp = ids[x];
+			ids[x] = ids[y];
+			ids[y] = tmp;
+		}
+	}
+
+	@Atomic
+	public void populateTable(int begin, int end, Random randomPtr, int table)
+	{ // Populate table
+		for (int i = begin; i < end; i++)
+		{
+			int id = ids[i];
 			int num = ((randomPtr.posrandom_generate() % 5) + 1) * 100;
 			int price = ((randomPtr.posrandom_generate() % 5) * 10) + 50;
-			if (t == 0)
+			switch (table)
 			{
+			case 0:
 				managerPtr.manager_addCar(id, num, price);
-			}
-			else if (t == 1)
-			{
+				break;
+			case 1:
 				managerPtr.manager_addFlight(id, num, price);
-			}
-			else if (t == 2)
-			{
+				break;
+			case 2:
 				managerPtr.manager_addRoom(id, num, price);
-			}
-			else if (t == 3)
-			{
+				break;
+			case 3:
 				managerPtr.manager_addCustomer(id);
 			}
 		}
@@ -255,129 +261,107 @@ public class Vacation
 
 	public Client[] initializeClients(Manager managerPtr)
 	{
-		Random randomPtr;
-		Client clients[];
-		int i;
-		int numClient = CLIENTS;
-		int numTransaction = TRANSACTIONS;
-		int numTransactionPerClient;
-		int numQueryPerTransaction = NUMBER;
-		int numRelation = RELATIONS;
+		int numClients = CLIENTS;
+		int numTxs = TRANSACTIONS;
+		int numQueryPerTx = NUMBER;
+		int numRelations = RELATIONS;
 		int percentQuery = QUERIES;
-		int queryRange;
 		int percentUser = USER;
 		int percentConsult = USER_CONSULT;
 
 		System.out.println("Initializing clients... ");
 
-		randomPtr = new Random();
+		Random randomPtr = new Random();
 		randomPtr.random_alloc();
 
-		clients = new Client[numClient];
+		Client clients[] = new Client[numClients];
 
-		numTransactionPerClient = (int) ((double) numTransaction
-				/ (double) numClient + 0.5);
-		queryRange = (int) ((double) percentQuery / 100.0
-				* (double) numRelation + 0.5);
+		int numTxsPerClient = (int) ((double) numTxs / (double) numClients + 0.5);
+		int queryRange = (int) ((double) percentQuery / 100.0
+				* (double) numRelations + 0.5);
 
-		for (i = 0; i < numClient; i++)
+		for (int i = 0; i < numClients; i++)
 		{
 			clients[i] = new Client((Integer.getInteger("tribu.site") - 1)
-					* numClient + i, managerPtr, numTransactionPerClient,
-					numQueryPerTransaction, queryRange, percentUser,
-					percentConsult);
+					* numClients + i, managerPtr, numTxsPerClient,
+					numQueryPerTx, queryRange, percentUser, percentConsult);
 		}
 
 		System.out.println("done.");
-		System.out.println("    Transactions        = " + numTransaction);
-		System.out.println("    Clients             = " + numClient);
-		System.out.println("    Transactions/client = "
-				+ numTransactionPerClient);
-		System.out.println("    Queries/transaction = "
-				+ numQueryPerTransaction);
-		System.out.println("    Relations           = " + numRelation);
-		System.out.println("    Query percent       = " + percentQuery);
-		System.out.println("    Query range         = " + queryRange);
-		System.out.println("    Percent user        = " + percentUser + " ("
+		System.out.println("  Transactions        = " + numTxs);
+		System.out.println("  Clients             = " + numClients);
+		System.out.println("  Transactions/client = " + numTxsPerClient);
+		System.out.println("  Queries/transaction = " + numQueryPerTx);
+		System.out.println("  Relations           = " + numRelations);
+		System.out.println("  Query percent       = " + percentQuery);
+		System.out.println("  Query range         = " + queryRange);
+		System.out.println("  Percent user        = " + percentUser + " ("
 				+ percentConsult + " read-only)");
 
 		return clients;
 	}
 
-	@Bootstrap(id = 0)
-	static public org.deuce.benchmark.Barrier firstBarrier;
-	@Bootstrap(id = 1)
-	static public org.deuce.benchmark.Barrier setupBarrier;
-	@Bootstrap(id = 2)
-	static public org.deuce.benchmark.Barrier finishBarrier;
-	@Bootstrap(id = 3)
-	static org.deuce.benchmark.Barrier benchBarrier;
-	@Bootstrap(id = 4)
-	static Manager managerPtr;
-	@Bootstrap(id = 2000)
-	static public org.deuce.benchmark.Barrier exitBarrier;
-
 	@Atomic
-	private static void initBarriers()
+	private static void initBarriers(int replicas, int groups, int numThreads)
 	{
-		if (firstBarrier == null)
-			firstBarrier = new org.deuce.benchmark.Barrier(
-					Integer.getInteger("tribu.replicas"));
+		if (shuffleBarrier == null)
+			shuffleBarrier = new org.deuce.benchmark.Barrier(groups);
 		if (setupBarrier == null)
-			setupBarrier = new org.deuce.benchmark.Barrier(
-					Integer.getInteger("tribu.replicas"));
+			setupBarrier = new org.deuce.benchmark.Barrier(replicas);
 		if (finishBarrier == null)
-			finishBarrier = new org.deuce.benchmark.Barrier(
-					Integer.getInteger("tribu.replicas"));
+			finishBarrier = new org.deuce.benchmark.Barrier(replicas);
 		if (exitBarrier == null)
-			exitBarrier = new org.deuce.benchmark.Barrier(
-					Integer.getInteger("tribu.replicas"));
-	}
-
-	@Atomic
-	private static void initBenchBarrier(int numThreads)
-	{
+			exitBarrier = new org.deuce.benchmark.Barrier(replicas);
 		if (benchBarrier == null)
 			benchBarrier = new org.deuce.benchmark.Barrier(numThreads);
 	}
 
-	public static int MAX, MIN;
-	public static AtomicInteger reservations = new AtomicInteger(0),
-			deleteCustomers = new AtomicInteger(0),
-			updateTables = new AtomicInteger(0),
-			consults = new AtomicInteger(0);
+	@Atomic
+	private static void initFirstBarrier(int replicas)
+	{
+		if (firstBarrier == null)
+			firstBarrier = new org.deuce.benchmark.Barrier(replicas);
+	}
 
 	public static void main(String argv[]) throws Exception
 	{
-		final int PR_GROUP_ID = TribuDSTM.getLocalGroup().getId();
-		final int NUM_GROUPS = TribuDSTM.getNumGroups();
-		final boolean IS_GROUP_MASTER = TribuDSTM.isGroupMaster();
+		final int PR_GROUP_ID;
+		final int NUM_GROUPS;
+		final boolean IS_GROUP_MASTER;
 		final int SITE = Integer.getInteger("tribu.site");
 
-		System.out.println("------------------------------------------------");
-		System.out.println("------------------------------------------------");
-		System.out.println("NODE: " + SITE + " | GROUP: " + PR_GROUP_ID
-				+ " of " + (NUM_GROUPS - 1));
-		System.out.println("AM I THE GROUP MASTER: " + IS_GROUP_MASTER);
-		System.out.println("------------------------------------------------");
-		System.out.println("------------------------------------------------");
+		if (_partial)
+		{ // running in partial rep. mode
+			PR_GROUP_ID = TribuDSTM.getLocalGroup().getId();
+			NUM_GROUPS = TribuDSTM.getNumGroups();
+			IS_GROUP_MASTER = TribuDSTM.isGroupMaster();
 
-		Client clients[];
-		long start;
-		long stop;
+			System.out.println("---------------------------------------------");
+			System.out.println("NODE: " + SITE + " | GROUP: " + PR_GROUP_ID
+					+ " of " + (NUM_GROUPS - 1));
+			System.out.println("GROUP MASTER: " + IS_GROUP_MASTER);
+			System.out.println("---------------------------------------------");
+		}
+		else
+		{ // running in full rep. mode
+			PR_GROUP_ID = 0;
+			NUM_GROUPS = 1;
+			IS_GROUP_MASTER = false;
+		}
 
 		/* Initialization */
 		Vacation vac = new Vacation();
 		vac.parseArgs(argv);
+		int replicas = Integer.getInteger("tribu.replicas");
 
-		if (Integer.getInteger("tribu.site") == 1)
+		if (SITE == 1)
 		{
 			vac.initializeManager(vac.RELATIONS);
-			vac.initManager(vac.RELATIONS);
+			int numThreads = vac.CLIENTS * replicas;
+			initBarriers(replicas, NUM_GROUPS, numThreads);
 		}
 
-		initBarriers();
-
+		initFirstBarrier(replicas);
 		System.err.println("### firstBarrier");
 		firstBarrier.join();
 
@@ -396,40 +380,38 @@ public class Vacation
 			firstSection = sections + rest;
 		}
 		int size = PR_GROUP_ID == 0 ? firstSection : sections;
-		int base = PR_GROUP_ID == 0 ? PR_GROUP_ID * size : PR_GROUP_ID * size
-				+ rest;
+		int base = PR_GROUP_ID == 0 ? 0 : PR_GROUP_ID * size + rest;
 
 		MIN = base;
 		MAX = base + size;
 		System.out.println("base=" + base + " size=" + size + " [" + MIN + ", "
 				+ MAX + "[");
 
-		if (IS_GROUP_MASTER) // all group masters
+		if ((_partial && IS_GROUP_MASTER) /* all par. rep. group masters */
+				|| (!_partial && SITE == 1) /* the full rep. master */)
 		{
-			vac.populateManager(base, size);
-			initBenchBarrier(vac.CLIENTS * Integer.getInteger("tribu.replicas"));
+			vac.populateManager(base, size, PR_GROUP_ID, vac.RELATIONS);
 		}
 
 		System.err.println("### setupBarrier");
 		setupBarrier.join();
 
-		clients = vac.initializeClients(managerPtr);
+		Client clients[] = vac.initializeClients(managerPtr);
 		int numThread = vac.CLIENTS;
 
 		/* Run transactions */
 		System.out.println("Running clients... ");
 
 		Barrier.setBarrier(numThread + 1);
-
 		for (int i = 0; i < numThread; i++)
 		{
 			clients[i].start();
 		}
 
 		Barrier.enterBarrier();
-		start = System.currentTimeMillis();
+		long start = System.currentTimeMillis();
 		Barrier.enterBarrier();
-		stop = System.currentTimeMillis();
+		long stop = System.currentTimeMillis();
 
 		Barrier.assertIsClear();
 
@@ -439,8 +421,9 @@ public class Vacation
 
 		System.err.println("### finishBarrier");
 		finishBarrier.join();
-		stop = System.currentTimeMillis();
 		PRProfiler.enabled = false;
+
+		stop = System.currentTimeMillis();
 		diff = stop - start;
 		System.out.println("TIME2=" + diff);
 
@@ -452,7 +435,7 @@ public class Vacation
 				+ deleteCustomers + " U=" + updateTables);
 		System.out.println();
 
-		if (Integer.getInteger("tribu.site") == 1)
+		if (SITE == 1)
 		{
 			vac.checkTables(managerPtr);
 		}
@@ -466,7 +449,7 @@ public class Vacation
 	}
 
 	@Atomic
-	void checkTables(Manager managerPtr)
+	public void checkTables(Manager managerPtr)
 	{
 		int i;
 		int numRelation = RELATIONS;

@@ -46,8 +46,8 @@ package jstamp.vacation;
 
 public class Customer
 {
-	int id;
-	List_t reservationInfoListPtr;
+	private int id;
+	protected List_t reservationInfoListPtr;
 
 	public Customer(int id)
 	{

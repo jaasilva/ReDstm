@@ -47,8 +47,8 @@ package jstamp.vacation;
 
 public class List_t
 {
-	public List_Node head;
-	int size;
+	protected List_Node head;
+	private int size;
 
 	public List_t()
 	{
@@ -192,7 +192,7 @@ public class List_t
 		return false;
 	}
 
-	int compareObject(Object obj1, Object obj2)
+	public int compareObject(Object obj1, Object obj2)
 	{
 		return 1;
 	}

@@ -2,9 +2,9 @@ package jstamp.vacation;
 
 public class Reservation_Info
 {
-	int id;
-	int type;
-	int price;
+	protected int id;
+	protected int type;
+	protected int price;
 
 	public Reservation_Info(int type, int id, int price)
 	{

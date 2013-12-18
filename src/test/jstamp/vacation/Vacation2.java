@@ -53,6 +53,28 @@ import org.deuce.profiling.PRProfiler;
 
 public class Vacation2
 {
+	int CLIENTS;
+	int NUMBER;
+	int QUERIES;
+	int RELATIONS;
+	int TRANSACTIONS;
+	int USER;
+	int USER_CONSULT;
+
+	@Bootstrap(id = 1)
+	static public org.deuce.benchmark.Barrier setupBarrier;
+	@Bootstrap(id = 2)
+	static public org.deuce.benchmark.Barrier finishBarrier;
+	@Bootstrap(id = 3)
+	static org.deuce.benchmark.Barrier benchBarrier;
+	@Bootstrap(id = 4)
+	static Manager managerPtr;
+
+	public static AtomicInteger reservations = new AtomicInteger(0),
+			deleteCustomers = new AtomicInteger(0),
+			updateTables = new AtomicInteger(0),
+			consults = new AtomicInteger(0);
+
 	public Vacation2()
 	{
 	}
@@ -82,14 +104,6 @@ public class Vacation2
 						+ Defines.PARAM_DEFAULT_USER);
 		System.exit(1);
 	}
-
-	int CLIENTS;
-	int NUMBER;
-	int QUERIES;
-	int RELATIONS;
-	int TRANSACTIONS;
-	int USER;
-	int USER_CONSULT;
 
 	public void setDefaultParams()
 	{
@@ -166,7 +180,6 @@ public class Vacation2
 
 		for (t = 0; t < 4; t++)
 		{
-
 			/* Shuffle ids */
 			for (i = 0; i < numRelation; i++)
 			{
@@ -178,22 +191,6 @@ public class Vacation2
 			}
 
 			/* Populate table */
-			// for (i = 0; i < numRelation; i++) {
-			// boolean status;
-			// int id = ids[i];
-			// int num = ((randomPtr.posrandom_generate() % 5) + 1) * 100;
-			// int price = ((randomPtr.posrandom_generate() % 5) * 10) + 50;
-			// if (t==0) {
-			// status=managerPtr.manager_addCar(id, num, price);
-			// } else if (t==1) {
-			// status=managerPtr.manager_addFlight(id, num, price);
-			// } else if (t==2) {
-			// status=managerPtr.manager_addRoom(id, num, price);
-			// } else if (t==3) {
-			// status=managerPtr.manager_addCustomer(id);
-			// }
-			// //assert(status);
-			// }
 			int chunk = numRelation / 10;
 			for (i = 0; i < numRelation; i += chunk)
 			{
@@ -201,41 +198,36 @@ public class Vacation2
 				populateTable(i, (stop > numRelation ? numRelation : stop),
 						randomPtr, ids, t);
 			}
-
 		} /* for t */
 
 		System.out.println("done.");
-
 	}
 
 	@Atomic
 	public void populateTable(int i, int numRelation, Random randomPtr,
 			int[] ids, int t)
 	{
-		/* Populate table */
 		for (i = 0; i < numRelation; i++)
-		{
-			boolean status;
+		{ /* Populate table */
 			int id = ids[i];
 			int num = ((randomPtr.posrandom_generate() % 5) + 1) * 100;
 			int price = ((randomPtr.posrandom_generate() % 5) * 10) + 50;
 			if (t == 0)
 			{
-				status = managerPtr.manager_addCar(id, num, price);
+				managerPtr.manager_addCar(id, num, price);
 			}
 			else if (t == 1)
 			{
-				status = managerPtr.manager_addFlight(id, num, price);
+				managerPtr.manager_addFlight(id, num, price);
 			}
 			else if (t == 2)
 			{
-				status = managerPtr.manager_addRoom(id, num, price);
+				managerPtr.manager_addRoom(id, num, price);
 			}
 			else if (t == 3)
 			{
-				status = managerPtr.manager_addCustomer(id);
+				managerPtr.manager_addCustomer(id);
 			}
-			// assert(status);
 		}
 	}
 
@@ -271,7 +263,7 @@ public class Vacation2
 			clients[i] = new Client((Integer.getInteger("tribu.site") - 1)
 					* numClient + i, managerPtr, numTransactionPerClient,
 					numQueryPerTransaction, queryRange, percentUser,
-					percentConsult, true);
+					percentConsult);
 		}
 
 		System.out.println("done.");
@@ -289,15 +281,6 @@ public class Vacation2
 
 		return clients;
 	}
-
-	@Bootstrap(id = 1)
-	static public org.deuce.benchmark.Barrier setupBarrier;
-	@Bootstrap(id = 2)
-	static public org.deuce.benchmark.Barrier finishBarrier;
-	@Bootstrap(id = 3)
-	static org.deuce.benchmark.Barrier benchBarrier;
-	@Bootstrap(id = 4)
-	static Manager managerPtr;
 
 	@Atomic
 	private static void initBarriers()
@@ -317,18 +300,8 @@ public class Vacation2
 			benchBarrier = new org.deuce.benchmark.Barrier(numThreads);
 	}
 
-	public static AtomicInteger reservations = new AtomicInteger(0),
-			deleteCustomers = new AtomicInteger(0),
-			updateTables = new AtomicInteger(0),
-			consults = new AtomicInteger(0);
-
 	public static void main(String argv[]) throws Exception
 	{
-		// Manager managerPtr;
-		Client clients[];
-		long start;
-		long stop;
-
 		/* Initialization */
 		Vacation2 vac = new Vacation2();
 		vac.parseArgs(argv);
@@ -340,27 +313,12 @@ public class Vacation2
 			initBenchBarrier(vac.CLIENTS * Integer.getInteger("tribu.replicas"));
 		}
 
-		try
-		{
-			Thread.sleep(new java.util.Random().nextInt(5000));
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
 		initBarriers();
-		try
-		{
-			Thread.sleep(new java.util.Random().nextInt(5000));
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
+
 		System.err.println("### setupBarrier");
 		setupBarrier.join();
 
-		clients = vac.initializeClients(managerPtr);
+		Client clients[] = vac.initializeClients(managerPtr);
 		int numThread = vac.CLIENTS;
 
 		/* Run transactions */
@@ -374,9 +332,9 @@ public class Vacation2
 		}
 
 		Barrier.enterBarrier();
-		start = System.currentTimeMillis();
+		long start = System.currentTimeMillis();
 		Barrier.enterBarrier();
-		stop = System.currentTimeMillis();
+		long stop = System.currentTimeMillis();
 
 		Barrier.assertIsClear();
 

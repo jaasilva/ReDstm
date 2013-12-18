@@ -35,7 +35,7 @@ _BENCH=Vacation
 #_VACATION_HIGH=true
 _VACATION_HIGH=false
 
-if _VACATION_HIGH ; then # vacation-high
+if $_VACATION_HIGH ; then # vacation-high
 	_TASK_QUERIES=4
 	_PERC_QUERIED=60
 	_PERC_RESERVATION=90
@@ -48,9 +48,11 @@ fi
 _USER_CONSULT=0
 #_USER_CONSULT=90
 #_RELATIONS=1048576
-_RELATIONS=16384
+#_RELATIONS=16384
+_RELATIONS=13
 #_TASKS=4194304
-_TASKS=4096
+#_TASKS=4096
+_TASKS=50
 
 # vacation-high   -n4 -q60 -u90 -r16384   -t4096
 # vacation-high+  -n4 -q60 -u90 -r1048576 -t4096

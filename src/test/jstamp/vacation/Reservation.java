@@ -46,6 +46,12 @@ package jstamp.vacation;
 
 public class Reservation
 {
+	private int id;
+	protected int numUsed;
+	protected int numFree;
+	protected int numTotal;
+	protected int price;
+
 	public Reservation(int id, int numTotal, int price)
 	{
 		this.id = id;
@@ -55,12 +61,6 @@ public class Reservation
 		this.price = price;
 		checkReservation();
 	}
-
-	int id;
-	int numUsed;
-	int numFree;
-	int numTotal;
-	int price;
 
 	/**
 	 * Check if consistent
@@ -78,7 +78,7 @@ public class Reservation
 	 * Adds if 'num' > 0, removes if 'num' < 0; -- Returns TRUE on success, else
 	 * FALSE
 	 */
-	boolean reservation_addToTotal(int num)
+	public boolean reservation_addToTotal(int num)
 	{
 		if (numFree + num < 0)
 		{
@@ -109,7 +109,7 @@ public class Reservation
 	/**
 	 * Returns TRUE on success, else FALSE
 	 */
-	boolean reservation_cancel()
+	public boolean reservation_cancel()
 	{
 		if (numUsed < 1)
 		{
@@ -124,7 +124,7 @@ public class Reservation
 	/**
 	 * Failure if 'price' < 0 -- Returns TRUE on success, else FALSE
 	 */
-	boolean reservation_updatePrice(int newPrice)
+	public boolean reservation_updatePrice(int newPrice)
 	{
 		if (newPrice < 0)
 		{
@@ -139,13 +139,8 @@ public class Reservation
 	/**
 	 * Returns -1 if A < B, 0 if A = B, 1 if A > B
 	 */
-	int reservation_compare(Reservation aPtr, Reservation bPtr)
+	public int reservation_compare(Reservation aPtr, Reservation bPtr)
 	{
 		return aPtr.id - bPtr.id;
-	}
-
-	int reservation_hash()
-	{
-		return id;
 	}
 }

@@ -107,8 +107,7 @@ public class RBTree
 		}
 	}
 
-	Node root;
-	int compID;
+	private Node root;
 
 	public RBTree()
 	{
@@ -738,18 +737,6 @@ public class RBTree
 		}
 
 		return vfy;
-	}
-
-	public static RBTree alloc(int compID)
-	{
-		RBTree n = new RBTree();
-		if (n != null)
-		{
-			n.compID = compID;
-			n.root = null;
-		}
-
-		return n;
 	}
 
 	public boolean insert(int key, Object val)

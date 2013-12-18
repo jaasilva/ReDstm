@@ -46,10 +46,10 @@ package jstamp.vacation;
 
 public class Manager
 {
-	RBTree carTablePtr;
-	RBTree roomTablePtr;
-	RBTree flightTablePtr;
-	RBTree customerTablePtr;
+	protected RBTree carTablePtr;
+	protected RBTree roomTablePtr;
+	protected RBTree flightTablePtr;
+	protected RBTree customerTablePtr;
 
 	public Manager()
 	{
