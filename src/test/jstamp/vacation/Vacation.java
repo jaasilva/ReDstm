@@ -78,7 +78,6 @@ public class Vacation
 	@Bootstrap(id = 5)
 	public static int[] ids;
 
-	public static int MAX, MIN;
 	public static AtomicInteger reservations = new AtomicInteger(0),
 			deleteCustomers = new AtomicInteger(0),
 			updateTables = new AtomicInteger(0),
@@ -194,11 +193,12 @@ public class Vacation
 	public void populateManager(int base, int numRelations, int pr_group_id,
 			int totalRelations)
 	{
-		System.out.println("Populating manager...");
+		System.out.print("Populating manager... ");
 
 		Random randomPtr = new Random();
 		randomPtr.random_alloc();
 
+		org.deuce.benchmark.Barrier.quiet = true;
 		for (int t = 0; t < 4; t++)
 		{
 			if (pr_group_id == 0)
@@ -216,13 +216,13 @@ public class Vacation
 				populateTable(i, end, randomPtr, t);
 			}
 		}
+		org.deuce.benchmark.Barrier.quiet = false;
 		System.out.println("done.");
 	}
 
 	@Atomic
 	public final void shuffleIds(int totalRelations, final Random randomPtr)
 	{
-		System.out.println("Suffling ids...");
 		int numRelations = totalRelations;
 		for (int i = 0; i < 2 * numRelations; i++)
 		{
@@ -269,7 +269,7 @@ public class Vacation
 		int percentUser = USER;
 		int percentConsult = USER_CONSULT;
 
-		System.out.println("Initializing clients... ");
+		System.out.print("Initializing clients... ");
 
 		Random randomPtr = new Random();
 		randomPtr.random_alloc();
@@ -381,11 +381,7 @@ public class Vacation
 		}
 		int size = PR_GROUP_ID == 0 ? firstSection : sections;
 		int base = PR_GROUP_ID == 0 ? 0 : PR_GROUP_ID * size + rest;
-
-		MIN = base;
-		MAX = base + size;
-		System.out.println("base=" + base + " size=" + size + " [" + MIN + ", "
-				+ MAX + "[");
+		System.out.println("INTERVAL: [" + base + ", " + (base + size) + "[");
 
 		if ((_partial && IS_GROUP_MASTER) /* all par. rep. group masters */
 				|| (!_partial && SITE == 1) /* the full rep. master */)

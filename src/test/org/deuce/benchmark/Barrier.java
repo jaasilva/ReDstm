@@ -4,6 +4,7 @@ import org.deuce.Atomic;
 
 public class Barrier
 {
+	public static boolean quiet = false;
 	protected volatile int counter;
 	protected volatile int expected;
 	private static final long pollingPeriod = 500;
@@ -18,8 +19,11 @@ public class Barrier
 	{
 		increment();
 
-		System.err.println("Barrier increased to " + counter + " (expected="
-				+ expected + ")");
+		if (!quiet)
+		{
+			System.err.println("Barrier increased to " + counter
+					+ " (expected=" + expected + ")");
+		}
 		boolean exit = false;
 		while (!exit)
 		{
@@ -36,13 +40,15 @@ public class Barrier
 			}
 			catch (InterruptedException e)
 			{
-				System.err.println("Pao -> who should be interrupting me?");
+				System.err.println("Who should be interrupting me?");
 				e.printStackTrace();
 			}
 		}
-
-		System.err.println("-- Barrier increased to " + counter + " (expected="
-				+ expected + ")");
+		if (!quiet)
+		{
+			System.err.println("- Barrier increased to " + counter
+					+ " (expected=" + expected + ")");
+		}
 		counter = 0;
 	}
 
