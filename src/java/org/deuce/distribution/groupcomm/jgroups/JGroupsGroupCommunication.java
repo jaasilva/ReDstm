@@ -40,8 +40,10 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 
 			if (TribuDSTM.PARTIAL)
 			{ // XXX Partial Replication Mode (increase receiver threads)
-				channel.getProtocolStack().findProtocol("UDP")
-						.setValue("thread_pool_max_threads", 1);
+				channel.getProtocolStack()
+						.findProtocol("UDP")
+						.setValue("thread_pool_max_threads",
+								Defaults.JGROUPS_PARTIAL_MAX_RECEIVER_THREADS);
 			}
 
 			channel.setReceiver(this);

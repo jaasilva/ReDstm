@@ -1,11 +1,14 @@
 package org.deuce;
 
+import org.deuce.transform.ExcludeTM;
+
 /**
  * This class has all the default properties used by the system. PLEASE USE THIS
  * CLASS WHEN REFERING ONE OF THESE PROPERTIES.
  * 
  * @author jaasilva
  */
+@ExcludeTM
 public class Defaults
 {
 	public static final int MAX_RETRIES = Integer.MAX_VALUE;
@@ -51,4 +54,6 @@ public class Defaults
 	public static final String _DP_CLASS = "tribu.distributed.DataPartitionerClass";
 	// public static final String LOG = "";
 	// public static final String _LOG = "log";
+
+	public static final int JGROUPS_PARTIAL_MAX_RECEIVER_THREADS = 1;
 }
