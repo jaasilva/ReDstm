@@ -24,9 +24,5 @@ public interface OIDFactory
 	 * @param oid The desired OID.
 	 * @return A deterministically generated OID.
 	 */
-	/*
-	 * TODOs OIDs are not necessarily ints. The parameter of this method should
-	 * be a sort of seed that always generates the same OID.
-	 */
 	public OID generateOID(int oid);
 }

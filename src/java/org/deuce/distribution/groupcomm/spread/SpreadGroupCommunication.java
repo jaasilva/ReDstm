@@ -1,7 +1,6 @@
 package org.deuce.distribution.groupcomm.spread;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.List;
 
 import org.deuce.Defaults;
@@ -51,13 +50,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 			myAddress = new SpreadAddress(connection.getPrivateGroup()
 					.toString());
 		}
-		catch (SpreadException e)
-		{
-			System.err.println("Couldn't initialise Spread client.");
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		catch (UnknownHostException e)
+		catch (Exception e)
 		{
 			System.err.println("Couldn't initialise Spread client.");
 			e.printStackTrace();
@@ -92,6 +85,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		message.setData(payload);
 		message.addGroup(group);
 		message.setAgreed();
+
 		try
 		{
 			connection.multicast(message);
@@ -110,6 +104,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		message.setData(payload);
 		message.addGroup(group);
 		message.setReliable();
+
 		try
 		{
 			connection.multicast(message);
@@ -167,6 +162,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		message.setData(payload);
 		message.addGroup((String) addr.getSpecificAddress());
 		message.setFifo();
+
 		try
 		{
 			connection.multicast(message);
@@ -188,7 +184,9 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		{
 			message.addGroup((String) addr.getSpecificAddress());
 		}
+
 		message.setFifo();
+
 		try
 		{
 			connection.multicast(message);

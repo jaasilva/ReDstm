@@ -6,7 +6,7 @@ import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 
 /**
- * Every metadata class must implement this interface.
+ * Every distribution metadata class must implement this interface.
  * 
  * @author tvale
  */

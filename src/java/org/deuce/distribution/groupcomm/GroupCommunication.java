@@ -81,7 +81,6 @@ public abstract class GroupCommunication
 	protected Object notifyOptimisticDelivery(Object obj, Address src,
 			int payloadSize)
 	{
-
 		Object appObj = null;
 		if (optSubscriber != null)
 			appObj = optSubscriber.onOptimisticDelivery(obj, src, payloadSize);

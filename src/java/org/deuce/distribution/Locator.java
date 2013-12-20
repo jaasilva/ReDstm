@@ -3,7 +3,7 @@ package org.deuce.distribution;
 import org.deuce.transform.ExcludeTM;
 
 /**
- * Represents the locator table. It maps metadata to UniqueObjects.
+ * Represents the locator table. It maps distribution metadata to UniqueObjects.
  * 
  * @author tvale
  */

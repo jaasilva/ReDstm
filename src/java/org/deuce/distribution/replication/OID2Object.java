@@ -8,7 +8,7 @@ import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 
 /**
- * This class acts as an replacement serialised version of an already published
+ * This class acts as a replacement serialised version of an already published
  * unique object. Therefore, upon de-serialisation on the target host, it
  * returns the existing local copy of the unique object.
  * 

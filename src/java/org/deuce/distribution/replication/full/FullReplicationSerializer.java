@@ -21,8 +21,6 @@ public class FullReplicationSerializer extends ObjectSerializer
 	public final static String DESC = Type
 			.getDescriptor(FullReplicationSerializer.class);
 
-	// TODOs: Permitir definir qual a implementação de OID a usar.
-	// private OIDFactory factory = new SimpleOIDFactory();
 	private OIDFactory factory = new UUIDFactory();
 
 	/**
@@ -41,14 +39,14 @@ public class FullReplicationSerializer extends ObjectSerializer
 		OID oid = (OID) obj.getMetadata();
 
 		if (oid == null)
-		{
+		{ // not published
 			oid = factory.generateOID();
-			obj.setMetadata(oid);
-			TribuDSTM.putObject(oid, obj);
+			obj.setMetadata(oid); // set newly created metadata
+			TribuDSTM.putObject(oid, obj); // publish object
 			return obj;
 		}
 
-		return new OID2Object(oid);
+		return new OID2Object(oid); // return replacement object
 	}
 
 	/**
@@ -64,12 +62,12 @@ public class FullReplicationSerializer extends ObjectSerializer
 
 		UniqueObject object = TribuDSTM.getObject(oid);
 		if (object != null)
-		{
-			return object;
+		{ // already published object
+			return object; // return local copy
 		}
 
-		TribuDSTM.putObject(oid, obj);
-		return obj;
+		TribuDSTM.putObject(oid, obj); // newly published object. save it.
+		return obj; // return received object
 	}
 
 	public ObjectMetadata createMetadata()

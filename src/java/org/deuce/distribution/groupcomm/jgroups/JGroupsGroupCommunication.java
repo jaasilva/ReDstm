@@ -157,9 +157,11 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		{ // assumes group has no duplicate addresses
 			addr.add((org.jgroups.Address) a.getSpecificAddress());
 		}
+
 		final Message msg = new Message();
 		msg.setDest(addr);
 		msg.setBuffer(payload);
+
 		try
 		{
 			channel.send(msg);
@@ -181,7 +183,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 					(org.jgroups.Address) addr.getSpecificAddress(), payload);
 			// if (SCOReProtocol.serializationContext.get())
 			// {
-			// msg.setFlag(Message.Flag.OOB);
+			// msg.setFlag(Message.Flag.OOB); // XXX trying to optimize
 			// }
 			channel.send(msg);
 		}

@@ -25,9 +25,9 @@ public interface UniqueObject extends Serializable
 			+ Type.getDescriptor(ObjectMetadata.class);
 
 	/**
-	 * Returns the object's global identifier.
+	 * Returns the object's distribution metadata.
 	 * 
-	 * @return the global object identifier.
+	 * @return the object's distribution metadata.
 	 */
 	public ObjectMetadata getMetadata();
 
@@ -36,9 +36,9 @@ public interface UniqueObject extends Serializable
 			+ ObjectMetadata.DESC + ")V";
 
 	/**
-	 * Sets the object's global identifier.
+	 * Sets the object's distribution metadata.
 	 * 
-	 * @param oid - the global object identifier.
+	 * @param oid - the object's distribution metadata.
 	 */
 	public void setMetadata(ObjectMetadata metadata);
 

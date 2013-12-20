@@ -1,6 +1,5 @@
 package org.deuce.distribution.groupcomm.appia;
 
-import java.io.IOException;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,11 +86,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		{
 			controlSession.leave();
 		}
-		catch (ClosedSessionException e)
-		{
-			e.printStackTrace();
-		}
-		catch (JGCSException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -106,13 +101,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 			msg.setPayload(payload);
 			dataSession.multicast(msg, sendTOService, null);
 		}
-		catch (UnsupportedServiceException e)
-		{
-			System.err.println("Couldn't send message.");
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			System.err.println("Couldn't send message.");
 			e.printStackTrace();
@@ -128,13 +117,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 			msg.setPayload(payload);
 			dataSession.multicast(msg, sendURBService, null);
 		}
-		catch (UnsupportedServiceException e)
-		{
-			System.err.println("Couldn't send message.");
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			System.err.println("Couldn't send message.");
 			e.printStackTrace();
@@ -144,13 +127,14 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 
 	public void onMembershipChange()
 	{
-		Membership membership;
 		try
 		{
-			membership = controlSession.getMembership();
-			if (membership.getMembershipList().size() == Integer.getInteger(
-					Defaults._REPLICAS).intValue())
+			Membership membership = controlSession.getMembership();
+			int replicas = Integer.getInteger(Defaults._REPLICAS).intValue();
+			if (membership.getMembershipList().size() == replicas)
+			{
 				membersArrived();
+			}
 		}
 		catch (NotJoinedException e)
 		{
@@ -168,11 +152,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		{
 			controlSession.blockOk();
 		}
-		catch (NotJoinedException e)
-		{
-			e.printStackTrace();
-		}
-		catch (JGCSException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -255,19 +235,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 					(SocketAddress) addr.getSpecificAddress(),
 					(Annotation[]) null);
 		}
-		catch (ClosedSessionException e)
-		{
-			System.err.println("Couldn't send message.");
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		catch (UnsupportedServiceException e)
-		{
-			System.err.println("Couldn't send message.");
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			System.err.println("Couldn't send message.");
 			e.printStackTrace();
@@ -290,6 +258,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 			e.printStackTrace();
 			System.exit(-1);
 		}
+
 		for (Address a : group.getAll())
 		{ // assumes group has no duplicate addresses
 			try
@@ -298,13 +267,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 						(SocketAddress) a.getSpecificAddress(),
 						(Annotation[]) null);
 			}
-			catch (UnsupportedServiceException e)
-			{
-				System.err.println("Couldn't send message.");
-				e.printStackTrace();
-				System.exit(-1);
-			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				System.err.println("Couldn't send message.");
 				e.printStackTrace();

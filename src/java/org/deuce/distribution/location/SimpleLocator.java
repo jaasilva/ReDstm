@@ -1,8 +1,6 @@
 package org.deuce.distribution.location;
 
-import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
-import java.lang.ref.WeakReference;
+import java.lang.ref.*;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
