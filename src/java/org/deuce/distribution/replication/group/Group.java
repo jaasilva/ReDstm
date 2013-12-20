@@ -18,8 +18,8 @@ public interface Group extends Serializable
 	public final static String NAME = Type.getInternalName(Group.class);
 	public final static String DESC = Type.getDescriptor(Group.class);
 
-	public final static short ALL = -1;
-	public final static short NIL = -2;
+	public final static byte ALL = -1;
+	public final static byte NIL = -2;
 
 	/**
 	 * Returns a collection with the addresses of all the members of the group.
@@ -82,6 +82,13 @@ public interface Group extends Serializable
 	public String toString();
 
 	/**
+	 * Returns a readable string representing the group members.
+	 * 
+	 * @return a human-readable string.
+	 */
+	public String toStringMembers();
+
+	/**
 	 * Determines if an object is equals to this group.
 	 * 
 	 * @param obj - the object to check.
@@ -125,4 +132,11 @@ public interface Group extends Serializable
 	 * @return true if the group is ALL, false otherwise.
 	 */
 	public boolean isAll();
+
+	/**
+	 * Returns the address of the group master node.
+	 * 
+	 * @return the address of the group master node.
+	 */
+	public Address getGroupMaster();
 }

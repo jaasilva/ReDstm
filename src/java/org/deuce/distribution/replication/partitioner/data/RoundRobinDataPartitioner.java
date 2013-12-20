@@ -18,7 +18,6 @@ public class RoundRobinDataPartitioner implements DataPartitioner
 
 	public RoundRobinDataPartitioner()
 	{
-		super();
 		round = new AtomicInteger(0);
 	}
 

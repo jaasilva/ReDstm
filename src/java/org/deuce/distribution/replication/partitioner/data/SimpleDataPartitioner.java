@@ -13,7 +13,6 @@ public class SimpleDataPartitioner implements DataPartitioner
 {
 	public SimpleDataPartitioner()
 	{
-		super();
 	}
 
 	@Override

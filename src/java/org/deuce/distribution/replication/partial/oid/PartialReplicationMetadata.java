@@ -3,6 +3,7 @@ package org.deuce.distribution.replication.partial.oid;
 import java.nio.ByteBuffer;
 
 import org.deuce.distribution.replication.group.Group;
+import org.deuce.distribution.replication.partial.PartialReplicationOID;
 import org.deuce.transform.ExcludeTM;
 
 /**

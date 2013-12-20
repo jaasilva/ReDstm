@@ -18,7 +18,6 @@ public class RandomDataPartitioner implements DataPartitioner
 
 	public RandomDataPartitioner()
 	{
-		super();
 		rand = new Random();
 	}
 

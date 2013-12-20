@@ -38,7 +38,6 @@ public class TribuDSTM
 	private static DataPartitioner dataPart;
 	private static GroupPartitioner groupPart;
 	private static Class<? extends DistributedContext> ctxClass;
-	private static int numGroups;
 	public static boolean PARTIAL; // check runtime mode
 	final public static Collection<Address> ALL = new HashSet<Address>();
 
@@ -50,7 +49,7 @@ public class TribuDSTM
 
 	static
 	{
-		LOGGER.warn("#################################");
+		LOGGER.warn("####################################################");
 		LOGGER.warn("> TribuDSTM initializing...");
 
 		checkRuntimeMode();
@@ -60,68 +59,9 @@ public class TribuDSTM
 		if (PARTIAL)
 		{
 			initPartitioners();
+			int groups = Integer.getInteger(Defaults._GROUPS, Defaults.GROUPS);
+			groupPart.init(groups);
 		}
-	}
-
-	public static final String INIT_METHOD_NAME = "init";
-	public static final String INIT_METHOD_DESC = "()"
-			+ Type.VOID_TYPE.getDescriptor();
-
-	/**
-	 * Initializes a part of the system. The first initialization is done in the
-	 * static block. The initialization of the group communication system is
-	 * deferred until the actual application is executing because, apparently,
-	 * explicit class loading during the execution of an agent is only supported
-	 * in JDK 7. It also initializes some things related with group and data
-	 * partitioners and the distributed protocol.
-	 */
-	public static void init()
-	{
-		initGroupCommunication();
-
-		if (PARTIAL)
-		{
-			numGroups = Integer.getInteger(Defaults._GROUPS, Defaults.GROUPS);
-
-			LOGGER.warn("> Groups: " + numGroups);
-
-			groupPart.partitionGroups(getAllMembers(), numGroups);
-			dataPart.init();
-
-			ALL.addAll(getAllMembers());
-
-			LOGGER.warn("> ALL:" + ALL);
-		}
-
-		distProtocol.init();
-
-		LOGGER.warn("> TribuDSTM initialized...");
-		LOGGER.warn("#################################");
-
-		if (PARTIAL)
-		{
-			System.out.println(">>GROUP: " + getLocalGroup().getId());
-		}
-	}
-
-	public static final String CLOSE_METHOD_NAME = "close";
-	public static final String CLOSE_METHOD_DESC = "()"
-			+ Type.VOID_TYPE.getDescriptor();
-
-	/**
-	 * Closes the group communication system gracefully and terminates the
-	 * system.
-	 */
-	public static void close()
-	{
-		LOGGER.warn("#################################");
-		LOGGER.warn("> TribuDSTM closing");
-
-		groupComm.close();
-
-		LOGGER.warn("> TribuDSTM closing");
-
-		System.exit(0);
 	}
 
 	/**
@@ -133,51 +73,6 @@ public class TribuDSTM
 				Defaults._PARTIAL_MODE, Defaults.PARTIAL_MODE));
 
 		LOGGER.warn("> Partial replication mode: " + PARTIAL);
-	}
-
-	/**
-	 * Initializes the group communication system component.
-	 */
-	private static void initGroupCommunication()
-	{
-		String className = System.getProperty(Defaults._COMM_CLASS,
-				Defaults.COMM_CLASS);
-		try
-		{
-			@SuppressWarnings("unchecked")
-			Class<? extends GroupCommunication> groupCommClass = (Class<? extends GroupCommunication>) Class
-					.forName(className);
-			groupComm = groupCommClass.newInstance();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			System.exit(-1);
-		}
-
-		LOGGER.warn("> Group communication: " + className);
-	}
-
-	/**
-	 * Initializes the transaction context used by the system.
-	 */
-	@SuppressWarnings("unchecked")
-	private static void initTransactionContext()
-	{
-		String className = System.getProperty(Defaults._CTX_CLASS,
-				Defaults.CTX_CLASS);
-		try
-		{
-			ctxClass = (Class<? extends DistributedContext>) Class
-					.forName(className);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			System.exit(-1);
-		}
-
-		LOGGER.info("> Transaction context: " + className);
 	}
 
 	/**
@@ -201,6 +96,28 @@ public class TribuDSTM
 		}
 
 		LOGGER.warn("> Replication protocol: " + className);
+	}
+
+	/**
+	 * Initializes the transaction context used by the system.
+	 */
+	@SuppressWarnings("unchecked")
+	private static void initTransactionContext()
+	{
+		String className = System.getProperty(Defaults._CTX_CLASS,
+				Defaults.CTX_CLASS);
+		try
+		{
+			ctxClass = (Class<? extends DistributedContext>) Class
+					.forName(className);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
+		LOGGER.info("> Transaction context: " + className);
 	}
 
 	/**
@@ -231,6 +148,81 @@ public class TribuDSTM
 
 		LOGGER.warn("> Group Partitioner: " + groupPartClass);
 		LOGGER.warn("> Data Partitioner: " + dataPartClass);
+	}
+
+	public static final String INIT_METHOD_NAME = "init";
+	public static final String INIT_METHOD_DESC = "()"
+			+ Type.VOID_TYPE.getDescriptor();
+
+	/**
+	 * Initializes a part of the system. The first initialization is done in the
+	 * static block. The initialization of the group communication system is
+	 * deferred until the actual application is executing because, apparently,
+	 * explicit class loading during the execution of an agent is only supported
+	 * in JDK 7. It also initializes some things related with group and data
+	 * partitioners and the distributed protocol.
+	 */
+	public static void init()
+	{
+		initGroupCommunication();
+
+		if (PARTIAL)
+		{
+			groupPart.partitionGroups(getAllMembers());
+			dataPart.init();
+
+			ALL.addAll(getAllMembers()); // XXX check
+
+			LOGGER.warn("> ALL:" + ALL);
+		}
+
+		distProtocol.init();
+
+		LOGGER.warn("> TribuDSTM initialized!");
+		LOGGER.warn("####################################################");
+	}
+
+	public static final String CLOSE_METHOD_NAME = "close";
+	public static final String CLOSE_METHOD_DESC = "()"
+			+ Type.VOID_TYPE.getDescriptor();
+
+	/**
+	 * Closes the group communication system gracefully and terminates the
+	 * system.
+	 */
+	public static void close()
+	{
+		LOGGER.warn("####################################################");
+		LOGGER.warn("> TribuDSTM closing...");
+
+		groupComm.close();
+
+		LOGGER.warn("> TribuDSTM closed!");
+
+		System.exit(0);
+	}
+
+	/**
+	 * Initializes the group communication system component.
+	 */
+	private static void initGroupCommunication()
+	{
+		String className = System.getProperty(Defaults._COMM_CLASS,
+				Defaults.COMM_CLASS);
+		try
+		{
+			@SuppressWarnings("unchecked")
+			Class<? extends GroupCommunication> groupCommClass = (Class<? extends GroupCommunication>) Class
+					.forName(className);
+			groupComm = groupCommClass.newInstance();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
+		LOGGER.warn("> Group communication: " + className);
 	}
 
 	/*
@@ -503,7 +495,7 @@ public class TribuDSTM
 	 */
 	public static final Group getGroup(int id)
 	{
-		return groupPart.getGroups().get(id);
+		return groupPart.getGroup(id);
 	}
 
 	/**
@@ -514,7 +506,7 @@ public class TribuDSTM
 	 */
 	public static final boolean isLocalGroup(Group group)
 	{
-		return group.contains(getLocalAddress());
+		return group.contains(getLocalAddress()); // XXX use id
 	}
 
 	/**
@@ -525,7 +517,7 @@ public class TribuDSTM
 	 */
 	public static final boolean groupIsAll(Group group)
 	{
-		return group.getAll().equals(ALL);
+		return group.getAll().equals(ALL); // XXX use id
 	}
 
 	/**
@@ -535,7 +527,7 @@ public class TribuDSTM
 	 */
 	public static final int getNumGroups()
 	{
-		return numGroups;
+		return groupPart.getNumGroups();
 	}
 
 	/**
@@ -545,10 +537,10 @@ public class TribuDSTM
 	 */
 	public static final boolean isGroupMaster()
 	{
-		Address local_addr = getLocalAddress();
-		Address master_addr = getLocalGroup().getAll().iterator().next();
+		Address localAddr = getLocalAddress();
+		Address masterAddr = getLocalGroup().getGroupMaster();
 
-		return local_addr.equals(master_addr);
+		return localAddr.equals(masterAddr);
 	}
 
 	/*

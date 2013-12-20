@@ -10,8 +10,6 @@ import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.replication.OID2Object;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationMetadataFactory;
-import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
-import org.deuce.distribution.replication.partial.oid.PartialReplicationOIDFactory;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 
@@ -137,8 +135,8 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		obj.setMetadata(meta);
 		final Group toPublish = TribuDSTM.publishObjectTo(obj);
 		((PartialReplicationOID) meta).getPartialGroup().getAll()
-				.addAll(toPublish.getAll());
-		TribuDSTM.putObject(meta, obj); // XXX
+				.addAll(toPublish.getAll()); // XXX find better way!!!
+		TribuDSTM.putObject(meta, obj); // XXX check
 	}
 
 	public static final String CREATE_FULL_METADATA_METHOD_NAME = "createFullReplicationMetadata";
@@ -155,7 +153,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	{ // id = rand(), group = partialGroup = ALL
 		ObjectMetadata meta = factory.generateFullReplicationOID();
 		obj.setMetadata(meta);
-		TribuDSTM.putObject(meta, obj); // XXX
+		TribuDSTM.putObject(meta, obj); // XXX check
 	}
 
 	public static final String BOOTSTRAP_METHOD_NAME = "createBootstrapMetadata";

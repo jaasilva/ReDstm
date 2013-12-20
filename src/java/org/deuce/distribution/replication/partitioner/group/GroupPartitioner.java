@@ -13,11 +13,17 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public interface GroupPartitioner
 {
-	public void partitionGroups(Collection<Address> members, int groups);
+	public void init(int numGroups);
+
+	public void partitionGroups(Collection<Address> members);
 
 	public List<Group> getGroups();
 
+	public Group getGroup(int id);
+
 	public Group getLocalGroup();
+
+	public int getNumGroups();
 
 	public String toString();
 }

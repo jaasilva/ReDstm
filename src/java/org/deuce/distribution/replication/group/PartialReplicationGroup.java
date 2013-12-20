@@ -88,20 +88,7 @@ public class PartialReplicationGroup implements Group
 	@Override
 	public String toString()
 	{
-		if (this.addrs.size() == 0)
-		{
-			return "[]";
-		}
-
-		StringBuilder sb = new StringBuilder("[");
-		for (Address a : this.addrs)
-		{
-			sb.append(a);
-			sb.append(" ");
-		}
-		sb.insert(sb.length() - 1, "]");
-
-		return sb.toString().trim();
+		return "" + id;
 	}
 
 	@Override
@@ -135,5 +122,29 @@ public class PartialReplicationGroup implements Group
 	public boolean isAll()
 	{
 		return TribuDSTM.groupIsAll(this);
+	}
+
+	@Override
+	public String toStringMembers()
+	{
+		if (size() == 0)
+		{
+			return "[]";
+		}
+		StringBuilder sb = new StringBuilder("[");
+		for (Address a : this.addrs)
+		{
+			sb.append(a);
+			sb.append(" ");
+		}
+		sb.deleteCharAt(sb.length() - 1);
+		sb.append("]");
+		return sb.toString().trim();
+	}
+
+	@Override
+	public Address getGroupMaster()
+	{
+		return addrs.iterator().next();
 	}
 }

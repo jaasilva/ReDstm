@@ -1,4 +1,4 @@
-package org.deuce.distribution.replication.partial.oid;
+package org.deuce.distribution.replication.partial;
 
 import org.deuce.distribution.replication.OID;
 import org.deuce.distribution.replication.group.Group;

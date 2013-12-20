@@ -2,8 +2,8 @@ package org.deuce.transform.localmetadata.array;
 
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.group.Group;
+import org.deuce.distribution.replication.partial.PartialReplicationOID;
 import org.deuce.distribution.replication.partial.PartialReplicationSerializer;
-import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.reflection.AddressUtil;
 import org.deuce.transaction.ContextDelegator;

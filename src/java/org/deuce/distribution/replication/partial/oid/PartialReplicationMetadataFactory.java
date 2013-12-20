@@ -3,6 +3,8 @@ package org.deuce.distribution.replication.partial.oid;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
+import org.deuce.distribution.replication.partial.PartialReplicationOID;
+import org.deuce.distribution.replication.partial.PartialReplicationOIDFactory;
 import org.deuce.transform.ExcludeTM;
 
 /**

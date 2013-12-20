@@ -1,4 +1,4 @@
-package org.deuce.distribution.replication.partial.oid;
+package org.deuce.distribution.replication.partial;
 
 import org.deuce.distribution.replication.OIDFactory;
 import org.deuce.transform.ExcludeTM;
@@ -27,7 +27,7 @@ public interface PartialReplicationOIDFactory extends OIDFactory
 	public PartialReplicationOID generateFullReplicationOID();
 
 	/**
-	 * Creates a new PRepMetadata with // id = rand(oid), group = partialGroup =
+	 * Creates a new PRepMetadata with id = rand(oid), group = partialGroup =
 	 * ALL.
 	 * 
 	 * @param oid - the seed for the id creation.
@@ -36,8 +36,7 @@ public interface PartialReplicationOIDFactory extends OIDFactory
 	public PartialReplicationOID generateFullReplicationOID(int oid);
 
 	/**
-	 * Creates a new PRepMetadata with // id = rand(), group = partialGroup =
-	 * null.
+	 * Creates a new PRepMetadata with id = rand(), group = partialGroup = null.
 	 * 
 	 * @param oid - the seed for the id creation.
 	 * @return the newly created metadata.

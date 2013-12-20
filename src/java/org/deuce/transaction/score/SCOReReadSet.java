@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
-import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
+import org.deuce.distribution.replication.partial.PartialReplicationOID;
 import org.deuce.transaction.score.field.InPlaceRWLock;
 import org.deuce.transaction.score.field.SCOReReadFieldAccess;
 import org.deuce.transaction.score.field.VBoxField;

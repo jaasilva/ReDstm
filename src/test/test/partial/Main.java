@@ -6,7 +6,7 @@ import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.replication.Bootstrap;
-import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
+import org.deuce.distribution.replication.partial.PartialReplicationOID;
 
 class MyObject
 {
