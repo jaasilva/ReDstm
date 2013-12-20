@@ -1,16 +1,15 @@
 package org.deuce.distribution.replication.full.protocol.voting;
 
+import org.deuce.distribution.replication.ProtocolMessage;
 import org.deuce.transform.ExcludeTM;
 
 /**
- * FIXMEs: Refactor.
- * 
  * @author Tiago Vale
  */
 @ExcludeTM
-public class ResultMessage implements java.io.Serializable
+public class ResultMessage extends ProtocolMessage
 {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 4076576855178620723L;
 	public int ctxID;
 	public boolean result;
 

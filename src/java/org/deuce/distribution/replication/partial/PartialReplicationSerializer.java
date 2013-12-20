@@ -12,7 +12,6 @@ import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationMetadataFactory;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOID;
 import org.deuce.distribution.replication.partial.oid.PartialReplicationOIDFactory;
-import org.deuce.distribution.replication.partial.protocol.score.SCOReProtocol;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transform.ExcludeTM;
 
@@ -44,7 +43,8 @@ public class PartialReplicationSerializer extends ObjectSerializer
 			throws ObjectStreamException
 	{
 		PartialReplicationOID oid = (PartialReplicationOID) obj.getMetadata();
-		boolean isRead = SCOReProtocol.serializationContext.get();
+		boolean isRead = PartialReplicationProtocol.serializationReadContext
+				.get();
 
 		if (isRead)
 		{ // read context. I have to send the object
@@ -58,14 +58,12 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		{ // publish object and send
 			Group group = oid.getGroup();
 			oid.publish();
-
 			if (group.isLocal())
 			{ // if this is my group save object in locator table
 				TribuDSTM.putObject(oid, obj);
 			}
+			return obj; // return the object itself
 		}
-
-		return obj;
 	}
 
 	/**
@@ -86,13 +84,13 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		PartialReplicationOID oid = (PartialReplicationOID) obj.getMetadata();
 		Group group = oid.getGroup();
 
-		boolean isLocalGroup = true; // XXX TODO FIXME
+		boolean isLocalGroup = true; // XXX why?
 		try
 		{
 			isLocalGroup = group.isLocal();
 		}
 		catch (NullPointerException e)
-		{
+		{ // XXX why does this happen?
 		}
 
 		if (isLocalGroup)
@@ -112,7 +110,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		else
 		{ // not for me to replicate this object
 			TribuDSTM.putObject(oid, obj); // to cache the object graph
-			// received from a read request during a transaction
+			// received from a read request during the transaction
 			return obj;
 		}
 	}
@@ -160,7 +158,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		TribuDSTM.putObject(meta, obj); // XXX
 	}
 
-	public static final String BOOTSTRAP_METHOD_NAME = "createBootstrapOID";
+	public static final String BOOTSTRAP_METHOD_NAME = "createBootstrapMetadata";
 	public static final String BOOTSTRAP_METHOD_DESC = "(" + UniqueObject.DESC
 			+ Type.INT_TYPE.getDescriptor() + ")"
 			+ Type.VOID_TYPE.getDescriptor();
@@ -172,7 +170,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	 *            created metadata.
 	 * @param id - the id to force the UniqueObject id to be deterministic.
 	 */
-	public void createBootstrapOID(UniqueObject obj, int id)
+	public void createBootstrapMetadata(UniqueObject obj, int id)
 	{ // id = rand(oid), group = partialGroup = ALL
 		PartialReplicationOID meta = factory.generateFullReplicationOID(id);
 		obj.setMetadata(meta);

@@ -1,8 +1,7 @@
 package org.deuce.distribution.replication.full.protocol.nonvoting;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectSerializer;
@@ -23,8 +22,7 @@ public class NonVoting extends FullReplicationProtocol implements
 {
 	private static final Logger LOGGER = Logger.getLogger(NonVoting.class);
 
-	private final Map<Integer, DistributedContext> contexts = Collections
-			.synchronizedMap(new HashMap<Integer, DistributedContext>());
+	private final Map<Integer, DistributedContext> contexts = new ConcurrentHashMap<Integer, DistributedContext>();
 
 	public void init()
 	{
@@ -40,9 +38,7 @@ public class NonVoting extends FullReplicationProtocol implements
 		if (src.isLocal())
 		{
 			ctx = contexts.get(ctxState.ctxID);
-			// ctx.profiler.onTODelivery();
 			PRProfiler.onLastVoteReceived(ctxState.ctxID);
-			// ctx.profiler.newMsgRecv(payloadSize);
 			PRProfiler.newMsgRecv(payloadSize);
 		}
 		else
@@ -78,11 +74,8 @@ public class NonVoting extends FullReplicationProtocol implements
 		byte[] payload = ObjectSerializer.object2ByteArray(ctx.createState());
 		PRProfiler.onSerializationFinish(ctx.threadID);
 
-		// ctx.profiler.onTOSend();
 		PRProfiler.onPrepSend(ctx.threadID);
-		// ctx.profiler.newMsgSent(payload.length);
 		PRProfiler.newMsgSent(payload.length);
-
 		TribuDSTM.sendTotalOrdered(payload);
 	}
 

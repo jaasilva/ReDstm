@@ -1,10 +1,9 @@
 package org.deuce.distribution.replication.full.protocol.voting;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectSerializer;
@@ -24,9 +23,7 @@ public class Voting extends FullReplicationProtocol implements
 {
 	public static final Logger LOGGER = Logger.getLogger(Voting.class);
 
-	private final Map<Integer, DistributedContext> contexts = Collections
-			.synchronizedMap(new HashMap<Integer, DistributedContext>());
-
+	private final Map<Integer, DistributedContext> contexts = new ConcurrentHashMap<Integer, DistributedContext>();
 	private final List<PendingTx> pendingTxs = new LinkedList<PendingTx>();
 	private final List<PendingResult> pendingResults = new LinkedList<PendingResult>();
 

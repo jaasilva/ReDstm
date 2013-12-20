@@ -1,11 +1,10 @@
 package org.deuce.transaction;
 
-import java.io.Serializable;
-
+import org.deuce.distribution.replication.ProtocolMessage;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
-public class DistributedContextState implements Serializable
+public class DistributedContextState extends ProtocolMessage
 {
 	private static final long serialVersionUID = 1L;
 	public Object rs;

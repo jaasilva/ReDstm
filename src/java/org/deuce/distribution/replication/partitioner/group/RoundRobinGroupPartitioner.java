@@ -7,15 +7,13 @@ import org.apache.log4j.Logger;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
-import org.deuce.distribution.replication.partitioner.Partitioner;
 import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
  */
 @ExcludeTM
-public class RoundRobinGroupPartitioner extends Partitioner implements
-		GroupPartitioner
+public class RoundRobinGroupPartitioner extends Partitioner
 {
 	private static final Logger LOGGER = Logger
 			.getLogger(RoundRobinGroupPartitioner.class);
@@ -28,16 +26,16 @@ public class RoundRobinGroupPartitioner extends Partitioner implements
 	@Override
 	public void partitionGroups(Collection<Address> members, int groups)
 	{
-		List<Group> g = super.getGroups();
+		List<Group> groupsList = super.getGroups();
 		for (int i = 0; i < groups; i++)
 		{
-			g.add(new PartialReplicationGroup(i));
+			groupsList.add(new PartialReplicationGroup(i));
 		}
 
 		int group = 0;
 		for (Address a : members)
 		{
-			Group selectedGroup = g.get(group % groups);
+			Group selectedGroup = groupsList.get(group % groups);
 			selectedGroup.add(a);
 
 			if (a.isLocal())

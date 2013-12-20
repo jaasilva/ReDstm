@@ -77,15 +77,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 	private static final List<DistributedContextState> toBeProcessed = new ArrayList<DistributedContextState>();
 
-	public static final ThreadLocal<Boolean> serializationContext = new ThreadLocal<Boolean>()
-	{ // false -> *NOT* read context; true -> read context
-		@Override
-		protected Boolean initialValue()
-		{
-			return false;
-		}
-	};
-
 	@Override
 	public void init()
 	{
@@ -311,9 +302,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		ReadRet ret = new ReadRet(msg.ctxID, msg.msgVersion, read);
 
 		PRProfiler.onSerializationBegin(msg.ctxID);
-		serializationContext.set(true);
+		serializationReadContext.set(true); // enter read context
 		byte[] payload = ObjectSerializer.object2ByteArray(ret);
-		serializationContext.set(false);
+		serializationReadContext.set(false); // exit read context
 		PRProfiler.onSerializationFinish(msg.ctxID);
 
 		PRProfiler.newMsgSent(payload.length);

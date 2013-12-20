@@ -1,6 +1,7 @@
 package org.deuce.transaction;
 
 import org.apache.log4j.Logger;
+import org.deuce.Defaults;
 import org.deuce.LocalMetadata;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.reflection.AddressUtil;
@@ -22,10 +23,8 @@ import org.deuce.transform.localmetadata.type.TxField;
  * Cluster static delegate methods. These methods delegates calls from the
  * dynamic generated code to the context.
  * 
- * 
  * @author Guy Korland
  * @since 1.0
- * 
  */
 public class ContextDelegator
 {
@@ -395,8 +394,7 @@ public class ContextDelegator
 
 		public ContextThreadLocal()
 		{
-			String className = System
-					.getProperty("org.deuce.transaction.contextClass");
+			String className = System.getProperty(Defaults._CTX_CLASS);
 			if (className != null)
 			{
 				try
@@ -438,50 +436,50 @@ public class ContextDelegator
 		{
 			switch (type.getSort())
 			{
-				case Type.BOOLEAN:
-					return WRITE_METHOD_BOOLEAN_DESC;
-				case Type.BYTE:
-					return WRITE_METHOD_BYTE_DESC;
-				case Type.CHAR:
-					return WRITE_METHOD_CHAR_DESC;
-				case Type.SHORT:
-					return WRITE_METHOD_SHORT_DESC;
-				case Type.INT:
-					return WRITE_METHOD_INT_DESC;
-				case Type.LONG:
-					return WRITE_METHOD_LONG_DESC;
-				case Type.FLOAT:
-					return WRITE_METHOD_FLOAT_DESC;
-				case Type.DOUBLE:
-					return WRITE_METHOD_DOUBLE_DESC;
-				default:
-					return WRITE_METHOD_OBJ_DESC;
+			case Type.BOOLEAN:
+				return WRITE_METHOD_BOOLEAN_DESC;
+			case Type.BYTE:
+				return WRITE_METHOD_BYTE_DESC;
+			case Type.CHAR:
+				return WRITE_METHOD_CHAR_DESC;
+			case Type.SHORT:
+				return WRITE_METHOD_SHORT_DESC;
+			case Type.INT:
+				return WRITE_METHOD_INT_DESC;
+			case Type.LONG:
+				return WRITE_METHOD_LONG_DESC;
+			case Type.FLOAT:
+				return WRITE_METHOD_FLOAT_DESC;
+			case Type.DOUBLE:
+				return WRITE_METHOD_DOUBLE_DESC;
+			default:
+				return WRITE_METHOD_OBJ_DESC;
 			}
 		}
 		else
 		{
 			switch (type.getSort())
 			{
-				case Type.BOOLEAN:
-					return WRITE_METHOD_BOOLEAN_DESC_META;
-				case Type.BYTE:
-					return WRITE_METHOD_BYTE_DESC_META;
-				case Type.CHAR:
-					return WRITE_METHOD_CHAR_DESC_META;
-				case Type.SHORT:
-					return WRITE_METHOD_SHORT_DESC_META;
-				case Type.INT:
-					return WRITE_METHOD_INT_DESC_META;
-				case Type.LONG:
-					return WRITE_METHOD_LONG_DESC_META;
-				case Type.FLOAT:
-					return WRITE_METHOD_FLOAT_DESC_META;
-				case Type.DOUBLE:
-					return WRITE_METHOD_DOUBLE_DESC_META;
-				case Type.ARRAY:
-					return WRITE_METHOD_ARRAY_DESC_META;
-				default:
-					return WRITE_METHOD_OBJ_DESC_META;
+			case Type.BOOLEAN:
+				return WRITE_METHOD_BOOLEAN_DESC_META;
+			case Type.BYTE:
+				return WRITE_METHOD_BYTE_DESC_META;
+			case Type.CHAR:
+				return WRITE_METHOD_CHAR_DESC_META;
+			case Type.SHORT:
+				return WRITE_METHOD_SHORT_DESC_META;
+			case Type.INT:
+				return WRITE_METHOD_INT_DESC_META;
+			case Type.LONG:
+				return WRITE_METHOD_LONG_DESC_META;
+			case Type.FLOAT:
+				return WRITE_METHOD_FLOAT_DESC_META;
+			case Type.DOUBLE:
+				return WRITE_METHOD_DOUBLE_DESC_META;
+			case Type.ARRAY:
+				return WRITE_METHOD_ARRAY_DESC_META;
+			default:
+				return WRITE_METHOD_OBJ_DESC_META;
 			}
 		}
 	}
@@ -492,50 +490,50 @@ public class ContextDelegator
 		{
 			switch (type.getSort())
 			{
-				case Type.BOOLEAN:
-					return STATIC_WRITE_METHOD_BOOLEAN_DESC;
-				case Type.BYTE:
-					return STATIC_WRITE_METHOD_BYTE_DESC;
-				case Type.CHAR:
-					return STATIC_WRITE_METHOD_CHAR_DESC;
-				case Type.SHORT:
-					return STATIC_WRITE_METHOD_SHORT_DESC;
-				case Type.INT:
-					return STATIC_WRITE_METHOD_INT_DESC;
-				case Type.LONG:
-					return STATIC_WRITE_METHOD_LONG_DESC;
-				case Type.FLOAT:
-					return STATIC_WRITE_METHOD_FLOAT_DESC;
-				case Type.DOUBLE:
-					return STATIC_WRITE_METHOD_DOUBLE_DESC;
-				default:
-					return STATIC_WRITE_METHOD_OBJ_DESC;
+			case Type.BOOLEAN:
+				return STATIC_WRITE_METHOD_BOOLEAN_DESC;
+			case Type.BYTE:
+				return STATIC_WRITE_METHOD_BYTE_DESC;
+			case Type.CHAR:
+				return STATIC_WRITE_METHOD_CHAR_DESC;
+			case Type.SHORT:
+				return STATIC_WRITE_METHOD_SHORT_DESC;
+			case Type.INT:
+				return STATIC_WRITE_METHOD_INT_DESC;
+			case Type.LONG:
+				return STATIC_WRITE_METHOD_LONG_DESC;
+			case Type.FLOAT:
+				return STATIC_WRITE_METHOD_FLOAT_DESC;
+			case Type.DOUBLE:
+				return STATIC_WRITE_METHOD_DOUBLE_DESC;
+			default:
+				return STATIC_WRITE_METHOD_OBJ_DESC;
 			}
 		}
 		else
 		{
 			switch (type.getSort())
 			{
-				case Type.BOOLEAN:
-					return STATIC_WRITE_METHOD_BOOLEAN_DESC_META;
-				case Type.BYTE:
-					return STATIC_WRITE_METHOD_BYTE_DESC_META;
-				case Type.CHAR:
-					return STATIC_WRITE_METHOD_CHAR_DESC_META;
-				case Type.SHORT:
-					return STATIC_WRITE_METHOD_SHORT_DESC_META;
-				case Type.INT:
-					return STATIC_WRITE_METHOD_INT_DESC_META;
-				case Type.LONG:
-					return STATIC_WRITE_METHOD_LONG_DESC_META;
-				case Type.FLOAT:
-					return STATIC_WRITE_METHOD_FLOAT_DESC_META;
-				case Type.DOUBLE:
-					return STATIC_WRITE_METHOD_DOUBLE_DESC_META;
-				case Type.ARRAY:
-					return STATIC_WRITE_METHOD_ARRAY_DESC_META;
-				default:
-					return STATIC_WRITE_METHOD_OBJ_DESC_META;
+			case Type.BOOLEAN:
+				return STATIC_WRITE_METHOD_BOOLEAN_DESC_META;
+			case Type.BYTE:
+				return STATIC_WRITE_METHOD_BYTE_DESC_META;
+			case Type.CHAR:
+				return STATIC_WRITE_METHOD_CHAR_DESC_META;
+			case Type.SHORT:
+				return STATIC_WRITE_METHOD_SHORT_DESC_META;
+			case Type.INT:
+				return STATIC_WRITE_METHOD_INT_DESC_META;
+			case Type.LONG:
+				return STATIC_WRITE_METHOD_LONG_DESC_META;
+			case Type.FLOAT:
+				return STATIC_WRITE_METHOD_FLOAT_DESC_META;
+			case Type.DOUBLE:
+				return STATIC_WRITE_METHOD_DOUBLE_DESC_META;
+			case Type.ARRAY:
+				return STATIC_WRITE_METHOD_ARRAY_DESC_META;
+			default:
+				return STATIC_WRITE_METHOD_OBJ_DESC_META;
 			}
 		}
 	}
@@ -546,50 +544,50 @@ public class ContextDelegator
 		{
 			switch (type.getSort())
 			{
-				case Type.BOOLEAN:
-					return READ_METHOD_BOOLEAN_DESC;
-				case Type.BYTE:
-					return READ_METHOD_BYTE_DESC;
-				case Type.CHAR:
-					return READ_METHOD_CHAR_DESC;
-				case Type.SHORT:
-					return READ_METHOD_SHORT_DESC;
-				case Type.INT:
-					return READ_METHOD_INT_DESC;
-				case Type.LONG:
-					return READ_METHOD_LONG_DESC;
-				case Type.FLOAT:
-					return READ_METHOD_FLOAT_DESC;
-				case Type.DOUBLE:
-					return READ_METHOD_DOUBLE_DESC;
-				default:
-					return READ_METHOD_OBJ_DESC;
+			case Type.BOOLEAN:
+				return READ_METHOD_BOOLEAN_DESC;
+			case Type.BYTE:
+				return READ_METHOD_BYTE_DESC;
+			case Type.CHAR:
+				return READ_METHOD_CHAR_DESC;
+			case Type.SHORT:
+				return READ_METHOD_SHORT_DESC;
+			case Type.INT:
+				return READ_METHOD_INT_DESC;
+			case Type.LONG:
+				return READ_METHOD_LONG_DESC;
+			case Type.FLOAT:
+				return READ_METHOD_FLOAT_DESC;
+			case Type.DOUBLE:
+				return READ_METHOD_DOUBLE_DESC;
+			default:
+				return READ_METHOD_OBJ_DESC;
 			}
 		}
 		else
 		{
 			switch (type.getSort())
 			{
-				case Type.BOOLEAN:
-					return READ_METHOD_BOOLEAN_DESC_META;
-				case Type.BYTE:
-					return READ_METHOD_BYTE_DESC_META;
-				case Type.CHAR:
-					return READ_METHOD_CHAR_DESC_META;
-				case Type.SHORT:
-					return READ_METHOD_SHORT_DESC_META;
-				case Type.INT:
-					return READ_METHOD_INT_DESC_META;
-				case Type.LONG:
-					return READ_METHOD_LONG_DESC_META;
-				case Type.FLOAT:
-					return READ_METHOD_FLOAT_DESC_META;
-				case Type.DOUBLE:
-					return READ_METHOD_DOUBLE_DESC_META;
-				case Type.ARRAY:
-					return READ_METHOD_ARRAY_DESC_META;
-				default:
-					return READ_METHOD_OBJ_DESC_META;
+			case Type.BOOLEAN:
+				return READ_METHOD_BOOLEAN_DESC_META;
+			case Type.BYTE:
+				return READ_METHOD_BYTE_DESC_META;
+			case Type.CHAR:
+				return READ_METHOD_CHAR_DESC_META;
+			case Type.SHORT:
+				return READ_METHOD_SHORT_DESC_META;
+			case Type.INT:
+				return READ_METHOD_INT_DESC_META;
+			case Type.LONG:
+				return READ_METHOD_LONG_DESC_META;
+			case Type.FLOAT:
+				return READ_METHOD_FLOAT_DESC_META;
+			case Type.DOUBLE:
+				return READ_METHOD_DOUBLE_DESC_META;
+			case Type.ARRAY:
+				return READ_METHOD_ARRAY_DESC_META;
+			default:
+				return READ_METHOD_OBJ_DESC_META;
 			}
 		}
 	}
@@ -600,26 +598,26 @@ public class ContextDelegator
 		{
 			switch (type.getSort())
 			{
-				case Type.BOOLEAN:
-					return READ_ARRAY_METHOD_BOOLEAN_DESC_META;
-				case Type.BYTE:
-					return READ_ARRAY_METHOD_BYTE_DESC_META;
-				case Type.CHAR:
-					return READ_ARRAY_METHOD_CHAR_DESC_META;
-				case Type.SHORT:
-					return READ_ARRAY_METHOD_SHORT_DESC_META;
-				case Type.INT:
-					return READ_ARRAY_METHOD_INT_DESC_META;
-				case Type.LONG:
-					return READ_ARRAY_METHOD_LONG_DESC_META;
-				case Type.FLOAT:
-					return READ_ARRAY_METHOD_FLOAT_DESC_META;
-				case Type.DOUBLE:
-					return READ_ARRAY_METHOD_DOUBLE_DESC_META;
-				case Type.ARRAY:
-					return READ_ARRAY_METHOD_MULTI_DESC_META;
-				default:
-					return READ_ARRAY_METHOD_OBJ_DESC_META;
+			case Type.BOOLEAN:
+				return READ_ARRAY_METHOD_BOOLEAN_DESC_META;
+			case Type.BYTE:
+				return READ_ARRAY_METHOD_BYTE_DESC_META;
+			case Type.CHAR:
+				return READ_ARRAY_METHOD_CHAR_DESC_META;
+			case Type.SHORT:
+				return READ_ARRAY_METHOD_SHORT_DESC_META;
+			case Type.INT:
+				return READ_ARRAY_METHOD_INT_DESC_META;
+			case Type.LONG:
+				return READ_ARRAY_METHOD_LONG_DESC_META;
+			case Type.FLOAT:
+				return READ_ARRAY_METHOD_FLOAT_DESC_META;
+			case Type.DOUBLE:
+				return READ_ARRAY_METHOD_DOUBLE_DESC_META;
+			case Type.ARRAY:
+				return READ_ARRAY_METHOD_MULTI_DESC_META;
+			default:
+				return READ_ARRAY_METHOD_OBJ_DESC_META;
 			}
 		}
 		else
@@ -634,26 +632,26 @@ public class ContextDelegator
 		{
 			switch (type.getSort())
 			{
-				case Type.BOOLEAN:
-					return WRITE_ARRAY_METHOD_BOOLEAN_DESC_META;
-				case Type.BYTE:
-					return WRITE_ARRAY_METHOD_BYTE_DESC_META;
-				case Type.CHAR:
-					return WRITE_ARRAY_METHOD_CHAR_DESC_META;
-				case Type.SHORT:
-					return WRITE_ARRAY_METHOD_SHORT_DESC_META;
-				case Type.INT:
-					return WRITE_ARRAY_METHOD_INT_DESC_META;
-				case Type.LONG:
-					return WRITE_ARRAY_METHOD_LONG_DESC_META;
-				case Type.FLOAT:
-					return WRITE_ARRAY_METHOD_FLOAT_DESC_META;
-				case Type.DOUBLE:
-					return WRITE_ARRAY_METHOD_DOUBLE_DESC_META;
-				case Type.ARRAY:
-					return WRITE_ARRAY_METHOD_MULTI_DESC_META;
-				default:
-					return WRITE_ARRAY_METHOD_OBJ_DESC_META;
+			case Type.BOOLEAN:
+				return WRITE_ARRAY_METHOD_BOOLEAN_DESC_META;
+			case Type.BYTE:
+				return WRITE_ARRAY_METHOD_BYTE_DESC_META;
+			case Type.CHAR:
+				return WRITE_ARRAY_METHOD_CHAR_DESC_META;
+			case Type.SHORT:
+				return WRITE_ARRAY_METHOD_SHORT_DESC_META;
+			case Type.INT:
+				return WRITE_ARRAY_METHOD_INT_DESC_META;
+			case Type.LONG:
+				return WRITE_ARRAY_METHOD_LONG_DESC_META;
+			case Type.FLOAT:
+				return WRITE_ARRAY_METHOD_FLOAT_DESC_META;
+			case Type.DOUBLE:
+				return WRITE_ARRAY_METHOD_DOUBLE_DESC_META;
+			case Type.ARRAY:
+				return WRITE_ARRAY_METHOD_MULTI_DESC_META;
+			default:
+				return WRITE_ARRAY_METHOD_OBJ_DESC_META;
 			}
 		}
 		else
