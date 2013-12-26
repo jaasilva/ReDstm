@@ -137,7 +137,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 
 	public void membershipMessageReceived(SpreadMessage message)
 	{
-		final SpreadGroup[] members;
+		SpreadGroup[] members = null;
 		if (message.isMembership()
 				&& message.getMembershipInfo().isRegularMembership()
 				&& (members = message.getMembershipInfo().getMembers()).length == Integer
@@ -146,6 +146,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 			this.members = members;
 			membersArrived();
 		}
+		System.err.println(">>> " + members);
 	}
 
 	@Override

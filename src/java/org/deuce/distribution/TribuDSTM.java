@@ -117,7 +117,7 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.info("> Transaction context: " + className);
+		LOGGER.warn("> Transaction context: " + className);
 	}
 
 	/**
@@ -146,8 +146,8 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.warn("> Group Partitioner: " + groupPartClass);
-		LOGGER.warn("> Data Partitioner: " + dataPartClass);
+		LOGGER.warn("> Group partitioner: " + groupPartClass);
+		LOGGER.warn("> Data partitioner: " + dataPartClass);
 	}
 
 	public static final String INIT_METHOD_NAME = "init";
@@ -173,7 +173,7 @@ public class TribuDSTM
 
 			ALL.addAll(getAllMembers()); // XXX check
 
-			LOGGER.warn("> ALL:" + ALL);
+			LOGGER.warn("> ALL:" + ALL); // XXX check
 		}
 
 		distProtocol.init();

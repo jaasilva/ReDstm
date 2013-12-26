@@ -107,19 +107,15 @@ public class AtomicMethod extends MethodAdapter implements Opcodes
 	}
 
 	/**
-	 * public static boolean foo(Object s) throws IOException{
-	 * 
-	 * Throwable throwable = null; Context context =
-	 * ContextDelegator.getInstance(); boolean commit = true; boolean result =
-	 * true; for( int i=10 ; i>0 ; --i) { context.init(atomicBlockId, metainf);
-	 * try { result = foo(s,context); } catch( AbortTransactionException ex) {
-	 * context.rollback(); throw ex; } catch( TransactionException ex) { commit
-	 * = false; } catch( Throwable ex) { throwable = ex; }
-	 * 
-	 * if( commit ) { if( context.commit()){ if( throwable != null) throw
-	 * (IOException)throwable; return result; } } else { context.rollback();
-	 * commit = true; } } throw new TransactionException();
-	 * 
+	 * public static boolean foo(Object s) throws IOException{ Throwable
+	 * throwable = null; Context context = ContextDelegator.getInstance();
+	 * boolean commit = true; boolean result = true; for( int i=10 ; i>0 ; --i)
+	 * { context.init(atomicBlockId, metainf); try { result = foo(s,context); }
+	 * catch( AbortTransactionException ex) { context.rollback(); throw ex; }
+	 * catch( TransactionException ex) { commit = false; } catch( Throwable ex)
+	 * { throwable = ex; } if( commit ) { if( context.commit()){ if( throwable
+	 * != null) throw (IOException)throwable; return result; } } else {
+	 * context.rollback(); commit = true; } } throw new TransactionException();
 	 * }
 	 */
 	@Override

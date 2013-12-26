@@ -3,6 +3,7 @@ package org.deuce.transaction.mvstm.field;
 import java.io.Serializable;
 
 import org.apache.log4j.Logger;
+import org.deuce.transaction.mvstm.Context;
 import org.deuce.transaction.score.SCOReContext;
 import org.deuce.transform.ExcludeTM;
 
@@ -55,7 +56,7 @@ public class Version implements Serializable
 			{
 				LOGGER.trace("Abort trx version_unavailable " + this.version
 						+ " " + maxVersion);
-				throw SCOReContext.VERSION_UNAVAILABLE_EXCEPTION;
+				throw Context.VERSION_UNAVAILABLE_EXCEPTION;
 			}
 		}
 		return res;

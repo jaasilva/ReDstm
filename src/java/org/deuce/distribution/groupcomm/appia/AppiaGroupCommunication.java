@@ -16,7 +16,6 @@ import net.sf.appia.jgcs.AppiaGroup;
 import net.sf.appia.jgcs.AppiaProtocolFactory;
 import net.sf.appia.jgcs.AppiaService;
 import net.sf.jgcs.Annotation;
-import net.sf.jgcs.ClosedSessionException;
 import net.sf.jgcs.DataSession;
 import net.sf.jgcs.ExceptionListener;
 import net.sf.jgcs.JGCSException;
@@ -130,6 +129,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		try
 		{
 			Membership membership = controlSession.getMembership();
+			System.err.println(">>> " + membership.getMembershipList());
 			int replicas = Integer.getInteger(Defaults._REPLICAS).intValue();
 			if (membership.getMembershipList().size() == replicas)
 			{
