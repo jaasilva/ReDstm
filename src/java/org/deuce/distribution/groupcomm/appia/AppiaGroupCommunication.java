@@ -251,28 +251,19 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		{
 			msg = dataSession.createMessage();
 			msg.setPayload(payload);
-		}
-		catch (ClosedSessionException e)
-		{
-			System.err.println("Couldn't send message.");
-			e.printStackTrace();
-			System.exit(-1);
-		}
 
-		for (Address a : group.getAll())
-		{ // assumes group has no duplicate addresses
-			try
-			{
+			for (Address a : group.getAll())
+			{ // assumes group has no duplicate addresses
 				dataSession.send(msg, sendURBService, null,
 						(SocketAddress) a.getSpecificAddress(),
 						(Annotation[]) null);
 			}
-			catch (Exception e)
-			{
-				System.err.println("Couldn't send message.");
-				e.printStackTrace();
-				System.exit(-1);
-			}
+		}
+		catch (Exception e)
+		{
+			System.err.println("Couldn't send message.");
+			e.printStackTrace();
+			System.exit(-1);
 		}
 	}
 

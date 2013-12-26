@@ -170,7 +170,6 @@ public class VBoxField extends TxField implements InPlaceLock,
 
 		if ((l & LockTable.LOCK) != 0)
 		{
-			// System.out.println(this+" locked by "+lockHolder);
 			throw LockTable.LOCKED_VERSION_EXCEPTION;
 		}
 
@@ -179,7 +178,6 @@ public class VBoxField extends TxField implements InPlaceLock,
 
 		if (!isLocked)
 		{
-			// System.out.println(this+" locked by "+lockHolder);
 			throw LockTable.LOCKED_VERSION_EXCEPTION;
 		}
 

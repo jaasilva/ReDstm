@@ -30,37 +30,16 @@ public class BenchmarkThread implements Runnable
 
 	public void run()
 	{
-		// CacheMonitor cm = new CacheMonitor(); //RJFD
-		// cm.init();
-		// cm.monitor_L2();
-
-		// System.err.println(this+": beginning warmup.");
-
 		while (m_phase == Benchmark.WARMUP_PHASE)
 		{
-			// System.err.print(this+": warmup step...");
 			step(Benchmark.WARMUP_PHASE);
-			// System.err.println(" done.");
 		}
-
-		// System.err.println(this+": finished warmup/beginning test.");
-
-		// cm.start();
-		// cm.reset();
 
 		while (m_phase == Benchmark.TEST_PHASE)
 		{
-			// System.err.print(this+": test step...");
 			step(Benchmark.TEST_PHASE);
 			m_steps++;
-			// System.err.println(" done.");
 		}
-
-		// System.err.println(this+": finished working.");
-
-		// cm.stop();
-		//
-		// cm.close();
 	}
 
 	protected void step(int phase)
