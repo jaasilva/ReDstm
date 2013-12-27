@@ -161,8 +161,9 @@ public class Context extends DistributedContext
 
 	public ArrayContainer onReadAccess(ArrayContainer value, TxField field)
 	{
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		VBoxField box = (VBoxField) field;
-
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
@@ -172,15 +173,17 @@ public class Context extends DistributedContext
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
-
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return (ArrayContainer) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
 
 	public Object onReadAccess(Object value, TxField field)
 	{
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		VBoxField box = (VBoxField) field;
-
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
@@ -190,15 +193,17 @@ public class Context extends DistributedContext
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
-
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value;
 	}
 
 	public boolean onReadAccess(boolean value, TxField field)
 	{
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		VBoxField box = (VBoxField) field;
-
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
@@ -208,15 +213,17 @@ public class Context extends DistributedContext
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
-
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return (Boolean) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
 
 	public byte onReadAccess(byte value, TxField field)
 	{
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		VBoxField box = (VBoxField) field;
-
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
@@ -226,15 +233,17 @@ public class Context extends DistributedContext
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
-
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return (Byte) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
 
 	public char onReadAccess(char value, TxField field)
 	{
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		VBoxField box = (VBoxField) field;
-
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
@@ -244,15 +253,17 @@ public class Context extends DistributedContext
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
-
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return (Character) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
 
 	public short onReadAccess(short value, TxField field)
 	{
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		VBoxField box = (VBoxField) field;
-
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
@@ -262,15 +273,17 @@ public class Context extends DistributedContext
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
-
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return (Short) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
 
 	public int onReadAccess(int value, TxField field)
 	{
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		VBoxField box = (VBoxField) field;
-
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
@@ -280,15 +293,17 @@ public class Context extends DistributedContext
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
-
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return (Integer) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
 
 	public long onReadAccess(long value, TxField field)
 	{
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		VBoxField box = (VBoxField) field;
-
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
@@ -298,15 +313,17 @@ public class Context extends DistributedContext
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
-
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return (Long) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
 
 	public float onReadAccess(float value, TxField field)
 	{
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		VBoxField box = (VBoxField) field;
-
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
@@ -316,15 +333,17 @@ public class Context extends DistributedContext
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
-
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return (Float) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
 
 	public double onReadAccess(double value, TxField field)
 	{
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		VBoxField box = (VBoxField) field;
-
 		if (readWriteHint)
 		{
 			WriteFieldAccess res = readLocal(box);
@@ -334,7 +353,8 @@ public class Context extends DistributedContext
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
-
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return (Double) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
@@ -492,6 +512,8 @@ public class Context extends DistributedContext
 
 	public boolean commit()
 	{
+		Profiler.onTxAppFinish(threadID);
+
 		if (writeSet.isEmpty() || !readWriteHint)
 		{
 			Profiler.txProcessed(true);
