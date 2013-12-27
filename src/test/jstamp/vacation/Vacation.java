@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
-import org.deuce.profiling.PRProfiler;
+import org.deuce.profiling.Profiler;
 
 /*
  * =============================================================================
@@ -417,7 +417,7 @@ public class Vacation
 
 		System.err.println("### finishBarrier");
 		finishBarrier.join();
-		PRProfiler.enabled = false;
+		Profiler.disable();
 
 		stop = System.currentTimeMillis();
 		diff = stop - start;
@@ -439,7 +439,7 @@ public class Vacation
 		System.err.println("### exitBarrier");
 		exitBarrier.join();
 
-		PRProfiler.print();
+		Profiler.print();
 
 		TribuDSTM.close();
 	}

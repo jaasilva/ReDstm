@@ -8,7 +8,7 @@ import jstamp.intruder.Vector_t;
 
 import org.deuce.Atomic;
 import org.deuce.distribution.replication.Bootstrap;
-import org.deuce.profiling.Profiler;
+import org.deuce.profiling._Profiler;
 
 public class Sequencer
 {
@@ -106,10 +106,10 @@ public class Sequencer
 
 		int CHUNK_STEP1 = 12;
 
-		Profiler.enabled = false;
+		_Profiler.enabled = false;
 		Genome.benchBarrier1.join();
 		// System.out.println("Step 1");
-		Profiler.enabled = true;
+		_Profiler.enabled = true;
 
 		/*
 		 * Step 1: Remove duplicate segments
@@ -139,10 +139,10 @@ public class Sequencer
 		}
 
 		// Barrier.enterBarrier();
-		Profiler.enabled = false;
+		_Profiler.enabled = false;
 		Genome.benchBarrier2.join();
 		// System.out.println("Step 2a");
-		Profiler.enabled = true;
+		_Profiler.enabled = true;
 
 		/*
 		 * Step 2a: Iterate over unique segments and compute hashes. For the
@@ -245,10 +245,10 @@ public class Sequencer
 		}
 
 		// Barrier.enterBarrier();
-		Profiler.enabled = false;
+		_Profiler.enabled = false;
 		Genome.benchBarrier3.join();
 		// System.out.println("Step 2b");
-		Profiler.enabled = true;
+		_Profiler.enabled = true;
 
 		/*
 		 * Step 2b: Match ends to starts by using hash-based string comparison.
@@ -329,10 +329,10 @@ public class Sequencer
 			} /* for (endIndex < numUniqueSegment) */
 
 			// Barrier.enterBarrier();
-			Profiler.enabled = false;
+			_Profiler.enabled = false;
 			Genome.benchBarrier4.join();
 			// System.out.println("Step 2c");
-			Profiler.enabled = true;
+			_Profiler.enabled = true;
 
 			/*
 			 * Step 2c: Update jump values and hashes endHash entries of all
@@ -383,17 +383,17 @@ public class Sequencer
 			}
 
 			// Barrier.enterBarrier();
-			Profiler.enabled = false;
+			_Profiler.enabled = false;
 			Genome.benchBarrier5.join();
-			Profiler.enabled = true;
+			_Profiler.enabled = true;
 
 		} /* for (substringLength > 0) */
 
 		// Barrier.enterBarrier();
-		Profiler.enabled = false;
+		_Profiler.enabled = false;
 		Genome.benchBarrier6.join();
 		// System.out.println("Step 3");
-		Profiler.enabled = true;
+		_Profiler.enabled = true;
 
 		/*
 		 * Step 3: Build sequence string

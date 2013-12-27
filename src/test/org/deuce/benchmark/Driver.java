@@ -3,7 +3,7 @@ package org.deuce.benchmark;
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
-import org.deuce.profiling.PRProfiler;
+import org.deuce.profiling.Profiler;
 
 /**
  * @author Pascal Felber
@@ -142,7 +142,7 @@ public class Driver
 		}
 		long wend = System.currentTimeMillis();
 
-		PRProfiler.enabled = true;
+		Profiler.enable();
 		for (int i = 0; i < bt.length; i++)
 		{
 			bt[i].setPhase(Benchmark.TEST_PHASE);
@@ -174,7 +174,7 @@ public class Driver
 			{
 			}
 		}
-		PRProfiler.enabled = false;
+		Profiler.disable();
 		System.err.println("done2.");
 
 		System.out.println();
@@ -193,7 +193,7 @@ public class Driver
 			System.out.println("    " + i + " : " + bt[i].getSteps() + " ("
 					+ bt[i].getStats() + ")");
 
-		PRProfiler.print();
+		Profiler.print();
 
 		// try
 		// {

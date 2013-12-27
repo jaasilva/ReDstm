@@ -9,7 +9,7 @@ import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partial.PartialReplicationOID;
 import org.deuce.distribution.replication.partial.protocol.score.ReadDone;
-import org.deuce.profiling.PRProfiler;
+import org.deuce.profiling.Profiler;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.GroupsViolationException;
@@ -101,7 +101,7 @@ public class SCOReContext extends DistributedContext
 		}
 		else
 		{ // *IN* the writeSet. Return value
-			PRProfiler.onTxWsRead(threadID);
+			Profiler.onTxWsRead(threadID);
 			return writeAccess.getValue();
 		}
 	}
@@ -391,11 +391,11 @@ public class SCOReContext extends DistributedContext
 
 	public boolean commit()
 	{
-		PRProfiler.onTxAppFinish(threadID);
+		Profiler.onTxAppFinish(threadID);
 
 		if (writeSet.isEmpty())
 		{ // read-only transaction
-			PRProfiler.txProcessed(true);
+			Profiler.txProcessed(true);
 
 			TribuDSTM.onTxFinished(this, true);
 			return true;

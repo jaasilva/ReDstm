@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.deuce.Defaults;
 import org.deuce.LocalMetadata;
 import org.deuce.distribution.TribuDSTM;
-import org.deuce.profiling.PRProfiler;
+import org.deuce.profiling.Profiler;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.TransactionException;
@@ -194,7 +194,8 @@ public class Context extends DistributedContext
 
 	public ArrayContainer onReadAccess(ArrayContainer value, TxField field)
 	{
-		PRProfiler.onTxLocalReadBegin(threadID);
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		ArrayContainer res = null;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
@@ -205,13 +206,15 @@ public class Context extends DistributedContext
 		{
 			res = ((ArrayWriteFieldAccess) writeAccess).getValue();
 		}
-		PRProfiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return res;
 	}
 
 	public Object onReadAccess(Object value, TxField field)
 	{
-		PRProfiler.onTxLocalReadBegin(threadID);
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		Object res = null;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
@@ -222,13 +225,15 @@ public class Context extends DistributedContext
 		{
 			res = ((ObjectWriteFieldAccess) writeAccess).getValue();
 		}
-		PRProfiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return res;
 	}
 
 	public boolean onReadAccess(boolean value, TxField field)
 	{
-		PRProfiler.onTxLocalReadBegin(threadID);
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		boolean res = false;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
@@ -239,13 +244,15 @@ public class Context extends DistributedContext
 		{
 			res = ((BooleanWriteFieldAccess) writeAccess).getValue();
 		}
-		PRProfiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return res;
 	}
 
 	public byte onReadAccess(byte value, TxField field)
 	{
-		PRProfiler.onTxLocalReadBegin(threadID);
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		byte res = -1;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
@@ -256,13 +263,15 @@ public class Context extends DistributedContext
 		{
 			res = ((ByteWriteFieldAccess) writeAccess).getValue();
 		}
-		PRProfiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return res;
 	}
 
 	public char onReadAccess(char value, TxField field)
 	{
-		PRProfiler.onTxLocalReadBegin(threadID);
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		char res = ' ';
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
@@ -273,13 +282,15 @@ public class Context extends DistributedContext
 		{
 			res = ((CharWriteFieldAccess) writeAccess).getValue();
 		}
-		PRProfiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return res;
 	}
 
 	public short onReadAccess(short value, TxField field)
 	{
-		PRProfiler.onTxLocalReadBegin(threadID);
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		short res = -1;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
@@ -290,14 +301,16 @@ public class Context extends DistributedContext
 		{
 			res = ((ShortWriteFieldAccess) writeAccess).getValue();
 		}
-		PRProfiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return res;
 
 	}
 
 	public int onReadAccess(int value, TxField field)
 	{
-		PRProfiler.onTxLocalReadBegin(threadID);
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		int res = -1;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
@@ -308,13 +321,15 @@ public class Context extends DistributedContext
 		{
 			res = ((IntWriteFieldAccess) writeAccess).getValue();
 		}
-		PRProfiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return res;
 	}
 
 	public long onReadAccess(long value, TxField field)
 	{
-		PRProfiler.onTxLocalReadBegin(threadID);
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		long res = -1;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
@@ -325,13 +340,15 @@ public class Context extends DistributedContext
 		{
 			res = ((LongWriteFieldAccess) writeAccess).getValue();
 		}
-		PRProfiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return res;
 	}
 
 	public float onReadAccess(float value, TxField field)
 	{
-		PRProfiler.onTxLocalReadBegin(threadID);
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		float res = -1;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
@@ -342,13 +359,15 @@ public class Context extends DistributedContext
 		{
 			res = ((FloatWriteFieldAccess) writeAccess).getValue();
 		}
-		PRProfiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return res;
 	}
 
 	public double onReadAccess(double value, TxField field)
 	{
-		PRProfiler.onTxLocalReadBegin(threadID);
+		Profiler.onTxCompleteReadBegin(threadID);
+		Profiler.onTxLocalReadBegin(threadID);
 		double res = -1;
 		WriteFieldAccess writeAccess = onReadAccess0(field);
 		if (writeAccess == null)
@@ -359,7 +378,8 @@ public class Context extends DistributedContext
 		{
 			res = ((DoubleWriteFieldAccess) writeAccess).getValue();
 		}
-		PRProfiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxLocalReadFinish(threadID);
+		Profiler.onTxCompleteReadFinish(threadID);
 		return res;
 	}
 
@@ -567,16 +587,17 @@ public class Context extends DistributedContext
 	 */
 	public boolean commit()
 	{
-		PRProfiler.onTxAppFinish(threadID);
+		Profiler.onTxAppFinish(threadID);
 
 		if (writeSet.isEmpty())
 		{
-			PRProfiler.txProcessed(true);
+			Profiler.txProcessed(true);
 
 			TribuDSTM.onTxFinished(this, true);
 			return true;
 		}
 
+		Profiler.onTxConfirmationBegin(threadID);
 		TribuDSTM.onTxCommit(this);
 		try
 		{
@@ -586,6 +607,7 @@ public class Context extends DistributedContext
 		{
 			e.printStackTrace();
 		}
+		Profiler.onTxConfirmationFinish(threadID);
 
 		TribuDSTM.onTxFinished(this, committed);
 		boolean result = committed;

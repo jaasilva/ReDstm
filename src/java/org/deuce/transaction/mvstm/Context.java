@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.deuce.Defaults;
 import org.deuce.LocalMetadata;
 import org.deuce.distribution.TribuDSTM;
+import org.deuce.profiling.Profiler;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transaction.TransactionException;
@@ -30,7 +31,7 @@ import org.deuce.trove.TObjectProcedure;
  */
 @ExcludeTM
 @LocalMetadata(metadataClass = "org.deuce.transaction.mvstm.field.VBoxField")
-public final class Context extends DistributedContext
+public class Context extends DistributedContext
 {
 	private static final TransactionException READ_ONLY_FAILURE_EXCEPTION = new TransactionException(
 			"Fail on write (read-only hint was set).");
@@ -493,10 +494,13 @@ public final class Context extends DistributedContext
 	{
 		if (writeSet.isEmpty() || !readWriteHint)
 		{
+			Profiler.txProcessed(true);
+
 			TribuDSTM.onTxFinished(this, true);
 			return true;
 		}
 
+		Profiler.onTxConfirmationBegin(threadID);
 		TribuDSTM.onTxCommit(this);
 		try
 		{
@@ -506,6 +510,7 @@ public final class Context extends DistributedContext
 		{
 			e.printStackTrace();
 		}
+		Profiler.onTxConfirmationFinish(threadID);
 
 		TribuDSTM.onTxFinished(this, committed);
 		boolean result = committed;

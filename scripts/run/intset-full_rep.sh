@@ -42,8 +42,8 @@ _RANGE=4096
 _WRITES=$5
 _PARTIAL_OPS=$6
 
-#_CTX=tl2.Context
-_CTX=mvstm.Context
+_CTX=tl2.Context
+#_CTX=mvstm.Context
 _PROTO=nonvoting.NonVoting
 #_PROTO=voting.Voting
 _GCS=jgroups.JGroups

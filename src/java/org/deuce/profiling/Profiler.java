@@ -1,441 +1,718 @@
 package org.deuce.profiling;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
 public class Profiler
 {
-	static public boolean enabled = false;
-	static protected Object lock = new Object();
-
-	static protected List<Profiler> profilers = new LinkedList<Profiler>();
-
-	static public void addProfiler(Profiler prof)
-	{
-		synchronized (profilers)
-		{
-			profilers.add(prof);
-		}
-	}
+	private static boolean ENABLED = false;
+	private static final int THREADS = 16;
 
 	/**
 	 * Transaction throughput related.
 	 */
-	public long txCommitted, txSpecCommitted, txAborted, txSpecAborted,
-			txLocal, txOutOfOrder;
-	static public long txCommittedRemote, txSpecCommittedRemote,
-			txAbortedRemote, txSpecAbortedRemote, txRemote, txOutOfOrderRemote;
+	private static long txCommitted = 0, txAborted = 0, txTimeout = 0;
 
 	/**
 	 * Incremental average.
 	 */
-	static protected long avgLocal, avgLocalNetTO, avgLocalNetURB, avgRemote,
-			avgValidated, avgCommitted;
+	private static long txDurationIt = 0, txVotesIt = 0, txValidateIt = 0,
+			txCommitIt = 0, msgSent = 0, msgRecv = 0, txRReadIt = 0,
+			txLReadIt = 0, txCReadIt = 0, serIt = 0, waitingReadIt = 0,
+			distCommitIt = 0, confirmationIt = 0;
 
 	/**
 	 * Time related, in nanoseconds.
 	 */
-	protected long txAppStart, txAppEnd, txNetTOStart, txNetOptEnd, txNetTOEnd,
-			txNetURBStart, txNetURBEnd, txValidateStart, txSpecValidateStart,
-			txValidateEnd, txSpecValidateEnd, txCommitStart, txSpecCommitStart,
-			txCommitEnd, txSpecCommitEnd, txSpecAbortStart, txSpecAbortEnd;
-	protected static long txTimeAppAvg, txTimeAppMin = Long.MAX_VALUE,
-			txTimeAppMax = Long.MIN_VALUE, txTimeNetTOAvg,
-			txTimeNetTOMin = Long.MAX_VALUE, txTimeNetTOMax = Long.MIN_VALUE,
-			txTimeNetURBAvg, txTimeNetURBMin = Long.MAX_VALUE,
-			txTimeNetURBMax = Long.MIN_VALUE, txTimeNetOptAvg,
-			txTimeNetOptMin = Long.MAX_VALUE, txTimeNetOptMax = Long.MIN_VALUE,
-			txTimeValidateAvg, txTimeValidateMin = Long.MAX_VALUE,
-			txTimeValidateMax = Long.MIN_VALUE, txTimeCommitAvg,
-			txTimeCommitMin = Long.MAX_VALUE, txTimeCommitMax = Long.MIN_VALUE;
+	private static long[] txAppDuration = new long[THREADS];
+	private static long[] txVotes = new long[THREADS];
+	private static long[] txValidate = new long[THREADS];
+	private static long[] txCommit = new long[THREADS];
+	private static long[] txRRead = new long[THREADS];
+	private static long[] txLRead = new long[THREADS];
+	private static long[] txCRead = new long[THREADS];
+	private static long[] serialization = new long[THREADS];
+	private static long[] distCommit = new long[THREADS];
+	private static long[] confirmation = new long[THREADS];
+	private static long txAppDurationAvg = 0,
+			txAppDurationMax = Long.MIN_VALUE,
+			txAppDurationMin = Long.MAX_VALUE, txVotesAvg = 0,
+			txVotesMax = Long.MIN_VALUE, txVotesMin = Long.MAX_VALUE,
+			txValidateAvg = 0, txValidateMax = Long.MIN_VALUE,
+			txValidateMin = Long.MAX_VALUE, txCommitAvg = 0,
+			txCommitMax = Long.MIN_VALUE, txCommitMin = Long.MAX_VALUE,
+			txRReadAvg = 0, txRReadMax = Long.MIN_VALUE,
+			txRReadMin = Long.MAX_VALUE, txLReadAvg = 0,
+			txLReadMax = Long.MIN_VALUE, txLReadMin = Long.MAX_VALUE,
+			txCReadAvg = 0, txCReadMax = Long.MIN_VALUE,
+			txCReadMin = Long.MAX_VALUE, serAvg = 0, serMax = Long.MIN_VALUE,
+			serMin = Long.MAX_VALUE, waitingReadAvg = 0,
+			waitingReadMax = Long.MIN_VALUE, waitingReadMin = Long.MAX_VALUE,
+			txLocalRead = 0, txRemoteRead = 0, txReads = 0, txWsReads = 0,
+			distCommitMax = Long.MIN_VALUE, distCommitMin = Long.MAX_VALUE,
+			distCommitAvg = 0, totalCommit = 0,
+			confirmationMax = Long.MIN_VALUE, confirmationMin = Long.MAX_VALUE,
+			confirmationAvg = 0;
 
 	/**
 	 * Network related, in bytes.
 	 */
-	protected static long msgSent, msgSentSizeAvg,
-			msgSentSizeMax = Long.MIN_VALUE, msgSentSizeMin = Long.MAX_VALUE,
-			msgRecv, msgRecvSizeAvg, msgRecvSizeMax = Long.MIN_VALUE,
-			msgRecvSizeMin = Long.MAX_VALUE;
+	private static long msgSentSizeAvg = 0, msgSentSizeMax = Long.MIN_VALUE,
+			msgSentSizeMin = Long.MAX_VALUE, msgRecvSizeAvg = 0,
+			msgRecvSizeMax = Long.MIN_VALUE, msgRecvSizeMin = Long.MAX_VALUE;
 
-	public boolean remote;
-
-	public Profiler(boolean remote)
+	public static void enable()
 	{
-		this.remote = remote;
-		// if (remote)
-		// txRemote++;
+		ENABLED = true;
 	}
 
-	public void txCommitted()
+	public static void disable()
 	{
-		if (enabled)
-			// if (remote)
-			// txCommittedRemote++;
-			// else
-			txCommitted++;
+		ENABLED = false;
 	}
 
-	public void txSpecCommitted()
+	private static long incAvg(long currAvg, long value, long currIt)
 	{
-		if (enabled)
-			// if (remote)
-			// txSpecCommittedRemote++;
-			// else
-			txSpecCommitted++;
+		return currAvg + ((value - currAvg) / (currIt + 1));
 	}
 
-	public void txAborted()
-	{
-		if (enabled)
-			// if (remote)
-			// txAbortedRemote++;
-			// else
-			txAborted++;
-	}
+	private static final Object lock1 = new Object();
 
-	public void txSpecAborted()
+	public static void txCommitted()
 	{
-		if (enabled)
-			// if (remote)
-			// txSpecAbortedRemote++;
-			// else
-			txSpecAborted++;
-	}
-
-	public void txOutOfOrder()
-	{
-		if (enabled)
-			// if (remote)
-			// txOutOfOrderRemote++;
-			// else
-			txOutOfOrder++;
-	}
-
-	public void onTxBegin()
-	{
-		if (enabled)
-			txAppStart = System.nanoTime();
-	}
-
-	public void onTxAppCommit()
-	{
-		if (enabled)
+		if (ENABLED)
 		{
-			txAppEnd = System.nanoTime();
-
-			long appElapsed = txAppEnd - txAppStart;
-			synchronized (lock)
+			synchronized (lock1)
 			{
-				if (appElapsed < txTimeAppMin)
-					txTimeAppMin = appElapsed;
-				if (appElapsed > txTimeAppMax)
-					txTimeAppMax = appElapsed;
-				txTimeAppAvg = incrementalAvg(txTimeAppAvg, appElapsed,
-						avgLocal);
-
-				avgLocal++;
+				txCommitted++;
 			}
 		}
 	}
 
-	public void onTOSend()
-	{
-		if (enabled)
-			txNetTOStart = System.nanoTime();
-	}
+	private static final Object lock2 = new Object();
 
-	public void onOptTODelivery()
+	public static void txAborted()
 	{
-		if (enabled && !remote)
+		if (ENABLED)
 		{
-			txNetOptEnd = System.nanoTime();
-
-			long optElapsed = txNetOptEnd - txNetTOStart;
-			synchronized (lock)
+			synchronized (lock2)
 			{
-				if (optElapsed < txTimeNetOptMin)
-					txTimeNetOptMin = optElapsed;
-				if (optElapsed > txTimeNetOptMax)
-					txTimeNetOptMax = optElapsed;
-				txTimeNetOptAvg = incrementalAvg(txTimeNetOptAvg, optElapsed,
-						avgLocalNetTO);
+				txAborted++;
 			}
 		}
 	}
 
-	public void onTODelivery()
+	public static void txProcessed(boolean committed)
 	{
-		if (enabled && !remote)
-		{
-			txNetTOEnd = System.nanoTime();
-
-			long toElapsed = txNetTOEnd - txNetTOStart;
-			synchronized (lock)
-			{
-				if (toElapsed < txTimeNetTOMin)
-					txTimeNetTOMin = toElapsed;
-				if (toElapsed > txTimeNetTOMax)
-					txTimeNetTOMax = toElapsed;
-				txTimeNetTOAvg = incrementalAvg(txTimeNetTOAvg, toElapsed,
-						avgLocalNetTO);
-				avgLocalNetTO++;
-			}
-		}
-	}
-
-	public void onURBSend()
-	{
-		if (enabled)
-			txNetURBStart = System.nanoTime();
-	}
-
-	public void onURBDelivery()
-	{
-		if (enabled && !remote)
-		{
-			txNetURBEnd = System.nanoTime();
-
-			long urbElapsed = txNetURBEnd - txNetURBStart;
-			synchronized (lock)
-			{
-				if (urbElapsed < txTimeNetURBMin)
-					txTimeNetURBMin = urbElapsed;
-				if (urbElapsed > txTimeNetURBMax)
-					txTimeNetURBMax = urbElapsed;
-				txTimeNetURBAvg = incrementalAvg(txTimeNetURBAvg, urbElapsed,
-						avgLocalNetURB);
-				avgLocalNetURB++;
-			}
-		}
-	}
-
-	public void onTxValidateBegin()
-	{
-		if (enabled)
-			txValidateStart = System.nanoTime();
-	}
-
-	public void onTxValidateEnd()
-	{
-		if (enabled)
-		{
-			txValidateEnd = System.nanoTime();
-
-			long validateElapsed = txValidateEnd - txValidateStart;
-			synchronized (lock)
-			{
-				if (validateElapsed < txTimeValidateMin)
-					txTimeValidateMin = validateElapsed;
-				if (validateElapsed > txTimeValidateMax)
-					txTimeValidateMax = validateElapsed;
-				txTimeValidateAvg = incrementalAvg(txTimeValidateAvg,
-						validateElapsed, avgValidated);
-				avgValidated++;
-			}
-		}
-	}
-
-	public void onTxSpecValidateBegin()
-	{
-		if (enabled)
-			txSpecValidateStart = System.nanoTime();
-	}
-
-	public void onTxSpecValidateEnd()
-	{
-		if (enabled)
-			txSpecValidateEnd = System.nanoTime();
-	}
-
-	public void onTxCommitStart()
-	{
-		if (enabled)
-			txCommitStart = System.nanoTime();
-	}
-
-	public void onTxCommitEnd()
-	{
-		if (enabled)
-		{
-			txCommitEnd = System.nanoTime();
-			long commitElapsed = txCommitEnd - txCommitStart;
-
-			synchronized (lock)
-			{
-				if (commitElapsed < txTimeCommitMin)
-					txTimeCommitMin = commitElapsed;
-				if (commitElapsed > txTimeCommitMax)
-					txTimeCommitMax = commitElapsed;
-
-				txTimeCommitAvg = incrementalAvg(txTimeCommitAvg,
-						commitElapsed, avgCommitted);
-				avgCommitted++;
-			}
-		}
-	}
-
-	public void onTxSpecCommitStart()
-	{
-		if (enabled)
-			txSpecCommitStart = System.nanoTime();
-	}
-
-	public void onTxSpecCommitEnd()
-	{
-		if (enabled)
-			txSpecCommitEnd = System.nanoTime();
-	}
-
-	public void onTxSpecAbortStart()
-	{
-		if (enabled)
-			txSpecAbortStart = System.nanoTime();
-	}
-
-	public void onTxSpecAbortEnd()
-	{
-		if (enabled)
-			txSpecAbortEnd = System.nanoTime();
-	}
-
-	public void txProcessed(boolean committed)
-	{
-		if (enabled)
+		if (ENABLED)
 		{
 			if (committed)
+			{
 				txCommitted();
+			}
 			else
+			{
 				txAborted();
+			}
 		}
 	}
 
-	public void newMsgSent(int bytes)
+	private static final Object lock3 = new Object();
+
+	public static void txTimeout()
 	{
-		if (enabled)
+		if (ENABLED)
 		{
-			msgSentSizeAvg = incrementalAvg(msgSentSizeAvg, bytes, msgSent);
-			msgSent++;
-
-			if (bytes < msgSentSizeMin)
-				msgSentSizeMin = bytes;
-
-			if (bytes > msgSentSizeMax)
-				msgSentSizeMax = bytes;
+			synchronized (lock3)
+			{
+				txTimeout++;
+			}
 		}
 	}
 
-	public void newMsgRecv(int bytes)
+	public static void onTxAppBegin(int ctxID)
 	{
-		if (enabled)
+		if (ENABLED)
 		{
-			msgRecvSizeAvg = incrementalAvg(msgRecvSizeAvg, bytes, msgRecv);
-			msgRecv++;
-
-			if (bytes < msgRecvSizeMin)
-				msgRecvSizeMin = bytes;
-
-			if (bytes > msgRecvSizeMax)
-				msgRecvSizeMax = bytes;
+			long txAppStart = System.nanoTime();
+			txAppDuration[ctxID] = txAppStart;
 		}
 	}
 
-	private static long incrementalAvg(long currentAvg, long value,
-			long currentIteration)
+	private static final Object lock4 = new Object();
+
+	public static void onTxAppFinish(int ctxID)
 	{
-		return currentAvg + (value - currentAvg) / (currentIteration + 1);
+		if (ENABLED)
+		{
+			long txAppEnd = System.nanoTime();
+			long elapsed = txAppEnd - txAppDuration[ctxID];
+
+			synchronized (lock4)
+			{
+				if (elapsed < txAppDurationMin)
+				{
+					txAppDurationMin = elapsed;
+				}
+				if (elapsed > txAppDurationMax)
+				{
+					txAppDurationMax = elapsed;
+				}
+				txAppDurationAvg = incAvg(txAppDurationAvg, elapsed,
+						txDurationIt++);
+			}
+		}
+	}
+
+	public static void onTxValidateBegin(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long txValidateStart = System.nanoTime();
+			txValidate[ctxID] = txValidateStart;
+		}
+	}
+
+	private static final Object lock5 = new Object();
+
+	public static void onTxValidateFinish(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long txValidateEnd = System.nanoTime();
+			long elapsed = txValidateEnd - txValidate[ctxID];
+
+			synchronized (lock5)
+			{
+				if (elapsed < txValidateMin)
+				{
+					txValidateMin = elapsed;
+				}
+				if (elapsed > txValidateMax)
+				{
+					txValidateMax = elapsed;
+				}
+				txValidateAvg = incAvg(txValidateAvg, elapsed, txValidateIt++);
+			}
+		}
+	}
+
+	public static void onTxCommitBegin(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long txCommitStart = System.nanoTime();
+			txCommit[ctxID] = txCommitStart;
+		}
+	}
+
+	private static final Object lock6 = new Object();
+
+	public static void onTxCommitFinish(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long txCommitEnd = System.nanoTime();
+			long elapsed = txCommitEnd - txCommit[ctxID];
+
+			synchronized (lock6)
+			{
+				if (elapsed < txCommitMin)
+				{
+					txCommitMin = elapsed;
+				}
+				if (elapsed > txCommitMax)
+				{
+					txCommitMax = elapsed;
+				}
+				txCommitAvg = incAvg(txCommitAvg, elapsed, txCommitIt++);
+			}
+		}
+	}
+
+	public static void onTxDistCommitBegin(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long start = System.nanoTime();
+			distCommit[ctxID] = start;
+		}
+	}
+
+	private static final Object lock7 = new Object();
+
+	public static void onTxDistCommitFinish(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long end = System.nanoTime();
+			long elapsed = end - distCommit[ctxID];
+
+			synchronized (lock7)
+			{
+				if (elapsed < distCommitMin)
+				{
+					distCommitMin = elapsed;
+				}
+				if (elapsed > distCommitMax)
+				{
+					distCommitMax = elapsed;
+				}
+				distCommitAvg = incAvg(distCommitAvg, elapsed, distCommitIt++);
+			}
+		}
+	}
+
+	private static final Object lock8 = new Object();
+
+	public static void onTxRemoteReadBegin(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long txReadStart = System.nanoTime();
+			txRRead[ctxID] = txReadStart;
+			synchronized (lock8)
+			{
+				txRemoteRead++;
+			}
+		}
+	}
+
+	private static final Object lock9 = new Object();
+
+	public static void onTxRemoteReadFinish(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long txReadEnd = System.nanoTime();
+			long elapsed = txReadEnd - txRRead[ctxID];
+
+			synchronized (lock9)
+			{
+				if (elapsed < txRReadMin)
+				{
+					txRReadMin = elapsed;
+				}
+				if (elapsed > txRReadMax)
+				{
+					txRReadMax = elapsed;
+				}
+				txRReadAvg = incAvg(txRReadAvg, elapsed, txRReadIt++);
+			}
+		}
+	}
+
+	private static final Object lock10 = new Object();
+
+	public static void onTxLocalReadBegin(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long txReadStart = System.nanoTime();
+			txLRead[ctxID] = txReadStart;
+			synchronized (lock10)
+			{
+				txLocalRead++;
+			}
+		}
+	}
+
+	private static final Object lock11 = new Object();
+
+	public static void onTxLocalReadFinish(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long txReadEnd = System.nanoTime();
+			long elapsed = txReadEnd - txLRead[ctxID];
+
+			synchronized (lock11)
+			{
+				if (elapsed < txLReadMin)
+				{
+					txLReadMin = elapsed;
+				}
+				if (elapsed > txLReadMax)
+				{
+					txLReadMax = elapsed;
+				}
+				txLReadAvg = incAvg(txLReadAvg, elapsed, txLReadIt++);
+			}
+		}
+	}
+
+	private static final Object lock12 = new Object();
+
+	public static void onTxCompleteReadBegin(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long txReadStart = System.nanoTime();
+			txCRead[ctxID] = txReadStart;
+			synchronized (lock12)
+			{
+				txReads++;
+			}
+		}
+	}
+
+	private static final Object lock13 = new Object();
+
+	public static void onTxCompleteReadFinish(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long txReadEnd = System.nanoTime();
+			long elapsed = txReadEnd - txCRead[ctxID];
+
+			synchronized (lock13)
+			{
+				if (elapsed < txCReadMin)
+				{
+					txCReadMin = elapsed;
+				}
+				if (elapsed > txCReadMax)
+				{
+					txCReadMax = elapsed;
+				}
+				txCReadAvg = incAvg(txCReadAvg, elapsed, txCReadIt++);
+			}
+		}
+	}
+
+	private static final Object lock14 = new Object();
+
+	public static void onTxWsRead(int ctxID)
+	{
+		if (ENABLED)
+		{
+			synchronized (lock14)
+			{
+				txReads++; // XXX check
+				txWsReads++;
+			}
+		}
+	}
+
+	private static final Object lock15 = new Object();
+
+	public static void onWaitingRead(long time)
+	{
+		if (ENABLED)
+		{
+			synchronized (lock15)
+			{
+				if (time < waitingReadMin)
+				{
+					waitingReadMin = time;
+				}
+				if (time > waitingReadMax)
+				{
+					waitingReadMax = time;
+				}
+				waitingReadAvg = incAvg(waitingReadAvg, time, waitingReadIt++);
+			}
+		}
+	}
+
+	public static void onSerializationBegin(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long serStart = System.nanoTime();
+			serialization[ctxID] = serStart;
+		}
+	}
+
+	private static final Object lock16 = new Object();
+
+	public static void onSerializationFinish(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long serEnd = System.nanoTime();
+			long elapsed = serEnd - serialization[ctxID];
+
+			synchronized (lock16)
+			{
+				if (elapsed < serMin)
+				{
+					serMin = elapsed;
+				}
+				if (elapsed > serMax)
+				{
+					serMax = elapsed;
+				}
+				serAvg = incAvg(serAvg, elapsed, serIt++);
+			}
+		}
+	}
+
+	public static void onPrepSend(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long txPrepStart = System.nanoTime();
+			txVotes[ctxID] = txPrepStart;
+		}
+	}
+
+	private static final Object lock17 = new Object();
+
+	public static void onLastVoteReceived(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long txPrepEnd = System.nanoTime();
+			long elapsed = txPrepEnd - txVotes[ctxID];
+
+			synchronized (lock17)
+			{
+				if (elapsed < txVotesMin)
+				{
+					txVotesMin = elapsed;
+				}
+				if (elapsed > txVotesMax)
+				{
+					txVotesMax = elapsed;
+				}
+				txVotesAvg = incAvg(txVotesAvg, elapsed, txVotesIt++);
+			}
+		}
+	}
+
+	private static final Object lock18 = new Object();
+
+	public static void newMsgSent(int bytes)
+	{
+		if (ENABLED)
+		{
+			synchronized (lock18)
+			{
+				if (bytes < msgSentSizeMin)
+				{
+					msgSentSizeMin = bytes;
+				}
+				if (bytes > msgSentSizeMax)
+				{
+					msgSentSizeMax = bytes;
+				}
+				msgSentSizeAvg = incAvg(msgSentSizeAvg, bytes, msgSent++);
+			}
+		}
+	}
+
+	private static final Object lock19 = new Object();
+
+	public synchronized static void newMsgRecv(int bytes)
+	{
+		if (ENABLED)
+		{
+			synchronized (lock19)
+			{
+				if (bytes < msgRecvSizeMin)
+				{
+					msgRecvSizeMin = bytes;
+				}
+				if (bytes > msgRecvSizeMax)
+				{
+					msgRecvSizeMax = bytes;
+				}
+				msgRecvSizeAvg = incAvg(msgRecvSizeAvg, bytes, msgRecv++);
+			}
+		}
+	}
+
+	private static final Object lock21 = new Object();
+	private static final int REPLICAS = Integer.getInteger("tribu.replicas");
+
+	public static void whatNodes(int nodes)
+	{
+		if (ENABLED)
+		{
+			if (nodes == REPLICAS)
+			{
+				synchronized (lock21)
+				{
+					totalCommit++;
+				}
+			}
+		}
+	}
+
+	public static void onTxConfirmationBegin(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long txConfStart = System.nanoTime();
+			confirmation[ctxID] = txConfStart;
+		}
+	}
+
+	private static final Object lock22 = new Object();
+
+	public static void onTxConfirmationFinish(int ctxID)
+	{
+		if (ENABLED)
+		{
+			long txConfEnd = System.nanoTime();
+			long elapsed = txConfEnd - confirmation[ctxID];
+
+			if (elapsed != txConfEnd)
+			{
+				synchronized (lock22)
+				{
+					if (elapsed < confirmationMin)
+					{
+						confirmationMin = elapsed;
+					}
+					if (elapsed > confirmationMax)
+					{
+						confirmationMax = elapsed;
+					}
+					confirmationAvg = incAvg(confirmationAvg, elapsed,
+							confirmationIt++);
+				}
+			}
+			confirmation[ctxID] = 0;
+		}
 	}
 
 	public static void print()
 	{
-		long totalTxCommittedLocal = 0, totalTxAbortedLocal = 0, totalTxSpecCommittedLocal = 0, totalTxSpecAbortedLocal = 0, totalTxOutOfOrderLocal = 0, totalTxLocal = 0;
-		long totalTxCommittedRemote = 0, totalTxAbortedRemote = 0, totalTxSpecCommittedRemote = 0, totalTxSpecAbortedRemote = 0, totalTxOutOfOrderRemote = 0;
-		for (Profiler p : profilers)
-		{
-			if (!p.remote)
-			{
-				totalTxCommittedLocal += p.txCommitted;
-				totalTxAbortedLocal += p.txAborted;
-				totalTxSpecCommittedLocal += p.txSpecCommitted;
-				totalTxSpecAbortedLocal += p.txSpecAborted;
-				totalTxOutOfOrderLocal += p.txOutOfOrder;
-				totalTxLocal += p.txLocal;
-			}
-			else
-			{
-				totalTxCommittedRemote += p.txCommitted;
-				totalTxAbortedRemote += p.txAborted;
-				totalTxSpecCommittedRemote += p.txSpecCommitted;
-				totalTxSpecAbortedRemote += p.txSpecAborted;
-				totalTxOutOfOrderRemote += p.txOutOfOrder;
-			}
-		}
-		long totalTxCommitted = totalTxCommittedLocal + totalTxCommittedRemote;
-		long totalTxAborted = totalTxAbortedLocal + totalTxAbortedRemote;
-		long totalTxSpecCommitted = totalTxSpecCommittedLocal
-				+ totalTxSpecCommittedRemote;
-		long totalTxSpecAborted = totalTxSpecAbortedLocal
-				+ totalTxSpecAbortedRemote;
-		long totalTxOutOfOrder = totalTxOutOfOrderLocal
-				+ totalTxOutOfOrderRemote;
-		long totalTx = totalTxLocal + txRemote;
+		StringBuffer stats = new StringBuffer();
+		NumberFormat formatter = new DecimalFormat("#.#####");
+		String str = "";
 
-		System.out.println("\nSTATISTICS:");
-		System.out
-				.printf("  Committed   = %d	Local = %d	Remote = %d\n",
-						totalTxCommitted, totalTxCommittedLocal,
-						totalTxCommittedRemote);
-		System.out.printf(
-				"  Aborted     = %d (%.2f%%)	Local = %d	Remote = %d\n",
-				totalTxAborted, 100.0 * totalTxAborted / totalTxCommitted,
-				totalTxAbortedLocal, totalTxAbortedRemote);
-		System.out.printf("  SCommitted  = %d\n", totalTxSpecCommitted);
-		System.out.printf("  SAborted    = %d (%.2f%%)\n", totalTxSpecAborted,
-				100.0 * totalTxSpecAborted / totalTx);
-		System.out.printf("  Out of ordr = %d\n", totalTxOutOfOrder);
-		System.out.printf("  Local       = %d (%.2f%%)\n",
-				totalTxCommittedLocal, 100.0 * totalTxCommittedLocal
-						/ totalTxCommitted);
-		System.out.printf("  Remote      = %d (%.2f%%)\n",
-				totalTxCommittedRemote, 100.0 * totalTxCommittedRemote
-						/ totalTxCommitted);
-		System.out.println();
-		System.out.printf("  Tx execution time\n");
-		System.out.printf("    Application\n");
-		System.out.printf("      avg = %d µs\n", txTimeAppAvg / 1000);
-		System.out.printf("      max = %d µs\n", txTimeAppMax / 1000);
-		System.out.printf("      min = %d µs\n", txTimeAppMin / 1000);
-		System.out.printf("    Network\n");
-		System.out.printf("      TO\n");
-		System.out.printf("        avg = %d ms\n", txTimeNetTOAvg / 1000000);
-		System.out.printf("        max = %d ms\n", txTimeNetTOMax / 1000000);
-		System.out.printf("        min = %d ms\n", txTimeNetTOMin / 1000000);
-		System.out.printf("      Opt\n");
-		System.out.printf("        avg = %d ms\n", txTimeNetOptAvg / 1000000);
-		System.out.printf("        max = %d ms\n", txTimeNetOptMax / 1000000);
-		System.out.printf("        min = %d ms\n", txTimeNetOptMin / 1000000);
-		System.out.printf("      URB\n");
-		System.out.printf("        avg = %d ms\n", txTimeNetURBAvg / 1000000);
-		System.out.printf("        max = %d ms\n", txTimeNetURBMax / 1000000);
-		System.out.printf("        min = %d ms\n", txTimeNetURBMin / 1000000);
-		System.out.printf("    Validation\n");
-		System.out.printf("      avg = %d µs\n", txTimeValidateAvg / 1000);
-		System.out.printf("      max = %d µs\n", txTimeValidateMax / 1000);
-		System.out.printf("      min = %d µs\n", txTimeValidateMin / 1000);
-		System.out.printf("    Commit\n");
-		System.out.printf("      avg = %d µs\n", txTimeCommitAvg / 1000);
-		System.out.printf("      max = %d µs\n", txTimeCommitMax / 1000);
-		System.out.printf("      min = %d µs\n", txTimeCommitMin / 1000);
-		System.out.println();
-		System.out.printf("  Msgs sent = %d\n", msgSent);
-		System.out.printf("    avg     = %d bytes\n", msgSentSizeAvg);
-		System.out.printf("    max     = %d bytes\n", msgSentSizeMax);
-		System.out.printf("    min     = %d bytes\n", msgSentSizeMin);
-		System.out.printf("  Msgs recv = %d\n", msgRecv);
-		System.out.printf("    avg     = %d bytes\n", msgRecvSizeAvg);
-		System.out.printf("    max     = %d bytes\n", msgRecvSizeMax);
-		System.out.printf("    min     = %d bytes\n", msgRecvSizeMin);
+		stats.append("\n################################################\n");
+		stats.append("################## STATISTICS ##################\n");
+		stats.append("################################################\n");
+
+		stats.append("=== System Throughput\n");
+
+		stats.append("  Committed = " + txCommitted + "\n");
+		stats.append("  Aborted   = " + txAborted + "\n");
+		stats.append("  Timetout  = " + txTimeout + "\n");
+
+		stats.append("=== Transactions\n");
+
+		stats.append("  Tx App Duration\n");
+		str = formatter.format(txAppDurationAvg / 1000.0);
+		stats.append("    avg = " + str + " µs\n");
+		str = formatter.format(txAppDurationMax / 1000.0);
+		stats.append("    max = " + str + " µs\n");
+		str = formatter.format(txAppDurationMin / 1000.0);
+		stats.append("    min = " + str + " µs\n");
+
+		stats.append("  Validation Operation\n");
+		str = formatter.format(txValidateAvg / 1000.0);
+		stats.append("    avg = " + str + " µs\n");
+		str = formatter.format(txValidateMax / 1000.0);
+		stats.append("    max = " + str + " µs\n");
+		str = formatter.format(txValidateMin / 1000.0);
+		stats.append("    min = " + str + " µs\n");
+
+		stats.append("  Commit Operation\n");
+		str = formatter.format(txCommitAvg / 1000.0);
+		stats.append("    avg = " + str + " µs\n");
+		str = formatter.format(txCommitMax / 1000.0);
+		stats.append("    max = " + str + " µs\n");
+		str = formatter.format(txCommitMin / 1000.0);
+		stats.append("    min = " + str + " µs\n");
+
+		stats.append("  Distributed Commit\n");
+		stats.append("    Total Number = " + distCommitIt + "\n");
+		stats.append("    Full Commits = " + totalCommit + "\n");
+
+		str = formatter.format(distCommitAvg / 1000000.0);
+		stats.append("    avg = " + str + " ms\n");
+		str = formatter.format(distCommitMax / 1000000.0);
+		stats.append("    max = " + str + " ms\n");
+		str = formatter.format(distCommitMin / 1000000.0);
+		stats.append("    min = " + str + " ms\n");
+
+		boolean correct = (txReads == (txWsReads + txRemoteRead + txLocalRead));
+		stats.append("  Reads (" + correct + ")\n");
+
+		stats.append("    Total Number = " + txReads + "\n");
+		str = formatter.format((txLocalRead * 100.0) / txReads);
+		stats.append("    Local Reads  = " + str + " (" + txLocalRead + ")\n");
+		str = formatter.format((txWsReads * 100.0) / txReads);
+		stats.append("    WS Reads     = " + str + " (" + txWsReads + ")\n");
+		str = formatter.format((txRemoteRead * 100.0) / txReads);
+		stats.append("    Remote Reads = " + str + " (" + txRemoteRead + ")\n");
+
+		stats.append("    --Local Reads\n");
+		str = formatter.format(txLReadAvg / 1000.0);
+		stats.append("      avg = " + str + " µs\n");
+		str = formatter.format(txLReadMax / 1000.0);
+		stats.append("      max = " + str + " µs\n");
+		str = formatter.format(txLReadMin / 1000.0);
+		stats.append("      min = " + str + " µs\n");
+
+		stats.append("    --Remote Reads\n");
+		str = formatter.format(txRReadAvg / 1000000.0);
+		stats.append("      avg = " + str + " ms\n");
+		str = formatter.format(txRReadMax / 1000000.0);
+		stats.append("      max = " + str + " ms\n");
+		str = formatter.format(txRReadMin / 1000000.0);
+		stats.append("      min = " + str + " ms\n");
+
+		stats.append("    --Complete Reads\n");
+		str = formatter.format(txCReadAvg / 1000.0);
+		stats.append("      avg = " + str + " µs\n");
+		str = formatter.format(txCReadMax / 1000.0);
+		stats.append("      max = " + str + " µs\n");
+		str = formatter.format(txCReadMin / 1000.0);
+		stats.append("      min = " + str + " µs\n");
+
+		stats.append("  Waiting for doRead\n");
+		str = formatter.format(waitingReadAvg / 1000.0);
+		stats.append("    avg = " + str + " µs\n");
+		str = formatter.format(waitingReadMax / 1000.0);
+		stats.append("    max = " + str + " µs\n");
+		str = formatter.format(waitingReadMin / 1000.0);
+		stats.append("    min = " + str + " µs\n");
+
+		stats.append("  Serialization\n");
+		str = formatter.format(serAvg / 1000000.0);
+		stats.append("    avg = " + str + " ms\n");
+		str = formatter.format(serMax / 1000000.0);
+		stats.append("    max = " + str + " ms\n");
+		str = formatter.format(serMin / 1000000.0);
+		stats.append("    min = " + str + " ms\n");
+
+		stats.append("  Confirmation\n");
+		str = formatter.format(confirmationAvg / 1000000.0);
+		stats.append("    avg = " + str + " ms\n");
+		str = formatter.format(confirmationMax / 1000000.0);
+		stats.append("    max = " + str + " ms\n");
+		str = formatter.format(confirmationMin / 1000000.0);
+		stats.append("    min = " + str + " ms\n");
+
+		stats.append("=== Network\n");
+
+		stats.append("  Waiting for Votes\n");
+		str = formatter.format(txVotesAvg / 1000000.0);
+		stats.append("    avg = " + str + " ms\n");
+		str = formatter.format(txVotesMax / 1000000.0);
+		stats.append("    max = " + str + " ms\n");
+		str = formatter.format(txVotesMin / 1000000.0);
+		stats.append("    min = " + str + " ms\n");
+
+		stats.append("  Msgs Sent = " + msgSent + "\n");
+		stats.append("    avg = " + msgSentSizeAvg + " bytes\n");
+		stats.append("    max = " + msgSentSizeMax + " bytes\n");
+		stats.append("    min = " + msgSentSizeMin + " bytes\n");
+
+		stats.append("  Msgs Recv = " + msgRecv + "\n");
+		stats.append("    avg = " + msgRecvSizeAvg + " bytes\n");
+		stats.append("    max = " + msgRecvSizeMax + " bytes\n");
+		stats.append("    min = " + msgRecvSizeMin + " bytes\n");
+
+		System.out.println(stats.toString());
 	}
 }

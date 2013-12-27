@@ -3,7 +3,7 @@ package jstamp.genome;
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
-import org.deuce.profiling.Profiler;
+import org.deuce.profiling._Profiler;
 import org.deuce.transaction.TransactionException;
 
 public class Genome extends Thread
@@ -243,7 +243,7 @@ public class Genome extends Thread
 			gn[i].start();
 		}
 
-		Profiler.enabled = true;
+		_Profiler.enabled = true;
 		long start = System.currentTimeMillis();
 		Barrier.enterBarrier();
 		Sequencer.run((Integer.getInteger("tribu.site") - 1) * g.numThread + 0,
@@ -262,7 +262,7 @@ public class Genome extends Thread
 
 		System.out.println("done.");
 
-		Profiler.print();
+		_Profiler.print();
 
 		/* Check result */
 		{

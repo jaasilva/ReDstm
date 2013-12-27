@@ -9,7 +9,7 @@ import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.full.FullReplicationProtocol;
-import org.deuce.profiling.PRProfiler;
+import org.deuce.profiling.Profiler;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
@@ -31,18 +31,17 @@ public class NonVoting extends FullReplicationProtocol implements
 
 	public void onDelivery(Object obj, Address src, int payloadSize)
 	{
-		PRProfiler.newMsgRecv(payloadSize);
+		Profiler.newMsgRecv(payloadSize);
 		DistributedContextState ctxState = (DistributedContextState) obj;
 		DistributedContext ctx = null;
 
 		if (src.isLocal())
-		{
+		{ // local context
+			Profiler.onLastVoteReceived(ctxState.ctxID);
 			ctx = contexts.get(ctxState.ctxID);
-			PRProfiler.onLastVoteReceived(ctxState.ctxID);
-			PRProfiler.newMsgRecv(payloadSize);
 		}
 		else
-		{
+		{ // remote context
 			ctx = (DistributedContext) ContextDelegator.getInstance();
 			ctx.recreateContextFromState(ctxState);
 		}
@@ -50,6 +49,7 @@ public class NonVoting extends FullReplicationProtocol implements
 		if (ctx.validate())
 		{
 			ctx.applyWriteSet();
+			Profiler.onTxDistCommitFinish(ctxState.ctxID);
 			ctx.processed(true);
 
 			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
@@ -57,6 +57,7 @@ public class NonVoting extends FullReplicationProtocol implements
 		}
 		else
 		{
+			Profiler.onTxDistCommitFinish(ctxState.ctxID);
 			ctx.processed(false);
 
 			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
@@ -70,12 +71,13 @@ public class NonVoting extends FullReplicationProtocol implements
 
 	public void onTxCommit(DistributedContext ctx)
 	{
-		PRProfiler.onSerializationBegin(ctx.threadID);
+		Profiler.onTxDistCommitBegin(ctx.threadID);
+		Profiler.onSerializationBegin(ctx.threadID);
 		byte[] payload = ObjectSerializer.object2ByteArray(ctx.createState());
-		PRProfiler.onSerializationFinish(ctx.threadID);
+		Profiler.onSerializationFinish(ctx.threadID);
 
-		PRProfiler.onPrepSend(ctx.threadID);
-		PRProfiler.newMsgSent(payload.length);
+		Profiler.newMsgSent(payload.length);
+		Profiler.onPrepSend(ctx.threadID);
 		TribuDSTM.sendTotalOrdered(payload);
 	}
 

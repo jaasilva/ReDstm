@@ -4,13 +4,13 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.deuce.distribution.TribuDSTM;
-import org.deuce.profiling.PRProfiler;
+import org.deuce.profiling.Profiler;
 import org.deuce.transform.ExcludeTM;
 
 /**
  * Distributed Context.
  * 
- * @author Tiago Vale
+ * @author Tiago Vale, jaasilva
  */
 @ExcludeTM
 public abstract class DistributedContext implements ContextMetadata
@@ -39,7 +39,6 @@ public abstract class DistributedContext implements ContextMetadata
 		threadID = threadIDCounter.getAndIncrement();
 		committed = false;
 		trxProcessed = new Semaphore(0);
-
 		TribuDSTM.onContextCreation(this);
 	}
 
@@ -66,11 +65,9 @@ public abstract class DistributedContext implements ContextMetadata
 	public void init(int atomicBlockId, String metainf)
 	{
 		this.atomicBlockId = atomicBlockId;
-
 		initialise(atomicBlockId, metainf);
 		TribuDSTM.onTxBegin(this);
-
-		PRProfiler.onTxAppBegin(threadID);
+		Profiler.onTxAppBegin(threadID);
 	}
 
 	/**
@@ -90,12 +87,9 @@ public abstract class DistributedContext implements ContextMetadata
 	 */
 	public boolean validate()
 	{
-		PRProfiler.onTxValidateBegin(threadID);
-
+		Profiler.onTxValidateBegin(threadID);
 		boolean valid = performValidation();
-
-		PRProfiler.onTxValidateEnd(threadID);
-
+		Profiler.onTxValidateFinish(threadID);
 		return valid;
 	}
 
@@ -110,11 +104,9 @@ public abstract class DistributedContext implements ContextMetadata
 	 */
 	public void applyWriteSet()
 	{
-		PRProfiler.onTxCommitBegin(threadID);
-
+		Profiler.onTxCommitBegin(threadID);
 		applyUpdates();
-
-		PRProfiler.onTxCommitEnd(threadID);
+		Profiler.onTxCommitFinish(threadID);
 	}
 
 	/**
@@ -131,16 +123,13 @@ public abstract class DistributedContext implements ContextMetadata
 	public void processed(boolean committed)
 	{
 		this.committed = committed;
-
-		PRProfiler.txProcessed(committed);
-
+		Profiler.txProcessed(committed);
 		trxProcessed.release(); // Release semaphore
 	}
 
 	public void rollback()
 	{
-		PRProfiler.txProcessed(false);
-
+		Profiler.txProcessed(false);
 		TribuDSTM.onTxFinished(this, false);
 	}
 }

@@ -46,8 +46,7 @@ public class Barrier
 		}
 		if (!quiet)
 		{
-			System.err.println("- Barrier increased to " + counter
-					+ " (expected=" + expected + ")");
+			System.err.println("- Barrier exited!");
 		}
 		counter = 0;
 	}

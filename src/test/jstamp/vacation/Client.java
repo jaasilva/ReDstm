@@ -1,7 +1,7 @@
 package jstamp.vacation;
 
 import org.deuce.Atomic;
-import org.deuce.profiling.PRProfiler;
+import org.deuce.profiling.Profiler;
 
 /*
  * =============================================================================
@@ -113,7 +113,7 @@ public class Client extends Thread
 		System.err.println("### benchBarrier: " + id);
 		Vacation.benchBarrier.join();
 
-		PRProfiler.enabled = true;
+		Profiler.enable();
 		Barrier.enterBarrier();
 		for (int i = 0; i < numOperation; i++)
 		{
