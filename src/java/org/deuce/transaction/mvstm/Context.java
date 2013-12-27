@@ -209,7 +209,7 @@ public class Context extends DistributedContext
 			readSet.getNext().init(box, lastReadVersion);
 		}
 
-		return (boolean) (lastReadVersion == box.getLastVersion() ? value
+		return (Boolean) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
 
@@ -227,7 +227,7 @@ public class Context extends DistributedContext
 			readSet.getNext().init(box, lastReadVersion);
 		}
 
-		return (byte) (lastReadVersion == box.getLastVersion() ? value
+		return (Byte) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
 
@@ -245,7 +245,7 @@ public class Context extends DistributedContext
 			readSet.getNext().init(box, lastReadVersion);
 		}
 
-		return (char) (lastReadVersion == box.getLastVersion() ? value
+		return (Character) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
 
@@ -263,7 +263,7 @@ public class Context extends DistributedContext
 			readSet.getNext().init(box, lastReadVersion);
 		}
 
-		return (short) (lastReadVersion == box.getLastVersion() ? value
+		return (Short) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
 
@@ -281,7 +281,7 @@ public class Context extends DistributedContext
 			readSet.getNext().init(box, lastReadVersion);
 		}
 
-		return (int) (lastReadVersion == box.getLastVersion() ? value
+		return (Integer) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
 
@@ -299,7 +299,7 @@ public class Context extends DistributedContext
 			readSet.getNext().init(box, lastReadVersion);
 		}
 
-		return (long) (lastReadVersion == box.getLastVersion() ? value
+		return (Long) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
 
@@ -317,7 +317,7 @@ public class Context extends DistributedContext
 			readSet.getNext().init(box, lastReadVersion);
 		}
 
-		return (float) (lastReadVersion == box.getLastVersion() ? value
+		return (Float) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
 
@@ -335,7 +335,7 @@ public class Context extends DistributedContext
 			readSet.getNext().init(box, lastReadVersion);
 		}
 
-		return (double) (lastReadVersion == box.getLastVersion() ? value
+		return (Double) (lastReadVersion == box.getLastVersion() ? value
 				: lastReadVersion.value);
 	}
 
