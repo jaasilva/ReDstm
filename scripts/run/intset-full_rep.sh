@@ -25,9 +25,20 @@ _EXCLUDE="${_EXCLUDE},spread.*"
 _EXCLUDE="${_EXCLUDE},org.deuce.trove.*"
 _EXCLUDE="${_EXCLUDE},org.deuce.benchmark.intset.MyObjectBackend"
 
+_BENCH_BIG=false
+#_BENCH_BIG=true
+
+if $_BENCH_BIG ; then
+	_DURATION=30000 # s
+	_SIZE=32768 # 2^15
+	RANGE=131072 # SIZE*4
+else
+	_DURATION=10000 # s
+	_SIZE=1024
+	_RANGE=4096
+fi
+
 _WARMUP=0
-#_DURATION=10000
-_DURATION=30000
 
 _SITE=`hostname | cut -c 5-`
 _THREADS=$2
@@ -35,10 +46,6 @@ _REPLICAS=$3
 _RUN=$4
 
 _BENCH=$1
-_SIZE=1024
-#_SIZE=32768 # 2^15
-_RANGE=4096
-#_RANGE=131072 # SIZE*4
 _WRITES=$5
 _PARTIAL_OPS=$6
 
