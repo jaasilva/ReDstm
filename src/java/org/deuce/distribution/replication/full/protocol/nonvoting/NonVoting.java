@@ -49,7 +49,10 @@ public class NonVoting extends FullReplicationProtocol implements
 		if (ctx.validate())
 		{
 			ctx.applyWriteSet();
-			Profiler.onTxDistCommitFinish(ctxState.ctxID);
+			if (src.isLocal())
+			{
+				Profiler.onTxDistCommitFinish(ctxState.ctxID);
+			}
 			ctx.processed(true);
 
 			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
@@ -57,7 +60,10 @@ public class NonVoting extends FullReplicationProtocol implements
 		}
 		else
 		{
-			Profiler.onTxDistCommitFinish(ctxState.ctxID);
+			if (src.isLocal())
+			{
+				Profiler.onTxDistCommitFinish(ctxState.ctxID);
+			}
 			ctx.processed(false);
 
 			LOGGER.debug(src + ":" + ctxState.ctxID + ":"

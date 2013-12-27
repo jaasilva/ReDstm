@@ -8,7 +8,7 @@ import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partial.PartialReplicationOID;
-import org.deuce.distribution.replication.partial.protocol.score.ReadDone;
+import org.deuce.distribution.replication.partial.protocol.score.msgs.ReadDone;
 import org.deuce.profiling.Profiler;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;

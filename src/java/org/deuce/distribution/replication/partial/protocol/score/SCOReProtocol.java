@@ -16,6 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
+import org.deuce.Defaults;
 import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
@@ -24,6 +25,11 @@ import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partial.PartialReplicationOID;
 import org.deuce.distribution.replication.partial.PartialReplicationProtocol;
+import org.deuce.distribution.replication.partial.protocol.score.msgs.DecideMsg;
+import org.deuce.distribution.replication.partial.protocol.score.msgs.ReadDone;
+import org.deuce.distribution.replication.partial.protocol.score.msgs.ReadReq;
+import org.deuce.distribution.replication.partial.protocol.score.msgs.ReadRet;
+import org.deuce.distribution.replication.partial.protocol.score.msgs.VoteMsg;
 import org.deuce.profiling.Profiler;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
@@ -62,9 +68,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 	private final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 	private final Queue<Pair<String, Integer>> pendQ = new PriorityQueue<Pair<String, Integer>>(
-			50, comp); // accessed ONLY by bottom threads
+			1000, comp); // accessed ONLY by bottom threads
 	private final Queue<Pair<String, Integer>> stableQ = new PriorityQueue<Pair<String, Integer>>(
-			50, comp); // accessed ONLY by bottom threads
+			1000, comp); // accessed ONLY by bottom threads
 
 	// accessed ONLY by bottom threads
 	private final Map<String, DistributedContextState> receivedTrxs = new HashMap<String, DistributedContextState>();
@@ -73,7 +79,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 	private static final int minReadThreads = 1;
 	private final Executor pool = Executors.newFixedThreadPool(Math.max(
-			Integer.getInteger("tribu.replicas") - 1, minReadThreads));
+			Integer.getInteger(Defaults._REPLICAS) - 1, minReadThreads));
 
 	private static final List<DistributedContextState> toBeProcessed = new ArrayList<DistributedContextState>();
 

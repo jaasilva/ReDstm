@@ -204,7 +204,7 @@ public class Context extends DistributedContext
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return (boolean) res.value;
+				return (Boolean) res.value;
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
@@ -222,7 +222,7 @@ public class Context extends DistributedContext
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return (byte) res.value;
+				return (Byte) res.value;
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
@@ -240,7 +240,7 @@ public class Context extends DistributedContext
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return (char) res.value;
+				return (Character) res.value;
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
@@ -258,7 +258,7 @@ public class Context extends DistributedContext
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return (short) res.value;
+				return (Short) res.value;
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
@@ -276,7 +276,7 @@ public class Context extends DistributedContext
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return (int) res.value;
+				return (Integer) res.value;
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
@@ -294,7 +294,7 @@ public class Context extends DistributedContext
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return (long) res.value;
+				return (Long) res.value;
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
@@ -312,7 +312,7 @@ public class Context extends DistributedContext
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return (float) res.value;
+				return (Float) res.value;
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}
@@ -330,7 +330,7 @@ public class Context extends DistributedContext
 			WriteFieldAccess res = readLocal(box);
 			if (res != null)
 			{
-				return (double) res.value;
+				return (Double) res.value;
 			}
 			readSet.getNext().init(box, lastReadVersion);
 		}

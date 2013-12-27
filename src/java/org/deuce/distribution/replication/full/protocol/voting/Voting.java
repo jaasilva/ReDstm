@@ -11,6 +11,10 @@ import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.full.FullReplicationProtocol;
+import org.deuce.distribution.replication.full.protocol.voting.msgs.PendingResult;
+import org.deuce.distribution.replication.full.protocol.voting.msgs.PendingTx;
+import org.deuce.distribution.replication.full.protocol.voting.msgs.ResultMessage;
+import org.deuce.profiling.Profiler;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
@@ -34,17 +38,17 @@ public class Voting extends FullReplicationProtocol implements
 
 	public void onDelivery(Object obj, Address src, int payloadSize)
 	{
+		Profiler.newMsgRecv(payloadSize);
+
 		if (obj instanceof DistributedContextState)
-		{
+		{ // WS message
 			DistributedContextState ctxState = (DistributedContextState) obj;
 			PendingTx tx = new PendingTx(src, ctxState);
 
-			// if (src.isLocal())
-			// {
-			// Profiler prof = contexts.get(ctxState.ctxID).profiler;
-			// prof.onTODelivery();
-			// prof.newMsgRecv(payloadSize);
-			// }
+			if (src.isLocal())
+			{ // local context
+				Profiler.onLastVoteReceived(ctxState.ctxID);
+			}
 
 			// Check for existing result
 			PendingResult pendingResult = null;
@@ -58,9 +62,9 @@ public class Voting extends FullReplicationProtocol implements
 					break;
 				}
 			}
-			// If it exists, set the tx state
+
 			if (exists)
-			{
+			{ // If it exists, set the tx state
 				tx.result = pendingResult.msg.result ? PendingTx.COMMITTED
 						: PendingTx.ABORTED;
 				pendingResults.remove(pendingResult);
@@ -68,15 +72,8 @@ public class Voting extends FullReplicationProtocol implements
 			pendingTxs.add(tx);
 		}
 		else if (obj instanceof ResultMessage)
-		{
+		{ // Result message
 			ResultMessage msg = (ResultMessage) obj;
-
-			// if (src.isLocal())
-			// {
-			// Profiler prof = contexts.get(msg.ctxID).profiler;
-			// prof.onURBDelivery();
-			// prof.newMsgRecv(payloadSize);
-			// }
 
 			// Check for existing tx
 			PendingTx pendingTx = null;
@@ -121,7 +118,7 @@ public class Voting extends FullReplicationProtocol implements
 			// If tx's result has been received, apply it
 			// If not, and tx is local, validate and bcast result
 			if (tx.result > PendingTx.VALIDATED)
-			{
+			{ // Result already known
 				pendingTxs.remove(0);
 
 				if (tx.src.isLocal())
@@ -137,6 +134,10 @@ public class Voting extends FullReplicationProtocol implements
 				if (tx.result == PendingTx.COMMITTED)
 				{
 					ctx.applyWriteSet();
+					if (tx.src.isLocal())
+					{
+						Profiler.onTxDistCommitFinish(tx.ctxState.ctxID);
+					}
 					ctx.processed(true);
 
 					LOGGER.debug(tx.src + ":" + tx.ctxState.ctxID + ":"
@@ -144,6 +145,10 @@ public class Voting extends FullReplicationProtocol implements
 				}
 				else
 				{
+					if (tx.src.isLocal())
+					{
+						Profiler.onTxDistCommitFinish(tx.ctxState.ctxID);
+					}
 					ctx.processed(false);
 
 					LOGGER.debug(tx.src + ":" + tx.ctxState.ctxID + ":"
@@ -152,17 +157,17 @@ public class Voting extends FullReplicationProtocol implements
 				keepProcessing = true;
 			}
 			else if (tx.src.isLocal() && tx.result == PendingTx.WAITING)
-			{
+			{ // Validate tx
 				ctx = contexts.get(tx.ctxState.ctxID);
 				boolean valid = ctx.validate();
 				tx.result = PendingTx.VALIDATED;
+				Profiler.onSerializationBegin(ctx.threadID);
 				byte[] payload = ObjectSerializer
 						.object2ByteArray(new ResultMessage(tx.ctxState.ctxID,
 								valid));
+				Profiler.onSerializationFinish(ctx.threadID);
 
-				// ctx.profiler.onURBSend();
-				// ctx.profiler.newMsgSent(payload.length);
-
+				Profiler.newMsgSent(payload.length);
 				TribuDSTM.sendReliably(payload);
 			}
 		}
@@ -174,13 +179,15 @@ public class Voting extends FullReplicationProtocol implements
 
 	public void onTxCommit(DistributedContext ctx)
 	{
+		Profiler.onTxDistCommitBegin(ctx.threadID);
 		DistributedContextState ctxState = ctx.createState();
 		ctxState.rs = null;
+		Profiler.onSerializationBegin(ctx.threadID);
 		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
+		Profiler.onSerializationFinish(ctx.threadID);
 
-		// ctx.profiler.onTOSend();
-		// ctx.profiler.newMsgSent(payload.length);
-
+		Profiler.newMsgSent(payload.length);
+		Profiler.onPrepSend(ctx.threadID);
 		TribuDSTM.sendTotalOrdered(payload);
 	}
 

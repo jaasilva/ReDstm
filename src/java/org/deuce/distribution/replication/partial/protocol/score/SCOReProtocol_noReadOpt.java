@@ -25,6 +25,11 @@ import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partial.PartialReplicationOID;
 import org.deuce.distribution.replication.partial.PartialReplicationProtocol;
+import org.deuce.distribution.replication.partial.protocol.score.msgs.DecideMsg;
+import org.deuce.distribution.replication.partial.protocol.score.msgs.ReadDone;
+import org.deuce.distribution.replication.partial.protocol.score.msgs.ReadReq;
+import org.deuce.distribution.replication.partial.protocol.score.msgs.ReadRet;
+import org.deuce.distribution.replication.partial.protocol.score.msgs.VoteMsg;
 import org.deuce.profiling.Profiler;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
@@ -79,15 +84,6 @@ public class SCOReProtocol_noReadOpt extends PartialReplicationProtocol
 
 	private static final List<DistributedContextState> toBeProcessed = new ArrayList<DistributedContextState>();
 
-	public static final ThreadLocal<Boolean> serializationContext = new ThreadLocal<Boolean>()
-	{ // false -> *NOT* read context; true -> read context
-		@Override
-		protected Boolean initialValue()
-		{
-			return false;
-		}
-	};
-
 	@Override
 	public void init()
 	{
@@ -112,6 +108,7 @@ public class SCOReProtocol_noReadOpt extends PartialReplicationProtocol
 	@Override
 	public void onTxCommit(DistributedContext ctx)
 	{ // I am the coordinator of this commit.
+		Profiler.onTxDistCommitBegin(ctx.threadID);
 		SCOReContext sctx = (SCOReContext) ctx;
 		DistributedContextState ctxState = sctx.createState();
 
@@ -119,6 +116,7 @@ public class SCOReProtocol_noReadOpt extends PartialReplicationProtocol
 		resGroup.add(TribuDSTM.getLocalAddress());// the coordinator needs to
 		// participate in this voting to release the context
 		int expVotes = resGroup.size();
+		Profiler.whatNodes(expVotes);
 
 		sctx.maxVote = 0;
 		sctx.receivedVotes = 0;
@@ -128,8 +126,8 @@ public class SCOReProtocol_noReadOpt extends PartialReplicationProtocol
 		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
 		Profiler.onSerializationFinish(ctx.threadID);
 
-		Profiler.onPrepSend(ctx.threadID);
 		Profiler.newMsgSent(payload.length);
+		Profiler.onPrepSend(ctx.threadID);
 
 		TribuDSTM.sendToGroup(payload, resGroup);
 
@@ -308,9 +306,9 @@ public class SCOReProtocol_noReadOpt extends PartialReplicationProtocol
 		ReadRet ret = new ReadRet(msg.ctxID, msg.msgVersion, read);
 
 		Profiler.onSerializationBegin(msg.ctxID);
-		serializationContext.set(true);
+		serializationReadContext.set(true); // enter read context
 		byte[] payload = ObjectSerializer.object2ByteArray(ret);
-		serializationContext.set(false);
+		serializationReadContext.set(false); // exit read context
 		Profiler.onSerializationFinish(msg.ctxID);
 
 		Profiler.newMsgSent(payload.length);
@@ -470,6 +468,7 @@ public class SCOReProtocol_noReadOpt extends PartialReplicationProtocol
 		DecideMsg decide = new DecideMsg(ctx.threadID, ctx.trxID, finalSid,
 				outcome);
 		Group group = ctx.getInvolvedNodes();
+		group.add(TribuDSTM.getLocalAddress()); // XXX new
 
 		Profiler.onSerializationBegin(ctx.threadID);
 		byte[] payload = ObjectSerializer.object2ByteArray(decide);
@@ -529,6 +528,7 @@ public class SCOReProtocol_noReadOpt extends PartialReplicationProtocol
 			if (src.isLocal())
 			{ // context is local. access directly
 				SCOReContext ctx = (SCOReContext) ctxs.get(ctxID);
+				Profiler.onTxDistCommitFinish(ctxID);
 				ctx.processed(false);
 			}
 		}
@@ -613,6 +613,7 @@ public class SCOReProtocol_noReadOpt extends PartialReplicationProtocol
 			if (ctx.src.isLocal())
 			{ // context is local. access directly
 				sctx = (SCOReContext) ctxs.get(ctx.ctxID);
+				Profiler.onTxDistCommitFinish(sctx.threadID);
 				sctx.processed(true);
 			}
 			it.remove();

@@ -1,4 +1,4 @@
-package org.deuce.distribution.replication.partial.protocol.score;
+package org.deuce.distribution.replication.partial.protocol.score.msgs;
 
 import java.io.Serializable;
 
