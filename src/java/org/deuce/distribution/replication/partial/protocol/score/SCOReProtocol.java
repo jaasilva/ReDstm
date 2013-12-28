@@ -51,7 +51,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		DeliverySubscriber
 {
 	private static final Logger LOGGER = Logger.getLogger(SCOReProtocol.class);
-	private Comparator<Pair<String, Integer>> comp = new Comparator<Pair<String, Integer>>()
+	private final Comparator<Pair<String, Integer>> comp = new Comparator<Pair<String, Integer>>()
 	{
 		@Override
 		public int compare(Pair<String, Integer> o1, Pair<String, Integer> o2)

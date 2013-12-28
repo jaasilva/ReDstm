@@ -1,14 +1,13 @@
 package org.deuce.distribution.replication.partial.protocol.score.msgs;
 
-import java.io.Serializable;
-
+import org.deuce.distribution.replication.ProtocolMessage;
 import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
  */
 @ExcludeTM
-public class VoteMsg implements Serializable
+public class VoteMsg extends ProtocolMessage
 {
 	private static final long serialVersionUID = 1L;
 	public boolean outcome;

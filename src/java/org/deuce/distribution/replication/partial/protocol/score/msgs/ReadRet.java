@@ -1,14 +1,13 @@
 package org.deuce.distribution.replication.partial.protocol.score.msgs;
 
-import java.io.Serializable;
-
+import org.deuce.distribution.replication.ProtocolMessage;
 import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
  */
 @ExcludeTM
-public class ReadRet implements Serializable
+public class ReadRet extends ProtocolMessage
 {
 	private static final long serialVersionUID = 1L;
 	public int ctxID;

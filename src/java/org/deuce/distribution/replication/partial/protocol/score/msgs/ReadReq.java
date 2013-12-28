@@ -1,15 +1,14 @@
 package org.deuce.distribution.replication.partial.protocol.score.msgs;
 
-import java.io.Serializable;
-
 import org.deuce.distribution.ObjectMetadata;
+import org.deuce.distribution.replication.ProtocolMessage;
 import org.deuce.transform.ExcludeTM;
 
 /**
  * @author jaasilva
  */
 @ExcludeTM
-public class ReadReq implements Serializable
+public class ReadReq extends ProtocolMessage
 {
 	private static final long serialVersionUID = 1L;
 	public int ctxID;
