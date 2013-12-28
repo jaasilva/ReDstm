@@ -401,6 +401,7 @@ public class SCOReContext extends DistributedContext
 			return true;
 		}
 
+		Profiler.onTxConfirmationBegin(threadID);
 		TribuDSTM.onTxCommit(this);
 		try
 		{ // blocked awaiting distributed validation
@@ -410,6 +411,7 @@ public class SCOReContext extends DistributedContext
 		{
 			e.printStackTrace();
 		}
+		Profiler.onTxConfirmationFinish(threadID);
 
 		TribuDSTM.onTxFinished(this, committed);
 		boolean result = committed;
