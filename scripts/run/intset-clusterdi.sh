@@ -15,18 +15,18 @@ _bench=$1
 ###############################################################################
 # PARTIAL REPLICATION
 ###############################################################################
-
+:<<'END'
 echo "#######################"
 echo "# PARTIAL REPLICATION #"
 echo "#######################"
 
 for _thrs in 2 4
 do
-for _writes in 10 20 50 80 100
+for _writes in 0 10 20 50 80 100
 do
 for _groups in 1 2 4 8
 do
-for _partial_ops in 10 20 50 80 100
+for _partial_ops in 0 10 20 50 80 100
 do
 for _run in 1 2 3 4 5
 do
@@ -60,7 +60,7 @@ done
 
 _end=`date +%s`
 echo "$(( ($_end-$_start)/60 ))min"
-
+END
 ###############################################################################
 # FULL REPLICATION
 ###############################################################################
@@ -69,11 +69,11 @@ echo "####################"
 echo "# FULL REPLICATION #"
 echo "####################"
 
-for _thrs in 4
+for _thrs in 2 4
 do
-for _writes in 10 20 50 80 100
+for _writes in 0 10 20 50 80 100
 do
-for _partial_ops in 10 20 50 80 100
+for _partial_ops in 0 10 20 50 80 100
 do
 for _run in 1 2 3 4 5
 do
