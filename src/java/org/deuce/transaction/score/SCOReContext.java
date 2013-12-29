@@ -43,12 +43,14 @@ public class SCOReContext extends DistributedContext
 {
 	public static final TransactionException VERSION_UNAVAILABLE_EXCEPTION = new TransactionException(
 			"Fail on retrieveing an older or unexistent version.");
+	public static final TransactionException OVERWRITTEN_VERSION_EXCEPTION = new TransactionException(
+			"Forced to see overwritten data.");
 	public static int MAX_VERSIONS = Integer
 			.getInteger(Defaults._SCORE_MVCC_MAX_VERSIONS,
 					Defaults.SCORE_MVCC_MAX_VERSIONS);
 
-	public SCOReReadSet readSet;
-	public SCOReWriteSet writeSet;
+	protected SCOReReadSet readSet;
+	protected SCOReWriteSet writeSet;
 
 	public int sid;
 	public boolean firstReadDone;
@@ -56,7 +58,7 @@ public class SCOReContext extends DistributedContext
 	public int receivedVotes;
 	public int expectedVotes;
 	public String trxID;
-	private Group involvedNodes;
+	private Group involvedNodes; // XXX check
 
 	public Semaphore syncMsg;
 	public ReadDone response;
@@ -84,25 +86,28 @@ public class SCOReContext extends DistributedContext
 	{
 	}
 
+	/***************************************
+	 * ON READ ACCESS
+	 **************************************/
+
 	private SCOReWriteFieldAccess onReadAccess(TxField field)
 	{
 		SCOReReadFieldAccess curr = readSet.getNext();
 		curr.init(field);
-
 		return writeSet.contains(curr);
 	}
 
 	private Object read(TxField field)
 	{
 		SCOReWriteFieldAccess writeAccess = onReadAccess(field);
-		if (writeAccess == null)
-		{ // *NOT* in the writeSet. Do distributed read
-			return TribuDSTM.onTxRead(this, field);
-		}
-		else
+		if (writeAccess != null)
 		{ // *IN* the writeSet. Return value
 			Profiler.onTxWsRead(threadID);
 			return writeAccess.getValue();
+		}
+		else
+		{ // *NOT* in the writeSet. Do distributed read
+			return TribuDSTM.onTxRead(this, field);
 		}
 	}
 
@@ -166,6 +171,10 @@ public class SCOReContext extends DistributedContext
 		return (Double) read(field);
 	}
 
+	/***************************************
+	 * ON WRITE ACCESS
+	 **************************************/
+
 	private void checkGroupRestrictions(UniqueObject obj, TxField field)
 	{
 		PartialReplicationOID txFieldMetadata = (PartialReplicationOID) field
@@ -202,16 +211,11 @@ public class SCOReContext extends DistributedContext
 		}
 	}
 
-	private void addWriteAccess(SCOReWriteFieldAccess write)
-	{ // add to writeSet
-		writeSet.put(write);
-	}
-
 	private void write(Object value, TxField field)
 	{
 		SCOReWriteFieldAccess next = WFAPool.getNext();
 		next.set(value, field);
-		addWriteAccess(next);
+		writeSet.put(next);
 	}
 
 	@Override
@@ -228,12 +232,12 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public void onWriteAccess(Object value, TxField field)
 	{
-		if (value != null && !(value instanceof String)
-				&& !(value instanceof Byte) && !(value instanceof Short)
-				&& !(value instanceof Integer) && !(value instanceof Long)
-				&& !(value instanceof Float) && !(value instanceof Double)
-				&& !(value instanceof Character) && !(value instanceof Boolean)
-				&& (value instanceof UniqueObject))
+		if (value != null && (value instanceof UniqueObject)
+				&& !(value instanceof String) && !(value instanceof Byte)
+				&& !(value instanceof Short) && !(value instanceof Integer)
+				&& !(value instanceof Long) && !(value instanceof Float)
+				&& !(value instanceof Double) && !(value instanceof Character)
+				&& !(value instanceof Boolean))
 		{
 			checkGroupRestrictions((UniqueObject) value, field);
 		}

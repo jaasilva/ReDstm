@@ -16,16 +16,18 @@ echo "#######################"
 echo "# PARTIAL REPLICATION #"
 echo "#######################"
 
-for _thrs in 4
+for _thrs in 2 4
 do
-for _writes in 10
+for _writes in 10 20 50 80 100
 do
 for _groups in 1 2 4 8
+do
+for _partial_ops in 10 20 50 80 100
 do
 for _run in 1 2 3 4 5
 
 echo "#####"
-echo "Benchmark: ${_bench}, writes: ${_writes}%, run ${_run}"
+echo "Benchmark: ${_bench}, writes: ${_writes}% (partial: ${_partial_ops}%), run ${_run}"
 echo "Threads: ${_thrs}, replicas: ${_replicas}, groups: ${_groups}"
 echo "Time: `date +'%F %H:%M:%S'`"
 echo "#####"
@@ -34,8 +36,8 @@ _start2=`date +%s`
 
 for _node in node1 node2 node3 node4 node5 node6 node7 node8
 do
-	ssh $_node "cd ./repos/metadata; ./scripts/run/intset-par_rep.sh ${_bench} \
-		${_thrs} ${_replicas} ${_run} ${_writes} ${_groups} > $node.out 2>&1" &
+	ssh $_node "cd ./repos/pardstm; ./scripts/run/intset-par_rep.sh ${_bench} \
+		${_thrs} ${_replicas} ${_run} ${_writes} ${_groups} ${_partial_ops} > $node.out 2>&1" &
 done
 
 wait
@@ -45,6 +47,7 @@ echo "> $(( ($_end2-$_start2) ))s"
 
 sleep 10
 
+done
 done
 done
 done
@@ -63,12 +66,14 @@ echo "####################"
 
 for _thrs in 4
 do
-for _writes in 10
+for _writes in 10 20 50 80 100
+do
+for _partial_ops in 10 20 50 80 100
 do
 for _run in 1 2 3 4 5
 
 echo "#####"
-echo "Benchmark: ${_bench}, writes: ${_writes}%, run ${_run}"
+echo "Benchmark: ${_bench}, writes: ${_writes}% (partial: ${_partial_ops}%), run ${_run}"
 echo "Threads: ${_thrs}, replicas: ${_replicas}"
 echo "Time: `date +'%F %H:%M:%S'`"
 echo "#####"
@@ -77,8 +82,8 @@ _start2=`date +%s`
 
 for _node in node1 node2 node3 node4 node5 node6 node7 node8
 do
-	ssh $_node "cd ./repos/metadata; ./scripts/run/intset-full_rep.sh ${_bench} \
-		${_thrs} ${_replicas} ${_run} ${_writes} > $node.out 2>&1" &
+	ssh $_node "cd ./repos/pardstm; ./scripts/run/intset-full_rep.sh ${_bench} \
+		${_thrs} ${_replicas} ${_run} ${_writes} ${_partial_ops} > $node.out 2>&1" &
 done
 
 wait
@@ -88,6 +93,7 @@ echo "> $(( ($_end2-$_start2) ))s"
 
 sleep 10
 
+done
 done
 done
 done

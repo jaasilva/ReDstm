@@ -34,7 +34,6 @@ import org.deuce.profiling.Profiler;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
-import org.deuce.transaction.TransactionException;
 import org.deuce.transaction.score.SCOReContext;
 import org.deuce.transaction.score.SCOReContextState;
 import org.deuce.transaction.score.field.InPlaceRWLock;
@@ -191,9 +190,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		if (sctx.isUpdate() && !read.mostRecent)
 		{ // optimization: abort trx forced to see overwritten data
-			LOGGER.debug("Forced to see overwritten data.\nAbort trx "
+			LOGGER.debug("Forced to see overwritten data.\nAbort tx "
 					+ sctx.trxID.split("-")[0]);
-			throw new TransactionException(); // abort transaction
+			throw SCOReContext.OVERWRITTEN_VERSION_EXCEPTION; // abort tx
 		}
 		// added to read set in onReadAccess context method
 		Profiler.onTxCompleteReadFinish(ctx.threadID);
@@ -365,7 +364,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		{ // I requested this object
 			readReturn((ReadRet) obj, src);
 		}
-
 		processTx();
 	}
 
@@ -622,7 +620,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 	}
 
-	final private void advanceCommitId()
+	private void advanceCommitId()
 	{
 		int origCommitId;
 		do
