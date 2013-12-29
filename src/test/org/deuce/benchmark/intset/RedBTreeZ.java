@@ -3,7 +3,7 @@ package org.deuce.benchmark.intset;
 import java.util.Random;
 
 import org.deuce.Atomic;
-import org.deuce.benchmark.Driver;
+import org.deuce.Defaults;
 import org.deuce.distribution.replication.partial.Partial;
 
 /*
@@ -117,12 +117,15 @@ public class RedBTreeZ implements IntSet
 	Node root;
 	Random rand;
 	private int initial;
+	private int partial_ops;
 
 	public RedBTreeZ(int initial)
 	{
 		root = null;
 		rand = new Random();
 		this.initial = initial;
+		partial_ops = Integer.getInteger(Defaults.RBTREE_PARTIAL_OPS,
+				Defaults._RBTREE_PARTIAL_OPS);
 	}
 
 	/*****************************************
@@ -708,7 +711,7 @@ public class RedBTreeZ implements IntSet
 	@Atomic
 	public boolean add(int key)
 	{
-		if (rand.nextInt(100) < Driver.partial_ops)
+		if (rand.nextInt(100) < partial_ops)
 		{ // partial operation
 			Node p = root;
 			int down = rand
@@ -754,7 +757,7 @@ public class RedBTreeZ implements IntSet
 	@Atomic
 	public boolean remove(int key)
 	{
-		if (rand.nextInt(100) < Driver.partial_ops)
+		if (rand.nextInt(100) < partial_ops)
 		{ // partial operation
 			Node p = root;
 			int down = rand

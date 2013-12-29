@@ -1,6 +1,7 @@
 package org.deuce.benchmark;
 
 import org.deuce.Atomic;
+import org.deuce.Defaults;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
 import org.deuce.profiling.Profiler;
@@ -17,7 +18,6 @@ public class Driver
 	static public Barrier finishBarrier;
 
 	static public int n_threads;
-	static public int partial_ops = 0;
 
 	public static void main(String[] args)
 	{
@@ -97,7 +97,7 @@ public class Driver
 		}
 
 		b.init(args);
-		partial_ops = partial_ops_priv; // partial replication related
+		System.setProperty(Defaults.RBTREE_PARTIAL_OPS, "" + partial_ops_priv);
 
 		// try
 		// {
