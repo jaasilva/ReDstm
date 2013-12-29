@@ -29,6 +29,7 @@ do
 for _partial_ops in 10 20 50 80 100
 do
 for _run in 1 2 3 4 5
+do
 
 echo "#####"
 echo "Benchmark: ${_bench}, writes: ${_writes}% (partial: ${_partial_ops}%), run ${_run}"
@@ -75,6 +76,7 @@ do
 for _partial_ops in 10 20 50 80 100
 do
 for _run in 1 2 3 4 5
+do
 
 echo "#####"
 echo "Benchmark: ${_bench}, writes: ${_writes}% (partial: ${_partial_ops}%), run ${_run}"
