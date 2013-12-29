@@ -9,8 +9,8 @@ public class DistributedContextState extends ProtocolMessage
 	private static final long serialVersionUID = 1L;
 	public Object rs;
 	public Object ws;
-	public int ctxID;
-	public int atomicBlockId;
+	public final int ctxID;
+	public final int atomicBlockId;
 
 	public DistributedContextState(Object rs, Object ws, int ctxID,
 			int atomicBlockId)
