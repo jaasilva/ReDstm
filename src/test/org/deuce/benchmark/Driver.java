@@ -219,10 +219,18 @@ public class Driver
 	{
 		System.out.println("................start");
 		if (setupBarrier == null)
+		{
+			System.out.println(".........................setupBarrier");
 			setupBarrier = new Barrier(Integer.getInteger("tribu.replicas"));
+			System.out.println(".........................setupBarrier+");
+		}
 		System.out.println("................middle");
 		if (finishBarrier == null)
+		{
+			System.out.println(".........................finishBarrier");
 			finishBarrier = new Barrier(Integer.getInteger("tribu.replicas"));
+			System.out.println(".........................finishBarrier+");
+		}
 		System.out.println("................end");
 	}
 }
