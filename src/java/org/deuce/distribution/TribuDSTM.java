@@ -5,6 +5,7 @@ import java.util.HashSet;
 
 import org.apache.log4j.Logger;
 import org.deuce.Defaults;
+import org.deuce.distribution.cache.Cache;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
@@ -38,8 +39,10 @@ public class TribuDSTM
 	private static DataPartitioner dataPart;
 	private static GroupPartitioner groupPart;
 	private static Class<? extends DistributedContext> ctxClass;
+	private static Cache cache;
 	public static boolean PARTIAL; // check runtime mode
-	final public static Collection<Address> ALL = new HashSet<Address>();
+
+	public static final Collection<Address> ALL = new HashSet<Address>();
 
 	/*
 	 * ################################################################
@@ -59,6 +62,7 @@ public class TribuDSTM
 		if (PARTIAL)
 		{
 			initPartitioners();
+			initCache();
 			int groups = Integer.getInteger(Defaults._GROUPS, Defaults.GROUPS);
 			groupPart.init(groups);
 		}
@@ -148,6 +152,14 @@ public class TribuDSTM
 
 		LOGGER.warn("> Group partitioner: " + groupPartClass);
 		LOGGER.warn("> Data partitioner: " + dataPartClass);
+	}
+
+	/**
+	 * Initializes the remote objects' cache.
+	 */
+	private static void initCache()
+	{
+		cache = new Cache();
 	}
 
 	public static final String INIT_METHOD_NAME = "init";
@@ -559,5 +571,26 @@ public class TribuDSTM
 	public static final Group publishObjectTo(UniqueObject obj)
 	{
 		return dataPart.publishTo(obj);
+	}
+
+	/*
+	 * ################################################################
+	 * ########### CACHE ##############################################
+	 * ################################################################
+	 */
+
+	public static final void cachePut(ObjectMetadata metadata, UniqueObject obj)
+	{
+		cache.put(metadata, obj);
+	}
+
+	public static final UniqueObject cacheGet(ObjectMetadata metadata)
+	{
+		return cache.get(metadata);
+	}
+
+	public static final boolean cacheContains(ObjectMetadata metadata)
+	{
+		return cache.contains(metadata);
 	}
 }

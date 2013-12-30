@@ -26,6 +26,11 @@ public class Cache
 		return cache.get(metadata);
 	}
 
+	public boolean contains(ObjectMetadata metadata)
+	{
+		return cache.contains(metadata);
+	}
+
 	@Override
 	public String toString()
 	{
@@ -38,5 +43,4 @@ public class Cache
 		sb.append("}");
 		return sb.toString();
 	}
-
 }

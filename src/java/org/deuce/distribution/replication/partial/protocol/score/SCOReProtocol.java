@@ -159,7 +159,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 
 		ReadDone read = null;
-		boolean local_read = p_group.contains(TribuDSTM.getLocalAddress());
+		boolean local_read = p_group.isLocal();
 		boolean local_graph = p_group.equals(group);
 		if (local_read || local_graph) // if the groups are equal I have the
 		// graph from the partial txField down cached in the locator table
@@ -180,6 +180,16 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 		else
 		{ // *REMOTE* read
+			if (TribuDSTM.cacheContains(metadata))
+			{
+				Object obj = checkCache(sctx.sid, metadata);
+				if (obj != null)
+				{
+					Profiler.onTxCompleteReadFinish(ctx.threadID);
+					return obj;
+				}
+			}
+
 			read = remoteRead(sctx, metadata, firstRead, p_group);
 		}
 
@@ -197,6 +207,32 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		// added to read set in onReadAccess context method
 		Profiler.onTxCompleteReadFinish(ctx.threadID);
 		return read.value;
+	}
+
+	private Object checkCache(int sid, ObjectMetadata metadata)
+	{
+		int origNextId;
+		do
+		{
+			origNextId = nextId.get();
+		} while (!nextId.compareAndSet(origNextId, Math.max(origNextId, sid)));
+		
+		VBoxField field = (VBoxField) TribuDSTM.cacheGet(metadata);
+		
+		long st = System.nanoTime();
+		while (commitId.get() < sid
+				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
+		{ // wait until (commitId.get() >= sid || ((InPlaceRWLock)
+			// field).isExclusiveUnlocked())
+			LOGGER.debug("doRead waiting: " + (commitId.get() < sid) + " "
+					+ !((InPlaceRWLock) field).isExclusiveUnlocked());
+		}
+		long end = System.nanoTime();
+		Profiler.onWaitingRead(end - st);
+		
+		Version ver = field.getLastVersion().get(sid);
+		
+		return ver;
 	}
 
 	private ReadDone remoteRead(SCOReContext sctx, ObjectMetadata metadata,

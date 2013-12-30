@@ -42,7 +42,7 @@ _start2=`date +%s`
 for _node in node1 node2 node3 node4 node5 node6 node7 node8
 do
 	ssh $_node "cd ./repos/pardstm; ./scripts/run/intset-par_rep.sh ${_bench} \
-		${_thrs} ${_replicas} ${_run} ${_writes} ${_groups} ${_partial_ops} > $node.out 2>&1" &
+		${_thrs} ${_replicas} ${_run} ${_writes} ${_groups} ${_partial_ops} > $_node.out 2>&1" &
 done
 
 wait
@@ -89,7 +89,7 @@ _start2=`date +%s`
 for _node in node1 node2 node3 node4 node5 node6 node7 node8
 do
 	ssh $_node "cd ./repos/pardstm; ./scripts/run/intset-full_rep.sh ${_bench} \
-		${_thrs} ${_replicas} ${_run} ${_writes} ${_partial_ops} > $node.out 2>&1" &
+		${_thrs} ${_replicas} ${_run} ${_writes} ${_partial_ops} > $_node.out 2>&1" &
 done
 
 wait

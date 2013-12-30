@@ -1,7 +1,7 @@
 package org.deuce.distribution.replication.partial.protocol.score.msgs;
 
 import org.deuce.distribution.ObjectMetadata;
-import org.deuce.distribution.replication.ProtocolMessage;
+import org.deuce.distribution.replication.msgs.ProtocolMessage;
 import org.deuce.transform.ExcludeTM;
 
 /**

@@ -1,4 +1,4 @@
-package org.deuce.distribution.replication;
+package org.deuce.distribution.replication.msgs;
 
 import java.io.Serializable;
 
