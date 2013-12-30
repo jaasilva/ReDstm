@@ -217,9 +217,12 @@ public class Driver
 	@Atomic
 	private static void initBarriers()
 	{
+		System.out.println("................start");
 		if (setupBarrier == null)
 			setupBarrier = new Barrier(Integer.getInteger("tribu.replicas"));
+		System.out.println("................middle");
 		if (finishBarrier == null)
 			finishBarrier = new Barrier(Integer.getInteger("tribu.replicas"));
+		System.out.println("................end");
 	}
 }
