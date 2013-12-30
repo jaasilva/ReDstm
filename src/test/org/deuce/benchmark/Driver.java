@@ -107,7 +107,9 @@ public class Driver
 		// {
 		// e.printStackTrace();
 		// }
+		System.out.println("initBarriers...");
 		initBarriers();
+		System.out.println("-initBarriers...");
 		// try
 		// {
 		// Thread.sleep(new Random().nextInt(5000));
@@ -116,7 +118,9 @@ public class Driver
 		// {
 		// e.printStackTrace();
 		// }
+		System.out.println("setupBarrier...");
 		setupBarrier.join();
+		System.out.println("-setupBarrier...");
 
 		BenchmarkThread[] bt = new BenchmarkThread[nb_threads];
 		for (int i = 0; i < bt.length; i++)
