@@ -122,8 +122,11 @@ public class Context extends DistributedContext
 		}
 		catch (TransactionException e)
 		{
-			writeSet.forEach(lockProcedure.unlockProcedure);
 			return false;
+		}
+		finally
+		{
+			writeSet.forEach(lockProcedure.unlockProcedure);
 		}
 
 		return result;

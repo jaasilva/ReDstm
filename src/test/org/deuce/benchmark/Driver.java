@@ -107,9 +107,7 @@ public class Driver
 		// {
 		// e.printStackTrace();
 		// }
-		System.out.println("initBarriers...");
 		initBarriers();
-		System.out.println("-initBarriers...");
 		// try
 		// {
 		// Thread.sleep(new Random().nextInt(5000));
@@ -118,9 +116,7 @@ public class Driver
 		// {
 		// e.printStackTrace();
 		// }
-		System.out.println("setupBarrier...");
 		setupBarrier.join();
-		System.out.println("-setupBarrier...");
 
 		BenchmarkThread[] bt = new BenchmarkThread[nb_threads];
 		for (int i = 0; i < bt.length; i++)
@@ -217,20 +213,9 @@ public class Driver
 	@Atomic
 	private static void initBarriers()
 	{
-		System.out.println("................start");
 		if (setupBarrier == null)
-		{
-			System.out.println(".........................setupBarrier");
 			setupBarrier = new Barrier(Integer.getInteger("tribu.replicas"));
-			System.out.println(".........................setupBarrier+");
-		}
-		System.out.println("................middle");
 		if (finishBarrier == null)
-		{
-			System.out.println(".........................finishBarrier");
 			finishBarrier = new Barrier(Integer.getInteger("tribu.replicas"));
-			System.out.println(".........................finishBarrier+");
-		}
-		System.out.println("................end");
 	}
 }
