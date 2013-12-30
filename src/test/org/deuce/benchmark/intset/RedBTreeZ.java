@@ -116,8 +116,8 @@ public class RedBTreeZ implements IntSet
 
 	Node root;
 	Random rand;
-	private int initial;
-	private int partial_ops;
+	private final int initial;
+	private final int partial_ops;
 
 	public RedBTreeZ(int initial)
 	{

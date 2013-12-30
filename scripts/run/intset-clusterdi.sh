@@ -11,11 +11,18 @@ _start=`date +%s`
 _replicas=8
 #_bench=RedBTree
 _bench=$1
+_runs=5
+
+_partial_rep=false
+#_partial_rep=true
+#_full_rep=false
+_full_rep=true
 
 ###############################################################################
 # PARTIAL REPLICATION
 ###############################################################################
-:<<'END'
+if $_partial_rep ; then
+
 echo "#######################"
 echo "# PARTIAL REPLICATION #"
 echo "#######################"
@@ -28,7 +35,7 @@ for _groups in 1 2 4 8
 do
 for _partial_ops in 0 10 20 50 80 100
 do
-for _run in 1 2 3 4 5
+for _run in `seq 1 $_runs`
 do
 
 echo "#####"
@@ -60,10 +67,13 @@ done
 
 _end=`date +%s`
 echo "$(( ($_end-$_start)/60 ))min"
-END
+
+fi
+
 ###############################################################################
 # FULL REPLICATION
 ###############################################################################
+if $_full_rep ; then
 
 echo "####################"
 echo "# FULL REPLICATION #"
@@ -75,7 +85,7 @@ for _writes in 10 20 50 80 100
 do
 for _partial_ops in 0 10 20 50 80 100
 do
-for _run in 1 2 3 4 5
+for _run in `seq 1 $_runs`
 do
 
 echo "#####"
@@ -103,6 +113,8 @@ done
 done
 done
 done
+
+fi
 
 echo "#####"
 echo "End: `date +'%F %H:%M:%S'`"

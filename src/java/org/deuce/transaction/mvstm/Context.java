@@ -81,6 +81,7 @@ public class Context extends DistributedContext
 		writeSet = (WriteSet) ctxState.ws;
 
 		localClock = ((ContextState) ctxState).rv;
+		readWriteHint = ((ContextState) ctxState).readWriteHint;
 
 		atomicBlockId = -1; // Remote tx
 

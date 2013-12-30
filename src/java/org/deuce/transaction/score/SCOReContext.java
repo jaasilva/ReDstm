@@ -58,7 +58,7 @@ public class SCOReContext extends DistributedContext
 	public int receivedVotes;
 	public int expectedVotes;
 	public String trxID;
-	private Group involvedNodes; // XXX check
+	private Group involvedNodes;
 
 	public Semaphore syncMsg;
 	public ReadDone response;

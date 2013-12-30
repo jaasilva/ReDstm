@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 import org.deuce.transaction.mvstm.Context;
-import org.deuce.transaction.score.SCOReContext;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -26,16 +25,16 @@ public class Version implements Serializable
 		this.next = next;
 		this.value = value;
 		this.size = next != null ? next.size + 1 : 1;
-		if (size == SCOReContext.MAX_VERSIONS)
+		if (size == Context.MAX_VERSIONS)
 		{
 			cleanVersions();
-			size = SCOReContext.MAX_VERSIONS >>> 1; // divide by 2
+			size = Context.MAX_VERSIONS >>> 1; // divide by 2
 		}
 	}
 
 	private void cleanVersions()
 	{
-		int c = SCOReContext.MAX_VERSIONS >>> 1; // divide by 2
+		int c = Context.MAX_VERSIONS >>> 1; // divide by 2
 		Version v = this;
 		while (c > 1)
 		{

@@ -67,7 +67,7 @@ public class VBoxField extends TxField implements InPlaceLock,
 		{
 			throw LockTable.LOCKED_VERSION_EXCEPTION;
 		}
-		return tmp.equals(version); // XXX equals ???
+		return tmp.equals(version);
 	}
 
 	public Version get(int maxVersion)
