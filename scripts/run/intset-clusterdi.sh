@@ -22,7 +22,7 @@ echo "#######################"
 
 for _thrs in 2 4
 do
-for _writes in 0 10 20 50 80 100
+for _writes in 10 20 50 80 100
 do
 for _groups in 1 2 4 8
 do
@@ -71,7 +71,7 @@ echo "####################"
 
 for _thrs in 2 4
 do
-for _writes in 0 10 20 50 80 100
+for _writes in 10 20 50 80 100
 do
 for _partial_ops in 0 10 20 50 80 100
 do

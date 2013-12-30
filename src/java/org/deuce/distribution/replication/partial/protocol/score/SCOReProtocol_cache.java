@@ -46,10 +46,10 @@ import org.deuce.transform.localmetadata.type.TxField;
  * @author jaasilva
  */
 @ExcludeTM
-public class SCOReProtocol extends PartialReplicationProtocol implements
+public class SCOReProtocol_cache extends PartialReplicationProtocol implements
 		DeliverySubscriber
 {
-	private static final Logger LOGGER = Logger.getLogger(SCOReProtocol.class);
+	private static final Logger LOGGER = Logger.getLogger(SCOReProtocol_cache.class);
 	private final Comparator<Pair<String, Integer>> comp = new Comparator<Pair<String, Integer>>()
 	{
 		@Override
@@ -180,7 +180,14 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 		else
 		{ // *REMOTE* read
-			read = remoteRead(sctx, metadata, firstRead, p_group);
+			if (TribuDSTM.cacheContains(metadata))
+			{
+				read = checkCache(sctx.sid, metadata);
+			}
+			else
+			{
+				read = remoteRead(sctx, metadata, firstRead, p_group);
+			}
 		}
 
 		if (firstRead && read.mostRecent)
@@ -197,6 +204,33 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		// added to read set in onReadAccess context method
 		Profiler.onTxCompleteReadFinish(ctx.threadID);
 		return read.value;
+	}
+
+	private ReadDone checkCache(int sid, ObjectMetadata metadata)
+	{
+		int origNextId;
+		do
+		{
+			origNextId = nextId.get();
+		} while (!nextId.compareAndSet(origNextId, Math.max(origNextId, sid)));
+
+		VBoxField field = (VBoxField) TribuDSTM.cacheGet(metadata);
+
+		long st = System.nanoTime();
+		while (commitId.get() < sid
+				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
+		{ // wait until (commitId.get() >= sid || ((InPlaceRWLock)
+			// field).isExclusiveUnlocked())
+			LOGGER.debug("doRead waiting: " + (commitId.get() < sid) + " "
+					+ !((InPlaceRWLock) field).isExclusiveUnlocked());
+		}
+		long end = System.nanoTime();
+		Profiler.onWaitingRead(end - st);
+
+		Version ver = field.getLastVersion().get(sid);
+		boolean mostRecent = ver.equals(field.getLastVersion());
+		int lastCommitted = commitId.get();
+		return new ReadDone(ver.value, lastCommitted, mostRecent);
 	}
 
 	private ReadDone remoteRead(SCOReContext sctx, ObjectMetadata metadata,
