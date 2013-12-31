@@ -21,6 +21,7 @@ import org.deuce.transaction.score.field.SCOReWriteFieldAccess;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.array.ArrayContainer;
 import org.deuce.transform.localmetadata.type.TxField;
+import org.deuce.trove.TObjectProcedure;
 
 /**
  * Snapshot visibility for transactions is determined by associating to each
@@ -349,10 +350,24 @@ public class SCOReContext extends DistributedContext
 		return outcome;
 	}
 
+	private final TObjectProcedure<SCOReWriteFieldAccess> putProcedure = new TObjectProcedure<SCOReWriteFieldAccess>()
+	{
+		public boolean execute(SCOReWriteFieldAccess wfa)
+		{
+			PartialReplicationOID meta = (PartialReplicationOID) wfa.field
+					.getMetadata();
+			if (meta.getPartialGroup().isLocal())
+			{
+				wfa.put(sid);
+			}
+			return true;
+		}
+	};
+
 	@Override
 	protected void applyUpdates()
 	{
-		writeSet.apply(sid);
+		writeSet.forEach(putProcedure);
 	}
 
 	public void recreateContextFromState(DistributedContextState ctxState)

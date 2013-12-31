@@ -10,6 +10,7 @@ import org.deuce.transaction.score.field.SCOReReadFieldAccess;
 import org.deuce.transaction.score.field.SCOReWriteFieldAccess;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.trove.THashSet;
+import org.deuce.trove.TObjectProcedure;
 
 /**
  * @author jaasilva
@@ -58,17 +59,9 @@ public class SCOReWriteSet implements Serializable
 		}
 	}
 
-	public synchronized void apply(int sid)
-	{ // apply *ONLY* the TxFields that I replicate
-		for (SCOReWriteFieldAccess a : writeSet)
-		{
-			PartialReplicationOID meta = ((PartialReplicationOID) a.field
-					.getMetadata());
-			if (meta.getPartialGroup().isLocal())
-			{
-				a.put(sid);
-			}
-		}
+	public boolean forEach(TObjectProcedure<SCOReWriteFieldAccess> procedure)
+	{
+		return writeSet.forEach(procedure);
 	}
 
 	public synchronized boolean releaseExclusiveLocks(String txID)

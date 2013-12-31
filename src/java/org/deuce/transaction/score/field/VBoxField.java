@@ -17,7 +17,7 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 	public volatile Version version;
 	public int type;
 
-	private transient volatile byte readLock = 0; // max 127 readers
+	private transient volatile int readLock = 0;
 	private transient volatile boolean writeLock = false; // false -> unlocked
 	private transient volatile String lockHolder = null; // trxID
 

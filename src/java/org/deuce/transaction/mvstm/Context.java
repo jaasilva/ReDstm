@@ -114,21 +114,20 @@ public class Context extends DistributedContext
 	protected boolean performValidation()
 	{
 		boolean result = false;
-
 		try
 		{
 			writeSet.forEach(lockProcedure);
 			result = readSet.validate(this);
+			if (!result)
+			{
+				writeSet.forEach(lockProcedure.unlockProcedure);
+			}
 		}
 		catch (TransactionException e)
 		{
+			writeSet.forEach(lockProcedure.unlockProcedure);
 			return false;
 		}
-		finally
-		{
-			writeSet.forEach(lockProcedure.unlockProcedure);
-		}
-
 		return result;
 	}
 
