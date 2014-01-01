@@ -6,7 +6,6 @@ package org.deuce.benchmark;
  */
 public interface Benchmark
 {
-
 	public static final int WARMUP_PHASE = 1;
 	public static final int TEST_PHASE = 2;
 	public static final int SHUTDOWN_PHASE = 3;
@@ -16,6 +15,6 @@ public interface Benchmark
 	public BenchmarkThread createThread(int i, int nb);
 
 	public String getStats(BenchmarkThread[] threads);
-	
+
 	public boolean validate();
 }

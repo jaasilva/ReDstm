@@ -186,6 +186,8 @@ public class TribuDSTM
 			ALL.addAll(getAllMembers()); // XXX check
 
 			LOGGER.warn("> ALL:" + ALL); // XXX check
+
+			System.out.println("GROUP: " + getLocalGroup().getId());
 		}
 
 		distProtocol.init();

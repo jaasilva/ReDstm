@@ -3,6 +3,7 @@ package org.deuce.benchmark.intset;
 import java.util.Random;
 
 import org.deuce.Atomic;
+import org.deuce.Defaults;
 import org.deuce.distribution.replication.Bootstrap;
 
 /**
@@ -29,7 +30,10 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			if (args[i].equals("-i"))
 			{
 				if (++i < args.length)
+				{
 					initial = Integer.parseInt(args[i]);
+					System.setProperty(Defaults.RBTREE_INITIAL, "" + initial);
+				}
 				else
 					error = true;
 			}
@@ -44,6 +48,17 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			{
 				if (++i < args.length)
 					m_rate = Integer.parseInt(args[i]);
+				else
+					error = true;
+			}
+			else if (args[i].equals("-po"))
+			{
+				if (++i < args.length)
+				{
+					int partial_ops = Integer.parseInt(args[i]);
+					System.setProperty(Defaults.RBTREE_PARTIAL_OPS, ""
+							+ partial_ops);
+				}
 				else
 					error = true;
 			}
@@ -111,7 +126,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 		{ // partial replication benchmark
 			if (m_set == null)
 			{
-				m_set = new RedBTreeZ(initial);
+				m_set = new RedBTreeZ();
 			}
 		}
 		else if (type.equals("SkipList"))
@@ -146,7 +161,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 		{
 			return true;
 		}
-
 		return false;
 	}
 
@@ -165,7 +179,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 	{
 		for (int i = 0; i < chunkSize; i++)
 		{
-			while (!m_set.add(random.nextInt(m_range)))
+			while (!m_set.initAdd(random.nextInt(m_range)))
 				;
 		}
 	}

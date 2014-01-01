@@ -745,4 +745,10 @@ public class RedBTreeX implements IntSet
 	{
 		return n != null ? size(n.l) + size(n.r) + 1 : 0;
 	}
+
+	@Override
+	public boolean initAdd(int value)
+	{
+		return add(value);
+	}
 }

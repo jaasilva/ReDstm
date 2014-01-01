@@ -32,4 +32,10 @@ public class HashTableSet implements IntSet
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public boolean initAdd(int value)
+	{
+		return add(value);
+	}
 }

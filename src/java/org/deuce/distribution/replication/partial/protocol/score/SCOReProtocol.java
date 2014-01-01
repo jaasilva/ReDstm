@@ -300,7 +300,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		if (msg.firstRead && commitId.get() > msg.readSid)
 		{
-			newReadSid = commitId.get();
+			newReadSid = commitId.get(); // XXX check
 		}
 
 		ReadDone read = doRead(newReadSid, msg.metadata);
@@ -343,7 +343,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	public void onDelivery(Object obj, Address src, int size)
 	{
 		Profiler.newMsgRecv(size);
-
 		if (obj instanceof DistributedContextState) // Prepare Message
 		{
 			prepareMessage((SCOReContextState) obj, src);

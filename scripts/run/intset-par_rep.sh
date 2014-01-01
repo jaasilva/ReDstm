@@ -56,8 +56,8 @@ _PROTO=score.SCOReProtocol
 _GCS=jgroups.JGroups
 #_GCS=appia.Appia
 #_GCS=spread.Spread
-_DPART=Random
-#_DPART=RoundRobin
+#_DPART=Random
+_DPART=RoundRobin
 #_DPART=Simple
 
 _STM="org.deuce.transaction.${_CTX}"
@@ -101,9 +101,9 @@ java -Xmx8g -cp $_CP -javaagent:bin/deuceAgent.jar \
 	-Dtribu.groups=$_GROUPS \
 	-Djgroups.bind_addr=`hostname` \
 	-Djava.net.preferIPv4Stack=true \
-	org.deuce.benchmark.Driver -n $_THREADS -d $_DURATION -w $_WARMUP -po $_PARTIAL_OPS \
+	org.deuce.benchmark.Driver -n $_THREADS -d $_DURATION -w $_WARMUP \
 		org.deuce.benchmark.intset.Benchmark $_BENCH -r $_RANGE -i $_SIZE \
-		-w $_WRITES 2>&1 | tee $_LOG
+		-w $_WRITES -po $_PARTIAL_OPS 2>&1 | tee $_LOG
 
 echo "#####"
 echo "End: `date +'%F %H:%M:%S'`"

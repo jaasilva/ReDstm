@@ -1,14 +1,11 @@
 package org.deuce.benchmark;
 
-// import papi.j.CacheMonitor;
-
 /**
  * @author Pascal Felber
  * @since 0.1
  */
 public class BenchmarkThread implements Runnable
 {
-
 	volatile private int m_phase;
 	private int m_steps;
 
@@ -44,7 +41,6 @@ public class BenchmarkThread implements Runnable
 
 	protected void step(int phase)
 	{
-
 	}
 
 	public String getStats()

@@ -1,7 +1,6 @@
 package org.deuce.benchmark;
 
 import org.deuce.Atomic;
-import org.deuce.Defaults;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
 import org.deuce.profiling.Profiler;
@@ -27,7 +26,6 @@ public class Driver
 		String benchmark = null;
 		boolean error = false;
 		int arg;
-		int partial_ops_priv = 0;
 
 		for (arg = 0; arg < args.length && !error; arg++)
 		{
@@ -52,15 +50,6 @@ public class Driver
 			{
 				if (++arg < args.length)
 					warmup = Integer.parseInt(args[arg]);
-				else
-					error = true;
-			}
-			else if (args[arg].equals("-po"))
-			{
-				if (++arg < args.length)
-				{
-					partial_ops_priv = Integer.parseInt(args[arg]);
-				}
 				else
 					error = true;
 			}
@@ -97,25 +86,8 @@ public class Driver
 		}
 
 		b.init(args);
-		System.setProperty(Defaults.RBTREE_PARTIAL_OPS, "" + partial_ops_priv);
 
-		// try
-		// {
-		// Thread.sleep(new Random().nextInt(5000));
-		// }
-		// catch (InterruptedException e)
-		// {
-		// e.printStackTrace();
-		// }
 		initBarriers();
-		// try
-		// {
-		// Thread.sleep(new Random().nextInt(5000));
-		// }
-		// catch (InterruptedException e)
-		// {
-		// e.printStackTrace();
-		// }
 		setupBarrier.join();
 
 		BenchmarkThread[] bt = new BenchmarkThread[nb_threads];
@@ -124,7 +96,9 @@ public class Driver
 
 		Thread[] t = new Thread[bt.length];
 		for (int i = 0; i < t.length; i++)
+		{
 			t[i] = new Thread(bt[i]);
+		}
 
 		for (int i = 0; i < t.length; i++)
 		{
@@ -182,7 +156,9 @@ public class Driver
 
 		int steps = 0;
 		for (int i = 0; i < bt.length; i++)
+		{
 			steps += bt[i].getSteps();
+		}
 
 		System.out.println("RESULTS:\n");
 		System.out.println("  Warmup duration (ms) = " + (wend - wstart));
@@ -190,19 +166,12 @@ public class Driver
 		System.out.println("  Nb iterations        = " + steps);
 		System.out.println("  Stats                = " + b.getStats(bt));
 		for (int i = 0; i < bt.length; i++)
+		{
 			System.out.println("    " + i + " : " + bt[i].getSteps() + " ("
 					+ bt[i].getStats() + ")");
-
+		}
 		Profiler.print();
 
-		// try
-		// {
-		// Thread.sleep(new Random().nextInt(2000));
-		// }
-		// catch (InterruptedException e)
-		// {
-		// e.printStackTrace();
-		// }
 		finishBarrier.join();
 
 		System.out.println("VALID: " + b.validate());

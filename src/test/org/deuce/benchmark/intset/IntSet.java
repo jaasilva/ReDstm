@@ -11,6 +11,8 @@ public interface IntSet
 	public boolean remove(int value);
 
 	public boolean contains(int value);
-	
+
 	public boolean validate();
+
+	public boolean initAdd(int value);
 }

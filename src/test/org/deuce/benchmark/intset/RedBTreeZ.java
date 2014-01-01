@@ -116,15 +116,16 @@ public class RedBTreeZ implements IntSet
 
 	Node root;
 	Random rand;
-	private final int initial;
-	private final int partial_ops;
+	private int initial;
+	private int partial_ops;
 
-	public RedBTreeZ(int initial)
+	public RedBTreeZ()
 	{
 		root = null;
 		rand = new Random();
-		this.initial = initial;
-		partial_ops = Integer.getInteger(Defaults.RBTREE_PARTIAL_OPS,
+		this.initial = Integer.getInteger(Defaults.RBTREE_INITIAL,
+				Defaults._RBTREE_INITIAL);
+		this.partial_ops = Integer.getInteger(Defaults.RBTREE_PARTIAL_OPS,
 				Defaults._RBTREE_PARTIAL_OPS);
 	}
 
@@ -821,5 +822,17 @@ public class RedBTreeZ implements IntSet
 	protected int size(Node n)
 	{
 		return n != null ? size(n.l) + size(n.r) + 1 : 0;
+	}
+
+	@Atomic
+	public boolean initAdd(int key)
+	{
+		Node node = new Node();
+		Node ex = insert(key, key, node);
+		if (ex != null)
+		{
+			node = null;
+		}
+		return ex == null;
 	}
 }

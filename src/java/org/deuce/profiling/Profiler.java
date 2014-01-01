@@ -663,7 +663,8 @@ public class Profiler
 
 		stats.append("  Distributed Commit\n");
 		stats.append("    Total Number = " + distCommitIt + "\n");
-		stats.append("    Full Commits = " + totalCommit + "\n");
+		str = formatter.format((totalCommit * 100.0) / distCommitIt);
+		stats.append("    Full Commits = " + totalCommit + " (" + str + ")\n");
 
 		str = formatter.format(distCommitAvg / 1000000.0);
 		stats.append("    avg = " + str + " ms\n");

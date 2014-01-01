@@ -56,7 +56,10 @@ public class Defaults
 	// public static final String _LOG = "log";
 
 	public static final int JGROUPS_PARTIAL_MAX_RECEIVER_THREADS = 1;
-	
+
 	public static final String RBTREE_PARTIAL_OPS = "benchmarks.rbtree.partial_ops";
 	public static final int _RBTREE_PARTIAL_OPS = 0;
+
+	public static final String RBTREE_INITIAL = "benchmarks.rbtree.initial";
+	public static final int _RBTREE_INITIAL = 32768;
 }

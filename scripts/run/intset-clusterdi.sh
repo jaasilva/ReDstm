@@ -9,8 +9,8 @@ echo "#####"
 
 _start=`date +%s`
 _replicas=8
-#_bench=RedBTree
-_bench=$1
+_bench=RedBTreeZ
+#_bench=$1
 _runs=5
 
 _partial_rep=false
