@@ -34,6 +34,7 @@ import org.deuce.profiling.Profiler;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
+import org.deuce.transaction.TransactionException;
 import org.deuce.transaction.score.SCOReContext;
 import org.deuce.transaction.score.SCOReContextState;
 import org.deuce.transaction.score.field.InPlaceRWLock;
@@ -50,6 +51,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		DeliverySubscriber
 {
 	private static final Logger LOGGER = Logger.getLogger(SCOReProtocol.class);
+	public static final TransactionException OVERWRITTEN_VERSION_EXCEPTION = new TransactionException(
+			"Forced to see overwritten data.");
 	private final Comparator<Pair<String, Integer>> comp = new Comparator<Pair<String, Integer>>()
 	{
 		@Override
@@ -59,11 +62,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 	};
 	// updated ONLY by bottom threads
-	private final AtomicInteger commitId = new AtomicInteger(0);
+	protected final AtomicInteger commitId = new AtomicInteger(0);
 	// updated by up and bottom threads
-	private final AtomicInteger nextId = new AtomicInteger(0);
+	protected final AtomicInteger nextId = new AtomicInteger(0);
 	// updated ONLY by bottom threads
-	private final AtomicInteger maxSeenId = new AtomicInteger(0);
+	protected final AtomicInteger maxSeenId = new AtomicInteger(0);
 
 	private final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 	private final Queue<Pair<String, Integer>> pendQ = new PriorityQueue<Pair<String, Integer>>(
@@ -111,8 +114,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		DistributedContextState ctxState = sctx.createState();
 
 		Group resGroup = sctx.getInvolvedNodes();
-		resGroup.add(TribuDSTM.getLocalAddress());// the coordinator needs to
-		// participate in this voting to release the context
 		int expVotes = resGroup.size();
 		Profiler.whatNodes(expVotes);
 
@@ -171,7 +172,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 				Profiler.onTxLocalReadFinish(ctx.threadID);
 			}
 			catch (NullPointerException e)
-			{ // XXX check this
+			{ // XXX check this. this should not happen!!!
 				LOGGER.debug("% Null pointer while reading locally: "
 						+ local_read + " " + local_graph + "\n" + metadata
 						+ "\n" + TribuDSTM.getObject(metadata));
@@ -192,14 +193,14 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		{ // optimization: abort trx forced to see overwritten data
 			LOGGER.debug("Forced to see overwritten data.\nAbort tx "
 					+ sctx.trxID.split("-")[0]);
-			throw SCOReContext.OVERWRITTEN_VERSION_EXCEPTION; // abort tx
+			throw OVERWRITTEN_VERSION_EXCEPTION; // abort tx
 		}
 		// added to read set in onReadAccess context method
 		Profiler.onTxCompleteReadFinish(ctx.threadID);
 		return read.value;
 	}
 
-	private ReadDone remoteRead(SCOReContext sctx, ObjectMetadata metadata,
+	protected ReadDone remoteRead(SCOReContext sctx, ObjectMetadata metadata,
 			boolean firstRead, Group p_group)
 	{
 		ReadReq req = new ReadReq(sctx.threadID, metadata, sctx.sid, firstRead,
@@ -230,7 +231,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		return sctx.response;
 	}
 
-	private ReadDone doRead(int sid, ObjectMetadata metadata)
+	protected ReadDone doRead(int sid, ObjectMetadata metadata)
 	{
 		int origNextId;
 		do
@@ -467,7 +468,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		DecideMsg decide = new DecideMsg(ctx.threadID, ctx.trxID, finalSid,
 				outcome);
 		Group group = ctx.getInvolvedNodes();
-		group.add(TribuDSTM.getLocalAddress()); // XXX new
 
 		Profiler.onSerializationBegin(ctx.threadID);
 		byte[] payload = ObjectSerializer.object2ByteArray(decide);

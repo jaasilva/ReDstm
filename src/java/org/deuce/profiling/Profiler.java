@@ -55,7 +55,7 @@ public class Profiler
 			distCommitMax = Long.MIN_VALUE, distCommitMin = Long.MAX_VALUE,
 			distCommitAvg = 0, totalCommit = 0,
 			confirmationMax = Long.MIN_VALUE, confirmationMin = Long.MAX_VALUE,
-			confirmationAvg = 0;
+			confirmationAvg = 0, cacheTry = 0, cacheHit = 0;
 
 	/**
 	 * Network related, in bytes.
@@ -619,6 +619,32 @@ public class Profiler
 		}
 	}
 
+	private static final Object lock23 = new Object();
+
+	public static void onCacheTry()
+	{
+		if (ENABLED)
+		{
+			synchronized (lock23)
+			{
+				cacheTry++;
+			}
+		}
+	}
+
+	private static final Object lock24 = new Object();
+
+	public static void onCacheHit()
+	{
+		if (ENABLED)
+		{
+			synchronized (lock24)
+			{
+				cacheHit++;
+			}
+		}
+	}
+
 	public static void print()
 	{
 		StringBuffer stats = new StringBuffer();
@@ -699,6 +725,10 @@ public class Profiler
 		stats.append("      max = " + str + " ms\n");
 		str = formatter.format(txRReadMin / 1000000.0);
 		stats.append("      min = " + str + " ms\n");
+
+		str = formatter.format((cacheHit * 100.0) / cacheTry);
+		stats.append("    --Cache Hits " + str + " (" + cacheHit + ") ("
+				+ cacheTry + ")\n");
 
 		stats.append("    --Complete Reads\n");
 		str = formatter.format(txCReadAvg / 1000.0);

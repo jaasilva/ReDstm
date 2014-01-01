@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.deuce.distribution.ObjectMetadata;
-import org.deuce.distribution.UniqueObject;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -13,15 +12,15 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class Cache
 {
-	private final ConcurrentHashMap<ObjectMetadata, UniqueObject> cache = new ConcurrentHashMap<ObjectMetadata, UniqueObject>(
+	private final ConcurrentHashMap<ObjectMetadata, Object> cache = new ConcurrentHashMap<ObjectMetadata, Object>(
 			50000);
 
-	public void put(ObjectMetadata metadata, UniqueObject obj)
+	public void put(ObjectMetadata metadata, Object obj)
 	{
 		cache.put(metadata, obj);
 	}
 
-	public UniqueObject get(ObjectMetadata metadata)
+	public Object get(ObjectMetadata metadata)
 	{
 		return cache.get(metadata);
 	}
@@ -36,9 +35,9 @@ public class Cache
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
-		for (Map.Entry<ObjectMetadata, UniqueObject> entry : cache.entrySet())
+		for (Map.Entry<ObjectMetadata, Object> entry : cache.entrySet())
 		{
-			sb.append(String.format("%s=%s, ", entry.getKey(), entry.getValue()));
+			sb.append(String.format("%s=%s\n", entry.getKey(), entry.getValue()));
 		}
 		sb.append("}");
 		return sb.toString();

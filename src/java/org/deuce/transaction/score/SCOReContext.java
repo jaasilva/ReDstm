@@ -44,8 +44,6 @@ public class SCOReContext extends DistributedContext
 {
 	public static final TransactionException VERSION_UNAVAILABLE_EXCEPTION = new TransactionException(
 			"Fail on retrieveing an older or unexistent version.");
-	public static final TransactionException OVERWRITTEN_VERSION_EXCEPTION = new TransactionException(
-			"Forced to see overwritten data.");
 	public static int MAX_VERSIONS = Integer
 			.getInteger(Defaults._SCORE_MVCC_MAX_VERSIONS,
 					Defaults.SCORE_MVCC_MAX_VERSIONS);
@@ -404,6 +402,13 @@ public class SCOReContext extends DistributedContext
 			Group group1 = readSet.getInvolvedNodes();
 			Group group2 = writeSet.getInvolvedNodes();
 			involvedNodes = group1.union(group2);
+			/*
+			 * the local node is always involved in a transaction where it is
+			 * the coordinator. the coordinator/local node needs to participate
+			 * in this transaction's voting in order to release its context in
+			 * the end.
+			 */
+			involvedNodes.add(TribuDSTM.getLocalAddress());
 		}
 		return involvedNodes;
 	}

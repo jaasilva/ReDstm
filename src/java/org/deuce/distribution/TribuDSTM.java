@@ -581,18 +581,22 @@ public class TribuDSTM
 	 * ################################################################
 	 */
 
-	public static final void cachePut(ObjectMetadata metadata, UniqueObject obj)
+	public static final void cachePut(ObjectMetadata metadata, Object obj)
 	{
 		cache.put(metadata, obj);
+		System.out.println("################ CACHE PUT\n" + cache.toString());
 	}
 
-	public static final UniqueObject cacheGet(ObjectMetadata metadata)
+	public static final Object cacheGet(ObjectMetadata metadata)
 	{
+		System.out.println("################ CACHE GET\n" + cache.toString());
 		return cache.get(metadata);
 	}
 
 	public static final boolean cacheContains(ObjectMetadata metadata)
 	{
+		System.out.println("################ CACHE CONTAINS\n"
+				+ cache.toString());
 		return cache.contains(metadata);
 	}
 }
