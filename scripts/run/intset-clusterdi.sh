@@ -68,7 +68,7 @@ done
 _end=`date +%s`
 echo "$(( ($_end-$_start)/60 ))min"
 
-fi
+fi # end partial_rep
 
 ###############################################################################
 # FULL REPLICATION
@@ -114,7 +114,7 @@ done
 done
 done
 
-fi
+fi # end full_rep
 
 echo "#####"
 echo "End: `date +'%F %H:%M:%S'`"

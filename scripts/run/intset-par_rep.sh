@@ -28,11 +28,11 @@ _EXCLUDE="${_EXCLUDE},org.deuce.benchmark.intset.MyObjectBackend"
 _BENCH_BIG=false
 #_BENCH_BIG=true
 
-if $_BENCH_BIG ; then
+if $_BENCH_BIG ; then # big values
 	_DURATION=30000
 	_SIZE=32768 # 2^15
 	_RANGE=131072 # SIZE*4
-else
+else # small values
 	_DURATION=10000
 	_SIZE=1024
 	_RANGE=4096
@@ -83,7 +83,7 @@ echo "Start: `date +'%F %H:%M:%S'`"
 echo "#####"
 
 if $_PROFILE_MEM ; then
-#	dstat -m -M top-mem > $_MEM &
+#	dstat -m -M top-mem > $_MEM & # in my pc
 	dstat -m -M topmem > $_MEM &
 	_PID2=$!
 	sleep 1
