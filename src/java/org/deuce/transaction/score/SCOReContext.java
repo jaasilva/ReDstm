@@ -1,6 +1,7 @@
 package org.deuce.transaction.score;
 
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.deuce.Defaults;
 import org.deuce.LocalMetadata;
@@ -16,8 +17,11 @@ import org.deuce.transaction.GroupsViolationException;
 import org.deuce.transaction.TransactionException;
 import org.deuce.transaction.pool.Pool;
 import org.deuce.transaction.pool.ResourceFactory;
+import org.deuce.transaction.score.field.InPlaceRWLock;
 import org.deuce.transaction.score.field.SCOReReadFieldAccess;
 import org.deuce.transaction.score.field.SCOReWriteFieldAccess;
+import org.deuce.transaction.score.field.VBoxField;
+import org.deuce.transaction.score.field.Version;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.array.ArrayContainer;
 import org.deuce.transform.localmetadata.type.TxField;
@@ -44,9 +48,18 @@ public class SCOReContext extends DistributedContext
 {
 	public static final TransactionException VERSION_UNAVAILABLE_EXCEPTION = new TransactionException(
 			"Fail on retrieveing an older or unexistent version.");
-	public static int MAX_VERSIONS = Integer
+	public static final TransactionException OVERWRITTEN_VERSION_EXCEPTION = new TransactionException(
+			"Forced to see overwritten data.");
+	public static final int MAX_VERSIONS = Integer
 			.getInteger(Defaults._SCORE_MVCC_MAX_VERSIONS,
 					Defaults.SCORE_MVCC_MAX_VERSIONS);
+
+	// updated ONLY by bottom threads
+	public static final AtomicInteger commitId = new AtomicInteger(0);
+	// updated by up and bottom threads
+	public static final AtomicInteger nextId = new AtomicInteger(0);
+	// updated ONLY by bottom threads
+	public static final AtomicInteger maxSeenId = new AtomicInteger(0);
 
 	protected SCOReReadSet readSet;
 	protected SCOReWriteSet writeSet;
@@ -105,9 +118,57 @@ public class SCOReContext extends DistributedContext
 			return writeAccess.getValue();
 		}
 		else
-		{ // *NOT* in the writeSet. Do distributed read
-			return TribuDSTM.onTxRead(this, field);
+		{ // *NOT* in the writeSet. Do regular read operation
+			Profiler.onTxCompleteReadBegin(threadID);
+			if (!this.firstReadDone) // if this is the first read
+			{
+				this.sid = commitId.get();
+			}
+
+			ReadDone read = (ReadDone) TribuDSTM.onTxRead(this, field);
+
+			if (!this.firstReadDone && read.mostRecent)
+			{ // try to advance our snapshot id to a fresher one
+				this.sid = Math.max(sid, read.lastCommitted);
+			}
+
+			if (this.isUpdate() && !read.mostRecent)
+			{ // optimization: abort tx forced to see overwritten data
+				throw OVERWRITTEN_VERSION_EXCEPTION;
+			}
+
+			if (!this.firstReadDone) // if this is the first read
+			{
+				this.firstReadDone = true;
+			}
+			Profiler.onTxCompleteReadFinish(threadID);
+			return read.value;
 		}
+	}
+
+	private ReadDone doReadLocal(TxField field)
+	{ // XXX should I use this?
+		int origNextId;
+		do
+		{
+			origNextId = nextId.get();
+		} while (nextId.compareAndSet(origNextId, Math.max(origNextId, sid)));
+
+		VBoxField box = (VBoxField) field;
+
+		long st = System.nanoTime();
+		while ((commitId.get() < sid)
+				&& !((InPlaceRWLock) box).isExclusiveUnlocked())
+		{
+		}
+		long end = System.nanoTime();
+		Profiler.onWaitingRead(end - st);
+
+		Version ver = box.getLastVersion().get(sid);
+		boolean mostRecent = ver.equals(box.getLastVersion());
+		int lastCommitted = commitId.get();
+
+		return new ReadDone(ver.value, lastCommitted, mostRecent);
 	}
 
 	@Override

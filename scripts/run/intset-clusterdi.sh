@@ -1,6 +1,6 @@
 #!/bin/sh
 ###############################################################################
-# <benchmark>
+# <partial_rep> <full_rep>
 ###############################################################################
 
 echo "#####"
@@ -15,6 +15,8 @@ _runs=5
 
 _partial_rep=false
 #_partial_rep=true
+#_partial_rep=$1
+#_full_rep=$2
 #_full_rep=false
 _full_rep=true
 
@@ -29,7 +31,7 @@ echo "#######################"
 
 for _thrs in 2 4
 do
-for _writes in 10 20 50 80 100
+for _writes in 10 20 50 80
 do
 for _groups in 1 2 4 8
 do
@@ -81,7 +83,7 @@ echo "####################"
 
 for _thrs in 2 4
 do
-for _writes in 10 20 50 80 100
+for _writes in 10 20 50 80
 do
 for _partial_ops in 0 10 20 50 80 100
 do

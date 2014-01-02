@@ -9,13 +9,11 @@ import org.deuce.distribution.replication.partial.PartialReplicationOID;
 import org.deuce.distribution.replication.partial.protocol.score.msgs.ReadDone;
 import org.deuce.distribution.replication.partial.protocol.score.msgs.ReadReq;
 import org.deuce.profiling.Profiler;
-import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.score.SCOReContext;
 import org.deuce.transaction.score.field.InPlaceRWLock;
 import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transaction.score.field.Version;
 import org.deuce.transform.ExcludeTM;
-import org.deuce.transform.localmetadata.type.TxField;
 
 /**
  * @author jaasilva
@@ -27,70 +25,44 @@ public class SCOReProtocol_cache extends SCOReProtocol
 			.getLogger(SCOReProtocol_cache.class);
 
 	@Override
-	public Object onTxRead(DistributedContext ctx, TxField field)
-	{ // I am the coordinator of this read.
-		Profiler.onTxCompleteReadBegin(ctx.threadID);
-		ObjectMetadata metadata = field.getMetadata();
-		SCOReContext sctx = (SCOReContext) ctx;
-
-		boolean firstRead = !sctx.firstReadDone;
-		Group p_group = ((PartialReplicationOID) metadata).getPartialGroup();
-		Group group = ((PartialReplicationOID) metadata).getGroup();
-
-		if (firstRead)
-		{ // first read of this transaction
-			sctx.sid = commitId.get();
-			sctx.firstReadDone = true;
-		}
-
+	protected ReadDone processRead(SCOReContext sctx, ObjectMetadata meta,
+			boolean firstRead)
+	{
+		Group p_group = ((PartialReplicationOID) meta).getPartialGroup();
+		Group group = ((PartialReplicationOID) meta).getGroup();
 		ReadDone read = null;
-		boolean local_read = p_group.isLocal();
-		boolean local_graph = p_group.equals(group);
-		if (local_read || local_graph) // if the groups are equal I have the
-		// graph from the partial txField down cached in the locator table
-		{ // *LOCAL* read
-			try
-			{
-				Profiler.onTxLocalReadBegin(ctx.threadID);
-				read = doRead(sctx.sid, metadata);
-				Profiler.onTxLocalReadFinish(ctx.threadID);
-			}
-			catch (NullPointerException e)
-			{ // XXX check this. this should not happen!!!
-				LOGGER.debug("% Null pointer while reading locally: "
-						+ local_read + " " + local_graph + "\n" + metadata
-						+ "\n" + TribuDSTM.getObject(metadata));
-				read = remoteRead(sctx, metadata, firstRead, p_group);
-			}
+
+		// If I belong to the local group, then I replicate this object
+		boolean localObj = p_group.isLocal();
+		/*
+		 * if the groups are equal I have the graph from the partial txField
+		 * down cached in the locator table
+		 */
+		boolean localGraph = p_group.equals(group);
+
+		if (localObj || localGraph)
+		{ // Do *LOCAL* read
+			Profiler.onTxLocalReadBegin(sctx.threadID);
+			read = doRead(sctx.sid, meta);
+			Profiler.onTxLocalReadFinish(sctx.threadID);
 		}
 		else
-		{ // *REMOTE* read
-			Profiler.onCacheTry();
-			if (TribuDSTM.cacheContains(metadata))
+		{ // Do *REMOTE* read
+			Profiler.onCacheTry(); // First try cache
+			if (TribuDSTM.cacheContains(meta))
 			{ // XXX cache get
 				Profiler.onCacheHit();
-				read = checkCache(sctx.sid, metadata);
+				read = checkCache(sctx.sid, meta);
 			}
 			else
 			{
-				read = remoteRead(sctx, metadata, firstRead, p_group);
+				Profiler.onTxRemoteReadBegin(sctx.threadID);
+				read = remoteRead(sctx, meta, firstRead, p_group);
+				Profiler.onTxRemoteReadFinish(sctx.threadID);
 			}
 		}
 
-		if (firstRead && read.mostRecent)
-		{ // advance our snapshot id to a fresher one
-			sctx.sid = Math.max(sctx.sid, read.lastCommitted);
-		}
-
-		if (sctx.isUpdate() && !read.mostRecent)
-		{ // optimization: abort trx forced to see overwritten data
-			LOGGER.debug("Forced to see overwritten data.\nAbort tx "
-					+ sctx.trxID.split("-")[0]);
-			throw OVERWRITTEN_VERSION_EXCEPTION; // abort tx
-		}
-		// added to read set in onReadAccess context method
-		Profiler.onTxCompleteReadFinish(ctx.threadID);
-		return read.value;
+		return read;
 	}
 
 	private ReadDone checkCache(int sid, ObjectMetadata metadata)
@@ -98,17 +70,19 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		int origNextId;
 		do
 		{
-			origNextId = nextId.get();
-		} while (!nextId.compareAndSet(origNextId, Math.max(origNextId, sid)));
+			origNextId = SCOReContext.nextId.get();
+		} while (!SCOReContext.nextId.compareAndSet(origNextId,
+				Math.max(origNextId, sid)));
 
 		VBoxField field = (VBoxField) TribuDSTM.cacheGet(metadata);
 
 		long st = System.nanoTime();
-		while (commitId.get() < sid
+		while (SCOReContext.commitId.get() < sid
 				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
 		{ // wait until (commitId.get() >= sid || ((InPlaceRWLock)
 			// field).isExclusiveUnlocked())
-			LOGGER.debug("doRead waiting: " + (commitId.get() < sid) + " "
+			LOGGER.debug("doRead waiting: "
+					+ (SCOReContext.commitId.get() < sid) + " "
 					+ !((InPlaceRWLock) field).isExclusiveUnlocked());
 		}
 		long end = System.nanoTime();
@@ -116,7 +90,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 
 		Version ver = field.getLastVersion().get(sid);
 		boolean mostRecent = ver.equals(field.getLastVersion());
-		int lastCommitted = commitId.get();
+		int lastCommitted = SCOReContext.commitId.get();
 		return new ReadDone(ver.value, lastCommitted, mostRecent);
 	}
 

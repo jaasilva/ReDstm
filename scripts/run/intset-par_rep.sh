@@ -29,16 +29,16 @@ _BENCH_BIG=false
 #_BENCH_BIG=true
 
 if $_BENCH_BIG ; then # big values
-	_DURATION=30000
 	_SIZE=32768 # 2^15
 	_RANGE=131072 # SIZE*4
 else # small values
-	_DURATION=10000
-	_SIZE=1024
-	_RANGE=4096
+	_SIZE=1024 # 2^10
+	_RANGE=4096 # SIZE*4
 fi
 
 _WARMUP=0
+#_DURATION=10000 # s
+_DURATION=30000 # s
 
 _SITE=`hostname | cut -c 5-`
 _THREADS=$2
@@ -52,7 +52,8 @@ _PARTIAL_OPS=$7
 
 _CTX=score.SCOReContext
 _PROTO=score.SCOReProtocol
-#_PROTO=scoreSCOReProtocol_noReadOpt
+#_PROTO=score.SCOReProtocol_noReadOpt
+#_PROTO=score.SCOReProtocol_cache
 _GCS=jgroups.JGroups
 #_GCS=appia.Appia
 #_GCS=spread.Spread
