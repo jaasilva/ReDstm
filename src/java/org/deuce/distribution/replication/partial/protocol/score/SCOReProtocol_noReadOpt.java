@@ -26,19 +26,9 @@ public class SCOReProtocol_noReadOpt extends SCOReProtocol
 
 		if (localObj)
 		{ // Do *LOCAL* read
-			// try
-			// {
 			Profiler.onTxLocalReadBegin(sctx.threadID);
 			read = doRead(sctx.sid, meta);
 			Profiler.onTxLocalReadFinish(sctx.threadID);
-			// }
-			// catch (NullPointerException e)
-			// { // XXX check this. this should not happen!!!
-			// LOGGER.debug("% Null pointer while reading locally: "
-			// + localObj + " " + localGraph + "\n" + meta + "\n"
-			// + TribuDSTM.getObject(meta));
-			// read = remoteRead(sctx, meta, firstRead, p_group);
-			// }
 		}
 		else
 		{ // Do *REMOTE* read
