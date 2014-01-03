@@ -201,6 +201,7 @@ public class Vacation
 		org.deuce.benchmark.Barrier.quiet = true;
 		for (int t = 0; t < 4; t++)
 		{
+			System.out.print(t + " ");
 			if (pr_group_id == 0)
 			{ // Shuffle ids
 				shuffleIds(totalRelations, randomPtr);
@@ -208,7 +209,7 @@ public class Vacation
 			shuffleBarrier.join();
 
 			/* Populate table */
-			int chunk = numRelations / 2;
+			int chunk = numRelations / 4;
 			for (int i = base; i < base + numRelations; i += chunk)
 			{
 				int end = i + chunk;
