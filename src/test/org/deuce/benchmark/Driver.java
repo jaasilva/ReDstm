@@ -174,7 +174,10 @@ public class Driver
 
 		finishBarrier.join();
 
-		System.out.println("VALID: " + b.validate());
+		if (Integer.getInteger("tribu.site") == 1)
+		{
+			System.out.println("VALID: " + b.validate());
+		}
 
 		TribuDSTM.close();
 	}

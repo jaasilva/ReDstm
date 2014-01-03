@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.deuce.distribution.ObjectMetadata;
+import org.deuce.transaction.score.field.Version;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -12,15 +13,15 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class Cache
 {
-	private final ConcurrentHashMap<ObjectMetadata, Object> cache = new ConcurrentHashMap<ObjectMetadata, Object>(
+	private final ConcurrentHashMap<ObjectMetadata, Version> cache = new ConcurrentHashMap<ObjectMetadata, Version>(
 			50000);
 
-	public void put(ObjectMetadata metadata, Object obj)
+	public void put(ObjectMetadata metadata, Version obj)
 	{
 		cache.put(metadata, obj);
 	}
 
-	public Object get(ObjectMetadata metadata)
+	public Version get(ObjectMetadata metadata)
 	{
 		return cache.get(metadata);
 	}
@@ -35,7 +36,7 @@ public class Cache
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
-		for (Map.Entry<ObjectMetadata, Object> entry : cache.entrySet())
+		for (Map.Entry<ObjectMetadata, Version> entry : cache.entrySet())
 		{
 			sb.append(String.format("%s=%s\n", entry.getKey(), entry.getValue()));
 		}

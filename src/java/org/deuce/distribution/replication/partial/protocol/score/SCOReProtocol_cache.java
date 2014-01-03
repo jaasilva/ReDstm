@@ -14,6 +14,7 @@ import org.deuce.transaction.score.field.InPlaceRWLock;
 import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transaction.score.field.Version;
 import org.deuce.transform.ExcludeTM;
+import org.deuce.transform.localmetadata.type.TxField;
 
 /**
  * @author jaasilva
@@ -25,9 +26,10 @@ public class SCOReProtocol_cache extends SCOReProtocol
 			.getLogger(SCOReProtocol_cache.class);
 
 	@Override
-	protected ReadDone processRead(SCOReContext sctx, ObjectMetadata meta,
+	protected ReadDone processRead(SCOReContext sctx, TxField field,
 			boolean firstRead)
 	{
+		ObjectMetadata meta = field.getMetadata();
 		Group p_group = ((PartialReplicationOID) meta).getPartialGroup();
 		Group group = ((PartialReplicationOID) meta).getGroup();
 		ReadDone read = null;
@@ -43,19 +45,19 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		if (localObj || localGraph)
 		{ // Do *LOCAL* read
 			Profiler.onTxLocalReadBegin(sctx.threadID);
-			read = doRead(sctx.sid, meta);
+			read = sctx.doReadLocal((VBoxField) field);
 			Profiler.onTxLocalReadFinish(sctx.threadID);
 		}
 		else
 		{ // Do *REMOTE* read
-			Profiler.onCacheTry(); // First try cache
+			Profiler.onCacheTry(); // first check cache
 			if (TribuDSTM.cacheContains(meta))
-			{ // XXX cache get
+			{
 				Profiler.onCacheHit();
 				read = checkCache(sctx.sid, meta);
 			}
 			else
-			{
+			{ // if not in cache. do remote read
 				Profiler.onTxRemoteReadBegin(sctx.threadID);
 				read = remoteRead(sctx, meta, firstRead, p_group);
 				Profiler.onTxRemoteReadFinish(sctx.threadID);
@@ -66,6 +68,25 @@ public class SCOReProtocol_cache extends SCOReProtocol
 	}
 
 	private ReadDone checkCache(int sid, ObjectMetadata metadata)
+	{ // XXX check
+		int origNextId;
+		do
+		{
+			origNextId = SCOReContext.nextId.get();
+		} while (!SCOReContext.nextId.compareAndSet(origNextId,
+				Math.max(origNextId, sid)));
+
+		// use versions list from cache
+		Version lastVersion = TribuDSTM.cacheGet(metadata);
+
+		Version ver = lastVersion.get(sid);
+		boolean mostRecent = ver.equals(lastVersion);
+		int lastCommitted = SCOReContext.commitId.get();
+		return new ReadDone(ver.value, lastCommitted, mostRecent);
+	}
+
+	@Override
+	protected ReadDone doReadRemote(int sid, ObjectMetadata metadata)
 	{
 		int origNextId;
 		do
@@ -74,16 +95,15 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		} while (!SCOReContext.nextId.compareAndSet(origNextId,
 				Math.max(origNextId, sid)));
 
-		VBoxField field = (VBoxField) TribuDSTM.cacheGet(metadata);
+		VBoxField field = (VBoxField) TribuDSTM.getObject(metadata);
 
 		long st = System.nanoTime();
 		while (SCOReContext.commitId.get() < sid
 				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
-		{ // wait until (commitId.get() >= sid || ((InPlaceRWLock)
-			// field).isExclusiveUnlocked())
-			LOGGER.debug("doRead waiting: "
-					+ (SCOReContext.commitId.get() < sid) + " "
-					+ !((InPlaceRWLock) field).isExclusiveUnlocked());
+		{ /*
+		 * wait until (commitId.get() >= sid || ((InPlaceRWLock)
+		 * field).isExclusiveUnlocked())
+		 */
 		}
 		long end = System.nanoTime();
 		Profiler.onWaitingRead(end - st);
@@ -91,7 +111,9 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		Version ver = field.getLastVersion().get(sid);
 		boolean mostRecent = ver.equals(field.getLastVersion());
 		int lastCommitted = SCOReContext.commitId.get();
-		return new ReadDone(ver.value, lastCommitted, mostRecent);
+		ReadDone read = new ReadDone(ver.value, lastCommitted, mostRecent);
+		read.piggyback = field.getLastVersion(); // assign versions list
+		return read;
 	}
 
 	@Override
@@ -106,8 +128,6 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		Profiler.onSerializationFinish(sctx.threadID);
 
 		Profiler.newMsgSent(payload.length);
-		Profiler.onTxRemoteReadBegin(sctx.threadID);
-
 		TribuDSTM.sendToGroup(payload, p_group);
 
 		LOGGER.debug("SEND READ REQ " + sctx.trxID.split("-")[0] + " "
@@ -121,10 +141,9 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		{
 			e.printStackTrace();
 		}
+		// put received version list in cache
+		TribuDSTM.cachePut(metadata, (Version) sctx.response.piggyback);
 
-		TribuDSTM.cachePut(metadata, sctx.response.value); // XXX cache put
-
-		Profiler.onTxRemoteReadFinish(sctx.threadID);
 		return sctx.response;
 	}
 }

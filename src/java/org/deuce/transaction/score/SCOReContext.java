@@ -61,8 +61,8 @@ public class SCOReContext extends DistributedContext
 	// updated ONLY by bottom threads
 	public static final AtomicInteger maxSeenId = new AtomicInteger(0);
 
-	protected SCOReReadSet readSet;
-	protected SCOReWriteSet writeSet;
+	private SCOReReadSet readSet;
+	private SCOReWriteSet writeSet;
 
 	public int sid;
 	public boolean firstReadDone;
@@ -127,7 +127,7 @@ public class SCOReContext extends DistributedContext
 
 			ReadDone read = (ReadDone) TribuDSTM.onTxRead(this, field);
 
-			if (!this.firstReadDone && read.mostRecent)
+			if (!this.firstReadDone /* && read.mostRecent */)
 			{ // try to advance our snapshot id to a fresher one
 				this.sid = Math.max(sid, read.lastCommitted);
 			}
@@ -146,26 +146,23 @@ public class SCOReContext extends DistributedContext
 		}
 	}
 
-	private ReadDone doReadLocal(TxField field)
-	{ // XXX should I use this?
+	public ReadDone doReadLocal(VBoxField field)
+	{
 		int origNextId;
 		do
 		{
 			origNextId = nextId.get();
-		} while (nextId.compareAndSet(origNextId, Math.max(origNextId, sid)));
-
-		VBoxField box = (VBoxField) field;
+		} while (!nextId.compareAndSet(origNextId, Math.max(origNextId, sid)));
 
 		long st = System.nanoTime();
 		while ((commitId.get() < sid)
-				&& !((InPlaceRWLock) box).isExclusiveUnlocked())
-		{
-		}
+				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
+			;
 		long end = System.nanoTime();
 		Profiler.onWaitingRead(end - st);
 
-		Version ver = box.getLastVersion().get(sid);
-		boolean mostRecent = ver.equals(box.getLastVersion());
+		Version ver = field.getLastVersion().get(sid);
+		boolean mostRecent = ver.equals(field.getLastVersion());
 		int lastCommitted = commitId.get();
 
 		return new ReadDone(ver.value, lastCommitted, mostRecent);
@@ -353,6 +350,10 @@ public class SCOReContext extends DistributedContext
 		write(value, field);
 	}
 
+	/***************************************
+	 * INHERITED METHODS
+	 **************************************/
+
 	@Override
 	public DistributedContextState createState()
 	{
@@ -363,20 +364,20 @@ public class SCOReContext extends DistributedContext
 	@Override
 	protected void initialise(int atomicBlockId, String metainf)
 	{
-		readSet.clear();
-		writeSet.clear();
+		this.readSet.clear();
+		this.writeSet.clear();
 
 		this.sid = 0;
 		this.firstReadDone = false;
 		this.maxVote = -1;
 		this.receivedVotes = 0;
 		this.expectedVotes = 0;
-		response = null;
-		trxID = java.util.UUID.randomUUID().toString();
-		involvedNodes = null;
-		syncMsg = new Semaphore(0); // this should not be necessary
+		this.response = null;
+		this.trxID = java.util.UUID.randomUUID().toString();
+		this.involvedNodes = null;
+		// syncMsg = new Semaphore(0);
 
-		WFAPool.clear();
+		this.WFAPool.clear();
 	}
 
 	@Override

@@ -135,16 +135,16 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	@Override
 	public Object onTxRead(DistributedContext ctx, TxField field)
 	{ // I am the coordinator of this read.
-		ObjectMetadata meta = field.getMetadata();
 		SCOReContext sctx = (SCOReContext) ctx;
 		boolean firstRead = !sctx.firstReadDone;
 
-		return processRead(sctx, meta, firstRead);
+		return processRead(sctx, field, firstRead);
 	}
 
-	protected ReadDone processRead(SCOReContext sctx, ObjectMetadata meta,
+	protected ReadDone processRead(SCOReContext sctx, TxField field,
 			boolean firstRead)
 	{
+		ObjectMetadata meta = field.getMetadata();
 		Group p_group = ((PartialReplicationOID) meta).getPartialGroup();
 		Group group = ((PartialReplicationOID) meta).getGroup();
 		ReadDone read = null;
@@ -160,7 +160,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		if (localObj || localGraph)
 		{ // Do *LOCAL* read
 			Profiler.onTxLocalReadBegin(sctx.threadID);
-			read = doRead(sctx.sid, meta);
+			read = sctx.doReadLocal((VBoxField) field);
 			Profiler.onTxLocalReadFinish(sctx.threadID);
 		}
 		else
@@ -184,7 +184,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		Profiler.onSerializationFinish(sctx.threadID);
 
 		Profiler.newMsgSent(payload.length);
-
 		TribuDSTM.sendToGroup(payload, p_group);
 
 		LOGGER.debug("SEND READ REQ " + sctx.trxID.split("-")[0] + " "
@@ -202,7 +201,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		return sctx.response;
 	}
 
-	protected ReadDone doRead(int sid, ObjectMetadata metadata)
+	protected ReadDone doReadRemote(int sid, ObjectMetadata metadata)
 	{
 		int origNextId;
 		do
@@ -216,11 +215,10 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		long st = System.nanoTime();
 		while (SCOReContext.commitId.get() < sid
 				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
-		{ // wait until (commitId.get() >= sid || ((InPlaceRWLock)
-			// field).isExclusiveUnlocked())
-			LOGGER.debug("doRead waiting: "
-					+ (SCOReContext.commitId.get() < sid) + " "
-					+ !((InPlaceRWLock) field).isExclusiveUnlocked());
+		{ /*
+		 * wait until (commitId.get() >= sid || ((InPlaceRWLock)
+		 * field).isExclusiveUnlocked())
+		 */
 		}
 		long end = System.nanoTime();
 		Profiler.onWaitingRead(end - st);
@@ -271,13 +269,15 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	private void readRequest(ReadReq msg, Address src)
 	{
 		int newReadSid = msg.readSid;
+		int commit;
 
-		if (msg.firstRead && SCOReContext.commitId.get() > msg.readSid)
+		if (msg.firstRead
+				&& (commit = SCOReContext.commitId.get()) > newReadSid)
 		{
-			newReadSid = SCOReContext.commitId.get(); // XXX check HLAV
+			newReadSid = commit;
 		}
 
-		ReadDone read = doRead(newReadSid, msg.metadata);
+		ReadDone read = doReadRemote(newReadSid, msg.metadata);
 		ReadRet ret = new ReadRet(msg.ctxID, msg.msgVersion, read);
 
 		Profiler.onSerializationBegin(msg.ctxID);
@@ -308,6 +308,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		updateNodeTimestamps(msg.read.lastCommitted);
 		sctx.syncMsg.release();
 
+		Profiler.remoteReadOk();
+
 		LOGGER.debug("READ RET (" + src + ") " + sctx.threadID + ":"
 				+ sctx.atomicBlockId + ":" + sctx.trxID.split("-")[0] + " "
 				+ msg.msgVersion);
@@ -335,6 +337,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 		else if (obj instanceof ReadRet) // Read Return
 		{ // I requested this object
+			Profiler.newRemoteReadRecv(size);
 			readReturn((ReadRet) obj, src);
 		}
 		processTx();

@@ -107,8 +107,11 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		}
 		else
 		{ // not for me to replicate this object
-			TribuDSTM.putObject(oid, obj); // to cache the object graph
-			// received from a read request during the transaction
+			/*
+			 * to cache the object graph received from a read request during the
+			 * transaction
+			 */
+			TribuDSTM.putObject(oid, obj);
 			return obj;
 		}
 	}

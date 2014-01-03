@@ -74,7 +74,7 @@ public abstract class Partitioner implements GroupPartitioner
 	{
 		StringBuilder sb = new StringBuilder("----- GROUPS (");
 		sb.append(getNumGroups());
-		sb.append(") -----");
+		sb.append(") -----\n");
 		for (Group g : groups)
 		{
 			if (g.isLocal())

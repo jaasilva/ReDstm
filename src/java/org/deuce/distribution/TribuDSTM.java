@@ -16,6 +16,7 @@ import org.deuce.distribution.replication.partitioner.data.DataPartitioner;
 import org.deuce.distribution.replication.partitioner.group.GroupPartitioner;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transaction.DistributedContext;
+import org.deuce.transaction.score.field.Version;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
@@ -41,6 +42,7 @@ public class TribuDSTM
 	private static Class<? extends DistributedContext> ctxClass;
 	private static Cache cache;
 	public static boolean PARTIAL; // check runtime mode
+	public static boolean CACHE;
 
 	public static final Collection<Address> ALL = new HashSet<Address>();
 
@@ -160,6 +162,8 @@ public class TribuDSTM
 	private static void initCache()
 	{
 		cache = new Cache();
+		CACHE = false;
+		// TODO check cache mode
 	}
 
 	public static final String INIT_METHOD_NAME = "init";
@@ -581,13 +585,13 @@ public class TribuDSTM
 	 * ################################################################
 	 */
 
-	public static final void cachePut(ObjectMetadata metadata, Object obj)
+	public static final void cachePut(ObjectMetadata metadata, Version obj)
 	{
 		cache.put(metadata, obj);
 		System.out.println("################ CACHE PUT\n" + cache.toString());
 	}
 
-	public static final Object cacheGet(ObjectMetadata metadata)
+	public static final Version cacheGet(ObjectMetadata metadata)
 	{
 		System.out.println("################ CACHE GET\n" + cache.toString());
 		return cache.get(metadata);
