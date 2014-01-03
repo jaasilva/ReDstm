@@ -596,8 +596,7 @@ public class TribuDSTM
 
 	public static final boolean cacheContains(ObjectMetadata metadata)
 	{
-		System.out.println("################ CACHE CONTAINS\n"
-				+ cache.toString());
+		System.out.println("################ CACHE CONTAINS");
 		return cache.contains(metadata);
 	}
 }
