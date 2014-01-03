@@ -585,18 +585,19 @@ public class TribuDSTM
 	public static final void cachePut(ObjectMetadata metadata, Version obj)
 	{
 		cache.put(metadata, obj);
-		System.out.println("################ CACHE PUT\n" + cache.toString());
+		System.out.println("################ CACHE PUT " + cache.cache.size());
 	}
 
 	public static final Version cacheGet(ObjectMetadata metadata)
 	{
-		System.out.println("################ CACHE GET\n" + cache.toString());
+		System.out.println("################ CACHE GET " + cache.cache.size());
 		return cache.get(metadata);
 	}
 
 	public static final boolean cacheContains(ObjectMetadata metadata)
 	{
-		System.out.println("################ CACHE CONTAINS");
+		System.out.println("################ CACHE CONTAINS "
+				+ cache.cache.size());
 		return cache.contains(metadata);
 	}
 }
