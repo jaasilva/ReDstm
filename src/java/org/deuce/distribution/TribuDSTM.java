@@ -42,7 +42,6 @@ public class TribuDSTM
 	private static Class<? extends DistributedContext> ctxClass;
 	private static Cache cache;
 	public static boolean PARTIAL; // check runtime mode
-	public static boolean CACHE;
 
 	public static final Collection<Address> ALL = new HashSet<Address>();
 
@@ -162,8 +161,6 @@ public class TribuDSTM
 	private static void initCache()
 	{
 		cache = new Cache();
-		CACHE = false;
-		// TODO check cache mode
 	}
 
 	public static final String INIT_METHOD_NAME = "init";
