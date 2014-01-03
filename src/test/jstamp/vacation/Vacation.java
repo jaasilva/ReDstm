@@ -193,6 +193,7 @@ public class Vacation
 	public void populateManager(int base, int numRelations, int pr_group_id,
 			int totalRelations)
 	{
+		long st = System.nanoTime();
 		System.out.print("Populating manager... ");
 
 		Random randomPtr = new Random();
@@ -218,7 +219,8 @@ public class Vacation
 			}
 		}
 		org.deuce.benchmark.Barrier.quiet = false;
-		System.out.println("done.");
+		long end = System.nanoTime();
+		System.out.println("done. (" + (end - st) / 1000000000 + "s)");
 	}
 
 	@Atomic
