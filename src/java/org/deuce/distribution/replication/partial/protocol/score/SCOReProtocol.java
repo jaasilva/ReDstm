@@ -135,16 +135,13 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	@Override
 	public Object onTxRead(DistributedContext ctx, TxField field)
 	{ // I am the coordinator of this read.
-		SCOReContext sctx = (SCOReContext) ctx;
-		boolean firstRead = !sctx.firstReadDone;
-
-		return processRead(sctx, field, firstRead);
+		return processRead((SCOReContext) ctx, field);
 	}
 
-	protected ReadDone processRead(SCOReContext sctx, TxField field,
-			boolean firstRead)
+	protected ReadDone processRead(SCOReContext sctx, TxField field)
 	{
 		ObjectMetadata meta = field.getMetadata();
+		boolean firstRead = !sctx.firstReadDone;
 		Group p_group = ((PartialReplicationOID) meta).getPartialGroup();
 		Group group = ((PartialReplicationOID) meta).getGroup();
 		ReadDone read = null;

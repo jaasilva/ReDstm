@@ -26,10 +26,10 @@ public class SCOReProtocol_cache extends SCOReProtocol
 			.getLogger(SCOReProtocol_cache.class);
 
 	@Override
-	protected ReadDone processRead(SCOReContext sctx, TxField field,
-			boolean firstRead)
+	protected ReadDone processRead(SCOReContext sctx, TxField field)
 	{
 		ObjectMetadata meta = field.getMetadata();
+		boolean firstRead = !sctx.firstReadDone;
 		Group p_group = ((PartialReplicationOID) meta).getPartialGroup();
 		Group group = ((PartialReplicationOID) meta).getGroup();
 		ReadDone read = null;
@@ -68,7 +68,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 	}
 
 	private ReadDone checkCache(int sid, ObjectMetadata metadata)
-	{ // XXX check
+	{ // XXX checkCache
 		int origNextId;
 		do
 		{
@@ -83,37 +83,6 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		boolean mostRecent = ver.equals(lastVersion);
 		int lastCommitted = SCOReContext.commitId.get();
 		return new ReadDone(ver.value, lastCommitted, mostRecent);
-	}
-
-	@Override
-	protected ReadDone doReadRemote(int sid, ObjectMetadata metadata)
-	{
-		int origNextId;
-		do
-		{
-			origNextId = SCOReContext.nextId.get();
-		} while (!SCOReContext.nextId.compareAndSet(origNextId,
-				Math.max(origNextId, sid)));
-
-		VBoxField field = (VBoxField) TribuDSTM.getObject(metadata);
-
-		long st = System.nanoTime();
-		while (SCOReContext.commitId.get() < sid
-				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
-		{ /*
-		 * wait until (commitId.get() >= sid || ((InPlaceRWLock)
-		 * field).isExclusiveUnlocked())
-		 */
-		}
-		long end = System.nanoTime();
-		Profiler.onWaitingRead(end - st);
-
-		Version ver = field.getLastVersion().get(sid);
-		boolean mostRecent = ver.equals(field.getLastVersion());
-		int lastCommitted = SCOReContext.commitId.get();
-		ReadDone read = new ReadDone(ver.value, lastCommitted, mostRecent);
-		read.piggyback = field.getLastVersion(); // assign versions list
-		return read;
 	}
 
 	@Override
@@ -145,5 +114,36 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		TribuDSTM.cachePut(metadata, (Version) sctx.response.piggyback);
 
 		return sctx.response;
+	}
+
+	@Override
+	protected ReadDone doReadRemote(int sid, ObjectMetadata metadata)
+	{
+		int origNextId;
+		do
+		{
+			origNextId = SCOReContext.nextId.get();
+		} while (!SCOReContext.nextId.compareAndSet(origNextId,
+				Math.max(origNextId, sid)));
+
+		VBoxField field = (VBoxField) TribuDSTM.getObject(metadata);
+
+		long st = System.nanoTime();
+		while (SCOReContext.commitId.get() < sid
+				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
+		{ /*
+		 * wait until (commitId.get() >= sid || ((InPlaceRWLock)
+		 * field).isExclusiveUnlocked())
+		 */
+		}
+		long end = System.nanoTime();
+		Profiler.onWaitingRead(end - st);
+
+		Version ver = field.getLastVersion().get(sid);
+		boolean mostRecent = ver.equals(field.getLastVersion());
+		int lastCommitted = SCOReContext.commitId.get();
+		ReadDone read = new ReadDone(ver.value, lastCommitted, mostRecent);
+		read.piggyback = field.getLastVersion(); // assign versions list
+		return read;
 	}
 }

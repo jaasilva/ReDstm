@@ -17,10 +17,10 @@ import org.deuce.transform.localmetadata.type.TxField;
 public class SCOReProtocol_noReadOpt extends SCOReProtocol
 {
 	@Override
-	protected ReadDone processRead(SCOReContext sctx, TxField field,
-			boolean firstRead)
+	protected ReadDone processRead(SCOReContext sctx, TxField field)
 	{
 		ObjectMetadata meta = field.getMetadata();
+		boolean firstRead = !sctx.firstReadDone;
 		Group p_group = ((PartialReplicationOID) meta).getPartialGroup();
 		ReadDone read = null;
 
