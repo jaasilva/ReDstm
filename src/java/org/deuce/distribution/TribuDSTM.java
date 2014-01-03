@@ -162,7 +162,7 @@ public class TribuDSTM
 	private static void initCache()
 	{
 		cache = new Cache();
-		CACHE = false;
+		CACHE = true;
 	}
 
 	public static final String INIT_METHOD_NAME = "init";
