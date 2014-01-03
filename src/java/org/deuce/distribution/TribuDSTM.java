@@ -42,6 +42,7 @@ public class TribuDSTM
 	private static Class<? extends DistributedContext> ctxClass;
 	private static Cache cache;
 	public static boolean PARTIAL; // check runtime mode
+	public static boolean CACHE;
 
 	public static final Collection<Address> ALL = new HashSet<Address>();
 
@@ -161,6 +162,7 @@ public class TribuDSTM
 	private static void initCache()
 	{
 		cache = new Cache();
+		CACHE = false;
 	}
 
 	public static final String INIT_METHOD_NAME = "init";
@@ -584,20 +586,29 @@ public class TribuDSTM
 
 	public static final void cachePut(ObjectMetadata metadata, Version obj)
 	{
-		cache.put(metadata, obj);
-		System.out.println("################ CACHE PUT " + cache.cache.size());
+		if (CACHE)
+		{
+			cache.put(metadata, obj);
+		}
 	}
 
 	public static final Version cacheGet(ObjectMetadata metadata)
 	{
-		System.out.println("################ CACHE GET " + cache.cache.size());
-		return cache.get(metadata);
+		if (CACHE)
+		{
+			System.out.println("################ CACHE GET "
+					+ cache.cache.size());
+			return cache.get(metadata);
+		}
+		return null;
 	}
 
 	public static final boolean cacheContains(ObjectMetadata metadata)
 	{
-		System.out.println("################ CACHE CONTAINS "
-				+ cache.cache.size());
-		return cache.contains(metadata);
+		if (CACHE)
+		{
+			return cache.contains(metadata);
+		}
+		return false;
 	}
 }
