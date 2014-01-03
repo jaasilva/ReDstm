@@ -48,11 +48,11 @@ fi
 _USER_CONSULT=0
 #_USER_CONSULT=90
 #_RELATIONS=1048576
-#_RELATIONS=16384
-_RELATIONS=13
+_RELATIONS=16384
+#_RELATIONS=13
 #_TASKS=4194304
-#_TASKS=4096
-_TASKS=50
+_TASKS=4096
+#_TASKS=50
 
 # vacation-high   -n4 -q60 -u90 -r16384   -t4096
 # vacation-high+  -n4 -q60 -u90 -r1048576 -t4096
@@ -62,6 +62,7 @@ _TASKS=50
 # vacation-low++  -n2 -q90 -u98 -r1048576 -t4194304
 
 _CTX=tl2.Context
+#_CTX=mvstm.Context
 _PROTO=nonvoting.NonVoting
 #_PROTO=voting.Voting
 _GCS=jgroups.JGroups
@@ -90,7 +91,7 @@ echo "Start: `date +'%F %H:%M:%S'`"
 echo "#####"
 
 if $_PROFILE_MEM ; then
-#	dstat -m -M top-mem > $_MEM &
+#	dstat -m -M top-mem > $_MEM & & # in my pc
 	dstat -m -M topmem > $_MEM &
 	_PID2=$!
 	sleep 1

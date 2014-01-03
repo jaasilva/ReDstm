@@ -22,7 +22,7 @@ public class Profiler
 	private static long txDurationIt = 0, txVotesIt = 0, txValidateIt = 0,
 			txCommitIt = 0, msgSent = 0, msgRecv = 0, txRReadIt = 0,
 			txLReadIt = 0, txCReadIt = 0, serIt = 0, waitingReadIt = 0,
-			distCommitIt = 0, confirmationIt = 0;
+			distCommitIt = 0, confirmationIt = 0, remoteReadMsgIt = 0;
 
 	/**
 	 * Time related, in nanoseconds.
@@ -55,7 +55,9 @@ public class Profiler
 			distCommitMax = Long.MIN_VALUE, distCommitMin = Long.MAX_VALUE,
 			distCommitAvg = 0, totalCommit = 0,
 			confirmationMax = Long.MIN_VALUE, confirmationMin = Long.MAX_VALUE,
-			confirmationAvg = 0, cacheTry = 0, cacheHit = 0;
+			confirmationAvg = 0, cacheTry = 0, cacheHit = 0,
+			remoteReadMsgSizeAvg = 0, remoteMsgSizeMin = Long.MAX_VALUE,
+			remoteMsgSizeMax = Long.MIN_VALUE, remoteReadOk = 0;
 
 	/**
 	 * Network related, in bytes.
@@ -151,7 +153,7 @@ public class Profiler
 			long txAppEnd = System.nanoTime();
 			long elapsed = txAppEnd - txAppDuration[ctxID];
 
-			if (elapsed != txAppEnd)
+			if (elapsed != txAppEnd && elapsed > 0)
 			{
 				synchronized (lock4)
 				{
@@ -189,7 +191,7 @@ public class Profiler
 			long txValidateEnd = System.nanoTime();
 			long elapsed = txValidateEnd - txValidate[ctxID];
 
-			if (elapsed != txValidateEnd)
+			if (elapsed != txValidateEnd && elapsed > 0)
 			{
 				synchronized (lock5)
 				{
@@ -227,7 +229,7 @@ public class Profiler
 			long txCommitEnd = System.nanoTime();
 			long elapsed = txCommitEnd - txCommit[ctxID];
 
-			if (elapsed != txCommitEnd)
+			if (elapsed != txCommitEnd && elapsed > 0)
 			{
 				synchronized (lock6)
 				{
@@ -264,7 +266,7 @@ public class Profiler
 			long end = System.nanoTime();
 			long elapsed = end - distCommit[ctxID];
 
-			if (elapsed != end)
+			if (elapsed != end && elapsed > 0)
 			{
 				synchronized (lock7)
 				{
@@ -308,7 +310,7 @@ public class Profiler
 			long txReadEnd = System.nanoTime();
 			long elapsed = txReadEnd - txRRead[ctxID];
 
-			if (elapsed != txReadEnd)
+			if (elapsed != txReadEnd && elapsed > 0)
 			{
 				synchronized (lock9)
 				{
@@ -351,7 +353,7 @@ public class Profiler
 			long txReadEnd = System.nanoTime();
 			long elapsed = txReadEnd - txLRead[ctxID];
 
-			if (elapsed != txReadEnd)
+			if (elapsed != txReadEnd && elapsed > 0)
 			{
 				synchronized (lock11)
 				{
@@ -394,7 +396,7 @@ public class Profiler
 			long txReadEnd = System.nanoTime();
 			long elapsed = txReadEnd - txCRead[ctxID];
 
-			if (elapsed != txReadEnd)
+			if (elapsed != txReadEnd && elapsed > 0)
 			{
 				synchronized (lock13)
 				{
@@ -433,17 +435,21 @@ public class Profiler
 	{
 		if (ENABLED)
 		{
-			synchronized (lock15)
+			if (time > 0)
 			{
-				if (time < waitingReadMin)
+				synchronized (lock15)
 				{
-					waitingReadMin = time;
+					if (time < waitingReadMin)
+					{
+						waitingReadMin = time;
+					}
+					if (time > waitingReadMax)
+					{
+						waitingReadMax = time;
+					}
+					waitingReadAvg = incAvg(waitingReadAvg, time,
+							waitingReadIt++);
 				}
-				if (time > waitingReadMax)
-				{
-					waitingReadMax = time;
-				}
-				waitingReadAvg = incAvg(waitingReadAvg, time, waitingReadIt++);
 			}
 		}
 	}
@@ -466,7 +472,7 @@ public class Profiler
 			long serEnd = System.nanoTime();
 			long elapsed = serEnd - serialization[ctxID];
 
-			if (elapsed != serEnd)
+			if (elapsed != serEnd && elapsed > 0)
 			{
 				synchronized (lock16)
 				{
@@ -503,7 +509,7 @@ public class Profiler
 			long txPrepEnd = System.nanoTime();
 			long elapsed = txPrepEnd - txVotes[ctxID];
 
-			if (elapsed != txPrepEnd)
+			if (elapsed != txPrepEnd && elapsed > 0)
 			{
 				synchronized (lock17)
 				{
@@ -545,7 +551,7 @@ public class Profiler
 
 	private static final Object lock19 = new Object();
 
-	public synchronized static void newMsgRecv(int bytes)
+	public static void newMsgRecv(int bytes)
 	{
 		if (ENABLED)
 		{
@@ -599,7 +605,7 @@ public class Profiler
 			long txConfEnd = System.nanoTime();
 			long elapsed = txConfEnd - confirmation[ctxID];
 
-			if (elapsed != txConfEnd)
+			if (elapsed != txConfEnd && elapsed > 0)
 			{
 				synchronized (lock22)
 				{
@@ -641,6 +647,41 @@ public class Profiler
 			synchronized (lock24)
 			{
 				cacheHit++;
+			}
+		}
+	}
+
+	private static final Object lock25 = new Object();
+
+	public static void newRemoteReadRecv(int bytes)
+	{
+		if (ENABLED)
+		{
+			synchronized (lock25)
+			{
+				if (bytes < remoteMsgSizeMin)
+				{
+					remoteMsgSizeMin = bytes;
+				}
+				if (bytes > remoteMsgSizeMax)
+				{
+					remoteMsgSizeMax = bytes;
+				}
+				remoteReadMsgSizeAvg = incAvg(remoteReadMsgSizeAvg, bytes,
+						remoteReadMsgIt++);
+			}
+		}
+	}
+
+	private static final Object lock26 = new Object();
+
+	public static void remoteReadOk()
+	{
+		if (ENABLED)
+		{
+			synchronized (lock26)
+			{
+				remoteReadOk++;
 			}
 		}
 	}
@@ -781,6 +822,12 @@ public class Profiler
 		stats.append("    avg = " + msgRecvSizeAvg + " bytes\n");
 		stats.append("    max = " + msgRecvSizeMax + " bytes\n");
 		stats.append("    min = " + msgRecvSizeMin + " bytes\n");
+
+		stats.append("  Remote Read Msgs Recv = " + remoteReadMsgIt + " ("
+				+ remoteReadOk + ")\n");
+		stats.append("    avg = " + remoteReadMsgSizeAvg + " bytes\n");
+		stats.append("    max = " + remoteMsgSizeMax + " bytes\n");
+		stats.append("    min = " + remoteMsgSizeMin + " bytes\n");
 
 		System.out.println(stats.toString());
 	}

@@ -49,11 +49,11 @@ fi
 _USER_CONSULT=0
 #_USER_CONSULT=90
 #_RELATIONS=1048576
-#_RELATIONS=16384
-_RELATIONS=13
+_RELATIONS=16384
+#_RELATIONS=13
 #_TASKS=4194304
-#_TASKS=4096
-_TASKS=50
+_TASKS=4096
+#_TASKS=50
 
 # vacation-high   -n4 -q60 -u90 -r16384   -t4096
 # vacation-high+  -n4 -q60 -u90 -r1048576 -t4096
@@ -65,12 +65,13 @@ _TASKS=50
 _CTX=score.SCOReContext
 _PROTO=score.SCOReProtocol
 #_PROTO=scoreSCOReProtocol_noReadOpt
+#_PROTO=score.SCOReProtocol_cache
 _GCS=jgroups.JGroups
 #_GCS=appia.Appia
 #_GCS=spread.Spread
-_DPART=Random
+#_DPART=Random
 #_DPART=RoundRobin
-#_DPART=Simple
+_DPART=Simple
 
 _STM="org.deuce.transaction.${_CTX}"
 _COMM="org.deuce.distribution.groupcomm.${_GCS}GroupCommunication"
@@ -95,7 +96,7 @@ echo "Start: `date +'%F %H:%M:%S'`"
 echo "#####"
 
 if $_PROFILE_MEM ; then
-#	dstat -m -M top-mem > $_MEM &
+#	dstat -m -M top-mem > $_MEM & & # in my pc
 	dstat -m -M topmem > $_MEM &
 	_PID2=$!
 	sleep 1

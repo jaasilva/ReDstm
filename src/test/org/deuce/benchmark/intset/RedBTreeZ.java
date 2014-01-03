@@ -702,7 +702,7 @@ public class RedBTreeZ implements IntSet
 
 	}
 
-	@Override
+	@Atomic
 	public boolean validate()
 	{
 		int r = verify(1);
