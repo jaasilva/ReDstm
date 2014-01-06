@@ -745,7 +745,6 @@ public class RedBTreeZ implements IntSet
 		else
 		{ // full operation
 			Node node = lookup(key);
-
 			if (node != null)
 			{
 				node = deleteNode(node);

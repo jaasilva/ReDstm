@@ -130,7 +130,8 @@ def full_rep_stats(dir, bench, writes, runs, size, thrs, proto, ctx, comm,
 			min = run
 	#end for
 	
-	print 'replicas=%d, w=%d%%, th=%d' % (replicas, writes, thrs)
+	print 'replicas=%d, w=%d%%, th=%d, pops=%d%%' % (replicas, writes, 
+		thrs, partial_ops)
 	print '  max: %d' % (run_its[max])
 	print '  min: %d' % (run_its[min])
 	
@@ -203,8 +204,7 @@ def full_rep_stats(dir, bench, writes, runs, size, thrs, proto, ctx, comm,
 	else:
 		rs -= 2
 	
-	print '  duration: %d s' % (dur)
-	print '  runs: %d' % (rs)
+	print '  runs: %d (%d s)' % (rs, dur)
 	sum_its /= (rs * 1.0)
 	print '  its avg: %.3f' % (sum_its)
 	txps = int(sum_its / dur)
@@ -292,7 +292,15 @@ def full_rep_stats(dir, bench, writes, runs, size, thrs, proto, ctx, comm,
 		print '    max: %d bytes' % (sum_msgrecv_size_max)
 		print '    min: %d bytes' % (sum_msgrecv_size_min)
 	
-	return (txps, std)
+	return (txps, std, abort_rate, 
+		[sum_app, sum_app_max, sum_app_min], 
+		[sum_val, sum_val_max, sum_val_min], 
+		[sum_commit, sum_commit_max, sum_commit_min], 
+		[sum_lreads, sum_lreads_max, sum_lreads_min], 
+		[sum_ser, sum_ser_max, sum_ser_min], 
+		[sum_conf, sum_conf_max, sum_conf_min], 
+		[sum_msgsent, sum_msgsent_size, sum_msgsent_size_max, sum_msgsent_size_min], 
+		[sum_msgrecv, sum_msgrecv_size_max, sum_msgrecv_size_min])
 
 def plot_Y():
 	pass
@@ -302,8 +310,11 @@ def plot_Z():
 
 def create_parser():
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-p', '--performance', help='plot throughput chart', 
+	parser.add_argument('-p1', '--performance1', help='plot throughput chart comparing writes and partial_ops in full replication', 
 		action='store_true')
+	parser.add_argument('-p2', '--performance2', help='plot throughput chart', 
+		action='store_true')
+	
 	parser.add_argument('-vv', '--verbose', 
 		help='output is more verbose', action='store_true')
 	parser.add_argument('-v', '--visual', 
@@ -323,7 +334,7 @@ def create_parser():
 		help='how many replicas where used?', nargs='?', const=8, default=8, 
 		type=int)
 	parser.add_argument('-rr', '--runs', help='how many runs where used?', 
-		nargs='?', const=5, default=5, type=int)
+		nargs='?', const=10, default=10, type=int)
 	parser.add_argument('-t', '--threads', help='how many threads where used?', 
 		nargs='?', const=4, default=4, type=int)
 	parser.add_argument('-b', '--benchmark', help='which benchmark was used?', 
@@ -336,6 +347,8 @@ def create_parser():
 		const=10, default=10, type=int)
 	parser.add_argument('-s', '--size', help='what was the size?', nargs='?', 
 		const=32768, default=32768, type=int)
+	parser.add_argument('-d', '--directory', help='where are the logs?', nargs='?', 
+		const='', default='')
 	
 	return parser
 
@@ -343,8 +356,11 @@ def main(argv):
 	parser = create_parser()
 	args = parser.parse_args()
 	
+	global VERBOSE
 	VERBOSE = args.verbose
+	global VISUAL
 	VISUAL = args.visual
+	global FILE
 	FILE = args.file
 	
 	_bench = args.benchmark
@@ -353,6 +369,7 @@ def main(argv):
 	_ctx_par = 'score.SCOReContext'
 	_proto_full = args.protofull
 	_proto_par = args.protopartial
+	_dir = args.directory
 	
 	_reps = args.replicas
 	_runs = args.runs
@@ -361,25 +378,41 @@ def main(argv):
 	_writes = args.writes
 	_partial_ops = args.partial_ops
 	
+	
 	# dir, bench, writes, runs, size, thrs, proto, ctx, comm, reps, partial_ops
-	if args.performance:
-		pops = [0,10,50,80,100]
-		for writes in [10,20,50,80]:
-			i=0;
-			x = [0]*5
-			for partial in pops:
-				a, b = full_rep_stats('logs/logs', _bench, writes, 10, _size, 
-					_thrs, _proto_full, 'tl2.Context', _comm, _reps, partial)
-				x[i]=a
-				i+=1
-			str = '%d%% writes' % (writes)
-			plt.plot(pops, x, label=str)
-		plt.ylabel('Tx/s')
-		plt.xlabel('Partial ops (%)')
-		title = '%s (%d threads)' % (_bench, _thrs)
-		plt.title(title)
-		plt.legend(loc=1)
-		plt.grid(True)
+	if args.performance1:
+		plot_performance1('logs/logs', _bench, 10, _size, _thrs, 
+			_proto_full, 'tl2.Context', _comm, _reps)
+
+def plot_performance1(dir, bench, runs, size, thrs, proto, ctx, comm, 
+	reps):
+	pops = [0, 10, 50, 80, 100]
+	for writes in [10, 20, 50, 80]:
+		i = 0;
+		x = [0] * 5
+		for partial in pops:
+			stats = full_rep_stats(dir, bench, writes, runs, size, thrs, 
+				proto, ctx, comm, reps, partial)
+			x[i] = stats[0]
+			i += 1
+		#end for
+		
+		str = '%d%% writes' % (writes)
+		plt.plot(pops, x, label=str, marker='o')
+	#end for
+	
+	plt.ylabel('Tx/s')
+	plt.xlabel('Partial ops (%)')
+	title = '%s (%d threads)' % (bench, thrs)
+	plt.title(title)
+	plt.legend(loc=1)
+	plt.grid(True)
+	
+	if len(FILE) > 0:
+		filename = '%s.pdf' % (FILE)
+		plt.savefig(filename, bbox_inches='tight')
+	
+	if VISUAL:
 		plt.show()
 
 if __name__ == "__main__":
