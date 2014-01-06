@@ -13,7 +13,7 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class Cache
 {
-	public final ConcurrentHashMap<ObjectMetadata, Version> cache = new ConcurrentHashMap<ObjectMetadata, Version>(
+	private final ConcurrentHashMap<ObjectMetadata, Version> cache = new ConcurrentHashMap<ObjectMetadata, Version>(
 			50000);
 
 	public void put(ObjectMetadata metadata, Version obj)

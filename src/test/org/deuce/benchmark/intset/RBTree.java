@@ -535,6 +535,7 @@ public class RBTree implements IntSet
 	 * @param root tree root
 	 * @return number of black nodes in left-most path
 	 */
+	@SuppressWarnings("unused")
 	private int countBlackNodes(RBNode root)
 	{
 		if (sentinelNode == root)
@@ -551,6 +552,7 @@ public class RBTree implements IntSet
 	 * @param root tree root
 	 * @return number of nodes in tree
 	 */
+	@SuppressWarnings("unused")
 	private int count(RBNode root)
 	{
 		if (root == sentinelNode)
@@ -565,6 +567,7 @@ public class RBTree implements IntSet
 	 * @param blackNodes number of black nodes expected in leaf-to-root path
 	 * @param soFar number of black nodes seen in path so far
 	 */
+	@SuppressWarnings("unused")
 	private void recursiveValidate(RBNode root, int blackNodes, int soFar)
 	{
 		// Empty sub-tree is vacuously OK

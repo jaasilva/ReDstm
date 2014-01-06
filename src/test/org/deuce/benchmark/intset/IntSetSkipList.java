@@ -219,6 +219,7 @@ public class IntSetSkipList implements IntSet
 		result = (node.getKey() == key);
 		if (result)
 		{
+			@SuppressWarnings("unused")
 			Object x = node.m_value;
 		}
 

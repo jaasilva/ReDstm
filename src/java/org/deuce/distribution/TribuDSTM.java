@@ -596,8 +596,7 @@ public class TribuDSTM
 	{
 		if (CACHE)
 		{
-			System.out.println("################ CACHE GET "
-					+ cache.cache.size());
+			System.out.println("################ CACHE GET");
 			return cache.get(metadata);
 		}
 		return null;

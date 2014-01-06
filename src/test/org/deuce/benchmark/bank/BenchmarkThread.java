@@ -83,8 +83,6 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 			else
 			{
 				int amount = m_random.nextInt(m_max) + 1;
-				Account src;
-				Account dst;
 				// if (Account.s_disjoint && m_nb <= m_accounts.length) {
 				// src = m_accounts[m_random.nextInt(m_accounts.length / m_nb) *
 				// m_nb + m_id];

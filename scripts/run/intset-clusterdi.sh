@@ -11,7 +11,7 @@ _start=`date +%s`
 _replicas=8
 _bench=RedBTreeZ
 #_bench=$1
-_runs=5
+_runs=10
 
 _partial_rep=false
 #_partial_rep=true
@@ -29,13 +29,13 @@ echo "#######################"
 echo "# PARTIAL REPLICATION #"
 echo "#######################"
 
-for _thrs in 2 4
+for _thrs in 4
 do
 for _writes in 10 20 50 80
 do
 for _groups in 1 2 4 8
 do
-for _partial_ops in 0 10 20 50 80 100
+for _partial_ops in 0 10 50 80 100
 do
 for _run in `seq 1 $_runs`
 do
@@ -81,11 +81,11 @@ echo "####################"
 echo "# FULL REPLICATION #"
 echo "####################"
 
-for _thrs in 2 4
+for _thrs in 4
 do
 for _writes in 10 20 50 80
 do
-for _partial_ops in 0 10 20 50 80 100
+for _partial_ops in 0 10 50 80 100
 do
 for _run in `seq 1 $_runs`
 do

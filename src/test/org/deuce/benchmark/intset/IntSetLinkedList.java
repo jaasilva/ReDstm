@@ -130,6 +130,7 @@ public class IntSetLinkedList implements IntSet
 		result = (v == key);
 		if (result)
 		{
+			@SuppressWarnings("unused")
 			Object x = next.m_value;
 		}
 

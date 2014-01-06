@@ -731,6 +731,7 @@ public class RedBTree implements IntSet
 		Node n = lookup(key);
 		if (n != null)
 		{
+			@SuppressWarnings("unused")
 			Object val = n.v;
 		}
 

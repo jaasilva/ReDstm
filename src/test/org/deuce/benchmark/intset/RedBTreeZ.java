@@ -116,15 +116,12 @@ public class RedBTreeZ implements IntSet
 
 	Node root;
 	Random rand;
-	private int initial;
 	private int partial_ops;
 
 	public RedBTreeZ()
 	{
 		root = null;
 		rand = new Random();
-		this.initial = Integer.getInteger(Defaults.RBTREE_INITIAL,
-				Defaults._RBTREE_INITIAL);
 		this.partial_ops = Integer.getInteger(Defaults.RBTREE_PARTIAL_OPS,
 				Defaults._RBTREE_PARTIAL_OPS);
 	}
@@ -714,34 +711,12 @@ public class RedBTreeZ implements IntSet
 	{
 		if (rand.nextInt(100) < partial_ops)
 		{ // partial operation
-			Node p = root;
-			int down = rand
-					.nextInt((int) (Math.log10(initial) / Math.log10(2)));
-			Node prev = p;
-
-			while (p != null && down > 0)
+			Node node = lookup(key);
+			if (node != null)
 			{
-				prev = p;
-				if (rand.nextBoolean())
-				{
-					p = p.l;
-				}
-				else
-				{
-					p = p.r;
-				}
-				down--;
+				node.v = rand.nextInt();
 			}
-
-			if (p == null)
-			{
-				prev.v = rand.nextInt();
-			}
-			else
-			{
-				p.v = rand.nextInt();
-			}
-			return true;
+			return node != null;
 		}
 		else
 		{ // full operation
@@ -760,39 +735,16 @@ public class RedBTreeZ implements IntSet
 	{
 		if (rand.nextInt(100) < partial_ops)
 		{ // partial operation
-			Node p = root;
-			int down = rand
-					.nextInt((int) (Math.log10(initial) / Math.log10(2)));
-			Node prev = p;
-
-			while (p != null && down > 0)
+			Node node = lookup(key);
+			if (node != null)
 			{
-				prev = p;
-				if (rand.nextBoolean())
-				{
-					p = p.l;
-				}
-				else
-				{
-					p = p.r;
-				}
-				down--;
+				node.v = rand.nextInt();
 			}
-
-			if (p == null)
-			{
-				prev.v = rand.nextInt();
-			}
-			else
-			{
-				p.v = rand.nextInt();
-			}
-			return true;
+			return node != null;
 		}
 		else
 		{ // full operation
-			Node node = null;
-			node = lookup(key);
+			Node node = lookup(key);
 
 			if (node != null)
 			{
@@ -805,13 +757,13 @@ public class RedBTreeZ implements IntSet
 	@Atomic
 	public boolean contains(int key)
 	{
-		Node n = lookup(key);
-		if (n != null)
+		Node node = lookup(key);
+		if (node != null)
 		{
-			Object val = n.v;
+			@SuppressWarnings("unused")
+			Object val = node.v;
 		}
-
-		return (n != null);
+		return node != null;
 	}
 
 	public int size()
