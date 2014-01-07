@@ -3,6 +3,11 @@
 # <threads> <replicas> <run>
 ###############################################################################
 
+if [ $1 = "-h" ]; then
+	echo "<threads> <replicas> <run>"
+	exit
+fi
+
 _CP="bin/classes"
 _CP="${_CP}:etc"
 _CP="${_CP}:lib/appia-core-4.1.2.jar"

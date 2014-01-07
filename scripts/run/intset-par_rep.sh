@@ -3,6 +3,11 @@
 # <benchmark> <threads> <replicas> <run> <writes> <groups> <partial_ops>
 ###############################################################################
 
+if [ $1 = "-h" ]; then
+	echo "<benchmark> <threads> <replicas> <run> <writes> <groups> <partial_ops>"
+	exit
+fi
+
 _CP="bin/classes"
 _CP="${_CP}:etc"
 _CP="${_CP}:lib/appia-core-4.1.2.jar"
