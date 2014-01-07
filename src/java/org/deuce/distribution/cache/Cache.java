@@ -28,7 +28,7 @@ public class Cache
 
 	public boolean contains(ObjectMetadata metadata)
 	{
-		return cache.contains(metadata);
+		return cache.containsKey(metadata);
 	}
 
 	@Override

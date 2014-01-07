@@ -15,8 +15,7 @@ import org.deuce.transform.ExcludeTM;
  * @author jaasilva
  */
 @ExcludeTM
-public class PartialReplicationMetadata implements PartialReplicationOID,
-		Comparable<PartialReplicationMetadata>
+public class PartialReplicationMetadata implements PartialReplicationOID
 {
 	private static final long serialVersionUID = 1L;
 	private java.util.UUID id;
@@ -109,12 +108,6 @@ public class PartialReplicationMetadata implements PartialReplicationOID,
 	{ // id:[group]:[pgroup]
 		return String
 				.format("%s:%s:%s", this.id, this.group, this.partialGroup);
-	}
-
-	@Override
-	public int compareTo(PartialReplicationMetadata oid)
-	{
-		return this.id.compareTo(oid.id);
 	}
 
 	@Override

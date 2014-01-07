@@ -51,9 +51,10 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		else
 		{ // Do *REMOTE* read
 			Profiler.onCacheTry(); // first check cache
-			System.out.println("get " + meta);
 			if (TribuDSTM.cacheContains(meta))
 			{
+				System.out.println("------------------------------------- "
+						+ meta);
 				Profiler.onCacheHit();
 				read = checkCache(sctx.sid, meta);
 			}
@@ -112,7 +113,6 @@ public class SCOReProtocol_cache extends SCOReProtocol
 			e.printStackTrace();
 		}
 		// put received version list in cache
-		System.out.println("put "+metadata);
 		TribuDSTM.cachePut(metadata, (Version) sctx.response.piggyback);
 
 		return sctx.response;
