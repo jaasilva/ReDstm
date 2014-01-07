@@ -117,11 +117,14 @@ public class RedBTreeZ implements IntSet
 	Node root;
 	Random rand;
 	private int partial_ops;
+	private int initial;
 
 	public RedBTreeZ()
 	{
 		root = null;
 		rand = new Random();
+		this.initial = Integer.getInteger(Defaults.RBTREE_INITIAL,
+				Defaults._RBTREE_INITIAL);
 		this.partial_ops = Integer.getInteger(Defaults.RBTREE_PARTIAL_OPS,
 				Defaults._RBTREE_PARTIAL_OPS);
 	}
@@ -711,12 +714,14 @@ public class RedBTreeZ implements IntSet
 	{
 		if (rand.nextInt(100) < partial_ops)
 		{ // partial operation
-			Node node = lookup(key);
-			if (node != null)
+			if (rand.nextBoolean()) // 50%
 			{
-				node.v = rand.nextInt();
+				return partial_op_random(key);
 			}
-			return node != null;
+			else
+			{
+				return partial_op();
+			}
 		}
 		else
 		{ // full operation
@@ -728,6 +733,47 @@ public class RedBTreeZ implements IntSet
 			}
 			return ex == null;
 		}
+	}
+
+	private boolean partial_op_random(int key)
+	{
+		Node node = lookup(key);
+		if (node != null)
+		{
+			node.v = rand.nextInt();
+		}
+		return node != null;
+	}
+
+	private boolean partial_op()
+	{
+		Node p = root;
+		int down = rand.nextInt((int) (Math.log10(initial) / Math.log10(2)));
+		Node prev = p;
+
+		while (p != null && down > 0)
+		{
+			prev = p;
+			if (rand.nextBoolean())
+			{
+				p = p.l;
+			}
+			else
+			{
+				p = p.r;
+			}
+			down--;
+		}
+
+		if (p == null)
+		{
+			prev.v = rand.nextInt();
+		}
+		else
+		{
+			p.v = rand.nextInt();
+		}
+		return true;
 	}
 
 	@Atomic
