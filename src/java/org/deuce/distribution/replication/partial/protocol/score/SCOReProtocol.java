@@ -74,7 +74,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	private final Executor pool = Executors.newFixedThreadPool(Math.max(
 			Integer.getInteger(Defaults._REPLICAS) - 1, minReadThreads));
 
-	private static final List<DistributedContextState> toBeProcessed = new ArrayList<DistributedContextState>();
+	private static final Set<DistributedContextState> toBeProcessed = Collections.newSetFromMap(new ConcurrentHashMap<DistributedContextState, Boolean>());
 
 	@Override
 	public void init()
