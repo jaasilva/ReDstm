@@ -54,7 +54,6 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 			boolean x = m_set.contains(m_random.nextInt(m_range));
 			if (phase == Benchmark.TEST_PHASE)
 				m_nb_contains++;
-			System.out.println("contains " + x);
 		}
 	}
 
