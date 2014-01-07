@@ -51,6 +51,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		else
 		{ // Do *REMOTE* read
 			Profiler.onCacheTry(); // first check cache
+			System.out.println("get " + meta);
 			if (TribuDSTM.cacheContains(meta))
 			{
 				Profiler.onCacheHit();
