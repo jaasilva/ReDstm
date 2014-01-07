@@ -1,6 +1,7 @@
 package org.deuce.distribution.replication.partial.protocol.score;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import org.apache.log4j.Logger;
 import org.deuce.Defaults;
@@ -58,15 +60,15 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	};
 
 	private final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
-	private final Queue<Pair<String, Integer>> pendQ = new PriorityQueue<Pair<String, Integer>>(
+	private final Queue<Pair<String, Integer>> pendQ = new  PriorityBlockingQueue<Pair<String, Integer>>(
 			1000, comp); // accessed ONLY by bottom threads
-	private final Queue<Pair<String, Integer>> stableQ = new PriorityQueue<Pair<String, Integer>>(
+	private final Queue<Pair<String, Integer>> stableQ = new  PriorityBlockingQueue<Pair<String, Integer>>(
 			1000, comp); // accessed ONLY by bottom threads
 
 	// accessed ONLY by bottom threads
-	private final Map<String, DistributedContextState> receivedTrxs = new HashMap<String, DistributedContextState>();
+	private final Map<String, DistributedContextState> receivedTrxs = new ConcurrentHashMap<String, DistributedContextState>();
 	// accessed ONLY by bottom threads
-	private final Set<String> rejectTrxs = new HashSet<String>();
+	private final Set<String> rejectTrxs = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
 	private static final int minReadThreads = 1;
 	private final Executor pool = Executors.newFixedThreadPool(Math.max(
@@ -416,12 +418,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			{
 				ctx.maxVote = proposedTimestamp;
 			}
-			// votes.add(proposedTimestamp);
-
 			if (ctx.receivedVotes == expectedVotes)
 			{ // last vote. Every vote was YES. send decide msg
 				Profiler.onLastVoteReceived(ctx.threadID);
-
 				finalizeVoteStep(ctx, true);
 			}
 		}

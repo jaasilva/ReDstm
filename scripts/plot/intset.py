@@ -348,7 +348,7 @@ def create_parser():
 	parser.add_argument('-s', '--size', help='what was the size?', nargs='?', 
 		const=32768, default=32768, type=int)
 	parser.add_argument('-d', '--directory', help='where are the logs?', nargs='?', 
-		const='', default='')
+		const='logs', default='logs')
 	
 	return parser
 
@@ -357,32 +357,30 @@ def main(argv):
 	args = parser.parse_args()
 	
 	global VERBOSE
-	VERBOSE = args.verbose
+	VERBOSE = args.verbose # False
 	global VISUAL
-	VISUAL = args.visual
+	VISUAL = args.visual # False
 	global FILE
-	FILE = args.file
+	FILE = args.file # ''
 	
-	_bench = args.benchmark
-	_comm = args.communication
-	_ctx_full = args.context
+	_bench = args.benchmark # RedBTreeZ
+	_comm = args.communication # jgroups.JGroups
+	_ctx_full = args.context # mvstm.Context
 	_ctx_par = 'score.SCOReContext'
-	_proto_full = args.protofull
-	_proto_par = args.protopartial
-	_dir = args.directory
+	_proto_full = args.protofull # nonvoting.NonVoting
+	_proto_par = args.protopartial # score.SCOReProtocol
+	_dir = args.directory # logs
 	
-	_reps = args.replicas
-	_runs = args.runs
-	_size = args.size
-	_thrs = args.threads
-	_writes = args.writes
-	_partial_ops = args.partial_ops
+	_reps = args.replicas # 8
+	_runs = args.runs # 10
+	_size = args.size # 32768
+	_thrs = args.threads # 4
+	_writes = args.writes # 10
+	_partial_ops = args.partial_ops # 50
 	
-	
-	# dir, bench, writes, runs, size, thrs, proto, ctx, comm, reps, partial_ops
 	if args.performance1:
-		plot_performance1('logs/logs', _bench, 10, _size, _thrs, 
-			_proto_full, 'tl2.Context', _comm, _reps)
+		plot_performance1(_dir, _bench, _runs, _size, _thrs, 
+			_proto_full, _ctx_full, _comm, _reps)
 
 def plot_performance1(dir, bench, runs, size, thrs, proto, ctx, comm, 
 	reps):

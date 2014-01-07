@@ -43,7 +43,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 				channel.getProtocolStack()
 						.findProtocol("UDP")
 						.setValue("thread_pool_max_threads",
-								Defaults.JGROUPS_PARTIAL_MAX_RECEIVER_THREADS);
+								3);
 			}
 
 			channel.setReceiver(this);
