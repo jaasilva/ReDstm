@@ -34,24 +34,27 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 		{
 			if (m_write)
 			{
-				m_set.add(m_random.nextInt(m_range));
+				boolean x = m_set.add(m_random.nextInt(m_range));
 				if (phase == Benchmark.TEST_PHASE)
 					m_nb_add++;
 				m_write = false;
+				System.out.println("add " + x);
 			}
 			else
 			{
-				m_set.remove(m_random.nextInt(m_range));
+				boolean x = m_set.remove(m_random.nextInt(m_range));
 				if (phase == Benchmark.TEST_PHASE)
 					m_nb_remove++;
 				m_write = true;
+				System.out.println("remove " + x);
 			}
 		}
 		else
 		{
-			m_set.contains(m_random.nextInt(m_range));
+			boolean x = m_set.contains(m_random.nextInt(m_range));
 			if (phase == Benchmark.TEST_PHASE)
 				m_nb_contains++;
+			System.out.println("contains " + x);
 		}
 	}
 
