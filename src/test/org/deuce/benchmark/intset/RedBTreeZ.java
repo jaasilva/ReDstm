@@ -715,8 +715,8 @@ public class RedBTreeZ implements IntSet
 		if (rand.nextInt(100) < partial_ops)
 		{ // partial operation
 			if (rand.nextBoolean()) // 50%
-			{ // it may modify a tree element
-				return partial_op_random(key);
+			{ // it may modify an existent element
+				return partial_op(key);
 			}
 			else
 			{ // it modifies an existent element
@@ -735,7 +735,7 @@ public class RedBTreeZ implements IntSet
 		}
 	}
 
-	private boolean partial_op_random(int key)
+	private boolean partial_op(int key)
 	{
 		Node node = lookup(key);
 		if (node != null)
@@ -781,14 +781,7 @@ public class RedBTreeZ implements IntSet
 	{
 		if (rand.nextInt(100) < partial_ops)
 		{ // partial operation
-			if (rand.nextBoolean()) // 50%
-			{ // it may modify a tree element
-				return partial_op_random(key);
-			}
-			else
-			{ // it modifies an existent element
-				return partial_op();
-			}
+			return partial_op(key);
 		}
 		else
 		{ // full operation

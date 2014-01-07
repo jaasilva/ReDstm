@@ -19,7 +19,9 @@ author: jaasilva
 		thread_pool.enabled="true"
 		thread_pool.min_threads="1"
 		thread_pool.max_threads="1"
-		oob_thread_pool.enabled="false"/>
+		oob_thread_pool.enabled="true"
+		oob_thread_pool.min_threads="1"
+		oob_thread_pool.max_threads="1"/>
 	<PING/>
 	<MERGE2/>
 	<FD_SOCK/>

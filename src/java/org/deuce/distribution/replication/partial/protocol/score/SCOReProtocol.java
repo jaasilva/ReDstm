@@ -283,7 +283,9 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		Profiler.onSerializationFinish(msg.ctxID);
 
 		Profiler.newMsgSent(payload.length);
+		serializationReadContext.set(true); // enter read context
 		TribuDSTM.sendTo(payload, src);
+		serializationReadContext.set(false); // exit read context
 		updateNodeTimestamps(msg.readSid);
 
 		LOGGER.debug("READ REQ (" + src + ") "
