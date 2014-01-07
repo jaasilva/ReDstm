@@ -89,6 +89,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 	protected ReadDone remoteRead(SCOReContext sctx, ObjectMetadata metadata,
 			boolean firstRead, Group p_group)
 	{
+		System.out.println(metadata);
 		ReadReq req = new ReadReq(sctx.threadID, metadata, sctx.sid, firstRead,
 				sctx.requestVersion);
 

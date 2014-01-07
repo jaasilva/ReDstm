@@ -750,7 +750,6 @@ public class RedBTreeZ implements IntSet
 		Node p = root;
 		int down = rand.nextInt((int) (Math.log10(initial) / Math.log10(2)));
 		Node prev = p;
-
 		while (p != null && down > 0)
 		{
 			prev = p;
@@ -764,7 +763,6 @@ public class RedBTreeZ implements IntSet
 			}
 			down--;
 		}
-
 		if (p == null)
 		{
 			prev.v = rand.nextInt();
