@@ -32,7 +32,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 				if (++i < args.length)
 				{
 					initial = Integer.parseInt(args[i]);
-					System.setProperty(Defaults.RBTREE_INITIAL, "" + initial);
 				}
 				else
 					error = true;
