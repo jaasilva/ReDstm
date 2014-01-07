@@ -586,28 +586,16 @@ public class TribuDSTM
 
 	public static final void cachePut(ObjectMetadata metadata, Version obj)
 	{
-		if (CACHE)
-		{
-			cache.put(metadata, obj);
-		}
+		cache.put(metadata, obj);
 	}
 
 	public static final Version cacheGet(ObjectMetadata metadata)
 	{
-		if (CACHE)
-		{
-			System.out.println("################ CACHE GET");
-			return cache.get(metadata);
-		}
-		return null;
+		return cache.get(metadata);
 	}
 
 	public static final boolean cacheContains(ObjectMetadata metadata)
 	{
-		if (CACHE)
-		{
-			return cache.contains(metadata);
-		}
-		return false;
+		return cache.contains(metadata);
 	}
 }
