@@ -89,7 +89,6 @@ public class SCOReProtocol_cache extends SCOReProtocol
 	protected ReadDone remoteRead(SCOReContext sctx, ObjectMetadata metadata,
 			boolean firstRead, Group p_group)
 	{
-		System.out.println(metadata);
 		ReadReq req = new ReadReq(sctx.threadID, metadata, sctx.sid, firstRead,
 				sctx.requestVersion);
 
@@ -112,6 +111,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 			e.printStackTrace();
 		}
 		// put received version list in cache
+		System.out.println("put "+metadata);
 		TribuDSTM.cachePut(metadata, (Version) sctx.response.piggyback);
 
 		return sctx.response;
