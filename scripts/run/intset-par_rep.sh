@@ -38,7 +38,7 @@ if $_BENCH_BIG ; then # big values
 	_RANGE=131072 # SIZE*4
 else # small values
 	_SIZE=1024 # 2^10
-	_RANGE=4096 # SIZE*4
+	_RANGE=2048 #4096 # SIZE*4
 fi
 
 _WARMUP=0
@@ -56,9 +56,9 @@ _WRITES=$5
 _PARTIAL_OPS=$7
 
 _CTX=score.SCOReContext
-_PROTO=score.SCOReProtocol
+#_PROTO=score.SCOReProtocol
 #_PROTO=score.SCOReProtocol_noReadOpt
-#_PROTO=score.SCOReProtocol_cache
+_PROTO=score.SCOReProtocol_cache
 _GCS=jgroups.JGroups
 #_GCS=appia.Appia
 #_GCS=spread.Spread

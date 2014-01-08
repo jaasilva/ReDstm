@@ -53,8 +53,6 @@ public class SCOReProtocol_cache extends SCOReProtocol
 			Profiler.onCacheTry(); // first check cache
 			if (TribuDSTM.cacheContains(meta))
 			{
-				System.out.println("------------------------------------- "
-						+ meta);
 				Profiler.onCacheHit();
 				read = checkCache(sctx.sid, meta);
 			}

@@ -31,6 +31,11 @@ public class Cache
 		return cache.containsKey(metadata);
 	}
 
+	public void remove(ObjectMetadata metadata)
+	{
+		cache.remove(metadata);
+	}
+
 	@Override
 	public String toString()
 	{

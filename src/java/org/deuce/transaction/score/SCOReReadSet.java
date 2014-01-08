@@ -99,8 +99,8 @@ public class SCOReReadSet implements Serializable
 		{
 			if (readSet[i] != null)
 			{
-				PartialReplicationOID meta = ((PartialReplicationOID) readSet[i].field
-						.getMetadata());
+				PartialReplicationOID meta = (PartialReplicationOID) readSet[i].field
+						.getMetadata();
 				if (meta.getPartialGroup().isLocal())
 				{
 					if (((VBoxField) readSet[i].field).getLastVersion().version > sid)
@@ -110,7 +110,6 @@ public class SCOReReadSet implements Serializable
 				}
 			}
 		}
-
 		return true;
 	}
 

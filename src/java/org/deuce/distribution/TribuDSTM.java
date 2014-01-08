@@ -598,4 +598,9 @@ public class TribuDSTM
 	{
 		return cache.contains(metadata);
 	}
+
+	public static final void cacheRemove(ObjectMetadata metadata)
+	{
+		cache.remove(metadata);
+	}
 }
