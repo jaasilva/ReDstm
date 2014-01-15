@@ -2,10 +2,13 @@ package org.deuce.distribution;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.deuce.Defaults;
 import org.deuce.distribution.cache.Cache;
+import org.deuce.distribution.cache.CacheContainer;
+import org.deuce.distribution.cache.iSetMsg;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
@@ -16,7 +19,7 @@ import org.deuce.distribution.replication.partitioner.data.DataPartitioner;
 import org.deuce.distribution.replication.partitioner.group.GroupPartitioner;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transaction.DistributedContext;
-import org.deuce.transaction.score.field.Version;
+import org.deuce.transaction.score.field.SCOReWriteFieldAccess;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
@@ -42,7 +45,7 @@ public class TribuDSTM
 	private static Class<? extends DistributedContext> ctxClass;
 	private static Cache cache;
 	public static boolean PARTIAL; // check runtime mode
-	public static boolean CACHE;
+	public static boolean CACHE; // check cache on/off
 
 	public static final Collection<Address> ALL = new HashSet<Address>();
 
@@ -64,7 +67,6 @@ public class TribuDSTM
 		if (PARTIAL)
 		{
 			initPartitioners();
-			initCache();
 			int groups = Integer.getInteger(Defaults._GROUPS, Defaults.GROUPS);
 			groupPart.init(groups);
 		}
@@ -156,15 +158,6 @@ public class TribuDSTM
 		LOGGER.warn("> Data partitioner: " + dataPartClass);
 	}
 
-	/**
-	 * Initializes the remote objects' cache.
-	 */
-	private static void initCache()
-	{
-		cache = new Cache();
-		CACHE = true;
-	}
-
 	public static final String INIT_METHOD_NAME = "init";
 	public static final String INIT_METHOD_DESC = "()"
 			+ Type.VOID_TYPE.getDescriptor();
@@ -185,6 +178,7 @@ public class TribuDSTM
 		{
 			groupPart.partitionGroups(getAllMembers());
 			dataPart.init();
+			initCache();
 
 			ALL.addAll(getAllMembers()); // XXX check
 
@@ -197,6 +191,19 @@ public class TribuDSTM
 
 		LOGGER.warn("> TribuDSTM initialized!");
 		LOGGER.warn("####################################################");
+	}
+
+	/**
+	 * Initializes the remote objects' cache.
+	 */
+	private static void initCache()
+	{
+		CACHE = Boolean.parseBoolean(System.getProperty(Defaults._CACHE,
+				Defaults.CACHE));
+		if (CACHE)
+		{
+			cache = new Cache();
+		}
 	}
 
 	public static final String CLOSE_METHOD_NAME = "close";
@@ -584,14 +591,16 @@ public class TribuDSTM
 	 * ################################################################
 	 */
 
-	public static final void cachePut(ObjectMetadata metadata, Version obj)
+	public static final void cachePut(ObjectMetadata metadata,
+			CacheContainer obj, int validity, int group, boolean mostRecent)
 	{
-		cache.put(metadata, obj);
+		cache.put(metadata, obj, validity, group, mostRecent);
 	}
 
-	public static final Version cacheGet(ObjectMetadata metadata)
+	public static final CacheContainer cacheGet(ObjectMetadata metadata,
+			int sid, boolean firstRead)
 	{
-		return cache.get(metadata);
+		return cache.getVisibleVersion(metadata, sid, firstRead);
 	}
 
 	public static final boolean cacheContains(ObjectMetadata metadata)
@@ -599,8 +608,13 @@ public class TribuDSTM
 		return cache.contains(metadata);
 	}
 
-	public static final void cacheRemove(ObjectMetadata metadata)
+	public static final void cacheCommittedKeys(Set<SCOReWriteFieldAccess> set)
 	{
-		cache.remove(metadata);
+		cache.committedKeys(set);
+	}
+
+	public static final void cacheInvalidateKeys(iSetMsg msg)
+	{
+		cache.processInvalidationMessage(msg);
 	}
 }

@@ -4,11 +4,16 @@ import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
+import org.deuce.distribution.cache.CacheContainer;
+import org.deuce.distribution.cache.CacheMsg;
+import org.deuce.distribution.cache.iSetMsg;
 import org.deuce.distribution.replication.group.Group;
+import org.deuce.distribution.replication.msgs.ControlMessage;
 import org.deuce.distribution.replication.partial.PartialReplicationOID;
 import org.deuce.distribution.replication.partial.protocol.score.msgs.ReadDone;
 import org.deuce.distribution.replication.partial.protocol.score.msgs.ReadReq;
 import org.deuce.profiling.Profiler;
+import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.score.SCOReContext;
 import org.deuce.transaction.score.field.InPlaceRWLock;
 import org.deuce.transaction.score.field.VBoxField;
@@ -50,13 +55,9 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		}
 		else
 		{ // Do *REMOTE* read
-			Profiler.onCacheTry(); // first check cache
-			if (TribuDSTM.cacheContains(meta))
-			{
-				Profiler.onCacheHit();
-				read = checkCache(sctx.sid, meta);
-			}
-			else
+			read = getValidVersion(sctx.sid, meta, firstRead);
+
+			if (read == null)
 			{ // if not in cache. do remote read
 				Profiler.onTxRemoteReadBegin(sctx.threadID);
 				read = remoteRead(sctx, meta, firstRead, p_group);
@@ -67,22 +68,53 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		return read;
 	}
 
-	private ReadDone checkCache(int sid, ObjectMetadata metadata)
-	{ // XXX checkCache
-		int origNextId;
-		do
+	private ReadDone getValidVersion(int sid, ObjectMetadata metadata,
+			boolean firstRead)
+	{
+		Profiler.onCacheTry();
+		if (TribuDSTM.cacheContains(metadata))
 		{
-			origNextId = SCOReContext.nextId.get();
-		} while (!SCOReContext.nextId.compareAndSet(origNextId,
-				Math.max(origNextId, sid)));
+			CacheContainer v = TribuDSTM.cacheGet(metadata, sid, firstRead);
+			if (v != null)
+			{
+				int validity = v.validity.validity;
+				if (sid <= validity)
+				{
+					Profiler.onCacheHit();
+					return new ReadDone(v.value, firstRead ? validity
+							: v.version, true);
+				}
+				else
+				{
+					Profiler.onCacheNoValidVersion();
+				}
+			}
+			else
+			{
+				Profiler.onCacheNoVisibleVersion();
+			}
+		}
+		else
+		{
+			Profiler.onCacheNoKey();
+		}
+		return null;
+	}
 
-		// use versions list from cache
-		Version lastVersion = TribuDSTM.cacheGet(metadata);
+	@Override
+	protected void processControlMessage(ControlMessage obj)
+	{
+		TribuDSTM.cacheInvalidateKeys((iSetMsg) obj);
+	}
 
-		Version ver = lastVersion.get(sid);
-		boolean mostRecent = ver.equals(lastVersion);
-		int lastCommitted = SCOReContext.commitId.get();
-		return new ReadDone(ver.value, lastCommitted, mostRecent);
+	private void updateCache(ObjectMetadata metadata, ReadDone read)
+	{ // put received version in cache
+		CacheMsg msg = ((CacheMsg) read.piggyback);
+		CacheContainer v = new CacheContainer();
+		v.value = read.value;
+		v.version = msg.version;
+		TribuDSTM.cachePut(metadata, v, msg.validity, msg.groupId,
+				read.mostRecent);
 	}
 
 	@Override
@@ -97,7 +129,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		Profiler.onSerializationFinish(sctx.threadID);
 
 		Profiler.newMsgSent(payload.length);
-		TribuDSTM.sendToGroup(payload, p_group);
+		TribuDSTM.sendToGroup(payload, p_group); // XXX id is -2
 
 		LOGGER.debug("SEND READ REQ " + sctx.trxID.split("-")[0] + " "
 				+ sctx.requestVersion);
@@ -110,9 +142,8 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		{
 			e.printStackTrace();
 		}
-		// put received version list in cache
-		TribuDSTM.cachePut(metadata, (Version) sctx.response.piggyback);
 
+		updateCache(metadata, sctx.response);
 		return sctx.response;
 	}
 
@@ -143,7 +174,28 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		boolean mostRecent = ver.equals(field.getLastVersion());
 		int lastCommitted = SCOReContext.commitId.get();
 		ReadDone read = new ReadDone(ver.value, lastCommitted, mostRecent);
-		read.piggyback = field.getLastVersion(); // assign versions list
+
+		// piggyback the info of the version to be cached
+		CacheMsg msg = new CacheMsg();
+		msg.validity = ver.validity == -1 ? lastCommitted : ver.validity - 1;
+		msg.version = ver.version;
+		msg.groupId = TribuDSTM.getLocalGroup().getId();
+		read.piggyback = msg;
+
 		return read;
+	}
+
+	@Override
+	public void onTxFinished(DistributedContext ctx, boolean committed)
+	{
+		SCOReContext sctx = (SCOReContext) ctx;
+
+		if (committed)
+		{
+			TribuDSTM.cacheCommittedKeys(sctx.getCommittedKeys());
+		}
+
+		LOGGER.debug("FINISH " + sctx.threadID + ":" + sctx.atomicBlockId + ":"
+				+ sctx.trxID.split("-")[0] + "= " + committed);
 	}
 }

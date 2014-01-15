@@ -18,13 +18,14 @@ public class Version implements Serializable
 	public Version next;
 	public Object value;
 	private int size;
+	public int validity = -1;
 
 	public Version(int version, Object value, Version next)
 	{
 		this.version = version;
 		this.next = next;
 		this.value = value;
-		this.size = next != null ? next.size + 1 : 1;
+		this.size = next != null ? next.size + 1 : 0; // XXX I think it is 0.
 		if (size == SCOReContext.MAX_VERSIONS)
 		{
 			cleanVersions();
@@ -46,9 +47,11 @@ public class Version implements Serializable
 
 	public Version get(int maxVersion)
 	{
+		Version prev = null;
 		Version res = this;
 		while (res.version > maxVersion)
 		{
+			prev = res;
 			res = res.next;
 
 			if (res == null)
@@ -58,6 +61,7 @@ public class Version implements Serializable
 				throw SCOReContext.VERSION_UNAVAILABLE_EXCEPTION;
 			}
 		}
+		res.validity = (prev != null) ? prev.version : -1; // XXX cache
 		return res;
 	}
 

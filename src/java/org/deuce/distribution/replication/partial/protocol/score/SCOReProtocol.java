@@ -19,6 +19,7 @@ import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.group.Group;
+import org.deuce.distribution.replication.msgs.ControlMessage;
 import org.deuce.distribution.replication.partial.PartialReplicationOID;
 import org.deuce.distribution.replication.partial.PartialReplicationProtocol;
 import org.deuce.distribution.replication.partial.protocol.score.msgs.DecideMsg;
@@ -54,7 +55,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 	};
 
-	private final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
+	protected final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 	private final Queue<Pair<String, Integer>> pendQ = new PriorityBlockingQueue<Pair<String, Integer>>(
 			1000, comp); // accessed ONLY by bottom threads
 	private final Queue<Pair<String, Integer>> stableQ = new PriorityBlockingQueue<Pair<String, Integer>>(
@@ -225,7 +226,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		return new ReadDone(ver.value, lastCommitted, mostRecent);
 	}
 
-	private void updateNodeTimestamps(int lastCommitted)
+	protected void updateNodeTimestamps(int lastCommitted)
 	{
 		int origNextId;
 		do
@@ -292,7 +293,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 				+ msg.metadata.toString().split("-")[0]);
 	}
 
-	private void readReturn(ReadRet msg, Address src)
+	protected void readReturn(ReadRet msg, Address src)
 	{ // I am the coordinator of this read.
 		SCOReContext sctx = ((SCOReContext) ctxs.get(msg.ctxID));
 
@@ -317,7 +318,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	public void onDelivery(Object obj, Address src, int size)
 	{
 		Profiler.newMsgRecv(size);
-		if (obj instanceof DistributedContextState) // Prepare Message
+		if (obj instanceof ControlMessage)
+		{
+			processControlMessage((ControlMessage) obj);
+		}
+		else if (obj instanceof DistributedContextState) // Prepare Message
 		{
 			prepareMessage((SCOReContextState) obj, src);
 		}
@@ -339,6 +344,10 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			readReturn((ReadRet) obj, src);
 		}
 		processTx();
+	}
+
+	protected void processControlMessage(ControlMessage obj)
+	{
 	}
 
 	private void prepareMessage(SCOReContextState ctx, Address src)

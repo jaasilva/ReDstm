@@ -312,7 +312,7 @@ def create_parser():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-p1', '--performance1', help='plot throughput chart comparing writes and partial_ops in full replication', 
 		action='store_true')
-	parser.add_argument('-p2', '--performance2', help='plot throughput chart', 
+	parser.add_argument('-p2', '--performance2', help='plot throughput chart comparing groups and partial_ops in partial replication (for a specified write percentage)', 
 		action='store_true')
 	
 	parser.add_argument('-vv', '--verbose', 

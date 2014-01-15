@@ -57,7 +57,8 @@ public class Profiler
 			confirmationMax = Long.MIN_VALUE, confirmationMin = Long.MAX_VALUE,
 			confirmationAvg = 0, cacheTry = 0, cacheHit = 0,
 			remoteReadMsgSizeAvg = 0, remoteMsgSizeMin = Long.MAX_VALUE,
-			remoteMsgSizeMax = Long.MIN_VALUE, remoteReadOk = 0;
+			remoteMsgSizeMax = Long.MIN_VALUE, remoteReadOk = 0,
+			cacheNoKey = 0, cacheNoVisibleVersion = 0, cacheNoValidVersion = 0;
 
 	/**
 	 * Network related, in bytes.
@@ -686,6 +687,45 @@ public class Profiler
 		}
 	}
 
+	private static final Object lock27 = new Object();
+
+	public static void onCacheNoKey()
+	{
+		if (ENABLED)
+		{
+			synchronized (lock27)
+			{
+				cacheNoKey++;
+			}
+		}
+	}
+
+	private static final Object lock28 = new Object();
+
+	public static void onCacheNoVisibleVersion()
+	{
+		if (ENABLED)
+		{
+			synchronized (lock28)
+			{
+				cacheNoVisibleVersion++;
+			}
+		}
+	}
+
+	private static final Object lock29 = new Object();
+
+	public static void onCacheNoValidVersion()
+	{
+		if (ENABLED)
+		{
+			synchronized (lock29)
+			{
+				cacheNoValidVersion++;
+			}
+		}
+	}
+
 	public static void print()
 	{
 		StringBuffer stats = new StringBuffer();
@@ -770,6 +810,9 @@ public class Profiler
 		str = formatter.format((cacheHit * 100.0) / cacheTry);
 		stats.append("    --Cache Hits " + str + " (" + cacheHit + ") ("
 				+ cacheTry + ")\n");
+		stats.append("      no key = " + cacheNoKey + "\n");
+		stats.append("      no vis ver = " + cacheNoVisibleVersion + "\n");
+		stats.append("      no val ver = " + cacheNoValidVersion + "\n");
 
 		stats.append("    --Complete Reads\n");
 		str = formatter.format(txCReadAvg / 1000.0);

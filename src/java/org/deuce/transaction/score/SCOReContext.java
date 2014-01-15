@@ -1,5 +1,6 @@
 package org.deuce.transaction.score;
 
+import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -88,6 +89,11 @@ public class SCOReContext extends DistributedContext
 		requestVersion = 0;
 	}
 
+	public Set<SCOReWriteFieldAccess> getCommittedKeys()
+	{
+		return writeSet.getWrites();
+	}
+
 	@Override
 	public void onIrrevocableAccess()
 	{
@@ -128,12 +134,13 @@ public class SCOReContext extends DistributedContext
 			ReadDone read = (ReadDone) TribuDSTM.onTxRead(this, field);
 
 			if (!this.firstReadDone /* && read.mostRecent */)
-			{ // try to advance our snapshot id to a fresher one
+			{ // advance our snapshot id to a fresher one
 				this.sid = Math.max(sid, read.lastCommitted);
+				// this.sid = read.lastCommitted;
 			}
 
 			if (this.isUpdate() && !read.mostRecent)
-			{ // optimization: abort tx forced to see overwritten data
+			{ // *optimization*: abort tx forced to see overwritten data
 				throw OVERWRITTEN_VERSION_EXCEPTION;
 			}
 
@@ -157,7 +164,11 @@ public class SCOReContext extends DistributedContext
 		long st = System.nanoTime();
 		while ((commitId.get() < sid)
 				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
-			;
+		{/*
+		 * wait until (commitId.get() >= sid || ((InPlaceRWLock)
+		 * field).isExclusiveUnlocked())
+		 */
+		}
 		long end = System.nanoTime();
 		Profiler.onWaitingRead(end - st);
 

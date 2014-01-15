@@ -1,6 +1,7 @@
 package org.deuce.transaction.score;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
@@ -21,6 +22,11 @@ public class SCOReWriteSet implements Serializable
 	private static final long serialVersionUID = 1L;
 	private final THashSet<SCOReWriteFieldAccess> writeSet = new THashSet<SCOReWriteFieldAccess>(
 			16);
+
+	public Set<SCOReWriteFieldAccess> getWrites()
+	{
+		return writeSet;
+	}
 
 	public void clear()
 	{

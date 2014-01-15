@@ -3,6 +3,7 @@ package org.deuce.transaction.score.field;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
+import org.deuce.distribution.ObjectMetadata;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
@@ -60,5 +61,10 @@ public class SCOReReadFieldAccess implements Serializable
 		{
 			return this;
 		}
+	}
+
+	public ObjectMetadata getDistMetadata()
+	{
+		return field.getMetadata();
 	}
 }

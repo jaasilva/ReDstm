@@ -89,13 +89,18 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public void sendReliably(byte[] payload)
 	{
 		final Message msg = new Message();
 		msg.setDest(null);
 		msg.setBuffer(payload);
-		msg.setFlag(Message.NO_TOTAL_ORDER); // flag is deprecated
+		msg.setFlag(Message.Flag.NO_TOTAL_ORDER);
+
+		if (PartialReplicationProtocol.serializationReadContext.get())
+		{
+			msg.setFlag(Message.Flag.OOB); // XXX trying to optimize
+		}
+
 		try
 		{
 			channel.send(msg);
@@ -134,7 +139,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 
 	public void viewAccepted(View new_view)
 	{
-		System.err.println(">>> " + new_view);
+		System.err.println("N_VIEW: " + new_view);
 		if (new_view.getMembers().size() == Integer
 				.getInteger(Defaults._REPLICAS))
 			membersArrived();
