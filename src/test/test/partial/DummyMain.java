@@ -65,26 +65,32 @@ public class DummyMain
 		
 		
 		
-		SortedSet<CacheContainer> s = new TreeSet<CacheContainer>();
+//		SortedSet<CacheContainer> s = new TreeSet<CacheContainer>();
+//		
+//		CacheContainer a = new CacheContainer();
+//		a.version = 1;
+//		CacheContainer b = new CacheContainer();
+//		b.version = 7;
+//		CacheContainer c = new CacheContainer();
+//		c.version = 3;
+//		
+//		s.add(a);
+//		s.add(b);
+//		s.add(c);
+//		
+//		System.out.println(">>> " + s.first().version);
+//		
+//		Iterator<CacheContainer> it = s.iterator();
+//		while(it.hasNext())
+//		{
+//			System.out.println(it.next().version);
+//		}
 		
-		CacheContainer a = new CacheContainer();
-		a.version = 1;
-		CacheContainer b = new CacheContainer();
-		b.version = 7;
-		CacheContainer c = new CacheContainer();
-		c.version = 3;
+		String x = "org.deuce.distribution.replication.partial.protocol.score.SCOReProtocol_cache";
 		
-		s.add(a);
-		s.add(b);
-		s.add(c);
+		String[] a = x.split("\\.");
 		
-		System.out.println(">>> " + s.first().version);
-		
-		Iterator<CacheContainer> it = s.iterator();
-		while(it.hasNext())
-		{
-			System.out.println(it.next().version);
-		}
+		System.out.println(a.length);
 		
 	}
 

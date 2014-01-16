@@ -107,7 +107,9 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.warn("> Rep. Protocol: " + className);
+		String[] proto = className.split("\\.");
+		LOGGER.warn("> Rep. Protocol: " + proto[proto.length - 2] + "."
+				+ proto[proto.length - 1]);
 	}
 
 	/**
@@ -129,7 +131,9 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.warn("> Tx Context: " + className);
+		String[] ctx = className.split("\\.");
+		LOGGER.warn("> Tx Context: " + ctx[ctx.length - 2] + "."
+				+ ctx[ctx.length - 1]);
 	}
 
 	/**
@@ -158,8 +162,10 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.warn("> Group Part.: " + groupPartClass);
-		LOGGER.warn("> Data Part.: " + dataPartClass);
+		String[] gp = groupPartClass.split("\\.");
+		String[] dp = dataPartClass.split("\\.");
+		LOGGER.warn("> Group Part.: " + gp[gp.length - 1]);
+		LOGGER.warn("> Data Part.: " + dp[dp.length - 1]);
 	}
 
 	public static final String INIT_METHOD_NAME = "init";
@@ -250,7 +256,9 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.warn("> Group Comm.: " + className);
+		String[] gcs = className.split("\\.");
+		LOGGER.warn("> Group Comm.: " + gcs[gcs.length - 2] + "."
+				+ gcs[gcs.length - 1]);
 	}
 
 	/*

@@ -170,12 +170,12 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		ReadDone read = new ReadDone(ver.value, lastCommitted, mostRecent);
 
 		// piggyback the info of the version to be cached
-		read.piggyback = createCacheMsg(ver, lastCommitted);
+		read.piggyback = createCacheMessage(ver, lastCommitted);
 
 		return read;
 	}
 
-	private CacheMsg createCacheMsg(Version ver, int lastCommitted)
+	private CacheMsg createCacheMessage(Version ver, int lastCommitted)
 	{
 		CacheMsg msg = new CacheMsg();
 		msg.validity = ver.validity == -1 ? lastCommitted : ver.validity - 1;
@@ -189,7 +189,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 	{
 		SCOReContext sctx = (SCOReContext) ctx;
 
-		if (committed)
+		if (sctx.isUpdate() && committed)
 		{
 			TribuDSTM.cacheSetCommittedKeys(sctx.getCommittedKeys());
 		}
