@@ -39,7 +39,7 @@ public class SCOReWriteSet implements Serializable
 	}
 
 	public Group getInvolvedNodes()
-	{
+	{ // XXX check
 		Group resGroup = new PartialReplicationGroup();
 
 		for (SCOReWriteFieldAccess wfa : writeSet)
@@ -102,10 +102,5 @@ public class SCOReWriteSet implements Serializable
 		}
 
 		return res;
-	}
-
-	public String toString()
-	{
-		return writeSet.toString();
 	}
 }

@@ -22,7 +22,7 @@ public class NonVoting extends FullReplicationProtocol implements
 {
 	private static final Logger LOGGER = Logger.getLogger(NonVoting.class);
 
-	private final Map<Integer, DistributedContext> contexts = new ConcurrentHashMap<Integer, DistributedContext>();
+	private final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 
 	public void init()
 	{
@@ -38,7 +38,7 @@ public class NonVoting extends FullReplicationProtocol implements
 		if (src.isLocal())
 		{ // local context
 			Profiler.onLastVoteReceived(ctxState.ctxID);
-			ctx = contexts.get(ctxState.ctxID);
+			ctx = ctxs.get(ctxState.ctxID);
 		}
 		else
 		{ // remote context
@@ -93,7 +93,7 @@ public class NonVoting extends FullReplicationProtocol implements
 
 	public void onTxContextCreation(DistributedContext ctx)
 	{
-		contexts.put(ctx.threadID, ctx);
+		ctxs.put(ctx.threadID, ctx);
 	}
 
 	public Object onTxRead(DistributedContext ctx, TxField field)

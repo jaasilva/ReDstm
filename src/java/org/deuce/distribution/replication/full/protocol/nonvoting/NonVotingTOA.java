@@ -10,6 +10,7 @@ import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.full.FullReplicationProtocol;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
+import org.deuce.profiling.Profiler;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
@@ -21,7 +22,8 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 		DeliverySubscriber
 {
 	private static final Logger LOGGER = Logger.getLogger(NonVotingTOA.class);
-	private final Map<Integer, DistributedContext> contexts = new ConcurrentHashMap<Integer, DistributedContext>();
+
+	private final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 
 	public void init()
 	{
@@ -30,15 +32,17 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 
 	public void onDelivery(Object obj, Address src, int payloadSize)
 	{
+		Profiler.newMsgRecv(payloadSize);
 		DistributedContextState ctxState = (DistributedContextState) obj;
 		DistributedContext ctx = null;
 
 		if (src.isLocal())
-		{
-			ctx = contexts.get(ctxState.ctxID);
+		{ // local context
+			Profiler.onLastVoteReceived(ctxState.ctxID);
+			ctx = ctxs.get(ctxState.ctxID);
 		}
 		else
-		{
+		{ // remote context
 			ctx = (DistributedContext) ContextDelegator.getInstance();
 			ctx.recreateContextFromState(ctxState);
 		}
@@ -46,6 +50,10 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 		if (ctx.validate())
 		{
 			ctx.applyWriteSet();
+			if (src.isLocal())
+			{
+				Profiler.onTxDistCommitFinish(ctxState.ctxID);
+			}
 			ctx.processed(true);
 
 			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
@@ -53,6 +61,10 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 		}
 		else
 		{
+			if (src.isLocal())
+			{
+				Profiler.onTxDistCommitFinish(ctxState.ctxID);
+			}
 			ctx.processed(false);
 
 			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
@@ -66,7 +78,13 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 
 	public void onTxCommit(DistributedContext ctx)
 	{
+		Profiler.onTxDistCommitBegin(ctx.threadID);
+		Profiler.onSerializationBegin(ctx.threadID);
 		byte[] payload = ObjectSerializer.object2ByteArray(ctx.createState());
+		Profiler.onSerializationFinish(ctx.threadID);
+
+		Profiler.newMsgSent(payload.length);
+		Profiler.onPrepSend(ctx.threadID);
 		TribuDSTM.sendTotalOrdered(payload, new PartialReplicationGroup(
 				TribuDSTM.ALL));
 	}
@@ -77,10 +95,9 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 
 	public void onTxContextCreation(DistributedContext ctx)
 	{
-		contexts.put(ctx.threadID, ctx);
+		ctxs.put(ctx.threadID, ctx);
 	}
 
-	@Override
 	public Object onTxRead(DistributedContext ctx, TxField field)
 	{
 		return null;

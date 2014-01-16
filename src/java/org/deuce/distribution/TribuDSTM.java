@@ -34,6 +34,8 @@ import org.deuce.transform.localmetadata.type.TxField;
 public class TribuDSTM
 {
 	private static final Logger LOGGER = Logger.getLogger(TribuDSTM.class);
+	private static final String SEP = "================================================================================";
+
 	public static final String DESC = Type.getDescriptor(TribuDSTM.class);
 	public static final String NAME = Type.getInternalName(TribuDSTM.class);
 
@@ -44,9 +46,11 @@ public class TribuDSTM
 	private static GroupPartitioner groupPart;
 	private static Class<? extends DistributedContext> ctxClass;
 	private static Cache cache;
+
 	public static boolean PARTIAL; // check runtime mode
 	public static boolean CACHE; // check cache on/off
 
+	// XXX group
 	public static final Collection<Address> ALL = new HashSet<Address>();
 
 	/*
@@ -57,7 +61,7 @@ public class TribuDSTM
 
 	static
 	{
-		LOGGER.warn("####################################################");
+		LOGGER.warn(SEP);
 		LOGGER.warn("> TribuDSTM initializing...");
 
 		checkRuntimeMode();
@@ -80,7 +84,7 @@ public class TribuDSTM
 		PARTIAL = Boolean.parseBoolean(System.getProperty(
 				Defaults._PARTIAL_MODE, Defaults.PARTIAL_MODE));
 
-		LOGGER.warn("> Partial replication mode: " + PARTIAL);
+		LOGGER.warn("> Partial Rep. Mode: " + PARTIAL);
 	}
 
 	/**
@@ -103,7 +107,7 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.warn("> Replication protocol: " + className);
+		LOGGER.warn("> Rep. Protocol: " + className);
 	}
 
 	/**
@@ -125,7 +129,7 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.warn("> Transaction context: " + className);
+		LOGGER.warn("> Tx Context: " + className);
 	}
 
 	/**
@@ -154,8 +158,8 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.warn("> Group partitioner: " + groupPartClass);
-		LOGGER.warn("> Data partitioner: " + dataPartClass);
+		LOGGER.warn("> Group Part.: " + groupPartClass);
+		LOGGER.warn("> Data Part.: " + dataPartClass);
 	}
 
 	public static final String INIT_METHOD_NAME = "init";
@@ -180,9 +184,9 @@ public class TribuDSTM
 			dataPart.init();
 			initCache();
 
-			ALL.addAll(getAllMembers()); // XXX check
+			ALL.addAll(getAllMembers()); // XXX group
 
-			LOGGER.warn("> ALL:" + ALL); // XXX check
+			LOGGER.warn("> ALL:" + ALL); // XXX group
 
 			System.out.println("GROUP: " + getLocalGroup().getId());
 		}
@@ -190,7 +194,7 @@ public class TribuDSTM
 		distProtocol.init();
 
 		LOGGER.warn("> TribuDSTM initialized!");
-		LOGGER.warn("####################################################");
+		LOGGER.warn(SEP);
 	}
 
 	/**
@@ -216,7 +220,7 @@ public class TribuDSTM
 	 */
 	public static void close()
 	{
-		LOGGER.warn("####################################################");
+		LOGGER.warn(SEP);
 		LOGGER.warn("> TribuDSTM closing...");
 
 		groupComm.close();
@@ -246,7 +250,7 @@ public class TribuDSTM
 			System.exit(-1);
 		}
 
-		LOGGER.warn("> Group communication: " + className);
+		LOGGER.warn("> Group Comm.: " + className);
 	}
 
 	/*
@@ -254,16 +258,6 @@ public class TribuDSTM
 	 * ########### LOCATOR TABLE ######################################
 	 * ################################################################
 	 */
-
-	/**
-	 * Returns the reference to the locator table.
-	 * 
-	 * @return the reference to the locator table.
-	 */
-	public static final Locator getLocator()
-	{
-		return locator;
-	}
 
 	/**
 	 * Returns the UniqueObject corresponding to the metadata.
@@ -530,7 +524,7 @@ public class TribuDSTM
 	 */
 	public static final boolean isLocalGroup(Group group)
 	{
-		return group.contains(getLocalAddress()); // XXX use id
+		return group.contains(getLocalAddress()); // XXX group (use id)
 	}
 
 	/**
@@ -541,7 +535,7 @@ public class TribuDSTM
 	 */
 	public static final boolean groupIsAll(Group group)
 	{
-		return group.getAll().equals(ALL); // XXX use id
+		return group.getAll().equals(ALL); // XXX group (use id)
 	}
 
 	/**
@@ -608,7 +602,8 @@ public class TribuDSTM
 		return cache.contains(metadata);
 	}
 
-	public static final void cacheCommittedKeys(Set<SCOReWriteFieldAccess> set)
+	public static final void cacheSetCommittedKeys(
+			Set<SCOReWriteFieldAccess> set)
 	{
 		cache.committedKeys(set);
 	}

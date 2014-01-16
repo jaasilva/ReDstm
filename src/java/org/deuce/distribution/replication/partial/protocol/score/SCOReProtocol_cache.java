@@ -192,7 +192,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 
 		if (committed)
 		{
-			TribuDSTM.cacheCommittedKeys(sctx.getCommittedKeys());
+			TribuDSTM.cacheSetCommittedKeys(sctx.getCommittedKeys());
 		}
 
 		LOGGER.debug("FINISH " + sctx.threadID + ":" + sctx.atomicBlockId + ":"

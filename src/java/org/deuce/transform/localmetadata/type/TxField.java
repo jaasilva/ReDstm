@@ -12,7 +12,7 @@ import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.array.ArrayContainer;
 
 /**
- * This is the base class for distributed objects metadata.
+ * This is the base class for transactional metadata.
  * 
  * @author Tiago Vale
  */

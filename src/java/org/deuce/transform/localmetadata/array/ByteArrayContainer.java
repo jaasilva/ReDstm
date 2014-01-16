@@ -49,7 +49,7 @@ public class ByteArrayContainer extends ArrayContainer
 				field.init(arr, base + scale * i);
 
 				if (TribuDSTM.PARTIAL)
-				{
+				{ // XXX check arrays stuff partial rep.
 					final PartialReplicationSerializer s = (PartialReplicationSerializer) TribuDSTM
 							.getObjectSerializer();
 					s.createFullReplicationMetadata(field);
@@ -61,8 +61,13 @@ public class ByteArrayContainer extends ArrayContainer
 					field_metadata.setPartialGroup(g);
 				}
 				if (TribuDSTM.PARTIAL && field instanceof VBoxField)
-				{
+				{ // XXX check arrays stuff partial rep.
 					VBoxField vbox = (VBoxField) field;
+					vbox.setType(Type.BYTE);
+				}
+				if (field instanceof org.deuce.transaction.mvstm.field.VBoxField)
+				{
+					org.deuce.transaction.mvstm.field.VBoxField vbox = (org.deuce.transaction.mvstm.field.VBoxField) field;
 					vbox.setType(Type.BYTE);
 				}
 				metadata[i] = field;

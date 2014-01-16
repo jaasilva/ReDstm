@@ -27,7 +27,7 @@ public class Voting extends FullReplicationProtocol implements
 {
 	public static final Logger LOGGER = Logger.getLogger(Voting.class);
 
-	private final Map<Integer, DistributedContext> contexts = new ConcurrentHashMap<Integer, DistributedContext>();
+	private final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 	private final List<PendingTx> pendingTxs = new LinkedList<PendingTx>();
 	private final List<PendingResult> pendingResults = new LinkedList<PendingResult>();
 
@@ -123,7 +123,7 @@ public class Voting extends FullReplicationProtocol implements
 
 				if (tx.src.isLocal())
 				{
-					ctx = contexts.get(tx.ctxState.ctxID);
+					ctx = ctxs.get(tx.ctxState.ctxID);
 				}
 				else
 				{
@@ -158,7 +158,7 @@ public class Voting extends FullReplicationProtocol implements
 			}
 			else if (tx.src.isLocal() && tx.result == PendingTx.WAITING)
 			{ // Validate tx
-				ctx = contexts.get(tx.ctxState.ctxID);
+				ctx = ctxs.get(tx.ctxState.ctxID);
 				boolean valid = ctx.validate();
 				tx.result = PendingTx.VALIDATED;
 				Profiler.onSerializationBegin(ctx.threadID);
@@ -197,7 +197,7 @@ public class Voting extends FullReplicationProtocol implements
 
 	public void onTxContextCreation(DistributedContext ctx)
 	{
-		contexts.put(ctx.threadID, ctx);
+		ctxs.put(ctx.threadID, ctx);
 	}
 
 	@Override

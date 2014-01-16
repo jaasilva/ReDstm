@@ -2,7 +2,6 @@ package org.deuce.transaction.mvstm.field;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
 import org.deuce.transaction.mvstm.Context;
 import org.deuce.transform.ExcludeTM;
 
@@ -12,19 +11,19 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class Version implements Serializable
 {
-	private static final Logger LOGGER = Logger.getLogger(Version.class);
 	private static final long serialVersionUID = 1L;
 	public int version;
 	public Version next;
 	public Object value;
 	private int size;
+	public int validity = -1;
 
 	public Version(int version, Object value, Version next)
 	{
 		this.version = version;
 		this.next = next;
 		this.value = value;
-		this.size = next != null ? next.size + 1 : 1;
+		this.size = next != null ? next.size + 1 : 1; // XXX is this 0 or 1?
 		if (size == Context.MAX_VERSIONS)
 		{
 			cleanVersions();
@@ -46,18 +45,19 @@ public class Version implements Serializable
 
 	public Version get(int maxVersion)
 	{
+		Version prev = null;
 		Version res = this;
 		while (res.version > maxVersion)
 		{
+			prev = res;
 			res = res.next;
-
 			if (res == null)
 			{
-				LOGGER.trace("Abort trx version_unavailable " + this.version
-						+ " " + maxVersion);
 				throw Context.VERSION_UNAVAILABLE_EXCEPTION;
 			}
 		}
+		// XXX just to the equal to SCORe Version class (cache stuff)
+		res.validity = (prev != null) ? prev.version : -1;
 		return res;
 	}
 

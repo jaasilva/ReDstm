@@ -114,7 +114,7 @@ public class SCOReReadSet implements Serializable
 	}
 
 	public Group getInvolvedNodes()
-	{
+	{ // XXX check
 		Group resGroup = new PartialReplicationGroup();
 		for (int i = 0; i < next; i++)
 		{
@@ -128,17 +128,5 @@ public class SCOReReadSet implements Serializable
 		}
 
 		return resGroup;
-	}
-
-	public String toString()
-	{
-		StringBuffer sb = new StringBuffer("[");
-		for (int i = 0; i < next; i++)
-		{
-			sb.append(readSet[i] + " ");
-		}
-		sb.insert(sb.length() - 1, "]");
-
-		return sb.toString().trim();
 	}
 }

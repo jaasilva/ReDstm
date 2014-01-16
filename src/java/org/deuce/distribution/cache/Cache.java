@@ -42,9 +42,9 @@ public class Cache
 	private static int lastSentSid = 0;
 	public static invalidation invStrategy;
 
-	private static final ScheduledExecutorService exe = Executors
+	private static final ScheduledExecutorService exec = Executors
 			.newSingleThreadScheduledExecutor();
-	public static final Executor exe2 = Executors.newFixedThreadPool(TribuDSTM
+	public static final Executor exec2 = Executors.newFixedThreadPool(TribuDSTM
 			.getNumGroups());
 
 	@ExcludeTM
@@ -61,10 +61,12 @@ public class Cache
 		if (inv.equals("eager"))
 		{
 			invStrategy = invalidation.EAGER;
+			// TODO implement this invalidation strategy
 		}
 		else if (inv.equals("lazy"))
 		{
 			invStrategy = invalidation.LAZY;
+			// TODO implement this invalidation strategy
 		}
 		else if (inv.equals("batch"))
 		{
@@ -72,7 +74,7 @@ public class Cache
 
 			if (TribuDSTM.isGroupMaster())
 			{
-				exe.scheduleAtFixedRate(new InvalidationSenderHandler(), 50,
+				exec.scheduleAtFixedRate(new InvalidationSenderHandler(), 50,
 						50, TimeUnit.MILLISECONDS);
 			}
 		}
@@ -317,7 +319,7 @@ public class Cache
 	{
 		if (msg.group != TribuDSTM.getLocalGroup().getId())
 		{
-			exe2.execute(new InvalidationReceiverHandler(msg));
+			exec2.execute(new InvalidationReceiverHandler(msg));
 		}
 	}
 

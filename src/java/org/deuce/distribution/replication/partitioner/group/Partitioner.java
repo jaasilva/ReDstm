@@ -72,9 +72,9 @@ public abstract class Partitioner implements GroupPartitioner
 	@Override
 	public String toString()
 	{
-		StringBuilder sb = new StringBuilder("----- GROUPS (");
+		StringBuilder sb = new StringBuilder("----------- GROUPS (");
 		sb.append(getNumGroups());
-		sb.append(") -----\n");
+		sb.append(") -----------\n");
 		for (Group g : groups)
 		{
 			if (g.isLocal())
@@ -90,7 +90,7 @@ public abstract class Partitioner implements GroupPartitioner
 			sb.append(g.toStringMembers());
 			sb.append("\n");
 		}
-		sb.append("----------------------");
+		sb.append("----------------------------------");
 		return sb.toString();
 	}
 }

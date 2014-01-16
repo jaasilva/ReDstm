@@ -2,7 +2,6 @@ package org.deuce.transaction.score.field;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
 import org.deuce.transaction.score.SCOReContext;
 import org.deuce.transform.ExcludeTM;
 
@@ -12,7 +11,6 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class Version implements Serializable
 {
-	private static final Logger LOGGER = Logger.getLogger(Version.class);
 	private static final long serialVersionUID = 1L;
 	public int version;
 	public Version next;
@@ -53,11 +51,8 @@ public class Version implements Serializable
 		{
 			prev = res;
 			res = res.next;
-
 			if (res == null)
 			{
-				LOGGER.trace("Abort trx version_unavailable " + this.version
-						+ " " + maxVersion);
 				throw SCOReContext.VERSION_UNAVAILABLE_EXCEPTION;
 			}
 		}

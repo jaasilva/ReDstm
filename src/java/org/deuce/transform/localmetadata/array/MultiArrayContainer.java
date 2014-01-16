@@ -75,47 +75,43 @@ public class MultiArrayContainer extends ArrayContainer
 			 */
 			switch (arrElemType)
 			{
-				case Type.INT:
-					for (int i = 0; i < length; i++)
-						nextDim[i] = new IntArrayContainer((int[]) matrix[i]);
-					break;
-				case Type.SHORT:
-					for (int i = 0; i < length; i++)
-						nextDim[i] = new ShortArrayContainer(
-								(short[]) matrix[i]);
-					break;
-				case Type.LONG:
-					for (int i = 0; i < length; i++)
-						nextDim[i] = new LongArrayContainer((long[]) matrix[i]);
-					break;
-				case Type.BYTE:
-					for (int i = 0; i < length; i++)
-						nextDim[i] = new ByteArrayContainer((byte[]) matrix[i]);
-					break;
-				case Type.BOOLEAN:
-					for (int i = 0; i < length; i++)
-						nextDim[i] = new BooleanArrayContainer(
-								(boolean[]) matrix[i]);
-					break;
-				case Type.CHAR:
-					for (int i = 0; i < length; i++)
-						nextDim[i] = new CharArrayContainer((char[]) matrix[i]);
-					break;
-				case Type.FLOAT:
-					for (int i = 0; i < length; i++)
-						nextDim[i] = new FloatArrayContainer(
-								(float[]) matrix[i]);
-					break;
-				case Type.DOUBLE:
-					for (int i = 0; i < length; i++)
-						nextDim[i] = new DoubleArrayContainer(
-								(double[]) matrix[i]);
-					break;
-				default: // object
-					for (int i = 0; i < length; i++)
-						nextDim[i] = new ObjectArrayContainer(
-								(Object[]) matrix[i]);
-					break;
+			case Type.INT:
+				for (int i = 0; i < length; i++)
+					nextDim[i] = new IntArrayContainer((int[]) matrix[i]);
+				break;
+			case Type.SHORT:
+				for (int i = 0; i < length; i++)
+					nextDim[i] = new ShortArrayContainer((short[]) matrix[i]);
+				break;
+			case Type.LONG:
+				for (int i = 0; i < length; i++)
+					nextDim[i] = new LongArrayContainer((long[]) matrix[i]);
+				break;
+			case Type.BYTE:
+				for (int i = 0; i < length; i++)
+					nextDim[i] = new ByteArrayContainer((byte[]) matrix[i]);
+				break;
+			case Type.BOOLEAN:
+				for (int i = 0; i < length; i++)
+					nextDim[i] = new BooleanArrayContainer(
+							(boolean[]) matrix[i]);
+				break;
+			case Type.CHAR:
+				for (int i = 0; i < length; i++)
+					nextDim[i] = new CharArrayContainer((char[]) matrix[i]);
+				break;
+			case Type.FLOAT:
+				for (int i = 0; i < length; i++)
+					nextDim[i] = new FloatArrayContainer((float[]) matrix[i]);
+				break;
+			case Type.DOUBLE:
+				for (int i = 0; i < length; i++)
+					nextDim[i] = new DoubleArrayContainer((double[]) matrix[i]);
+				break;
+			default: // object
+				for (int i = 0; i < length; i++)
+					nextDim[i] = new ObjectArrayContainer((Object[]) matrix[i]);
+				break;
 			}
 		}
 
@@ -129,7 +125,7 @@ public class MultiArrayContainer extends ArrayContainer
 				field.init(nextDim, i, matrix);
 
 				if (TribuDSTM.PARTIAL)
-				{
+				{ // XXX check arrays stuff partial rep.
 					final PartialReplicationSerializer s = (PartialReplicationSerializer) TribuDSTM
 							.getObjectSerializer();
 					s.createFullReplicationMetadata(field);
@@ -141,8 +137,13 @@ public class MultiArrayContainer extends ArrayContainer
 					field_metadata.setPartialGroup(g);
 				}
 				if (TribuDSTM.PARTIAL && field instanceof VBoxField)
-				{
+				{ // XXX check arrays stuff partial rep.
 					VBoxField vbox = (VBoxField) field;
+					vbox.setType(Type.ARRAY);
+				}
+				if (field instanceof org.deuce.transaction.mvstm.field.VBoxField)
+				{
+					org.deuce.transaction.mvstm.field.VBoxField vbox = (org.deuce.transaction.mvstm.field.VBoxField) field;
 					vbox.setType(Type.ARRAY);
 				}
 				metadata[i] = field;

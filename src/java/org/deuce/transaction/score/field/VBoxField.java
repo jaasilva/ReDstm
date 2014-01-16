@@ -14,12 +14,12 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 {
 	public final static String NAME = Type.getInternalName(VBoxField.class);
 
-	public volatile Version version;
-	public int type;
+	private volatile Version version;
+	private int type;
 
 	private transient volatile int readLock = 0;
 	private transient volatile boolean writeLock = false; // false -> unlocked
-	private transient volatile String lockHolder = null; // trxID
+	private transient volatile String lockHolder = null; // trxID XXX change
 
 	public VBoxField()
 	{

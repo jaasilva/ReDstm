@@ -18,8 +18,8 @@ public interface Group extends Serializable
 	public final static String NAME = Type.getInternalName(Group.class);
 	public final static String DESC = Type.getDescriptor(Group.class);
 
-	public final static byte ALL = -1;
-	public final static byte NIL = -2;
+	public static final byte ALL = -1;
+	public static final byte NIL = -2;
 
 	/**
 	 * Returns a collection with the addresses of all the members of the group.
