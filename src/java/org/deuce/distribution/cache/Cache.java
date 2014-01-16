@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -32,7 +31,7 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class Cache
 {
-	private static final ConcurrentMap<ObjectMetadata, SortedSet<CacheContainer>> cache = new ConcurrentHashMap<ObjectMetadata, SortedSet<CacheContainer>>(
+	private static final Map<ObjectMetadata, SortedSet<CacheContainer>> cache = new ConcurrentHashMap<ObjectMetadata, SortedSet<CacheContainer>>(
 			50000);
 	private static final Map<Integer, Validity> mostRecentValidities = new ConcurrentHashMap<Integer, Validity>(
 			TribuDSTM.getNumGroups());
@@ -73,7 +72,7 @@ public class Cache
 			invStrategy = invalidation.BATCH;
 
 			if (TribuDSTM.isGroupMaster())
-			{
+			{ // TODO parameterize invalidation interval (50 ms by default)
 				exec.scheduleAtFixedRate(new InvalidationSenderHandler(), 50,
 						50, TimeUnit.MILLISECONDS);
 			}
@@ -308,9 +307,9 @@ public class Cache
 			{
 				byte[] payload = ObjectSerializer.object2ByteArray(msg);
 
-				PartialReplicationProtocol.serializationReadContext.set(true);
+				PartialReplicationProtocol.serializationReadCtx.set(true);
 				TribuDSTM.sendReliably(payload); // XXX send to other groups
-				PartialReplicationProtocol.serializationReadContext.set(false);
+				PartialReplicationProtocol.serializationReadCtx.set(false);
 			}
 		}
 	}

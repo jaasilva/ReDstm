@@ -96,7 +96,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		msg.setBuffer(payload);
 		msg.setFlag(Message.Flag.NO_TOTAL_ORDER);
 
-		if (PartialReplicationProtocol.serializationReadContext.get())
+		if (PartialReplicationProtocol.serializationReadCtx.get())
 		{
 			msg.setFlag(Message.Flag.OOB); // XXX trying to optimize
 		}
@@ -189,7 +189,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		{
 			final Message msg = new Message(
 					(org.jgroups.Address) addr.getSpecificAddress(), payload);
-			if (PartialReplicationProtocol.serializationReadContext.get())
+			if (PartialReplicationProtocol.serializationReadCtx.get())
 			{
 				msg.setFlag(Message.Flag.OOB); // XXX trying to optimize
 			}

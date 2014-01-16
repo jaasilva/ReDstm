@@ -15,7 +15,7 @@ public abstract class PartialReplicationProtocol implements DistributedProtocol
 			.getDescriptor(Partial.class);
 	private PartialReplicationSerializer serializer = new PartialReplicationSerializer();
 
-	public static final ThreadLocal<Boolean> serializationReadContext = new ThreadLocal<Boolean>()
+	public static final ThreadLocal<Boolean> serializationReadCtx = new ThreadLocal<Boolean>()
 	{ // false -> *NOT* read context; true -> read context
 		@Override
 		protected Boolean initialValue()

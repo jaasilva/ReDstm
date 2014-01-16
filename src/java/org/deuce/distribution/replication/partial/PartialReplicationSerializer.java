@@ -41,7 +41,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 			throws ObjectStreamException
 	{
 		PartialReplicationOID oid = (PartialReplicationOID) obj.getMetadata();
-		boolean isRead = PartialReplicationProtocol.serializationReadContext
+		boolean isRead = PartialReplicationProtocol.serializationReadCtx
 				.get();
 
 		if (isRead)

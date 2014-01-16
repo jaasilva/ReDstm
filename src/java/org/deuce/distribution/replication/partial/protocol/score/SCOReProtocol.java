@@ -117,7 +117,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		Profiler.newMsgSent(payload.length);
 		Profiler.onPrepSend(ctx.threadID);
-
 		TribuDSTM.sendToGroup(payload, resGroup);
 
 		LOGGER.debug("SEND PREP " + sctx.threadID + ":" + sctx.atomicBlockId
@@ -198,34 +197,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		return sctx.response;
 	}
 
-	protected ReadDone doReadRemote(int sid, ObjectMetadata metadata)
-	{
-		int origNextId;
-		do
-		{
-			origNextId = SCOReContext.nextId.get();
-		} while (!SCOReContext.nextId.compareAndSet(origNextId,
-				Math.max(origNextId, sid)));
-
-		VBoxField field = (VBoxField) TribuDSTM.getObject(metadata);
-
-		long st = System.nanoTime();
-		while (SCOReContext.commitId.get() < sid
-				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
-		{ /*
-		 * wait until (commitId.get() >= sid || ((InPlaceRWLock)
-		 * field).isExclusiveUnlocked())
-		 */
-		}
-		long end = System.nanoTime();
-		Profiler.onWaitingRead(end - st);
-
-		Version ver = field.getLastVersion().get(sid);
-		boolean mostRecent = ver.equals(field.getLastVersion());
-		int lastCommitted = SCOReContext.commitId.get();
-		return new ReadDone(ver.value, lastCommitted, mostRecent);
-	}
-
 	protected void updateNodeTimestamps(int lastCommitted)
 	{
 		int origNextId;
@@ -278,19 +249,47 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		ReadRet ret = new ReadRet(msg.ctxID, msg.msgVersion, read);
 
 		Profiler.onSerializationBegin(msg.ctxID);
-		serializationReadContext.set(true); // enter read context
+		serializationReadCtx.set(true); // enter read context
 		byte[] payload = ObjectSerializer.object2ByteArray(ret);
-		serializationReadContext.set(false); // exit read context
+		serializationReadCtx.set(false); // exit read context
 		Profiler.onSerializationFinish(msg.ctxID);
 
 		Profiler.newMsgSent(payload.length);
-		serializationReadContext.set(true); // enter read context
+		serializationReadCtx.set(true); // enter read context
 		TribuDSTM.sendTo(payload, src);
-		serializationReadContext.set(false); // exit read context
+		serializationReadCtx.set(false); // exit read context
 		updateNodeTimestamps(msg.readSid);
 
 		LOGGER.debug("READ REQ (" + src + ") "
 				+ msg.metadata.toString().split("-")[0]);
+	}
+
+	protected ReadDone doReadRemote(int sid, ObjectMetadata metadata)
+	{
+		int origNextId;
+		do
+		{
+			origNextId = SCOReContext.nextId.get();
+		} while (!SCOReContext.nextId.compareAndSet(origNextId,
+				Math.max(origNextId, sid)));
+
+		VBoxField field = (VBoxField) TribuDSTM.getObject(metadata);
+
+		long st = System.nanoTime();
+		while (SCOReContext.commitId.get() < sid
+				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
+		{ /*
+		 * wait until (commitId.get() >= sid || ((InPlaceRWLock)
+		 * field).isExclusiveUnlocked())
+		 */
+		}
+		long end = System.nanoTime();
+		Profiler.onWaitingRead(end - st);
+
+		Version ver = field.getLastVersion().get(sid);
+		boolean mostRecent = ver.equals(field.getLastVersion());
+		int lastCommitted = SCOReContext.commitId.get();
+		return new ReadDone(ver.value, lastCommitted, mostRecent);
 	}
 
 	protected void readReturn(ReadRet msg, Address src)
@@ -306,7 +305,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		updateNodeTimestamps(msg.read.lastCommitted);
 		sctx.syncMsg.release();
-
 		Profiler.remoteReadOk();
 
 		LOGGER.debug("READ RET (" + src + ") " + sctx.threadID + ":"

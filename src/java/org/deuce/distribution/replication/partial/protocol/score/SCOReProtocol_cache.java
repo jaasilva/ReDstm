@@ -102,22 +102,6 @@ public class SCOReProtocol_cache extends SCOReProtocol
 	}
 
 	@Override
-	protected void processControlMessage(ControlMessage obj)
-	{
-		TribuDSTM.cacheInvalidateKeys((iSetMsg) obj);
-	}
-
-	private void updateCache(ObjectMetadata metadata, ReadDone read)
-	{ // put received version in cache
-		CacheMsg msg = ((CacheMsg) read.piggyback);
-		CacheContainer v = new CacheContainer();
-		v.value = read.value;
-		v.version = msg.version;
-		TribuDSTM.cachePut(metadata, v, msg.validity, msg.groupId,
-				read.mostRecent);
-	}
-
-	@Override
 	protected ReadDone remoteRead(SCOReContext sctx, ObjectMetadata metadata,
 			boolean firstRead, Group p_group)
 	{
@@ -129,7 +113,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		Profiler.onSerializationFinish(sctx.threadID);
 
 		Profiler.newMsgSent(payload.length);
-		TribuDSTM.sendToGroup(payload, p_group); // XXX id is -2
+		TribuDSTM.sendToGroup(payload, p_group); // XXX id is -2 (NIL)
 
 		LOGGER.debug("SEND READ REQ " + sctx.trxID.split("-")[0] + " "
 				+ sctx.requestVersion);
@@ -145,6 +129,16 @@ public class SCOReProtocol_cache extends SCOReProtocol
 
 		updateCache(metadata, sctx.response);
 		return sctx.response;
+	}
+
+	private void updateCache(ObjectMetadata metadata, ReadDone read)
+	{ // put received version in cache
+		CacheMsg msg = ((CacheMsg) read.piggyback);
+		CacheContainer v = new CacheContainer();
+		v.value = read.value;
+		v.version = msg.version;
+		TribuDSTM.cachePut(metadata, v, msg.validity, msg.groupId,
+				read.mostRecent);
 	}
 
 	@Override
@@ -176,13 +170,18 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		ReadDone read = new ReadDone(ver.value, lastCommitted, mostRecent);
 
 		// piggyback the info of the version to be cached
+		read.piggyback = createCacheMsg(ver, lastCommitted);
+
+		return read;
+	}
+
+	private CacheMsg createCacheMsg(Version ver, int lastCommitted)
+	{
 		CacheMsg msg = new CacheMsg();
 		msg.validity = ver.validity == -1 ? lastCommitted : ver.validity - 1;
 		msg.version = ver.version;
 		msg.groupId = TribuDSTM.getLocalGroup().getId();
-		read.piggyback = msg;
-
-		return read;
+		return msg;
 	}
 
 	@Override
@@ -197,5 +196,11 @@ public class SCOReProtocol_cache extends SCOReProtocol
 
 		LOGGER.debug("FINISH " + sctx.threadID + ":" + sctx.atomicBlockId + ":"
 				+ sctx.trxID.split("-")[0] + "= " + committed);
+	}
+
+	@Override
+	protected void processControlMessage(ControlMessage obj)
+	{
+		TribuDSTM.cacheInvalidateKeys((iSetMsg) obj);
 	}
 }
