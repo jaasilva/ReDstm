@@ -39,15 +39,15 @@ public class Cache
 			.newSetFromMap(new ConcurrentHashMap<SCOReWriteFieldAccess, Boolean>(
 					1000));
 	private static int lastSentSid = 0;
-	public static invalidation invStrategy;
+	public static Invalidation invalidationStrategy;
 
-	private static final ScheduledExecutorService exec = Executors
+	private static final ScheduledExecutorService senderExec = Executors
 			.newSingleThreadScheduledExecutor();
-	public static final Executor exec2 = Executors.newFixedThreadPool(TribuDSTM
-			.getNumGroups());
+	public static final Executor recvExec = Executors
+			.newFixedThreadPool(TribuDSTM.getNumGroups());
 
 	@ExcludeTM
-	public enum invalidation
+	public enum Invalidation
 	{
 		EAGER, LAZY, BATCH;
 	}
@@ -59,22 +59,24 @@ public class Cache
 
 		if (inv.equals("eager"))
 		{
-			invStrategy = invalidation.EAGER;
-			// TODO implement this invalidation strategy
+			invalidationStrategy = Invalidation.EAGER;
 		}
 		else if (inv.equals("lazy"))
 		{
-			invStrategy = invalidation.LAZY;
-			// TODO implement this invalidation strategy
+			invalidationStrategy = Invalidation.LAZY;
 		}
 		else if (inv.equals("batch"))
 		{
-			invStrategy = invalidation.BATCH;
+			invalidationStrategy = Invalidation.BATCH;
 
 			if (TribuDSTM.isGroupMaster())
-			{ // TODO parameterize invalidation interval (50 ms by default)
-				exec.scheduleAtFixedRate(new InvalidationSenderHandler(), 50,
-						50, TimeUnit.MILLISECONDS);
+			{
+				int interval = Integer.getInteger(
+						Defaults._CACHE_BATCH_INTERVAL,
+						Defaults.CACHE_BATCH_INTERVAL);
+
+				senderExec.scheduleAtFixedRate(new InvalidationSenderHandler(),
+						5, interval, TimeUnit.MILLISECONDS);
 			}
 		}
 		else
@@ -97,58 +99,57 @@ public class Cache
 			CacheContainer origVer = vers.first(); // most recent version
 			if (ver.version > origVer.version)
 			{ // installing newer version
-				System.out.println("    installing newer version mrv:"
-						+ origVer.version + " " + origVer.validity.validity
-						+ " " + origVer.validity.isShared);
-
-				if (origVer.validity.isShared)
-				{
-					origVer.validity = new Validity(origVer.validity.validity,
-							false);
-				}
+				System.out.print("    installing newer version mrv:"
+						+ origVer.version + " " + origVer.validity.validity);
 
 				Validity mrv = mostRecentValidities.get(group);
-				if (mrv == null)
-				{
-					mrv = new Validity(validity, true);
-					mostRecentValidities.put(group, mrv);
-				}
 
-				if (validity == mrv.validity)
+				if (mrv != null)
 				{
-					ver.validity = mrv;
+					if (origVer.validity.isShared)
+					{
+						origVer.validity = new Validity(
+								origVer.validity.validity, false);
+					}
+					if (validity == mrv.validity)
+					{
+						ver.validity = mrv;
+						System.out.println(" (shared) " + mrv.validity);
+					}
 				}
-				else
+				if (ver.validity == null)
 				{
 					Validity val = new Validity(validity, false);
 					ver.validity = val;
+					System.out.println(" (not shared) " + val.validity);
 				}
-
-				System.out.println("      " + origVer.validity.isShared + " "
-						+ ver.validity.isShared + " " + mrv.validity);
 			}
 			else if (ver.version == origVer.version)
 			{ // updating validity
-				System.out.println("    installing equal version mrv:"
-						+ origVer.version + " " + origVer.validity.validity
-						+ " " + origVer.validity.isShared);
+				System.out.print("    installing equal version mrv:"
+						+ origVer.version + " " + origVer.validity.validity);
 
-				if (origVer.validity.isShared)
+				if (!origVer.validity.isShared)
 				{
-					origVer.validity = new Validity(validity, false);
+					if (validity > origVer.validity.validity)
+					{
+						origVer.validity = new Validity(validity, false);
+						System.out.println(" (not shared) " + validity);
+					}
+					else
+					{
+						System.out.println(" (not shared)!");
+					}
 				}
 				else
 				{
-					origVer.validity.validity = validity;
+					System.out.println(" (shared)");
 				}
-
-				System.out.println("      " + origVer.validity.isShared);
 			}
 			else
 			{ // installing older version XXX will this ever happen?
 				System.out.println("    installing older version mrv:"
-						+ origVer.version + " " + origVer.validity.validity
-						+ " " + origVer.validity.isShared);
+						+ origVer.version + " " + origVer.validity.validity);
 
 				Validity val = new Validity(validity, false);
 				ver.validity = val;
@@ -158,31 +159,28 @@ public class Cache
 		}
 		else
 		{ // first version to be inserted for this key
-			System.out.println("    installing first version");
+			System.out.print("    installing first version");
 
 			vers = Collections
 					.synchronizedSortedSet(new TreeSet<CacheContainer>());
 			cache.put(metadata, vers);
 
 			Validity mrv = mostRecentValidities.get(group);
-			if (mrv == null)
+			if (mrv != null)
 			{
-				mrv = new Validity(validity, true);
-				mostRecentValidities.put(group, mrv);
-			}
+				if (validity == mrv.validity)
+				{
+					ver.validity = mrv;
+					System.out.println(" (shared) " + mrv.validity);
+				}
 
-			if (validity == mrv.validity)
-			{
-				ver.validity = mrv;
 			}
-			else
+			if (ver.validity == null)
 			{
 				Validity val = new Validity(validity, false);
 				ver.validity = val;
+				System.out.println(" (not shared) " + val.validity);
 			}
-
-			System.out.println("      " + ver.validity.isShared + " "
-					+ mrv.validity);
 		}
 
 		vers.add(ver);
@@ -195,7 +193,7 @@ public class Cache
 
 	public synchronized CacheContainer getVisibleVersion(
 			ObjectMetadata metadata, int sid, boolean firstRead)
-	{
+	{ // assumes that the key exists in the map
 		SortedSet<CacheContainer> vers = cache.get(metadata);
 
 		if (firstRead)
@@ -221,9 +219,15 @@ public class Cache
 	 * INVALIDATION
 	 ***************************************************/
 
-	public synchronized void committedKeys(Set<SCOReWriteFieldAccess> set)
+	public synchronized void addCommittedKeys(Set<SCOReWriteFieldAccess> set)
 	{
 		committedKeys.addAll(set);
+
+		if (invalidationStrategy == Invalidation.EAGER
+				&& TribuDSTM.isGroupMaster())
+		{
+			senderExec.execute(new InvalidationSenderHandler());
+		}
 	}
 
 	public synchronized iSetMsg getInvalidationSet()
@@ -248,51 +252,13 @@ public class Cache
 				}
 			}
 
-			if (!iSet.isEmpty())
-			{
-				msg = new iSetMsg(iSet, mostRecentSid, TribuDSTM
-						.getLocalGroup().getId());
-			}
+			msg = new iSetMsg(iSet, mostRecentSid, TribuDSTM.getLocalGroup()
+					.getId());
 
 			lastSentSid = mostRecentSid;
-
-			// System.out.println("################ getInvalidationSet "
-			// + iSet.size());
 		}
 
 		return msg;
-	}
-
-	public synchronized void invalidateKeys(int group, int mostRecent,
-			Collection<ObjectMetadata> iSet)
-	{
-		// System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> invalidateKeys g:"
-		// + group + " mrv:" + mostRecent + " iSet:" + iSet.size());
-		for (ObjectMetadata k : iSet)
-		{
-			SortedSet<CacheContainer> vers = cache.get(k);
-			if (vers != null)
-			{
-				CacheContainer v = vers.first(); // most recent version
-				if (v.validity.isShared)
-				{
-					v.validity = new Validity(v.validity.validity, false);
-				}
-			}
-		}
-
-		Validity mostRecentValidity = mostRecentValidities.get(group);
-		if (mostRecentValidity == null)
-		{
-			// System.out.println("    new mrv:" + mostRecent);
-			Validity validity = new Validity(mostRecent, true);
-			mostRecentValidities.put(group, validity);
-		}
-		else
-		{
-			// System.out.println("    update mrv:" + mostRecent);
-			mostRecentValidity.validity = mostRecent;
-		}
 	}
 
 	@ExcludeTM
@@ -305,6 +271,7 @@ public class Cache
 
 			if (msg != null)
 			{
+				System.out.println(">>>>> Send iSet:" + msg.iSet.size());
 				byte[] payload = ObjectSerializer.object2ByteArray(msg);
 
 				PartialReplicationProtocol.serializationReadCtx.set(true);
@@ -318,7 +285,7 @@ public class Cache
 	{
 		if (msg.group != TribuDSTM.getLocalGroup().getId())
 		{
-			exec2.execute(new InvalidationReceiverHandler(msg));
+			recvExec.execute(new InvalidationReceiverHandler(msg));
 		}
 	}
 
@@ -339,4 +306,36 @@ public class Cache
 		}
 	}
 
+	public synchronized void invalidateKeys(int group, int mostRecent,
+			Collection<ObjectMetadata> iSet)
+	{
+		System.out
+				.println(">>>>> Received iSet:" + iSet.size() + " g:" + group);
+
+		for (ObjectMetadata k : iSet)
+		{
+			SortedSet<CacheContainer> vers = cache.get(k);
+			if (vers != null)
+			{
+				CacheContainer v = vers.first(); // most recent version
+				if (v.validity.isShared)
+				{
+					v.validity = new Validity(v.validity.validity, false);
+				}
+			}
+		}
+
+		Validity mostRecentValidity = mostRecentValidities.get(group);
+		if (mostRecentValidity == null)
+		{
+			System.out.println("    new mrv:" + mostRecent);
+			Validity validity = new Validity(mostRecent, true);
+			mostRecentValidities.put(group, validity);
+		}
+		else
+		{
+			System.out.println("    update mrv:" + mostRecent);
+			mostRecentValidity.validity = mostRecent;
+		}
+	}
 }

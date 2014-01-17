@@ -14,6 +14,7 @@ public class CacheMsg implements Serializable
 	public int validity;
 	public int version;
 	public int groupId; // XXX check. I think I dont need this
+	public iSetMsg piggyback = null;
 
 	public CacheMsg()
 	{

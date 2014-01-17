@@ -714,14 +714,14 @@ public class RedBTreeZ implements IntSet
 	{
 		if (rand.nextInt(100) < partial_ops)
 		{ // partial operation
-			if (rand.nextInt(100) < 10) // 10%
-			{ // it *may* modify an existent element
-				return partial_op(key);
-			}
-			else
-			{ // it modifies an existent element
+//			if (rand.nextInt(100) < 5)
+//			{ // it *may* modify an existent element
+//				return partial_op(key);
+//			}
+//			else
+//			{ // it modifies an existent element
 				return partial_op();
-			}
+//			}
 		}
 		else
 		{ // full operation

@@ -192,8 +192,6 @@ public class TribuDSTM
 
 			ALL.addAll(getAllMembers()); // XXX group
 
-			LOGGER.warn("> ALL:" + ALL); // XXX group
-
 			System.out.println("GROUP: " + getLocalGroup().getId());
 		}
 
@@ -610,14 +608,19 @@ public class TribuDSTM
 		return cache.contains(metadata);
 	}
 
-	public static final void cacheSetCommittedKeys(
+	public static final void cacheAddCommittedKeys(
 			Set<SCOReWriteFieldAccess> set)
 	{
-		cache.committedKeys(set);
+		cache.addCommittedKeys(set);
 	}
 
 	public static final void cacheInvalidateKeys(iSetMsg msg)
 	{
 		cache.processInvalidationMessage(msg);
+	}
+
+	public static final iSetMsg cacheGetInvalidationSet()
+	{
+		return cache.getInvalidationSet();
 	}
 }

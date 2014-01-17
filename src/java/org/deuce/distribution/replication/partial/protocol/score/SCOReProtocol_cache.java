@@ -4,6 +4,8 @@ import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
+import org.deuce.distribution.cache.Cache;
+import org.deuce.distribution.cache.Cache.Invalidation;
 import org.deuce.distribution.cache.CacheContainer;
 import org.deuce.distribution.cache.CacheMsg;
 import org.deuce.distribution.cache.iSetMsg;
@@ -82,7 +84,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 				{
 					Profiler.onCacheHit();
 					return new ReadDone(v.value, firstRead ? validity
-							: v.version, true);
+							: v.version, true); // true means *nop* in opt
 				}
 				else
 				{
@@ -139,6 +141,12 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		v.version = msg.version;
 		TribuDSTM.cachePut(metadata, v, msg.validity, msg.groupId,
 				read.mostRecent);
+
+		if (Cache.invalidationStrategy == Invalidation.LAZY
+				&& msg.piggyback != null)
+		{
+			TribuDSTM.cacheInvalidateKeys(msg.piggyback);
+		}
 	}
 
 	@Override
@@ -181,6 +189,13 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		msg.validity = ver.validity == -1 ? lastCommitted : ver.validity - 1;
 		msg.version = ver.version;
 		msg.groupId = TribuDSTM.getLocalGroup().getId();
+
+		if (Cache.invalidationStrategy == Invalidation.LAZY
+				&& TribuDSTM.isGroupMaster())
+		{
+			msg.piggyback = TribuDSTM.cacheGetInvalidationSet();
+		}
+
 		return msg;
 	}
 
@@ -191,7 +206,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 
 		if (sctx.isUpdate() && committed)
 		{
-			TribuDSTM.cacheSetCommittedKeys(sctx.getCommittedKeys());
+			TribuDSTM.cacheAddCommittedKeys(sctx.getCommittedKeys());
 		}
 
 		LOGGER.debug("FINISH " + sctx.threadID + ":" + sctx.atomicBlockId + ":"
