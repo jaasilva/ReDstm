@@ -30,8 +30,8 @@ _EXCLUDE="${_EXCLUDE},spread.*"
 _EXCLUDE="${_EXCLUDE},org.deuce.trove.*"
 _EXCLUDE="${_EXCLUDE},org.deuce.benchmark.intset.MyObjectBackend"
 
-_BENCH_BIG=false
-#_BENCH_BIG=true
+#_BENCH_BIG=false
+_BENCH_BIG=true
 
 if $_BENCH_BIG ; then # big values
 	_SIZE=32768 # 2^15
@@ -54,8 +54,8 @@ _BENCH=$1
 _WRITES=$5
 _PARTIAL_OPS=$6
 
-_CTX=tl2.Context
-#_CTX=mvstm.Context
+#_CTX=tl2.Context
+_CTX=mvstm.Context
 _PROTO=nonvoting.NonVoting
 #_PROTO=voting.Voting
 _GCS=jgroups.JGroups
