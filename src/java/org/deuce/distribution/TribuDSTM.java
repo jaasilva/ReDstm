@@ -208,9 +208,13 @@ public class TribuDSTM
 	{
 		CACHE = Boolean.parseBoolean(System.getProperty(Defaults._CACHE,
 				Defaults.CACHE));
+		LOGGER.warn("> Cache: " + CACHE);
 		if (CACHE)
 		{
-			cache = new Cache();
+			String invalidation = System.getProperty(Defaults._CACHE_INV,
+					Defaults.CACHE_INV);
+			LOGGER.warn("> Cache Invalidation: " + invalidation);
+			cache = new Cache(invalidation);
 		}
 	}
 
@@ -591,34 +595,60 @@ public class TribuDSTM
 	 * ################################################################
 	 */
 
+	/**
+	 * @param metadata
+	 * @param obj
+	 * @param validity
+	 * @param group
+	 * @param mostRecent
+	 */
 	public static final void cachePut(ObjectMetadata metadata,
 			CacheContainer obj, int validity, int group, boolean mostRecent)
 	{
 		cache.put(metadata, obj, validity, group, mostRecent);
 	}
 
+	/**
+	 * @param metadata
+	 * @param sid
+	 * @param firstRead
+	 * @return
+	 */
 	public static final CacheContainer cacheGet(ObjectMetadata metadata,
 			int sid, boolean firstRead)
 	{
 		return cache.getVisibleVersion(metadata, sid, firstRead);
 	}
 
+	/**
+	 * @param metadata
+	 * @return
+	 */
 	public static final boolean cacheContains(ObjectMetadata metadata)
 	{
 		return cache.contains(metadata);
 	}
 
+	/**
+	 * @param set
+	 */
 	public static final void cacheAddCommittedKeys(
 			Set<SCOReWriteFieldAccess> set)
 	{
 		cache.addCommittedKeys(set);
 	}
 
+	/**
+	 * @param msg
+	 */
 	public static final void cacheInvalidateKeys(iSetMsg msg)
 	{
 		cache.processInvalidationMessage(msg);
 	}
 
+	/**
+	 * @return
+	 */
 	public static final iSetMsg cacheGetInvalidationSet()
 	{
 		return cache.getInvalidationSet();

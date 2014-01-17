@@ -52,20 +52,17 @@ public class Cache
 		EAGER, LAZY, BATCH;
 	}
 
-	public Cache()
+	public Cache(String invalidation)
 	{
-		String inv = System
-				.getProperty(Defaults._CACHE_INV, Defaults.CACHE_INV);
-
-		if (inv.equals("eager"))
+		if (invalidation.equals("eager"))
 		{
 			invalidationStrategy = Invalidation.EAGER;
 		}
-		else if (inv.equals("lazy"))
+		else if (invalidation.equals("lazy"))
 		{
 			invalidationStrategy = Invalidation.LAZY;
 		}
-		else if (inv.equals("batch"))
+		else if (invalidation.equals("batch"))
 		{
 			invalidationStrategy = Invalidation.BATCH;
 
@@ -81,59 +78,62 @@ public class Cache
 		}
 		else
 		{
-			System.err.println("Unknown invalidation strategy: " + inv);
+			System.err
+					.println("Unknown invalidation strategy: " + invalidation);
 			System.exit(-1);
 		}
 	}
 
-	public synchronized void put(ObjectMetadata metadata, CacheContainer ver,
-			int validity, int group, boolean mostRecent)
+	public synchronized void put(ObjectMetadata metadata,
+			CacheContainer newVer, int validity, int group, boolean mostRecent)
 	{
 		SortedSet<CacheContainer> vers = null;
-		System.out.println("*Installing " + metadata.toString().split("-")[0]
-				+ " ver:" + ver.version + " val:" + validity + " g:" + group);
+		System.out
+				.println("*Installing " + metadata.toString().split("-")[0]
+						+ " ver:" + newVer.version + " val:" + validity + " g:"
+						+ group);
 
 		if (cache.containsKey(metadata))
 		{ // some version(s) already inserted
 			vers = cache.get(metadata);
-			CacheContainer origVer = vers.first(); // most recent version
-			if (ver.version > origVer.version)
+			CacheContainer first = vers.first(); // most recent version
+			if (newVer.version > first.version)
 			{ // installing newer version
 				System.out.print("    installing newer version mrv:"
-						+ origVer.version + " " + origVer.validity.validity);
+						+ first.version + " " + first.validity.validity);
 
 				Validity mrv = mostRecentValidities.get(group);
 
 				if (mrv != null)
 				{
-					if (origVer.validity.isShared)
+					if (first.validity.isShared)
 					{
-						origVer.validity = new Validity(
-								origVer.validity.validity, false);
+						first.validity = new Validity(first.validity.validity,
+								false);
 					}
 					if (validity == mrv.validity)
 					{
-						ver.validity = mrv;
+						newVer.validity = mrv;
 						System.out.println(" (shared) " + mrv.validity);
 					}
 				}
-				if (ver.validity == null)
+				if (newVer.validity == null)
 				{
 					Validity val = new Validity(validity, false);
-					ver.validity = val;
+					newVer.validity = val;
 					System.out.println(" (not shared) " + val.validity);
 				}
 			}
-			else if (ver.version == origVer.version)
+			else if (newVer.version == first.version)
 			{ // updating validity
 				System.out.print("    installing equal version mrv:"
-						+ origVer.version + " " + origVer.validity.validity);
+						+ first.version + " " + first.validity.validity);
 
-				if (!origVer.validity.isShared)
+				if (!first.validity.isShared)
 				{
-					if (validity > origVer.validity.validity)
+					if (validity > first.validity.validity)
 					{
-						origVer.validity = new Validity(validity, false);
+						first.validity = new Validity(validity, false);
 						System.out.println(" (not shared) " + validity);
 					}
 					else
@@ -148,13 +148,8 @@ public class Cache
 			}
 			else
 			{ // installing older version XXX will this ever happen?
-				System.out.println("    installing older version mrv:"
-						+ origVer.version + " " + origVer.validity.validity);
-
 				Validity val = new Validity(validity, false);
-				ver.validity = val;
-
-				System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+				newVer.validity = val;
 			}
 		}
 		else
@@ -170,20 +165,20 @@ public class Cache
 			{
 				if (validity == mrv.validity)
 				{
-					ver.validity = mrv;
+					newVer.validity = mrv;
 					System.out.println(" (shared) " + mrv.validity);
 				}
 
 			}
-			if (ver.validity == null)
+			if (newVer.validity == null)
 			{
 				Validity val = new Validity(validity, false);
-				ver.validity = val;
+				newVer.validity = val;
 				System.out.println(" (not shared) " + val.validity);
 			}
 		}
 
-		vers.add(ver);
+		vers.add(newVer);
 	}
 
 	public synchronized boolean contains(ObjectMetadata metadata)

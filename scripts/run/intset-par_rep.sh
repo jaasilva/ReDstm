@@ -41,7 +41,7 @@ else # small values
 	_RANGE=4096 #1024 #2048 #4096 # SIZE*4
 fi
 
-_WARMUP=0
+_WARMUP=30000
 #_DURATION=10000 # s
 _DURATION=30000 # s
 
@@ -65,6 +65,11 @@ _GCS=jgroups.JGroups
 #_DPART=Random
 _DPART=RoundRobin
 #_DPART=Simple
+_CACHE=true
+#_CACHE=false
+_CACHE_INV=eager
+#_CACHE_INV=batch
+#_CACHE=INV=lazy
 
 _STM="org.deuce.transaction.${_CTX}"
 _COMM="org.deuce.distribution.groupcomm.${_GCS}GroupCommunication"
@@ -107,6 +112,8 @@ java -Xmx8g -cp $_CP -javaagent:bin/deuceAgent.jar \
 	-Dtribu.groups=$_GROUPS \
 	-Djgroups.bind_addr=`hostname` \
 	-Djava.net.preferIPv4Stack=true \
+	-Dtribu.distributed.partial.cache=$_CACHE \
+	-Dtribu.distributed.partial.cache.invalidation=$_CACHE_INV \
 	org.deuce.benchmark.Driver -n $_THREADS -d $_DURATION -w $_WARMUP \
 		org.deuce.benchmark.intset.Benchmark $_BENCH -r $_RANGE -i $_SIZE \
 		-w $_WRITES -po $_PARTIAL_OPS 2>&1 | tee $_LOG
