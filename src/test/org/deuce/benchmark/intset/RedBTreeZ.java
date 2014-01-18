@@ -756,16 +756,13 @@ public class RedBTreeZ implements IntSet
 			}
 			down--;
 		}
-		if (rand.nextInt(100) < 95)
-		{ // 95% of the times, it modifies something
-			if (p == null)
-			{
-				prev.v = rand.nextInt();
-			}
-			else
-			{
-				p.v = rand.nextInt();
-			}
+		if (p == null)
+		{
+			prev.v = rand.nextInt();
+		}
+		else
+		{
+			p.v = rand.nextInt();
 		}
 		return true;
 	}
