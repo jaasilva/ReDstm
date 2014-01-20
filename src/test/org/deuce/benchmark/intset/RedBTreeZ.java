@@ -728,16 +728,6 @@ public class RedBTreeZ implements IntSet
 		}
 	}
 
-	// private boolean partial_op(int key)
-	// {
-	// Node node = lookup(key);
-	// if (node != null)
-	// {
-	// node.v = rand.nextInt();
-	// }
-	// return node != null;
-	// }
-
 	private boolean partial_op()
 	{
 		Node p = root;
@@ -772,7 +762,7 @@ public class RedBTreeZ implements IntSet
 	{
 		if (rand.nextInt(100) < partial_ops)
 		{ // partial operation
-			return partial_op();
+			return partial_op(key);
 		}
 		else
 		{ // full operation
@@ -783,6 +773,16 @@ public class RedBTreeZ implements IntSet
 			}
 			return node != null;
 		}
+	}
+
+	private boolean partial_op(int key)
+	{
+		Node node = lookup(key);
+		if (node != null)
+		{
+			node.v = rand.nextInt();
+		}
+		return node != null;
 	}
 
 	@Atomic
