@@ -762,7 +762,7 @@ public class RedBTreeZ implements IntSet
 	{
 		if (rand.nextInt(100) < partial_ops)
 		{ // partial operation
-			return partial_op(key);
+			return partial_op();
 		}
 		else
 		{ // full operation
@@ -775,15 +775,15 @@ public class RedBTreeZ implements IntSet
 		}
 	}
 
-	private boolean partial_op(int key)
-	{
-		Node node = lookup(key);
-		if (node != null)
-		{
-			node.v = rand.nextInt();
-		}
-		return node != null;
-	}
+	// private boolean partial_op(int key)
+	// {
+	// Node node = lookup(key);
+	// if (node != null)
+	// {
+	// node.v = rand.nextInt();
+	// }
+	// return node != null;
+	// }
 
 	@Atomic
 	public boolean contains(int key)

@@ -38,7 +38,7 @@ if $_BENCH_BIG ; then # big values
 	_RANGE=131072 # SIZE*4
 else # small values
 	_SIZE=1024 # 2^10
-	_RANGE=4096 #1024 #2048 #4096 # SIZE*4
+	_RANGE=1024 #2048 #4096 # SIZE*4
 fi
 
 _WARMUP=30000
@@ -69,7 +69,7 @@ _CACHE=true
 #_CACHE=false
 _CACHE_INV=eager
 #_CACHE_INV=batch
-#_CACHE=INV=lazy
+#_CACHE_INV=lazy
 
 _STM="org.deuce.transaction.${_CTX}"
 _COMM="org.deuce.distribution.groupcomm.${_GCS}GroupCommunication"

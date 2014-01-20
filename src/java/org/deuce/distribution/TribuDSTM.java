@@ -596,11 +596,13 @@ public class TribuDSTM
 	 */
 
 	/**
-	 * @param metadata
-	 * @param obj
-	 * @param validity
-	 * @param group
-	 * @param mostRecent
+	 * Insert or update a new version in the cache.
+	 * 
+	 * @param metadata - the key.
+	 * @param obj - the object.
+	 * @param validity - the validity version.
+	 * @param group - the group where it was read.
+	 * @param mostRecent - if it is the most recent version.
 	 */
 	public static final void cachePut(ObjectMetadata metadata,
 			CacheContainer obj, int validity, int group, boolean mostRecent)
@@ -609,10 +611,12 @@ public class TribuDSTM
 	}
 
 	/**
-	 * @param metadata
-	 * @param sid
-	 * @param firstRead
-	 * @return
+	 * Returns the valid version for this sid.
+	 * 
+	 * @param metadata - the key.
+	 * @param sid - the version to read.
+	 * @param firstRead - if it is the first read.
+	 * @return the container with the visible version.
 	 */
 	public static final CacheContainer cacheGet(ObjectMetadata metadata,
 			int sid, boolean firstRead)
@@ -621,8 +625,10 @@ public class TribuDSTM
 	}
 
 	/**
-	 * @param metadata
-	 * @return
+	 * Returns true if there is a mapping for this key.
+	 * 
+	 * @param metadata - the key.
+	 * @return true if there is a mapping for this key.
 	 */
 	public static final boolean cacheContains(ObjectMetadata metadata)
 	{
@@ -630,7 +636,9 @@ public class TribuDSTM
 	}
 
 	/**
-	 * @param set
+	 * Add these keys to the set of updated keys.
+	 * 
+	 * @param set - the new set of committed keys.
 	 */
 	public static final void cacheAddCommittedKeys(
 			Set<SCOReWriteFieldAccess> set)
@@ -639,7 +647,9 @@ public class TribuDSTM
 	}
 
 	/**
-	 * @param msg
+	 * Processes an invalidation message and invalidates the corresponding keys.
+	 * 
+	 * @param msg - the message to process.
 	 */
 	public static final void cacheInvalidateKeys(iSetMsg msg)
 	{
@@ -647,7 +657,9 @@ public class TribuDSTM
 	}
 
 	/**
-	 * @return
+	 * Creates the invalidation set.
+	 * 
+	 * @return the invalidation message rady to be sent.
 	 */
 	public static final iSetMsg cacheGetInvalidationSet()
 	{

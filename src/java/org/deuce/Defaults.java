@@ -59,7 +59,7 @@ public class Defaults
 	public static final String _CACHE = "tribu.distributed.partial.cache";
 	public static final String CACHE = "false";
 	public static final String _CACHE_INV = "tribu.distributed.partial.cache.invalidation";
-	public static final String CACHE_INV = "batch"; // eager, lazy or batch
+	public static final String CACHE_INV = "eager"; // eager, lazy or batch
 	public static final String _CACHE_BATCH_INTERVAL = "tribu.distributed.partial.cache.invalidation.batch.interval";
 	public static final int CACHE_BATCH_INTERVAL = 50; // milliseconds
 

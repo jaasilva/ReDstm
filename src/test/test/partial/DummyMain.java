@@ -22,6 +22,11 @@ public class DummyMain
 	private static final Semaphore syncMsg = new Semaphore(0);
 	private static final Executor exe = Executors.newFixedThreadPool(3);
 	
+	public enum Invalidation
+	{
+		EAGER, LAZY, BATCH;
+	}
+	
 	public static void main(String[] args)
 	{
 //		one a = new DummyMain.one();
@@ -86,11 +91,16 @@ public class DummyMain
 //			System.out.println(it.next().version);
 //		}
 		
-		String x = "org.deuce.distribution.replication.partial.protocol.score.SCOReProtocol_cache";
+//		String x = "org.deuce.distribution.replication.partial.protocol.score.SCOReProtocol_cache";
+//		
+//		String[] a = x.split("\\.");
+//		
+//		System.out.println(a.length);
 		
-		String[] a = x.split("\\.");
 		
-		System.out.println(a.length);
+		Invalidation x = Invalidation.BATCH;
+		
+		System.out.println(x);
 		
 	}
 

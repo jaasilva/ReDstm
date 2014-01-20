@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
 import org.deuce.Defaults;
 import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
@@ -31,6 +32,7 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class Cache
 {
+	private static final Logger LOGGER = Logger.getLogger(Cache.class);
 	private static final Map<ObjectMetadata, SortedSet<CacheContainer>> cache = new ConcurrentHashMap<ObjectMetadata, SortedSet<CacheContainer>>(
 			50000);
 	private static final Map<Integer, Validity> mostRecentValidities = new ConcurrentHashMap<Integer, Validity>(
@@ -88,10 +90,6 @@ public class Cache
 			CacheContainer newVer, int validity, int group, boolean mostRecent)
 	{
 		SortedSet<CacheContainer> vers = null;
-		System.out
-				.println("*Installing " + metadata.toString().split("-")[0]
-						+ " ver:" + newVer.version + " val:" + validity + " g:"
-						+ group);
 
 		if (cache.containsKey(metadata))
 		{ // some version(s) already inserted
@@ -99,51 +97,33 @@ public class Cache
 			CacheContainer first = vers.first(); // most recent version
 			if (newVer.version > first.version)
 			{ // installing newer version
-				System.out.print("    installing newer version mrv:"
-						+ first.version + " " + first.validity.validity);
-
 				Validity mrv = mostRecentValidities.get(group);
 
 				if (mrv != null)
 				{
 					if (first.validity.isShared)
-					{
+					{ // unlink old version's validity
 						first.validity = new Validity(first.validity.validity,
 								false);
 					}
 					if (validity == mrv.validity)
-					{
+					{ // link new version's validity
 						newVer.validity = mrv;
-						System.out.println(" (shared) " + mrv.validity);
 					}
 				}
 				if (newVer.validity == null)
 				{
-					Validity val = new Validity(validity, false);
-					newVer.validity = val;
-					System.out.println(" (not shared) " + val.validity);
+					newVer.validity = new Validity(validity, false);
 				}
 			}
 			else if (newVer.version == first.version)
 			{ // updating validity
-				System.out.print("    installing equal version mrv:"
-						+ first.version + " " + first.validity.validity);
-
 				if (!first.validity.isShared)
 				{
 					if (validity > first.validity.validity)
 					{
 						first.validity = new Validity(validity, false);
-						System.out.println(" (not shared) " + validity);
 					}
-					else
-					{
-						System.out.println(" (not shared)!");
-					}
-				}
-				else
-				{
-					System.out.println(" (shared)");
 				}
 			}
 			else
@@ -154,8 +134,6 @@ public class Cache
 		}
 		else
 		{ // first version to be inserted for this key
-			System.out.print("    installing first version");
-
 			vers = Collections
 					.synchronizedSortedSet(new TreeSet<CacheContainer>());
 			cache.put(metadata, vers);
@@ -166,7 +144,6 @@ public class Cache
 				if (validity == mrv.validity)
 				{
 					newVer.validity = mrv;
-					System.out.println(" (shared) " + mrv.validity);
 				}
 
 			}
@@ -174,7 +151,6 @@ public class Cache
 			{
 				Validity val = new Validity(validity, false);
 				newVer.validity = val;
-				System.out.println(" (not shared) " + val.validity);
 			}
 		}
 
@@ -230,7 +206,7 @@ public class Cache
 		iSetMsg msg = null;
 		int mostRecentSid = SCOReContext.commitId.get();
 
-		if (mostRecentSid > lastSentSid && !committedKeys.isEmpty())
+		if (mostRecentSid > lastSentSid /* && !committedKeys.isEmpty() */)
 		{
 			Set<SCOReWriteFieldAccess> keys = new HashSet<SCOReWriteFieldAccess>(
 					committedKeys);
@@ -266,9 +242,9 @@ public class Cache
 
 			if (msg != null)
 			{
-				System.out.println(">>>>> Send iSet:" + msg.iSet.size());
-				byte[] payload = ObjectSerializer.object2ByteArray(msg);
+				LOGGER.trace("% Send iSet (" + msg.iSet.size() + ")");
 
+				byte[] payload = ObjectSerializer.object2ByteArray(msg);
 				PartialReplicationProtocol.serializationReadCtx.set(true);
 				TribuDSTM.sendReliably(payload); // XXX send to other groups
 				PartialReplicationProtocol.serializationReadCtx.set(false);
@@ -304,8 +280,8 @@ public class Cache
 	public synchronized void invalidateKeys(int group, int mostRecent,
 			Collection<ObjectMetadata> iSet)
 	{
-		System.out
-				.println(">>>>> Received iSet:" + iSet.size() + " g:" + group);
+		LOGGER.trace("$ Received iSet (" + iSet.size() + ") from group: "
+				+ group);
 
 		for (ObjectMetadata k : iSet)
 		{
@@ -323,13 +299,11 @@ public class Cache
 		Validity mostRecentValidity = mostRecentValidities.get(group);
 		if (mostRecentValidity == null)
 		{
-			System.out.println("    new mrv:" + mostRecent);
 			Validity validity = new Validity(mostRecent, true);
 			mostRecentValidities.put(group, validity);
 		}
 		else
 		{
-			System.out.println("    update mrv:" + mostRecent);
 			mostRecentValidity.validity = mostRecent;
 		}
 	}
