@@ -121,15 +121,14 @@ public class Cache
 				if (!first.validity.isShared)
 				{
 					if (validity > first.validity.validity)
-					{
-						first.validity = new Validity(validity, false);
+					{ // update version's validity
+						first.validity.validity = validity;
 					}
 				}
 			}
 			else
-			{ // installing older version XXX will this ever happen?
-				Validity val = new Validity(validity, false);
-				newVer.validity = val;
+			{ // installing older version
+				newVer.validity = new Validity(validity, false);
 			}
 		}
 		else
@@ -142,15 +141,14 @@ public class Cache
 			if (mrv != null)
 			{
 				if (validity == mrv.validity)
-				{
+				{ // link new version's validity
 					newVer.validity = mrv;
 				}
 
 			}
 			if (newVer.validity == null)
 			{
-				Validity val = new Validity(validity, false);
-				newVer.validity = val;
+				newVer.validity = new Validity(validity, false);
 			}
 		}
 

@@ -44,7 +44,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		// If I belong to the local group, then I replicate this object
 		boolean localObj = p_group.isLocal();
 		/*
-		 * if the groups are equal I have the graph from the partial txField
+		 * If the groups are equal I have the graph from the partial txField
 		 * down cached in the locator table
 		 */
 		boolean localGraph = p_group.equals(group);
@@ -60,7 +60,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 			read = getValidVersion(sctx.sid, meta, firstRead);
 
 			if (read == null)
-			{ // if not in cache. do remote read
+			{ // If not in cache. Do remote read
 				Profiler.onTxRemoteReadBegin(sctx.threadID);
 				read = remoteRead(sctx, meta, firstRead, p_group);
 				Profiler.onTxRemoteReadFinish(sctx.threadID);
@@ -129,7 +129,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 			e.printStackTrace();
 		}
 
-		updateCache(metadata, sctx.response);
+		updateCache(metadata, sctx.response); // update cache versions
 		return sctx.response;
 	}
 

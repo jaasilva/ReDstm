@@ -72,7 +72,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	private final Executor pool = Executors.newFixedThreadPool(Math.max(
 			Integer.getInteger(Defaults._REPLICAS) - 1, minReadThreads));
 
-	private static final Set<DistributedContextState> toBeProcessed = Collections
+	private final Set<DistributedContextState> toBeProcessed = Collections
 			.newSetFromMap(new ConcurrentHashMap<DistributedContextState, Boolean>());
 
 	@Override
@@ -148,7 +148,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		// If I belong to the local group, then I replicate this object
 		boolean localObj = p_group.isLocal();
 		/*
-		 * if the groups are equal I have the graph from the partial txField
+		 * If the groups are equal I have the graph from the partial txField
 		 * down cached in the locator table
 		 */
 		boolean localGraph = p_group.equals(group);
