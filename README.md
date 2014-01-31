@@ -1,4 +1,5 @@
-trxsys-tvale
+PARdstm
+Partial Data Replication for Distributed Transactional Memory in Java 
 ============
 
-Projeto da disciplina de Transacional Systems 2012-13
+It's a Distributed Transactional Memory framework supporting partial data replication for the Java programming language (actually a fork from https://github.com/trxsys/trxsys-tvale).
