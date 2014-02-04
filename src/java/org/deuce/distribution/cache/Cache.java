@@ -121,6 +121,29 @@ public class Cache
 				{
 					newVer.validity = new Validity(validity, false);
 				}
+
+				// Validity mrv = mostRecentValidities.get(group);
+				//
+				// if (mrv == null)
+				// {
+				// mrv = new Validity(validity, true);
+				// mostRecentValidities.put(group, mrv);
+				// }
+				// else if (first.validity.isShared) // mrv is not null
+				// { // unlink old version's validity
+				// first.validity = new Validity(first.validity.validity,
+				// false);
+				// }
+				// if (validity == mrv.validity)
+				// { // link new version's validity
+				// newVer.validity = mrv;
+				// z.incrementAndGet();
+				// }
+				// else
+				// {
+				// newVer.validity = new Validity(validity, false);
+				// }
+
 				a.incrementAndGet();
 			}
 			else if (newVer.version == first.version)
@@ -132,6 +155,19 @@ public class Cache
 						first.validity.validity = validity;
 					}
 				}
+
+				// if (validity > first.validity.validity)
+				// {
+				// if (first.validity.isShared)
+				// { // unlink version's validity
+				// first.validity = new Validity(validity, false);
+				// }
+				// else
+				// { // version's validity is not shared
+				// first.validity.validity = validity;
+				// }
+				// }
+
 				b.incrementAndGet();
 			}
 			else

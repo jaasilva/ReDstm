@@ -142,9 +142,10 @@ public class Driver
 		{
 			try
 			{
-				System.out.println(">>> " + i + " " + t[i].getId()); // XXX
+				System.out.println(i); // XXX
+				t[i].dumpStack();
 				t[i].join();
-				System.out.println(">>>> " + i + " " + t[i].getId()); // XXX
+				System.out.println("-" + i); // XXX
 			}
 			catch (InterruptedException e)
 			{
