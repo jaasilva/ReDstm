@@ -142,7 +142,6 @@ public class Driver
 		{
 			try
 			{
-				System.out.println(i); // XXX
 				t[i].join();
 				System.out.println("-" + i); // XXX
 			}
