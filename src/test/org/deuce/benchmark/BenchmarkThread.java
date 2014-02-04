@@ -37,6 +37,7 @@ public class BenchmarkThread implements Runnable
 			step(Benchmark.TEST_PHASE);
 			m_steps++;
 		}
+		Thread.dumpStack(); // XXX
 	}
 
 	protected void step(int phase)
