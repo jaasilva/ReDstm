@@ -7,7 +7,6 @@ _bench=RedBTreeZ
 _thrs=4 # has to be 4
 _reps=$1
 _groups=$(( $_reps / 2 ))
-_mem=3GB
 _writes=10
 _runs=10
 _pops=10
@@ -24,9 +23,8 @@ do
 	#PBS -N ${_reps}-${_run}-${_groups}
 	#PBS -S /bin/bash
 	#PBS -A pdr_14
-	#PBS -l nodes=${_reps}:ppn=${_thrs}:mem=${_mem}
-	#PBS -l walltime=00:10:00
-	#PBS -l place=scatter
+	#PBS -l nodes=${_reps}:ppn=${_thrs}
+	#PBS -l walltime=00:05:00
 	#PBS -q generic
 	#PBS -M jaa.silva@campus.fct.unl.pt
 	#PBS -m abe
@@ -34,8 +32,16 @@ do
 	#PBS -o ./logs/${_bench}_r${_reps}_t${_thrs}_w${_writes}_g${_groups}_${_run}_${_proto}.res
 	#PBS -W depend=afterany:$jobId
 	
-	pbsdsh /home/pdr/jaasilva/repos/pardstm/scripts/run/intset-full_rep.sh $_bench $_thrs $_reps $_run $_writes $_pops
-	#pbsdsh /home/pdr/jaasilva/repos/pardstm/scripts/run/intset-par_rep.sh $_bench $_thrs $_reps $_run $_writes $_groups $_pops
+	module load comp/mpich2/intel64
+	module load taskfarm
+	
+	cd $PBS_O_WORKDIR
+	
+	python ./scripts/run/pbs/create_task_file.py tasks $_reps ./scripts/run/intset-full_rep.sh $_bench $_thrs $_reps $_run $_writes $_pops
+	#python ./scripts/run/pbs/create_task_file.py tasks $_reps ./scripts/run/intset-par_rep.sh $_bench $_thrs $_reps $_run $_writes $_groups $_pops
+	
+	mpipbsexec nop.sh
+	taskfarm tasks
 	
 	echo "##### FINISHED!"
 	EOF)
