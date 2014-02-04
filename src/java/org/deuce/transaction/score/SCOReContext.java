@@ -149,7 +149,7 @@ public class SCOReContext extends DistributedContext
 				this.firstReadDone = true;
 			}
 			Profiler.onTxCompleteReadFinish(threadID);
-			return read.value; // XXX read == null sometimes?
+			return read.value; // XXX read == null sometimes
 		}
 	}
 

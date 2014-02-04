@@ -158,12 +158,22 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			Profiler.onTxLocalReadBegin(sctx.threadID);
 			read = sctx.doReadLocal((VBoxField) field);
 			Profiler.onTxLocalReadFinish(sctx.threadID);
+
+			if (read == null)
+			{
+				System.out.println("LOCAL"); // XXX
+			}
 		}
 		else
 		{ // Do *REMOTE* read
 			Profiler.onTxRemoteReadBegin(sctx.threadID);
 			read = remoteRead(sctx, meta, firstRead, p_group);
 			Profiler.onTxRemoteReadFinish(sctx.threadID);
+
+			if (read == null)
+			{
+				System.out.println("REMOTE"); // XXX
+			}
 		}
 
 		return read;
