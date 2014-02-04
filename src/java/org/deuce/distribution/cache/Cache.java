@@ -51,6 +51,7 @@ public class Cache
 
 	public static AtomicInteger a = new AtomicInteger(0);
 	public static AtomicInteger b = new AtomicInteger(0);
+	public static AtomicInteger z = new AtomicInteger(0);
 
 	@ExcludeTM
 	public enum Invalidation
@@ -113,6 +114,7 @@ public class Cache
 					if (validity == mrv.validity)
 					{ // link new version's validity
 						newVer.validity = mrv;
+						z.incrementAndGet();
 					}
 				}
 				if (newVer.validity == null)
@@ -149,6 +151,7 @@ public class Cache
 				if (validity == mrv.validity)
 				{ // link new version's validity
 					newVer.validity = mrv;
+					z.incrementAndGet();
 				}
 
 			}

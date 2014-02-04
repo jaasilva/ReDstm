@@ -236,6 +236,7 @@ public class TribuDSTM
 		{
 			System.out.println(Cache.a);
 			System.out.println(Cache.b);
+			System.out.println(Cache.z);
 		}
 
 		groupComm.close();

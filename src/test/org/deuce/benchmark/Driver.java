@@ -140,14 +140,11 @@ public class Driver
 
 		for (int i = 0; i < t.length; i++)
 		{
-
 			try
 			{
-				System.out.println(">>> " + i + " " + t[i].getId() + " "
-						+ t[i].isAlive());
+				System.out.println(">>> " + i + " " + t[i].getId()); // XXX
 				t[i].join();
-				System.out.println(">>> " + i + " " + t[i].getId() + " "
-						+ t[i].isAlive());
+				System.out.println(">>>> " + i + " " + t[i].getId()); // XXX
 			}
 			catch (InterruptedException e)
 			{
