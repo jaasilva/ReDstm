@@ -38,10 +38,10 @@ if $_BENCH_BIG ; then # big values
 	_RANGE=131072 # SIZE*4
 else # small values
 	_SIZE=1024 # 2^10
-	_RANGE=1024 #2048 #4096 # SIZE*4
+	_RANGE=4096 #1024 #2048 #4096 # SIZE*4
 fi
 
-_WARMUP=30000
+_WARMUP=0 #30000
 #_DURATION=10000 # s
 _DURATION=30000 # s
 
@@ -67,8 +67,9 @@ _DPART=RoundRobin
 #_DPART=Simple
 _CACHE=true
 #_CACHE=false
-_CACHE_INV=eager
-#_CACHE_INV=batch
+#_CACHE_INV=$8
+#_CACHE_INV=eager
+_CACHE_INV=batch
 #_CACHE_INV=lazy
 
 _STM="org.deuce.transaction.${_CTX}"

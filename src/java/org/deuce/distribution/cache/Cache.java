@@ -13,6 +13,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 import org.deuce.Defaults;
@@ -47,6 +48,9 @@ public class Cache
 			.newSingleThreadScheduledExecutor();
 	public static final Executor recvExec = Executors
 			.newFixedThreadPool(TribuDSTM.getNumGroups());
+
+	public static AtomicInteger a = new AtomicInteger(0);
+	public static AtomicInteger b = new AtomicInteger(0);
 
 	@ExcludeTM
 	public enum Invalidation
@@ -115,6 +119,7 @@ public class Cache
 				{
 					newVer.validity = new Validity(validity, false);
 				}
+				a.incrementAndGet();
 			}
 			else if (newVer.version == first.version)
 			{ // updating validity
@@ -125,6 +130,7 @@ public class Cache
 						first.validity.validity = validity;
 					}
 				}
+				b.incrementAndGet();
 			}
 			else
 			{ // installing older version
@@ -213,11 +219,12 @@ public class Cache
 			Set<ObjectMetadata> iSet = new HashSet<ObjectMetadata>(keys.size());
 			for (SCOReWriteFieldAccess m : keys)
 			{
-				Group pg = ((PartialReplicationOID) m.getDistMetadata())
-						.getPartialGroup();
-				if (pg.isLocal() && !pg.isAll())
+				PartialReplicationOID meta = (PartialReplicationOID) m
+						.getDistMetadata();
+				Group pg = meta.getPartialGroup();
+				if (!pg.isAll() && pg.isLocal())
 				{
-					iSet.add(m.getDistMetadata());
+					iSet.add(meta);
 				}
 			}
 
@@ -253,7 +260,7 @@ public class Cache
 	public void processInvalidationMessage(iSetMsg msg)
 	{
 		if (msg.group != TribuDSTM.getLocalGroup().getId())
-		{
+		{ // if is not my group
 			recvExec.execute(new InvalidationReceiverHandler(msg));
 		}
 	}

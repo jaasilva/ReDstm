@@ -434,10 +434,10 @@ public class Vacation
 				+ deleteCustomers + " U=" + updateTables);
 		System.out.println();
 
-		if (SITE == 1)
-		{
-			vac.checkTables(managerPtr);
-		}
+		// if (SITE == 1)
+		// {
+		// vac.checkTables(managerPtr);
+		// }
 
 		System.err.println("### exitBarrier");
 		exitBarrier.join();

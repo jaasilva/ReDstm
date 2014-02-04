@@ -129,13 +129,15 @@ public class SCOReProtocol_cache extends SCOReProtocol
 			e.printStackTrace();
 		}
 
+		System.out.println(sctx.response);
 		updateCache(metadata, sctx.response); // update cache versions
 		return sctx.response;
 	}
 
 	private void updateCache(ObjectMetadata metadata, ReadDone read)
 	{ // put received version in cache
-		CacheMsg msg = ((CacheMsg) read.piggyback);
+		System.out.println("------ " + read);
+		CacheMsg msg = (CacheMsg) read.piggyback;
 		CacheContainer v = new CacheContainer();
 		v.value = read.value;
 		v.version = msg.version;

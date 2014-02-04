@@ -140,9 +140,14 @@ public class Driver
 
 		for (int i = 0; i < t.length; i++)
 		{
+
 			try
 			{
+				System.out.println(">>> " + i + " " + t[i].getId() + " "
+						+ t[i].isAlive());
 				t[i].join();
+				System.out.println(">>> " + i + " " + t[i].getId() + " "
+						+ t[i].isAlive());
 			}
 			catch (InterruptedException e)
 			{
@@ -174,10 +179,10 @@ public class Driver
 
 		finishBarrier.join();
 
-		if (Integer.getInteger("tribu.site") == 1)
-		{
-			System.out.println("VALID: " + b.validate());
-		}
+		// if (Integer.getInteger("tribu.site") == 1)
+		// {
+		// System.out.println("VALID: " + b.validate());
+		// }
 
 		TribuDSTM.close();
 	}

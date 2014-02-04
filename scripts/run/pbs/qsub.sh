@@ -4,9 +4,9 @@
 ###############################################################################
 
 _bench=RedBTreeZ
-_thrs=4
+_thrs=4 # has to be 4
 _reps=$1
-_groups=$(( $_replicas / 2 ))
+_groups=$(( $_reps / 2 ))
 _mem=3GB
 _writes=10
 _runs=10
@@ -20,10 +20,11 @@ do
 
 	_jobId=$(cat <<EOF | qsub -
 	
-	#!/bin/sh
+	#!/bin/bash
 	#PBS -N ${_reps}-${_run}-${_groups}
+	#PBS -S /bin/bash
 	#PBS -A pdr_14
-	#PBS -l select=${_reps}:ncpus=${_thrs}:mem=${_mem}
+	#PBS -l nodes=${_reps}:ppn=${_thrs}:mem=${_mem}
 	#PBS -l walltime=00:10:00
 	#PBS -l place=scatter
 	#PBS -q generic
@@ -34,7 +35,7 @@ do
 	#PBS -W depend=afterany:$jobId
 	
 	pbsdsh /home/pdr/jaasilva/repos/pardstm/scripts/run/intset-full_rep.sh $_bench $_thrs $_reps $_run $_writes $_pops
-	#pbsdsh /home/pdr/jaasilva/repos/pardstm/scripts/run/intset-par_rep.sh $_bench $_thrs $_reps $_run $_writes $_pops $_groups
+	#pbsdsh /home/pdr/jaasilva/repos/pardstm/scripts/run/intset-par_rep.sh $_bench $_thrs $_reps $_run $_writes $_groups $_pops
 	
 	echo "##### FINISHED!"
 	EOF)

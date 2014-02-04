@@ -230,6 +230,13 @@ public class TribuDSTM
 	{
 		LOGGER.warn(SEP);
 		LOGGER.warn("> TribuDSTM closing...");
+		
+		
+		if (CACHE)
+		{
+			System.out.println(Cache.a);
+			System.out.println(Cache.b);
+		}
 
 		groupComm.close();
 
