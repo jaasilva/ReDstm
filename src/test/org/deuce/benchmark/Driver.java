@@ -143,7 +143,6 @@ public class Driver
 			try
 			{
 				t[i].join();
-				System.out.println("-" + i); // XXX
 			}
 			catch (InterruptedException e)
 			{
