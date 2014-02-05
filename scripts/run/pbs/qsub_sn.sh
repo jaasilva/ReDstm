@@ -42,14 +42,8 @@ do
 	#PBS -j oe
 	#PBS -W depend=afterany:$jobId
 	
-	cd $PBS_O_WORKDIR
-	
-	while read node
-		pbs_tmrsh $node ./scripts/run/intset-full_rep.sh $_bench $_thrs \
-			$_reps $_run $_writes $_pops
-	done < $PBS_NODEFILE
-	
-	wait
+	pbsdsh -- ./jsilva/trxsys/scripts/run/intset-full_rep.sh $_bench $_thrs \
+		$_reps $_run $_writes $_pops
 	
 	echo "##### FINISHED!"
 	EOF)
