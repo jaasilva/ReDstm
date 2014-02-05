@@ -118,7 +118,7 @@ java -Xmx8g -cp $_CP -javaagent:bin/deuceAgent.jar \
 	-Dtribu.distributed.partial.cache.invalidation=$_CACHE_INV \
 	org.deuce.benchmark.Driver -n $_THREADS -d $_DURATION -w $_WARMUP \
 		org.deuce.benchmark.intset.Benchmark $_BENCH -r $_RANGE -i $_SIZE \
-		-w $_WRITES -po $_PARTIAL_OPS 2>&1 | tee $_LOG
+		-w $_WRITES -po $_PARTIAL_OPS 2>&1
 
 echo "#####"
 echo "End: `date +'%F %H:%M:%S'`"
