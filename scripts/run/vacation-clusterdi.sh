@@ -30,7 +30,7 @@ echo "#######################"
 
 for _thrs in 4
 do
-for _groups in 1 2 4 8
+for _groups in 4 #1 2 4 8
 do
 for _run in `seq 1 $_runs`
 do
