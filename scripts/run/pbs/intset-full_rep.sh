@@ -44,10 +44,9 @@ else # small values
 fi
 
 _WARMUP=0
-#_DURATION=10000 # s
-_DURATION=30000 # s
+_DURATION=30000 # ms
 
-_SITE=`hostname | cut -c 5-`
+_SITE=`hostname | cut -c 3-`
 _THREADS=$2
 _REPLICAS=$3
 _RUN=$4
