@@ -42,7 +42,7 @@ do
 	#PBS -j oe
 	#PBS -W depend=afterany:$jobId
 	
-	pbsdsh -- ./jsilva/trxsys/scripts/run/intset-full_rep.sh $_bench $_thrs \
+	pbsdsh -- ./jsilva/trxsys/scripts/run/pbs/intset-full_rep.sh $_bench $_thrs \
 		$_reps $_run $_writes $_pops
 	
 	echo "##### FINISHED!"
