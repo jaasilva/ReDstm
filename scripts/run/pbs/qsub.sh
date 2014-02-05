@@ -34,7 +34,6 @@ do
 	#PBS -q generic
 	#PBS -m abe -M jaa.silva@campus.fct.unl.pt
 	#PBS -j oe
-	#PBS -o ./logs/${_bench}_r${_reps}_t${_thrs}_w${_writes}_g${_groups}_${_run}_${_proto}.res
 	#PBS -W depend=afterany:$jobId
 	
 	module load comp/mpich2/intel64
