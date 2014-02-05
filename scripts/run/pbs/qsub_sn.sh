@@ -40,7 +40,7 @@ do
 	#PBS -M jaa.silva@campus.fct.unl.pt
 	#PBS -m abe
 	#PBS -j oe
-	#PBS -W depend=afterany:$jobId
+	#PBS -W depend=afterany:${_jobId}
 	
 	pbsdsh -- ./jsilva/trxsys/scripts/run/pbs/intset-full_rep.sh $_bench $_thrs \
 		$_reps $_run $_writes $_pops
