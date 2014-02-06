@@ -43,7 +43,6 @@ do
 	#PBS -M jaa.silva@campus.fct.unl.pt
 	#PBS -m abe
 	#PBS -j oe
-	#PBS -o ./logs/${_bench}_n${_reps}_w${_writes}_p${_pops}_r${_run}_${_proto}.o
 	#PBS -W depend=afterany:${_jobId}
 	
 	pbsdsh -- ./jsilva/trxsys/scripts/run/pbs/intset-full_rep.sh $_bench $_thrs \
@@ -53,4 +52,6 @@ do
 	EOF)
 echo "> ${_jobId}"
 done
+
+#X PBS -o ./logs/${_bench}_n${_reps}_w${_writes}_p${_pops}_r${_run}_${_proto}.o
 

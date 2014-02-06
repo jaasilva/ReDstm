@@ -102,7 +102,7 @@ java -Xmx8g -cp $_CP -javaagent:bin/deuceAgent.jar \
 	-Djava.net.preferIPv4Stack=true \
 	org.deuce.benchmark.Driver -n $_THREADS -d $_DURATION -w $_WARMUP \
 		org.deuce.benchmark.intset.Benchmark $_BENCH -r $_RANGE -i $_SIZE \
-		-w $_WRITES -po $_PARTIAL_OPS 2>&1
+		-w $_WRITES -po $_PARTIAL_OPS &> $_LOG
 
 echo "#####"
 echo "End: `date +'%F %H:%M:%S'`"
