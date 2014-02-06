@@ -37,6 +37,7 @@ public class BenchmarkThread implements Runnable
 			step(Benchmark.TEST_PHASE);
 			m_steps++;
 		}
+		System.out.println("############################## FINISHED");
 		return;
 	}
 
