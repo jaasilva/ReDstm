@@ -728,6 +728,7 @@ public class RedBTreeZ implements IntSet
 		}
 	}
 
+	@Atomic
 	private boolean partial_op()
 	{
 		Node p = root;
