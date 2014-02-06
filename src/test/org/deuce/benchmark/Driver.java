@@ -136,6 +136,11 @@ public class Driver
 		{
 			bt[i].setPhase(Benchmark.SHUTDOWN_PHASE);
 		}
+		
+		for (int i = 0; i < bt.length; i++)
+		{
+			System.out.println(i + " " + bt[i].getPhase());
+		}
 		System.err.println("done.");
 
 		for (int i = 0; i < t.length; i++)

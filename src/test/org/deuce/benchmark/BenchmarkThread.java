@@ -20,6 +20,11 @@ public class BenchmarkThread implements Runnable
 		m_phase = phase;
 	}
 
+	public int getPhase()
+	{
+		return m_phase;
+	}
+	
 	public int getSteps()
 	{
 		return m_steps;
