@@ -30,6 +30,7 @@ public class VBoxField extends TxField implements InPlaceLock,
 	public void init(Object ref, long address)
 	{
 		super.init(ref, address);
+		lock = 0;
 	}
 
 	public VBoxField(Object ref, long address)
@@ -169,7 +170,7 @@ public class VBoxField extends TxField implements InPlaceLock,
 		int l = lock;
 
 		if ((l & LockTable.LOCK) != 0)
-		{
+		{ // already locked
 			throw LockTable.LOCKED_VERSION_EXCEPTION;
 		}
 
