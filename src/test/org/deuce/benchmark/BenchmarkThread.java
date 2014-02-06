@@ -27,19 +27,19 @@ public class BenchmarkThread implements Runnable
 
 	public void run()
 	{
+		long id = Thread.currentThread().getId();
 		while (m_phase == Benchmark.WARMUP_PHASE)
 		{
 			step(Benchmark.WARMUP_PHASE);
-			System.out.println("warmup_phase " + Thread.currentThread().getId());
 		}
 
 		while (m_phase == Benchmark.TEST_PHASE)
 		{
 			step(Benchmark.TEST_PHASE);
 			m_steps++;
-			System.out.println("test_phase " + Thread.currentThread().getId());
+			System.out.println("test_phase " + id);
 		}
-		System.out.println("shutdown_phase " + Thread.currentThread().getId());
+		System.out.println("shutdown_phase " + id);
 		return;
 	}
 
