@@ -21,19 +21,20 @@ public class Barrier
 
 		if (!quiet)
 		{
-			System.err.println("Barrier increased to " + getCounter()
+			System.err.println("Barrier increased to " + counter
 					+ " (expected=" + expected + ")");
 		}
+
 		boolean exit = false;
 		while (!exit)
 		{
 			try
 			{
-				int c = getCounter();
-				if (c >= expected)
+				if (counter >= expected)
 				{
 					exit = true;
 				}
+				System.out.println("=> " + counter);
 
 				Thread.sleep(pollingPeriod);
 			}
@@ -43,17 +44,13 @@ public class Barrier
 				e.printStackTrace();
 			}
 		}
+
 		if (!quiet)
 		{
 			System.err.println("- Barrier exited!");
 		}
-		counter = 0;
-	}
 
-	@Atomic
-	private int getCounter()
-	{
-		return counter;
+		counter = 0;
 	}
 
 	@Atomic
