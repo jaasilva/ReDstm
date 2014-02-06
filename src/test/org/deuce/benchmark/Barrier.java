@@ -34,7 +34,6 @@ public class Barrier
 				{
 					exit = true;
 				}
-				System.out.println("=> " + counter);
 
 				Thread.sleep(pollingPeriod);
 			}
