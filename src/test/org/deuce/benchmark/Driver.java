@@ -1,5 +1,7 @@
 package org.deuce.benchmark;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
@@ -138,6 +140,8 @@ public class Driver
 		}
 		System.err.println("done.");
 
+		LogManager.getRootLogger().setLevel(Level.ALL);
+		
 		for (int i = 0; i < t.length; i++)
 		{
 			try
