@@ -30,14 +30,16 @@ public class BenchmarkThread implements Runnable
 		while (m_phase == Benchmark.WARMUP_PHASE)
 		{
 			step(Benchmark.WARMUP_PHASE);
+			System.out.println("warmup_phase");
 		}
 
 		while (m_phase == Benchmark.TEST_PHASE)
 		{
 			step(Benchmark.TEST_PHASE);
 			m_steps++;
+			System.out.println("test_phase");
 		}
-		System.out.println("############################## FINISHED");
+		System.out.println("shutdown_phase " + Thread.currentThread().getId());
 		return;
 	}
 
