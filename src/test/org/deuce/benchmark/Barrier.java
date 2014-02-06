@@ -21,7 +21,7 @@ public class Barrier
 
 		if (!quiet)
 		{
-			System.err.println("Barrier increased to " + counter
+			System.err.println("Barrier increased to " + getCounter()
 					+ " (expected=" + expected + ")");
 		}
 		boolean exit = false;
@@ -29,9 +29,8 @@ public class Barrier
 		{
 			try
 			{
-				int c = counter;
-				boolean res = (c >= expected);
-				if (res)
+				int c = getCounter();
+				if (c >= expected)
 				{
 					exit = true;
 				}
@@ -49,6 +48,12 @@ public class Barrier
 			System.err.println("- Barrier exited!");
 		}
 		counter = 0;
+	}
+
+	@Atomic
+	private int getCounter()
+	{
+		return counter;
 	}
 
 	@Atomic
