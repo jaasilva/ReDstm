@@ -1,5 +1,9 @@
 package org.deuce.benchmark;
 
+import java.util.Random;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
@@ -15,6 +19,8 @@ public class Driver
 	static public Barrier setupBarrier;
 	@Bootstrap(id = 2)
 	static public Barrier finishBarrier;
+
+	private static final Random rand = new Random();
 
 	static public int n_threads;
 
@@ -136,12 +142,9 @@ public class Driver
 		{
 			bt[i].setPhase(Benchmark.SHUTDOWN_PHASE);
 		}
-		
-		for (int i = 0; i < bt.length; i++)
-		{
-			System.out.println(i + " " + bt[i].getPhase());
-		}
 		System.err.println("done.");
+		
+		LogManager.getRootLogger().setLevel(Level.ALL);
 
 		for (int i = 0; i < t.length; i++)
 		{
@@ -164,6 +167,8 @@ public class Driver
 		{
 			steps += bt[i].getSteps();
 		}
+		
+		LogManager.getRootLogger().setLevel(Level.WARN);
 
 		System.out.println("RESULTS:\n");
 		System.out.println("  Warmup duration (ms) = " + (wend - wstart));
@@ -177,6 +182,13 @@ public class Driver
 		}
 		Profiler.print();
 
+		try
+		{
+			Thread.sleep(rand.nextInt(3000));
+		}
+		catch (InterruptedException e)
+		{
+		}
 		finishBarrier.join();
 
 		// if (Integer.getInteger("tribu.site") == 1)

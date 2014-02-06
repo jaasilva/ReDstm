@@ -20,11 +20,6 @@ public class BenchmarkThread implements Runnable
 		m_phase = phase;
 	}
 
-	public int getPhase()
-	{
-		return m_phase;
-	}
-	
 	public int getSteps()
 	{
 		return m_steps;
@@ -32,7 +27,6 @@ public class BenchmarkThread implements Runnable
 
 	public void run()
 	{
-		long id = Thread.currentThread().getId();
 		while (m_phase == Benchmark.WARMUP_PHASE)
 		{
 			step(Benchmark.WARMUP_PHASE);
@@ -43,7 +37,7 @@ public class BenchmarkThread implements Runnable
 			step(Benchmark.TEST_PHASE);
 			m_steps++;
 		}
-		System.out.println("shutdown_phase " + id);
+		System.out.println("shutdown_phase");
 		return;
 	}
 
