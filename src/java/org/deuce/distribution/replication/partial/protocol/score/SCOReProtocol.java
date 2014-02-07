@@ -325,7 +325,6 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	@Override
 	public void onDelivery(Object obj, Address src, int size)
 	{
-		LOGGER.debug(obj);
 		Profiler.newMsgRecv(size);
 		if (obj instanceof ControlMessage)
 		{
