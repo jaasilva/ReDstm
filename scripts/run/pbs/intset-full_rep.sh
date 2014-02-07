@@ -32,16 +32,8 @@ _EXCLUDE="${_EXCLUDE},spread.*"
 _EXCLUDE="${_EXCLUDE},org.deuce.trove.*"
 _EXCLUDE="${_EXCLUDE},org.deuce.benchmark.intset.MyObjectBackend"
 
-#_BENCH_BIG=false
-_BENCH_BIG=true
-
-if $_BENCH_BIG ; then # big values
-	_SIZE=32768 # 2^15
-	_RANGE=131072 # SIZE*4
-else # small values
-	_SIZE=1024 # 2^10
-	_RANGE=4096 # SIZE*4
-fi
+_SIZE=32768 # 2^15
+_RANGE=131072 # SIZE*4
 
 _WARMUP=0
 _DURATION=30000 # ms
@@ -72,9 +64,6 @@ _GROUPCOMM="${_BENCH}_${_SIZE}_${_WRITES}_${_THREADS}_${_PROTO}_${_CTX}_${_REPLI
 _FNAME="${_BENCH}_i${_SIZE}_w${_WRITES}_t${_THREADS}_${_PROTO}_${_CTX}_${_GCS}_id${_SITE}-${_REPLICAS}_run${_RUN}_${_PARTIAL_OPS}"
 
 _LOG=logs/${_FNAME}.res
-_MEM=${_LOG}.mem
-_PROFILE_MEM=false
-#_PROFILE_MEM=true
 
 echo "#####"
 echo "Benchmark: ${_BENCH} -i ${_SIZE} -w ${_WRITES}, run ${_RUN}"
@@ -83,13 +72,7 @@ echo "Protocol: ${_PROTO}, context: ${_CTX}"
 echo "Comm: ${_GCS}"
 echo "Start: `date +'%F %H:%M:%S'`"
 echo "#####"
-
-if $_PROFILE_MEM ; then
-#	dstat -m -M top-mem > $_MEM & # in my pc
-	dstat -m -M topmem > $_MEM &
-	_PID2=$!
-	sleep 1
-fi
+_start2=`date +%s`
 
 java -Xmx8g -cp $_CP -javaagent:bin/deuceAgent.jar \
 	-Dorg.deuce.transaction.contextClass=$_STM \
@@ -104,13 +87,8 @@ java -Xmx8g -cp $_CP -javaagent:bin/deuceAgent.jar \
 		org.deuce.benchmark.intset.Benchmark $_BENCH -r $_RANGE -i $_SIZE \
 		-w $_WRITES -po $_PARTIAL_OPS &> $_LOG
 
+_end2=`date +%s`
 echo "#####"
-echo "End: `date +'%F %H:%M:%S'`"
+echo "End: `date +'%F %H:%M:%S'` $(( ($_end2-$_start2) ))s"
 echo "#####"
-
-if $_PROFILE_MEM ; then
-	sleep 1
-	kill $_PID2
-	wait $_PID2 2> /dev/null
-fi
 

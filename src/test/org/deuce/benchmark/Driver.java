@@ -2,8 +2,6 @@ package org.deuce.benchmark;
 
 import java.util.Random;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
@@ -144,21 +142,16 @@ public class Driver
 		}
 		System.err.println("done.");
 
-		LogManager.getRootLogger().setLevel(Level.ALL);
-
 		for (int i = 0; i < t.length; i++)
 		{
 			try
 			{
-				t[i].join();
+				t[i].join(5000);
 			}
 			catch (InterruptedException e)
 			{
 			}
 		}
-
-		LogManager.getRootLogger().setLevel(Level.WARN);
-
 		Profiler.disable();
 		System.err.println("done2.");
 

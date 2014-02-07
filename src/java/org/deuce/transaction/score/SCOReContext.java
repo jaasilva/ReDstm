@@ -469,7 +469,7 @@ public class SCOReContext extends DistributedContext
 	}
 
 	public Group getInvolvedNodes()
-	{ // !!! be careful when to call this XXX check
+	{ // !!! be careful when to call this XXX groups
 		if (involvedNodes == null)
 		{
 			Group group1 = readSet.getInvolvedNodes();
