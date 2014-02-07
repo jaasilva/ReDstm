@@ -341,6 +341,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 		else if (obj instanceof DecideMsg) // Decide Message
 		{
+			LOGGER.debug("DEC (" + src + ") " + ((DecideMsg) obj).trxID.split("-")[0]
+					+ " " + ((DecideMsg) obj).result);
 			decideMessage((DecideMsg) obj, src);
 		}
 		else if (obj instanceof ReadReq) // Read Request
