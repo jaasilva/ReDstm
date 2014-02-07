@@ -143,7 +143,7 @@ public class Driver
 			bt[i].setPhase(Benchmark.SHUTDOWN_PHASE);
 		}
 		System.err.println("done.");
-		
+
 		LogManager.getRootLogger().setLevel(Level.ALL);
 
 		for (int i = 0; i < t.length; i++)
@@ -156,6 +156,9 @@ public class Driver
 			{
 			}
 		}
+
+		LogManager.getRootLogger().setLevel(Level.WARN);
+
 		Profiler.disable();
 		System.err.println("done2.");
 
@@ -167,8 +170,6 @@ public class Driver
 		{
 			steps += bt[i].getSteps();
 		}
-		
-		LogManager.getRootLogger().setLevel(Level.WARN);
 
 		System.out.println("RESULTS:\n");
 		System.out.println("  Warmup duration (ms) = " + (wend - wstart));
