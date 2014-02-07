@@ -93,6 +93,7 @@ echo "Protocol: ${_PROTO}, context: ${_CTX}"
 echo "Comm: ${_GCS}, data partitioner: ${_DPART}"
 echo "Start: `date +'%F %H:%M:%S'`"
 echo "#####"
+_start2=`date +%s`
 
 if $_PROFILE_MEM ; then
 #	dstat -m -M top-mem > $_MEM & # in my pc
@@ -119,8 +120,9 @@ java -Xmx8g -cp $_CP -javaagent:bin/deuceAgent.jar \
 		org.deuce.benchmark.intset.Benchmark $_BENCH -r $_RANGE -i $_SIZE \
 		-w $_WRITES -po $_PARTIAL_OPS 2>&1 | tee $_LOG
 
+_end2=`date +%s`
 echo "#####"
-echo "End: `date +'%F %H:%M:%S'`"
+echo "End: `date +'%F %H:%M:%S'` $(( ($_end2-$_start2) ))s"
 echo "#####"
 
 if $_PROFILE_MEM ; then

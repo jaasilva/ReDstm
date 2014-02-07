@@ -146,7 +146,7 @@ public class Driver
 		{
 			try
 			{
-				t[i].join(5000);
+				t[i].join();
 			}
 			catch (InterruptedException e)
 			{
