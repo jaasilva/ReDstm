@@ -5,11 +5,6 @@
 
 cd $PBS_O_WORKDIR
 
-if [ $1 = "-h" ]; then
-	echo "<benchmark> <threads> <replicas> <run> <writes> <groups> <partial_ops>"
-	exit
-fi
-
 _CP="bin/classes"
 _CP="${_CP}:etc"
 _CP="${_CP}:lib/appia-core-4.1.2.jar"
@@ -39,7 +34,7 @@ _WARMUP=0
 _DURATION=1000 # ms
 
 _SITE=`hostname | cut -c 5-`
-_THREADS=4
+_THREADS=1
 _REPLICAS=$1
 _RUN=$2
 _GROUPS=$3
