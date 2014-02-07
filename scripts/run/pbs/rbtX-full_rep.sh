@@ -33,7 +33,7 @@ _RANGE=4096 # SIZE*4
 _WARMUP=0
 _DURATION=1000 # ms
 
-_SITE=`hostname | cut -c 5-`
+_SITE=`hostname | cut -c 3-`
 _THREADS=1
 _REPLICAS=$1
 _RUN=$2

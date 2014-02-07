@@ -19,8 +19,8 @@ public class SimpleLocator implements Locator
 
 	public void put(ObjectMetadata metadata, UniqueObject obj)
 	{
-		map.put(metadata, new SoftReference<UniqueObject>(obj));
-		// map.put(metadata, new WeakReference<UniqueObject>(obj));
+		// map.put(metadata, new SoftReference<UniqueObject>(obj));
+		map.put(metadata, new WeakReference<UniqueObject>(obj));
 	}
 
 	public UniqueObject get(ObjectMetadata metadata)
