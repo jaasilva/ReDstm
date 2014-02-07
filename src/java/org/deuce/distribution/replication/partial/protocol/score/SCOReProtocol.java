@@ -352,7 +352,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			readReturn((ReadRet) obj, src);
 		}
 		processTx();
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onDelivery.");
+		LOGGER.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> onDelivery.");
 	}
 
 	protected void processControlMessage(ControlMessage obj)
