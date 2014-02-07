@@ -138,6 +138,7 @@ public class Driver
 		}
 		System.err.println("done.");
 
+		// LogManager.getRootLogger().setLevel(Level.ALL);
 		for (int i = 0; i < t.length; i++)
 		{
 			try
