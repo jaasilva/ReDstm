@@ -1,5 +1,7 @@
 package org.deuce.benchmark;
 
+import java.util.Random;
+
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
@@ -17,6 +19,7 @@ public class Driver
 	static public Barrier finishBarrier;
 
 	static public int n_threads;
+	private static final Random rand = new Random();
 
 	public static void main(String[] args)
 	{
@@ -173,6 +176,13 @@ public class Driver
 		}
 		Profiler.print();
 
+		try
+		{
+			Thread.sleep(rand.nextInt(3000));
+		}
+		catch (InterruptedException e)
+		{
+		}
 		finishBarrier.join();
 
 		// if (Integer.getInteger("tribu.site") == 1)
