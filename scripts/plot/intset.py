@@ -675,8 +675,8 @@ def main(argv):
 		plot_performance2(_dir, _bench, _runs, _size, _thrs, 
 			_proto_par, _ctx_par, _comm, _reps)
 	
-	plot_performance3(_dir, _bench, _runs, _size, _thrs, _proto_full,
-			_proto_par, _ctx_full, _ctx_par, _comm, _reps)
+	#plot_performance3(_dir, _bench, _runs, _size, _thrs, _proto_full,
+	#	_proto_par, _ctx_full, _ctx_par, _comm, _reps)
 #end function
 
 def plot_performance1(dir, bench, runs, size, thrs, proto, ctx, comm, 
@@ -725,6 +725,7 @@ def plot_performance2(dir, bench, runs, size, thrs, proto, ctx, comm,
 		#end for
 		
 		str = '%d%% writes' % (writes)
+		print x
 		plt.plot(pops, x, label=str, marker='o')
 	#end for
 	
@@ -761,6 +762,9 @@ def plot_performance3(dir, bench, runs, size, thrs, proto_full,
 		#end for
 		
 		str = 'MVSTM %d%% writes' % (writes)
+		print pops
+		print x
+		print y
 		plt.plot(pops, x, label=str, marker='o')
 		str = 'SCORe %d%% writes' % (writes)
 		plt.plot(pops, y, label=str, marker='o')

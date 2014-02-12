@@ -57,6 +57,7 @@ public class Client extends Thread
 	private int queryRange;
 	private int percentUser;
 	private int percentConsult;
+	private final java.util.Random rand = new java.util.Random();
 
 	public Client()
 	{
@@ -111,6 +112,13 @@ public class Client extends Thread
 	public void run()
 	{
 		System.err.println("### benchBarrier: " + id);
+		try
+		{
+			Thread.sleep(rand.nextInt(3000));
+		}
+		catch (InterruptedException e)
+		{
+		}
 		Vacation.benchBarrier.join();
 
 		Profiler.enable();
