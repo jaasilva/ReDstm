@@ -73,11 +73,8 @@
 			</javac>
 	</target>
 	
-	<target name="clean"
-	        description="clean up" >
-	  <delete>
-            <fileset dir="." includes="**/*.class"/>
-          </delete>
+	<target name="clean" description="clean up" >
+	  <delete dir="${build}" />
 	</target>
 	
 </project>
