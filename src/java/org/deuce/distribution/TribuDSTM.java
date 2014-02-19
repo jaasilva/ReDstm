@@ -12,7 +12,6 @@ import org.deuce.distribution.cache.iSetMsg;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
-import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
 import org.deuce.distribution.location.SimpleLocator;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partitioner.data.DataPartitioner;
@@ -230,8 +229,7 @@ public class TribuDSTM
 	{
 		LOGGER.warn(SEP);
 		LOGGER.warn("> TribuDSTM closing...");
-		
-		
+
 		if (CACHE)
 		{
 			System.out.println(Cache.a);
@@ -471,19 +469,6 @@ public class TribuDSTM
 	public static final void subscribeDeliveries(DeliverySubscriber subscriber)
 	{
 		groupComm.subscribeDelivery(subscriber);
-	}
-
-	/**
-	 * Subscribes a subscriber to receive messages from the group communication
-	 * system, optimistically.
-	 * 
-	 * @param subscriber - the subscriber that will receive the messages,
-	 *            optimistically.
-	 */
-	public static final void subscribeOptimisticDeliveries(
-			OptimisticDeliverySubscriber subscriber)
-	{
-		groupComm.subscribeOptimisticDelivery(subscriber);
 	}
 
 	/**

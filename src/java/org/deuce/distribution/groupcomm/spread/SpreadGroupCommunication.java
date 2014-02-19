@@ -7,8 +7,6 @@ import org.deuce.Defaults;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
-import org.deuce.distribution.groupcomm.OptimisticDeliveryUnsupportedException;
-import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.serialization.GCPayloadException;
 import org.deuce.transform.ExcludeTM;
@@ -70,13 +68,6 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		{
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void subscribeOptimisticDelivery(
-			OptimisticDeliverySubscriber optSubscriber)
-	{
-		throw new OptimisticDeliveryUnsupportedException();
 	}
 
 	public void sendTotalOrdered(byte[] payload)

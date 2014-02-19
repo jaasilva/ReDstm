@@ -191,9 +191,6 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		}
 
 		Address src = new AppiaAddress(msg.getSenderAddress());
-
-		obj = notifyOptimisticDelivery(obj, src, payload.length);
-
 		return new Tuple(obj, src, payload.length);
 	}
 

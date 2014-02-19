@@ -10,8 +10,6 @@ import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
-import org.deuce.distribution.groupcomm.OptimisticDeliveryUnsupportedException;
-import org.deuce.distribution.groupcomm.subscriber.OptimisticDeliverySubscriber;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partial.PartialReplicationProtocol;
 import org.deuce.distribution.serialization.GCPayloadException;
@@ -66,13 +64,6 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	public void close()
 	{
 		channel.close();
-	}
-
-	@Override
-	public void subscribeOptimisticDelivery(
-			OptimisticDeliverySubscriber optSubscriber)
-	{
-		throw new OptimisticDeliveryUnsupportedException();
 	}
 
 	public void sendTotalOrdered(final byte[] payload)
