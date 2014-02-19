@@ -143,13 +143,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 				m_set = new IntSetHash();
 			}
 		}
-		else if (type.equals("IntJavaHashSet"))
-		{
-			if (m_set == null)
-			{
-				m_set = new IntJavaHashSet();
-			}
-		}
 		else if (type.equals("IntJavaConcurrentHashSet"))
 		{
 			if (m_set == null)
