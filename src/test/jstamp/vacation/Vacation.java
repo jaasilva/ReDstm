@@ -180,7 +180,7 @@ public class Vacation
 	public void populateManager()
 	{
 		long st = System.nanoTime();
-		System.out.println("Populating manager... ");
+		System.out.print("Populating manager... ");
 		Random randomPtr = new Random();
 		randomPtr.random_alloc();
 
