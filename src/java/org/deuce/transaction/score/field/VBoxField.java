@@ -19,7 +19,7 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 
 	private transient volatile int readLock = 0;
 	private transient volatile boolean writeLock = false; // false -> unlocked
-	private transient volatile String lockHolder = null; // trxID XXX change
+	private transient volatile String lockHolder = null; // trxID
 
 	public VBoxField()
 	{
@@ -67,7 +67,7 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 	}
 
 	@Override
-	public boolean exclusiveLock(String holder)
+	public synchronized boolean exclusiveLock(String holder)
 	{
 		if (readLock != 0)
 		{ // readLock LOCKED
@@ -84,7 +84,7 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 	}
 
 	@Override
-	public boolean exclusiveUnlock(String holder)
+	public synchronized boolean exclusiveUnlock(String holder)
 	{
 		if (!holder.equals(lockHolder))
 		{ // lockHolder != holder
@@ -97,11 +97,11 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 			return true;
 		}
 		// lockHolder == holder && writeLock UNLOCKED
-		return false;
+		return true;
 	}
 
 	@Override
-	public boolean sharedLock(String holder)
+	public synchronized boolean sharedLock(String holder)
 	{
 		if (writeLock && !holder.equals(lockHolder))
 		{ // writeLock LOCKED && lockHolder != holder
@@ -115,7 +115,7 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 	}
 
 	@Override
-	public boolean sharedUnlock(String holder)
+	public synchronized boolean sharedUnlock(String holder)
 	{ // USE CAREFULY!!! everyone can call this method without any check
 		if (readLock != 0)
 		{ // readLock LOCKED
@@ -123,11 +123,11 @@ public class VBoxField extends TxField implements InPlaceRWLock,
 			return true;
 		}
 		// readLock UNLOCKED
-		return false;
+		return true;
 	}
 
 	@Override
-	public boolean isExclusiveUnlocked()
+	public synchronized boolean isExclusiveUnlocked()
 	{
 		return !writeLock;
 	}

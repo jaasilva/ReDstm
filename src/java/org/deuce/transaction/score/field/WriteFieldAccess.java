@@ -7,7 +7,7 @@ import org.deuce.transform.localmetadata.type.TxField;
  * @author jaasilva
  */
 @ExcludeTM
-public class SCOReWriteFieldAccess extends SCOReReadFieldAccess
+public class WriteFieldAccess extends ReadFieldAccess
 {
 	private static final long serialVersionUID = 1L;
 	public Object value;

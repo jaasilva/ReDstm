@@ -34,8 +34,8 @@ import org.deuce.profiling.Profiler;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.DistributedContext;
 import org.deuce.transaction.DistributedContextState;
-import org.deuce.transaction.score.SCOReContext;
-import org.deuce.transaction.score.SCOReContextState;
+import org.deuce.transaction.score.Context;
+import org.deuce.transaction.score.ContextState;
 import org.deuce.transaction.score.field.InPlaceRWLock;
 import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transaction.score.field.Version;
@@ -46,10 +46,10 @@ import org.deuce.transform.localmetadata.type.TxField;
  * @author jaasilva
  */
 @ExcludeTM
-public class SCOReProtocol extends PartialReplicationProtocol implements
+public class SCORe extends PartialReplicationProtocol implements
 		DeliverySubscriber
 {
-	private static final Logger LOGGER = Logger.getLogger(SCOReProtocol.class);
+	private static final Logger LOGGER = Logger.getLogger(SCORe.class);
 	private final Comparator<Pair<String, Integer>> comp = new Comparator<Pair<String, Integer>>()
 	{
 		@Override
@@ -97,7 +97,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	public void onTxCommit(DistributedContext ctx)
 	{ // I am the coordinator of this commit.
 		Profiler.onTxDistCommitBegin(ctx.threadID);
-		SCOReContext sctx = (SCOReContext) ctx;
+		Context sctx = (Context) ctx;
 		DistributedContextState ctxState = sctx.createState();
 
 		Group resGroup = sctx.getInvolvedNodes();
@@ -123,7 +123,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	@Override
 	public void onTxFinished(DistributedContext ctx, boolean committed)
 	{
-		SCOReContext sctx = (SCOReContext) ctx;
+		Context sctx = (Context) ctx;
 		LOGGER.debug("FINISH " + sctx.threadID + ":" + sctx.atomicBlockId + ":"
 				+ sctx.trxID.split("-")[0] + "= " + committed);
 	}
@@ -131,10 +131,10 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	@Override
 	public Object onTxRead(DistributedContext ctx, TxField field)
 	{ // I am the coordinator of this read.
-		return processRead((SCOReContext) ctx, field);
+		return processRead((Context) ctx, field);
 	}
 
-	protected ReadDone processRead(SCOReContext sctx, TxField field)
+	protected ReadDone processRead(Context sctx, TxField field)
 	{
 		ObjectMetadata meta = field.getMetadata();
 		boolean firstRead = !sctx.firstReadDone;
@@ -176,7 +176,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		return read;
 	}
 
-	protected ReadDone remoteRead(SCOReContext sctx, ObjectMetadata metadata,
+	protected ReadDone remoteRead(Context sctx, ObjectMetadata metadata,
 			boolean firstRead, Group p_group)
 	{
 		ReadReq req = new ReadReq(sctx.threadID, metadata, sctx.sid, firstRead,
@@ -209,15 +209,15 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		int origNextId;
 		do
 		{
-			origNextId = SCOReContext.nextId.get();
-		} while (!SCOReContext.nextId.compareAndSet(origNextId,
+			origNextId = Context.nextId.get();
+		} while (!Context.nextId.compareAndSet(origNextId,
 				Math.max(origNextId, lastCommitted)));
 
 		int origMaxSeenId;
 		do
 		{
-			origMaxSeenId = SCOReContext.maxSeenId.get();
-		} while (!SCOReContext.maxSeenId.compareAndSet(origMaxSeenId,
+			origMaxSeenId = Context.maxSeenId.get();
+		} while (!Context.maxSeenId.compareAndSet(origMaxSeenId,
 				Math.max(origMaxSeenId, lastCommitted)));
 		advanceCommitId();
 	}
@@ -246,8 +246,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		int newReadSid = msg.readSid;
 		int commit;
 
-		if (msg.firstRead
-				&& (commit = SCOReContext.commitId.get()) > newReadSid)
+		if (msg.firstRead && (commit = Context.commitId.get()) > newReadSid)
 		{
 			newReadSid = commit;
 		}
@@ -276,14 +275,14 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		int origNextId;
 		do
 		{
-			origNextId = SCOReContext.nextId.get();
-		} while (!SCOReContext.nextId.compareAndSet(origNextId,
+			origNextId = Context.nextId.get();
+		} while (!Context.nextId.compareAndSet(origNextId,
 				Math.max(origNextId, sid)));
 
 		VBoxField field = (VBoxField) TribuDSTM.getObject(metadata);
 
 		long st = System.nanoTime();
-		while (SCOReContext.commitId.get() < sid
+		while (Context.commitId.get() < sid
 				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
 		{ /*
 		 * wait until (commitId.get() >= sid || ((InPlaceRWLock)
@@ -295,13 +294,13 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		Version ver = field.getLastVersion().get(sid);
 		boolean mostRecent = ver.equals(field.getLastVersion());
-		int lastCommitted = SCOReContext.commitId.get();
+		int lastCommitted = Context.commitId.get();
 		return new ReadDone(ver.value, lastCommitted, mostRecent);
 	}
 
 	protected void readReturn(ReadRet msg, Address src)
 	{ // I am the coordinator of this read.
-		SCOReContext sctx = ((SCOReContext) ctxs.get(msg.ctxID));
+		Context sctx = ((Context) ctxs.get(msg.ctxID));
 
 		if (sctx.requestVersion > msg.msgVersion)
 		{ // read request already responded. ignore late responses
@@ -329,7 +328,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 		else if (obj instanceof DistributedContextState) // Prepare Message
 		{
-			prepareMessage((SCOReContextState) obj, src);
+			prepareMessage((ContextState) obj, src);
 		}
 		else if (obj instanceof VoteMsg) // Vote Message
 		{ // I am the coordinator of this commit
@@ -355,7 +354,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	{
 	}
 
-	private void prepareMessage(SCOReContextState ctx, Address src)
+	private void prepareMessage(ContextState ctx, Address src)
 	{ // I am a participant in this commit. Validate and send vote msg
 		final String trxID = ctx.trxID;
 		final int ctxID = ctx.ctxID;
@@ -368,14 +367,14 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 		receivedTrxs.put(trxID, ctx);
 
-		SCOReContext sctx = null;
+		Context sctx = null;
 		if (src.isLocal())
 		{ // context is local. access directly
-			sctx = (SCOReContext) ctxs.get(ctxID);
+			sctx = (Context) ctxs.get(ctxID);
 		}
 		else
 		{ // context is remote. recreate from state
-			sctx = (SCOReContext) ContextDelegator.getInstance();
+			sctx = (Context) ContextDelegator.getInstance();
 			sctx.recreateContextFromState(ctx);
 		}
 
@@ -384,7 +383,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		int next = -1;
 		if (outcome) // valid trx
 		{
-			next = SCOReContext.nextId.incrementAndGet();
+			next = Context.nextId.incrementAndGet();
 			pendQ.add(new Pair<String, Integer>(trxID, next));
 		}
 
@@ -404,7 +403,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	private void voteMessage(VoteMsg msg, Address src)
 	{ // I am the coordinator of this commit. Gathering votes
 		// this context is local. access directly
-		SCOReContext ctx = (SCOReContext) ctxs.get(msg.ctxID);
+		Context ctx = (Context) ctxs.get(msg.ctxID);
 		final String trxID_msg = msg.trxID;
 		final String trxID = ctx.trxID;
 
@@ -440,7 +439,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		}
 	}
 
-	private void finalizeVoteStep(SCOReContext ctx, boolean outcome)
+	private void finalizeVoteStep(Context ctx, boolean outcome)
 	{ // I am the coordinator of this commit.
 		if (!outcome)
 		{ // ensures late vote checking
@@ -480,8 +479,8 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			int origNextId;
 			do
 			{
-				origNextId = SCOReContext.nextId.get();
-			} while (!SCOReContext.nextId.compareAndSet(origNextId,
+				origNextId = Context.nextId.get();
+			} while (!Context.nextId.compareAndSet(origNextId,
 					Math.max(origNextId, finalSid)));
 			stableQ.add(new Pair<String, Integer>(trxID, finalSid));
 		}
@@ -489,15 +488,14 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		boolean remove = pendQ.remove(new Pair<String, Integer>(trxID, -1));
 		advanceCommitId();
 
-		SCOReContextState tx = (SCOReContextState) receivedTrxs.get(trxID);
+		ContextState tx = (ContextState) receivedTrxs.get(trxID);
 		if (!result)
 		{ // DECIDE NO (someone voted NO)
 			if (tx != null)
 			{ // received DECIDE msg *after* PREPARE msg
 				if (remove) // I only have the locks if I voted YES
 				{ // and put the tx in the pendQ
-					SCOReContext sctx = (SCOReContext) ContextDelegator
-							.getInstance();
+					Context sctx = (Context) ContextDelegator.getInstance();
 					sctx.recreateContextFromState(tx);
 					sctx.unlock(); // release shared and exclusive locks
 				}
@@ -511,7 +509,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 			if (src.isLocal())
 			{ // context is local. access directly
-				SCOReContext ctx = (SCOReContext) ctxs.get(ctxID);
+				Context ctx = (Context) ctxs.get(ctxID);
 				Profiler.onTxDistCommitFinish(ctxID);
 				ctx.processed(false);
 			}
@@ -531,7 +529,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 			{ // nothing to do
 				if (snId != -1)
 				{ // it is safe to make snapshot visible
-					SCOReContext.commitId.set(snId);
+					Context.commitId.set(snId);
 					releaseTrxs();
 				}
 				advanceCommitId();
@@ -546,32 +544,31 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 				// sTx
 				if (snId != -1)
 				{ // it is safe to make snapshot visible
-					SCOReContext.commitId.set(snId);
+					Context.commitId.set(snId);
 					releaseTrxs();
 				}
 				return;
 			}
 
 			// *atomically*
-			SCOReContext ctx = null;
-			SCOReContextState tx = (SCOReContextState) receivedTrxs
-					.get(sTx.first);
+			Context ctx = null;
+			ContextState tx = (ContextState) receivedTrxs.get(sTx.first);
 
 			if (tx.src.isLocal())
 			{ // context is local. access directly
-				ctx = (SCOReContext) ctxs.get(tx.ctxID);
+				ctx = (Context) ctxs.get(tx.ctxID);
 			}
 			else
 			{ // context is remote. recreate from state
-				ctx = (SCOReContext) ContextDelegator.getInstance();
+				ctx = (Context) ContextDelegator.getInstance();
 				ctx.recreateContextFromState(tx);
 			}
 
 			ctx.sid = sTx.second;
 			if (snId != -1 && ctx.sid > snId)
 			{ // this snapshot is fresher than snId, it is safe to make
-				SCOReContext.commitId.set(snId); // the previous snapshot
-													// visible
+				Context.commitId.set(snId); // the previous snapshot
+											// visible
 				releaseTrxs();
 			}
 			snId = ctx.sid;
@@ -593,11 +590,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 
 		while (it.hasNext())
 		{
-			SCOReContextState ctx = (SCOReContextState) it.next();
-			SCOReContext sctx = null;
+			ContextState ctx = (ContextState) it.next();
+			Context sctx = null;
 			if (ctx.src.isLocal())
 			{ // context is local. access directly
-				sctx = (SCOReContext) ctxs.get(ctx.ctxID);
+				sctx = (Context) ctxs.get(ctx.ctxID);
 				Profiler.onTxDistCommitFinish(sctx.threadID);
 				sctx.processed(true);
 			}
@@ -610,14 +607,14 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 		int origCommitId;
 		do
 		{
-			origCommitId = SCOReContext.commitId.get();
-			if (origCommitId >= SCOReContext.maxSeenId.get()
-					|| !pendQ.isEmpty() || !stableQ.isEmpty())
+			origCommitId = Context.commitId.get();
+			if (origCommitId >= Context.maxSeenId.get() || !pendQ.isEmpty()
+					|| !stableQ.isEmpty())
 			{
 				return;
 			}
-		} while (!SCOReContext.commitId.compareAndSet(origCommitId,
-				SCOReContext.maxSeenId.get()));
+		} while (!Context.commitId.compareAndSet(origCommitId,
+				Context.maxSeenId.get()));
 	}
 
 	@ExcludeTM

@@ -18,7 +18,7 @@ import org.deuce.distribution.replication.partitioner.data.DataPartitioner;
 import org.deuce.distribution.replication.partitioner.group.GroupPartitioner;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transaction.DistributedContext;
-import org.deuce.transaction.score.field.SCOReWriteFieldAccess;
+import org.deuce.transaction.score.field.WriteFieldAccess;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
@@ -636,7 +636,7 @@ public class TribuDSTM
 	 * @param set - the new set of committed keys.
 	 */
 	public static final void cacheAddCommittedKeys(
-			Set<SCOReWriteFieldAccess> set)
+			Set<WriteFieldAccess> set)
 	{
 		cache.addCommittedKeys(set);
 	}

@@ -2,7 +2,6 @@ package org.deuce.transaction.mvstm;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.deuce.Defaults;
 import org.deuce.LocalMetadata;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.profiling.Profiler;
@@ -35,12 +34,6 @@ public class Context extends DistributedContext
 {
 	private static final TransactionException READ_ONLY_FAILURE_EXCEPTION = new TransactionException(
 			"Fail on write (read-only hint was set).");
-	public static final TransactionException VERSION_UNAVAILABLE_EXCEPTION = new TransactionException(
-			"Fail on retrieveing an older and unexistent version.");
-
-	public static int MAX_VERSIONS = Integer
-			.getInteger(Defaults._MVSTM_MVCC_MAX_VERSIONS,
-					Defaults.MVSTM_MVCC_MAX_VERSIONS);
 
 	private ReadSet readSet;
 	private WriteSet writeSet;

@@ -5,7 +5,7 @@ import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partial.PartialReplicationOID;
 import org.deuce.distribution.replication.partial.protocol.score.msgs.ReadDone;
 import org.deuce.profiling.Profiler;
-import org.deuce.transaction.score.SCOReContext;
+import org.deuce.transaction.score.Context;
 import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
@@ -14,10 +14,10 @@ import org.deuce.transform.localmetadata.type.TxField;
  * @author jaasilva
  */
 @ExcludeTM
-public class SCOReProtocol_noReadOpt extends SCOReProtocol
+public class SCORe_noReadOpt extends SCORe
 {
 	@Override
-	protected ReadDone processRead(SCOReContext sctx, TxField field)
+	protected ReadDone processRead(Context sctx, TxField field)
 	{
 		ObjectMetadata meta = field.getMetadata();
 		boolean firstRead = !sctx.firstReadDone;

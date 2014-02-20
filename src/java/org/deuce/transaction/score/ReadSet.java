@@ -6,7 +6,7 @@ import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.distribution.replication.partial.PartialReplicationOID;
 import org.deuce.transaction.score.field.InPlaceRWLock;
-import org.deuce.transaction.score.field.SCOReReadFieldAccess;
+import org.deuce.transaction.score.field.ReadFieldAccess;
 import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transform.ExcludeTM;
 
@@ -14,14 +14,14 @@ import org.deuce.transform.ExcludeTM;
  * @author jaasilva
  */
 @ExcludeTM
-public class SCOReReadSet implements Serializable
+public class ReadSet implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	private static final int DEFAULT_CAPACITY = 1024;
-	private SCOReReadFieldAccess[] readSet = new SCOReReadFieldAccess[DEFAULT_CAPACITY];
+	private ReadFieldAccess[] readSet = new ReadFieldAccess[DEFAULT_CAPACITY];
 	private int next = 0;
 
-	public SCOReReadSet()
+	public ReadSet()
 	{
 		fillArray(0);
 	}
@@ -30,7 +30,7 @@ public class SCOReReadSet implements Serializable
 	{
 		for (int i = offset; i < readSet.length; i++)
 		{
-			readSet[i] = new SCOReReadFieldAccess();
+			readSet[i] = new ReadFieldAccess();
 		}
 	}
 
@@ -39,12 +39,12 @@ public class SCOReReadSet implements Serializable
 		next = 0;
 	}
 
-	public SCOReReadFieldAccess getNext()
+	public ReadFieldAccess getNext()
 	{
 		if (next == readSet.length)
 		{
 			int originLength = readSet.length;
-			SCOReReadFieldAccess[] tmp = new SCOReReadFieldAccess[2 * originLength];
+			ReadFieldAccess[] tmp = new ReadFieldAccess[2 * originLength];
 			System.arraycopy(readSet, 0, tmp, 0, originLength);
 			readSet = tmp;
 			fillArray(originLength);

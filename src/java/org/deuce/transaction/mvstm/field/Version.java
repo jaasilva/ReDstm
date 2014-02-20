@@ -2,7 +2,8 @@ package org.deuce.transaction.mvstm.field;
 
 import java.io.Serializable;
 
-import org.deuce.transaction.mvstm.Context;
+import org.deuce.Defaults;
+import org.deuce.transaction.TransactionException;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -12,6 +13,12 @@ import org.deuce.transform.ExcludeTM;
 public class Version implements Serializable
 {
 	private static final long serialVersionUID = 1L;
+	public static final TransactionException VERSION_UNAVAILABLE_EXCEPTION = new TransactionException(
+			"Fail on retrieveing an older and unexistent version.");
+	public static int MAX_VERSIONS = Integer
+			.getInteger(Defaults._MVSTM_MVCC_MAX_VERSIONS,
+					Defaults.MVSTM_MVCC_MAX_VERSIONS);
+
 	public int version;
 	public Version next;
 	public Object value;
@@ -23,17 +30,17 @@ public class Version implements Serializable
 		this.version = version;
 		this.next = next;
 		this.value = value;
-		this.size = next != null ? next.size + 1 : 1; // XXX is this 0 or 1?
-		if (size == Context.MAX_VERSIONS)
+		this.size = next != null ? next.size + 1 : 0;
+		if (size == MAX_VERSIONS)
 		{
 			cleanVersions();
-			size = Context.MAX_VERSIONS >>> 1; // divide by 2
+			size = MAX_VERSIONS >>> 1; // divide by 2
 		}
 	}
 
 	private void cleanVersions()
 	{
-		int c = Context.MAX_VERSIONS >>> 1; // divide by 2
+		int c = MAX_VERSIONS >>> 1; // divide by 2
 		Version v = this;
 		while (c > 1)
 		{
@@ -53,11 +60,10 @@ public class Version implements Serializable
 			res = res.next;
 			if (res == null)
 			{
-				throw Context.VERSION_UNAVAILABLE_EXCEPTION;
+				throw VERSION_UNAVAILABLE_EXCEPTION;
 			}
 		}
-		// XXX just to the equal to SCORe Version class (cache stuff)
-		res.validity = (prev != null) ? prev.version : -1;
+		res.validity = prev != null ? prev.version : -1; // chache stuff
 		return res;
 	}
 

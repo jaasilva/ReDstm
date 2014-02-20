@@ -23,8 +23,8 @@ import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.partial.PartialReplicationOID;
 import org.deuce.distribution.replication.partial.PartialReplicationProtocol;
-import org.deuce.transaction.score.SCOReContext;
-import org.deuce.transaction.score.field.SCOReWriteFieldAccess;
+import org.deuce.transaction.score.Context;
+import org.deuce.transaction.score.field.WriteFieldAccess;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -38,8 +38,8 @@ public class Cache
 			50000);
 	private static final Map<Integer, Validity> mostRecentValidities = new ConcurrentHashMap<Integer, Validity>(
 			TribuDSTM.getNumGroups());
-	private static final Set<SCOReWriteFieldAccess> committedKeys = Collections
-			.newSetFromMap(new ConcurrentHashMap<SCOReWriteFieldAccess, Boolean>(
+	private static final Set<WriteFieldAccess> committedKeys = Collections
+			.newSetFromMap(new ConcurrentHashMap<WriteFieldAccess, Boolean>(
 					1000));
 	private static int lastSentSid = 0;
 	public static Invalidation invalidationStrategy;
@@ -233,7 +233,7 @@ public class Cache
 	 * INVALIDATION
 	 ***************************************************/
 
-	public synchronized void addCommittedKeys(Set<SCOReWriteFieldAccess> set)
+	public synchronized void addCommittedKeys(Set<WriteFieldAccess> set)
 	{
 		committedKeys.addAll(set);
 
@@ -247,16 +247,16 @@ public class Cache
 	public synchronized iSetMsg getInvalidationSet()
 	{
 		iSetMsg msg = null;
-		int mostRecentSid = SCOReContext.commitId.get();
+		int mostRecentSid = Context.commitId.get();
 
 		if (mostRecentSid > lastSentSid /* && !committedKeys.isEmpty() */)
 		{
-			Set<SCOReWriteFieldAccess> keys = new HashSet<SCOReWriteFieldAccess>(
+			Set<WriteFieldAccess> keys = new HashSet<WriteFieldAccess>(
 					committedKeys);
 			committedKeys.clear();
 
 			Set<ObjectMetadata> iSet = new HashSet<ObjectMetadata>(keys.size());
-			for (SCOReWriteFieldAccess m : keys)
+			for (WriteFieldAccess m : keys)
 			{
 				PartialReplicationOID meta = (PartialReplicationOID) m
 						.getDistMetadata();

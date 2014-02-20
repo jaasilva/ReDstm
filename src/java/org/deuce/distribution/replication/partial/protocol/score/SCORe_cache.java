@@ -16,7 +16,7 @@ import org.deuce.distribution.replication.partial.protocol.score.msgs.ReadDone;
 import org.deuce.distribution.replication.partial.protocol.score.msgs.ReadReq;
 import org.deuce.profiling.Profiler;
 import org.deuce.transaction.DistributedContext;
-import org.deuce.transaction.score.SCOReContext;
+import org.deuce.transaction.score.Context;
 import org.deuce.transaction.score.field.InPlaceRWLock;
 import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transaction.score.field.Version;
@@ -27,13 +27,12 @@ import org.deuce.transform.localmetadata.type.TxField;
  * @author jaasilva
  */
 @ExcludeTM
-public class SCOReProtocol_cache extends SCOReProtocol
+public class SCORe_cache extends SCORe
 {
-	private static final Logger LOGGER = Logger
-			.getLogger(SCOReProtocol_cache.class);
+	private static final Logger LOGGER = Logger.getLogger(SCORe_cache.class);
 
 	@Override
-	protected ReadDone processRead(SCOReContext sctx, TxField field)
+	protected ReadDone processRead(Context sctx, TxField field)
 	{
 		ObjectMetadata meta = field.getMetadata();
 		boolean firstRead = !sctx.firstReadDone;
@@ -104,7 +103,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 	}
 
 	@Override
-	protected ReadDone remoteRead(SCOReContext sctx, ObjectMetadata metadata,
+	protected ReadDone remoteRead(Context sctx, ObjectMetadata metadata,
 			boolean firstRead, Group p_group)
 	{
 		ReadReq req = new ReadReq(sctx.threadID, metadata, sctx.sid, firstRead,
@@ -157,14 +156,14 @@ public class SCOReProtocol_cache extends SCOReProtocol
 		int origNextId;
 		do
 		{
-			origNextId = SCOReContext.nextId.get();
-		} while (!SCOReContext.nextId.compareAndSet(origNextId,
+			origNextId = Context.nextId.get();
+		} while (!Context.nextId.compareAndSet(origNextId,
 				Math.max(origNextId, sid)));
 
 		VBoxField field = (VBoxField) TribuDSTM.getObject(metadata);
 
 		long st = System.nanoTime();
-		while (SCOReContext.commitId.get() < sid
+		while (Context.commitId.get() < sid
 				&& !((InPlaceRWLock) field).isExclusiveUnlocked())
 		{ /*
 		 * wait until (commitId.get() >= sid || ((InPlaceRWLock)
@@ -176,7 +175,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 
 		Version ver = field.getLastVersion().get(sid);
 		boolean mostRecent = ver.equals(field.getLastVersion());
-		int lastCommitted = SCOReContext.commitId.get();
+		int lastCommitted = Context.commitId.get();
 		ReadDone read = new ReadDone(ver.value, lastCommitted, mostRecent);
 
 		// piggyback the info of the version to be cached
@@ -204,7 +203,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 	@Override
 	public void onTxFinished(DistributedContext ctx, boolean committed)
 	{
-		SCOReContext sctx = (SCOReContext) ctx;
+		Context sctx = (Context) ctx;
 
 		if (sctx.isUpdate() && committed)
 		{

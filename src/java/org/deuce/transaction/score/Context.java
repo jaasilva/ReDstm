@@ -4,7 +4,6 @@ import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.deuce.Defaults;
 import org.deuce.LocalMetadata;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
@@ -19,8 +18,8 @@ import org.deuce.transaction.TransactionException;
 import org.deuce.transaction.pool.Pool;
 import org.deuce.transaction.pool.ResourceFactory;
 import org.deuce.transaction.score.field.InPlaceRWLock;
-import org.deuce.transaction.score.field.SCOReReadFieldAccess;
-import org.deuce.transaction.score.field.SCOReWriteFieldAccess;
+import org.deuce.transaction.score.field.ReadFieldAccess;
+import org.deuce.transaction.score.field.WriteFieldAccess;
 import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transaction.score.field.Version;
 import org.deuce.transform.ExcludeTM;
@@ -45,15 +44,10 @@ import org.deuce.trove.TObjectProcedure;
  */
 @ExcludeTM
 @LocalMetadata(metadataClass = "org.deuce.transaction.score.field.VBoxField")
-public class SCOReContext extends DistributedContext
+public class Context extends DistributedContext
 {
-	public static final TransactionException VERSION_UNAVAILABLE_EXCEPTION = new TransactionException(
-			"Fail on retrieveing an older or unexistent version.");
 	public static final TransactionException OVERWRITTEN_VERSION_EXCEPTION = new TransactionException(
 			"Forced to see overwritten data.");
-	public static final int MAX_VERSIONS = Integer
-			.getInteger(Defaults._SCORE_MVCC_MAX_VERSIONS,
-					Defaults.SCORE_MVCC_MAX_VERSIONS);
 
 	// updated ONLY by bottom threads
 	public static final AtomicInteger commitId = new AtomicInteger(0);
@@ -62,8 +56,8 @@ public class SCOReContext extends DistributedContext
 	// updated ONLY by bottom threads
 	public static final AtomicInteger maxSeenId = new AtomicInteger(0);
 
-	private SCOReReadSet readSet;
-	private SCOReWriteSet writeSet;
+	private ReadSet readSet;
+	private WriteSet writeSet;
 
 	public int sid;
 	public boolean firstReadDone;
@@ -77,11 +71,11 @@ public class SCOReContext extends DistributedContext
 	public ReadDone response;
 	public int requestVersion;
 
-	public SCOReContext()
+	public Context()
 	{
 		super();
-		readSet = new SCOReReadSet();
-		writeSet = new SCOReWriteSet();
+		readSet = new ReadSet();
+		writeSet = new WriteSet();
 
 		syncMsg = new Semaphore(0);
 		response = null;
@@ -89,7 +83,7 @@ public class SCOReContext extends DistributedContext
 		requestVersion = 0;
 	}
 
-	public Set<SCOReWriteFieldAccess> getCommittedKeys()
+	public Set<WriteFieldAccess> getCommittedKeys()
 	{
 		return writeSet.getWrites();
 	}
@@ -108,16 +102,16 @@ public class SCOReContext extends DistributedContext
 	 * ON READ ACCESS
 	 **************************************/
 
-	private SCOReWriteFieldAccess onReadAccess(TxField field)
+	private WriteFieldAccess onReadAccess(TxField field)
 	{
-		SCOReReadFieldAccess curr = readSet.getNext();
+		ReadFieldAccess curr = readSet.getNext();
 		curr.init(field);
 		return writeSet.contains(curr);
 	}
 
 	private Object read(TxField field)
 	{
-		SCOReWriteFieldAccess writeAccess = onReadAccess(field);
+		WriteFieldAccess writeAccess = onReadAccess(field);
 		if (writeAccess != null)
 		{ // *IN* the writeSet. Return value
 			Profiler.onTxWsRead(threadID);
@@ -281,7 +275,7 @@ public class SCOReContext extends DistributedContext
 
 	private void write(Object value, TxField field)
 	{
-		SCOReWriteFieldAccess next = WFAPool.getNext();
+		WriteFieldAccess next = WFAPool.getNext();
 		next.set(value, field);
 		writeSet.put(next);
 	}
@@ -368,8 +362,8 @@ public class SCOReContext extends DistributedContext
 	@Override
 	public DistributedContextState createState()
 	{
-		return new SCOReContextState(readSet, writeSet, threadID,
-				atomicBlockId, sid, trxID);
+		return new ContextState(readSet, writeSet, threadID, atomicBlockId,
+				sid, trxID);
 	}
 
 	@Override
@@ -421,10 +415,10 @@ public class SCOReContext extends DistributedContext
 		return outcome;
 	}
 
-	private final TObjectProcedure<SCOReWriteFieldAccess> putProcedure = new TObjectProcedure<SCOReWriteFieldAccess>()
+	private final TObjectProcedure<WriteFieldAccess> putProcedure = new TObjectProcedure<WriteFieldAccess>()
 	{
 		@Override
-		public boolean execute(SCOReWriteFieldAccess wfa)
+		public boolean execute(WriteFieldAccess wfa)
 		{
 			PartialReplicationOID meta = (PartialReplicationOID) wfa.field
 					.getMetadata();
@@ -448,10 +442,10 @@ public class SCOReContext extends DistributedContext
 		super.recreateContextFromState(ctxState);
 		atomicBlockId = -1;
 
-		SCOReContextState sctx = (SCOReContextState) ctxState;
+		ContextState sctx = (ContextState) ctxState;
 
-		readSet = (SCOReReadSet) ctxState.rs;
-		writeSet = (SCOReWriteSet) ctxState.ws;
+		readSet = (ReadSet) ctxState.rs;
+		writeSet = (WriteSet) ctxState.ws;
 
 		sid = sctx.sid;
 		trxID = sctx.trxID;
@@ -520,14 +514,14 @@ public class SCOReContext extends DistributedContext
 	}
 
 	private static class WFAResourceFactory implements
-			ResourceFactory<SCOReWriteFieldAccess>
+			ResourceFactory<WriteFieldAccess>
 	{
-		public SCOReWriteFieldAccess newInstance()
+		public WriteFieldAccess newInstance()
 		{
-			return new SCOReWriteFieldAccess();
+			return new WriteFieldAccess();
 		}
 	}
 
-	final private Pool<SCOReWriteFieldAccess> WFAPool = new Pool<SCOReWriteFieldAccess>(
+	final private Pool<WriteFieldAccess> WFAPool = new Pool<WriteFieldAccess>(
 			new WFAResourceFactory());
 }

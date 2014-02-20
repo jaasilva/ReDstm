@@ -7,8 +7,8 @@ import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.distribution.replication.partial.PartialReplicationOID;
 import org.deuce.transaction.score.field.InPlaceRWLock;
-import org.deuce.transaction.score.field.SCOReReadFieldAccess;
-import org.deuce.transaction.score.field.SCOReWriteFieldAccess;
+import org.deuce.transaction.score.field.ReadFieldAccess;
+import org.deuce.transaction.score.field.WriteFieldAccess;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.trove.THashSet;
 import org.deuce.trove.TObjectProcedure;
@@ -17,13 +17,13 @@ import org.deuce.trove.TObjectProcedure;
  * @author jaasilva
  */
 @ExcludeTM
-public class SCOReWriteSet implements Serializable
+public class WriteSet implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	private final THashSet<SCOReWriteFieldAccess> writeSet = new THashSet<SCOReWriteFieldAccess>(
+	private final THashSet<WriteFieldAccess> writeSet = new THashSet<WriteFieldAccess>(
 			16);
 
-	public Set<SCOReWriteFieldAccess> getWrites()
+	public Set<WriteFieldAccess> getWrites()
 	{
 		return writeSet;
 	}
@@ -42,7 +42,7 @@ public class SCOReWriteSet implements Serializable
 	{ // XXX check
 		Group resGroup = new PartialReplicationGroup();
 
-		for (SCOReWriteFieldAccess wfa : writeSet)
+		for (WriteFieldAccess wfa : writeSet)
 		{
 			Group other = ((PartialReplicationOID) wfa.field.getMetadata())
 					.getPartialGroup();
@@ -52,12 +52,12 @@ public class SCOReWriteSet implements Serializable
 		return resGroup;
 	}
 
-	public SCOReWriteFieldAccess contains(SCOReReadFieldAccess read)
+	public WriteFieldAccess contains(ReadFieldAccess read)
 	{ // check if it is already included in the write set
 		return writeSet.get(read);
 	}
 
-	public void put(SCOReWriteFieldAccess write)
+	public void put(WriteFieldAccess write)
 	{ // add to write set
 		if (!writeSet.add(write))
 		{
@@ -65,7 +65,7 @@ public class SCOReWriteSet implements Serializable
 		}
 	}
 
-	public boolean forEach(TObjectProcedure<SCOReWriteFieldAccess> procedure)
+	public boolean forEach(TObjectProcedure<WriteFieldAccess> procedure)
 	{
 		return writeSet.forEach(procedure);
 	}
@@ -73,7 +73,7 @@ public class SCOReWriteSet implements Serializable
 	public synchronized boolean releaseExclusiveLocks(String txID)
 	{ // assumes that these locks are held
 		boolean res = true;
-		for (SCOReWriteFieldAccess a : writeSet)
+		for (WriteFieldAccess a : writeSet)
 		{
 			res &= ((InPlaceRWLock) a.field).exclusiveUnlock(txID);
 		}
@@ -87,7 +87,7 @@ public class SCOReWriteSet implements Serializable
 		Object[] ws = writeSet.toArray();
 		while (res && i < ws.length)
 		{
-			res = ((InPlaceRWLock) ((SCOReWriteFieldAccess) ws[i]).field)
+			res = ((InPlaceRWLock) ((WriteFieldAccess) ws[i]).field)
 					.exclusiveLock(txID);
 			i++;
 		}
@@ -96,7 +96,7 @@ public class SCOReWriteSet implements Serializable
 		{
 			for (int j = 0; j < i - 1; j++)
 			{
-				((InPlaceRWLock) ((SCOReWriteFieldAccess) ws[j]).field)
+				((InPlaceRWLock) ((WriteFieldAccess) ws[j]).field)
 						.exclusiveUnlock(txID);
 			}
 		}

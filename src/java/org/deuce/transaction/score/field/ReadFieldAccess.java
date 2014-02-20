@@ -11,16 +11,16 @@ import org.deuce.transform.localmetadata.type.TxField;
  * @author jaasilva
  */
 @ExcludeTM
-public class SCOReReadFieldAccess implements Serializable
+public class ReadFieldAccess implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	public TxField field;
 
-	public SCOReReadFieldAccess()
+	public ReadFieldAccess()
 	{
 	}
 
-	public SCOReReadFieldAccess(TxField field)
+	public ReadFieldAccess(TxField field)
 	{
 		init(field);
 	}
@@ -33,7 +33,7 @@ public class SCOReReadFieldAccess implements Serializable
 	@Override
 	public boolean equals(Object obj)
 	{
-		SCOReReadFieldAccess other = (SCOReReadFieldAccess) obj;
+		ReadFieldAccess other = (ReadFieldAccess) obj;
 		return field == other.field;
 	}
 
