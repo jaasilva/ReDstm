@@ -1,29 +1,25 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework Copyright (c)
- * 2000-2007 INRIA, France Telecom All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer. 2. Redistributions in
- * binary form must reproduce the above copyright notice, this list of
- * conditions and the following disclaimer in the documentation and/or other
- * materials provided with the distribution. 3. Neither the name of the
- * copyright holders nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written
- * permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * 2000-2007 INRIA, France Telecom All rights reserved. Redistribution and use
+ * in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met: 1. Redistributions of source
+ * code must retain the above copyright notice, this list of conditions and the
+ * following disclaimer. 2. Redistributions in binary form must reproduce the
+ * above copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the copyright holders nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission. THIS SOFTWARE IS PROVIDED
+ * BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.deuce.objectweb.asm.tree;
 
@@ -84,23 +80,18 @@ public class FrameNode extends AbstractInsnNode
 	/**
 	 * Constructs a new {@link FrameNode}.
 	 * 
-	 * @param type
-	 *            the type of this frame. Must be {@link Opcodes#F_NEW} for
+	 * @param type the type of this frame. Must be {@link Opcodes#F_NEW} for
 	 *            expanded frames, or {@link Opcodes#F_FULL},
 	 *            {@link Opcodes#F_APPEND}, {@link Opcodes#F_CHOP},
 	 *            {@link Opcodes#F_SAME} or {@link Opcodes#F_APPEND},
 	 *            {@link Opcodes#F_SAME1} for compressed frames.
-	 * @param nLocal
-	 *            number of local variables of this stack map frame.
-	 * @param local
-	 *            the types of the local variables of this stack map frame.
+	 * @param nLocal number of local variables of this stack map frame.
+	 * @param local the types of the local variables of this stack map frame.
 	 *            Elements of this list can be Integer, String or LabelNode
 	 *            objects (for primitive, reference and uninitialized types
 	 *            respectively - see {@link MethodVisitor}).
-	 * @param nStack
-	 *            number of operand stack elements of this stack map frame.
-	 * @param stack
-	 *            the types of the operand stack elements of this stack map
+	 * @param nStack number of operand stack elements of this stack map frame.
+	 * @param stack the types of the operand stack elements of this stack map
 	 *            frame. Elements of this list can be Integer, String or
 	 *            LabelNode objects (for primitive, reference and uninitialized
 	 *            types respectively - see {@link MethodVisitor}).
@@ -112,22 +103,22 @@ public class FrameNode extends AbstractInsnNode
 		this.type = type;
 		switch (type)
 		{
-			case Opcodes.F_NEW:
-			case Opcodes.F_FULL:
-				this.local = asList(nLocal, local);
-				this.stack = asList(nStack, stack);
-				break;
-			case Opcodes.F_APPEND:
-				this.local = asList(nLocal, local);
-				break;
-			case Opcodes.F_CHOP:
-				this.local = asList(nLocal, local);
-				break;
-			case Opcodes.F_SAME:
-				break;
-			case Opcodes.F_SAME1:
-				this.stack = asList(1, stack);
-				break;
+		case Opcodes.F_NEW:
+		case Opcodes.F_FULL:
+			this.local = asList(nLocal, local);
+			this.stack = asList(nStack, stack);
+			break;
+		case Opcodes.F_APPEND:
+			this.local = asList(nLocal, local);
+			break;
+		case Opcodes.F_CHOP:
+			this.local = asList(nLocal, local);
+			break;
+		case Opcodes.F_SAME:
+			break;
+		case Opcodes.F_SAME1:
+			this.stack = asList(1, stack);
+			break;
 		}
 	}
 
@@ -139,30 +130,29 @@ public class FrameNode extends AbstractInsnNode
 	/**
 	 * Makes the given visitor visit this stack map frame.
 	 * 
-	 * @param mv
-	 *            a method visitor.
+	 * @param mv a method visitor.
 	 */
 	public void accept(final MethodVisitor mv)
 	{
 		switch (type)
 		{
-			case Opcodes.F_NEW:
-			case Opcodes.F_FULL:
-				mv.visitFrame(type, local.size(), asArray(local), stack.size(),
-						asArray(stack));
-				break;
-			case Opcodes.F_APPEND:
-				mv.visitFrame(type, local.size(), asArray(local), 0, null);
-				break;
-			case Opcodes.F_CHOP:
-				mv.visitFrame(type, local.size(), asArray(local), 0, null);
-				break;
-			case Opcodes.F_SAME:
-				mv.visitFrame(type, 0, null, 0, null);
-				break;
-			case Opcodes.F_SAME1:
-				mv.visitFrame(type, 0, null, 1, asArray(stack));
-				break;
+		case Opcodes.F_NEW:
+		case Opcodes.F_FULL:
+			mv.visitFrame(type, local.size(), asArray(local), stack.size(),
+					asArray(stack));
+			break;
+		case Opcodes.F_APPEND:
+			mv.visitFrame(type, local.size(), asArray(local), 0, null);
+			break;
+		case Opcodes.F_CHOP:
+			mv.visitFrame(type, local.size(), asArray(local), 0, null);
+			break;
+		case Opcodes.F_SAME:
+			mv.visitFrame(type, 0, null, 0, null);
+			break;
+		case Opcodes.F_SAME1:
+			mv.visitFrame(type, 0, null, 1, asArray(stack));
+			break;
 		}
 	}
 

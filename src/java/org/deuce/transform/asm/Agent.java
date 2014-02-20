@@ -64,8 +64,7 @@ public class Agent implements ClassFileTransformer
 	}
 
 	/**
-	 * @param offline
-	 *            <code>true</code> if this is an offline transform.
+	 * @param offline <code>true</code> if this is an offline transform.
 	 */
 	private List<ClassByteCode> transform(String className,
 			byte[] classfileBuffer, boolean offline)
@@ -146,11 +145,8 @@ public class Agent implements ClassFileTransformer
 	/**
 	 * Reads the bytecode and calculate the frames, to support 1.5- code.
 	 * 
-	 * @param className
-	 *            class to manipulate
-	 * @param classfileBuffer
-	 *            original byte code
-	 * 
+	 * @param className class to manipulate
+	 * @param classfileBuffer original byte code
 	 * @return bytecode with frames
 	 */
 	private byte[] addFrames(String className, byte[] classfileBuffer)
@@ -179,8 +175,7 @@ public class Agent implements ClassFileTransformer
 	/**
 	 * Used for offline instrumentation.
 	 * 
-	 * @param args
-	 *            input jar & output jar e.g.:
+	 * @param args input jar & output jar e.g.:
 	 *            "C:\Java\jdk1.5.0_13\jre\lib\rt.jar" "C:\rt.jar"
 	 * @throws Exception
 	 */

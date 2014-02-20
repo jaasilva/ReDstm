@@ -12,8 +12,7 @@ public class AddressUtil
 	/**
 	 * Fetches the field direct address.
 	 * 
-	 * @param field
-	 *            field reference
+	 * @param field field reference
 	 * @return direct address
 	 */
 	public static long getAddress(Field field)
@@ -31,8 +30,7 @@ public class AddressUtil
 	/**
 	 * Fetches base class handle
 	 * 
-	 * @param clazz
-	 *            Class reference
+	 * @param clazz Class reference
 	 * @return direct address
 	 */
 	public static Object staticFieldBase(Class clazz, String fieldName)
@@ -52,8 +50,7 @@ public class AddressUtil
 	/**
 	 * Fetches the array base offset
 	 * 
-	 * @param arrClass
-	 *            array class
+	 * @param arrClass array class
 	 * @return offset
 	 */
 	public static int arrayBaseOffset(Class arrClass)
@@ -64,8 +61,7 @@ public class AddressUtil
 	/**
 	 * Fetches the array index scale
 	 * 
-	 * @param arrClass
-	 *            array class
+	 * @param arrClass array class
 	 * @return scale
 	 */
 	public static int arrayIndexScale(Class arrClass)

@@ -23,9 +23,8 @@ package org.deuce.trove;
 // ////////////////////////////////////////////////
 
 /**
- * Interface for procedures with one short parameter.
- * 
- * Created: Mon Nov 5 21:45:49 2001
+ * Interface for procedures with one short parameter. Created: Mon Nov 5
+ * 21:45:49 2001
  * 
  * @author Eric D. Friedman
  * @version $Id: PProcedure.template,v 1.2 2007/11/01 16:08:14 robeden Exp $
@@ -38,8 +37,7 @@ public interface TShortProcedure
 	 * application executing this procedure should not invoke this procedure
 	 * again.
 	 * 
-	 * @param value
-	 *            a value of type <code>short</code>
+	 * @param value a value of type <code>short</code>
 	 * @return true if additional invocations of the procedure are allowed.
 	 */
 	public boolean execute(short value);

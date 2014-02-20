@@ -24,7 +24,6 @@ package org.deuce.trove;
 
 /**
  * Interface for procedures that take two parameters of type double and Object.
- * 
  * Created: Mon Nov 5 22:03:30 2001
  * 
  * @author Eric D. Friedman
@@ -39,10 +38,8 @@ public interface TDoubleObjectProcedure<T>
 	 * application executing this procedure should not invoke this procedure
 	 * again.
 	 * 
-	 * @param a
-	 *            a <code>double</code> value
-	 * @param b
-	 *            an <code>Object</code> value
+	 * @param a a <code>double</code> value
+	 * @param b an <code>Object</code> value
 	 * @return true if additional invocations of the procedure are allowed.
 	 */
 	public boolean execute(double a, T b);

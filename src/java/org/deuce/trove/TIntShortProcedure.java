@@ -24,7 +24,6 @@ package org.deuce.trove;
 
 /**
  * Interface for procedures that take two parameters of type int and short.
- * 
  * Created: Mon Nov 5 22:03:30 2001
  * 
  * @author Eric D. Friedman
@@ -39,10 +38,8 @@ public interface TIntShortProcedure
 	 * application executing this procedure should not invoke this procedure
 	 * again.
 	 * 
-	 * @param a
-	 *            a <code>int</code> value
-	 * @param b
-	 *            a <code>short</code> value
+	 * @param a a <code>int</code> value
+	 * @param b a <code>short</code> value
 	 * @return true if additional invocations of the procedure are allowed.
 	 */
 	public boolean execute(int a, short b);

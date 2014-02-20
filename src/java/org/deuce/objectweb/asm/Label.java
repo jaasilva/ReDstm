@@ -1,29 +1,25 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework Copyright (c)
- * 2000-2007 INRIA, France Telecom All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer. 2. Redistributions in
- * binary form must reproduce the above copyright notice, this list of
- * conditions and the following disclaimer in the documentation and/or other
- * materials provided with the distribution. 3. Neither the name of the
- * copyright holders nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written
- * permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * 2000-2007 INRIA, France Telecom All rights reserved. Redistribution and use
+ * in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met: 1. Redistributions of source
+ * code must retain the above copyright notice, this list of conditions and the
+ * following disclaimer. 2. Redistributions in binary form must reproduce the
+ * above copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the copyright holders nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission. THIS SOFTWARE IS PROVIDED
+ * BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.deuce.objectweb.asm;
 
@@ -181,18 +177,15 @@ public class Label
 
 	/**
 	 * Start of the output stack relatively to the input stack. The exact
-	 * semantics of this field depends on the algorithm that is used.
-	 * 
-	 * When only the maximum stack size is computed, this field is the number of
-	 * elements in the input stack.
-	 * 
-	 * When the stack map frames are completely computed, this field is the
-	 * offset of the first output stack element relatively to the top of the
-	 * input stack. This offset is always negative or null. A null offset means
-	 * that the output stack must be appended to the input stack. A -n offset
-	 * means that the first n output stack elements must replace the top n input
-	 * stack elements, and that the other elements must be appended to the input
-	 * stack.
+	 * semantics of this field depends on the algorithm that is used. When only
+	 * the maximum stack size is computed, this field is the number of elements
+	 * in the input stack. When the stack map frames are completely computed,
+	 * this field is the offset of the first output stack element relatively to
+	 * the top of the input stack. This offset is always negative or null. A
+	 * null offset means that the output stack must be appended to the input
+	 * stack. A -n offset means that the first n output stack elements must
+	 * replace the top n input stack elements, and that the other elements must
+	 * be appended to the input stack.
 	 */
 	int inputStackTop;
 
@@ -257,8 +250,7 @@ public class Label
 	 * generators or adapters.</i>
 	 * 
 	 * @return the offset corresponding to this label.
-	 * @throws IllegalStateException
-	 *             if this label is not resolved yet.
+	 * @throws IllegalStateException if this label is not resolved yet.
 	 */
 	public int getOffset()
 	{
@@ -276,18 +268,14 @@ public class Label
 	 * directly. Otherwise, a null offset is written and a new forward reference
 	 * is declared for this label.
 	 * 
-	 * @param owner
-	 *            the code writer that calls this method.
-	 * @param out
-	 *            the bytecode of the method.
-	 * @param source
-	 *            the position of first byte of the bytecode instruction that
+	 * @param owner the code writer that calls this method.
+	 * @param out the bytecode of the method.
+	 * @param source the position of first byte of the bytecode instruction that
 	 *            contains this label.
-	 * @param wideOffset
-	 *            <tt>true</tt> if the reference must be stored in 4 bytes, or
-	 *            <tt>false</tt> if it must be stored with 2 bytes.
-	 * @throws IllegalArgumentException
-	 *             if this label has not been created by the given code writer.
+	 * @param wideOffset <tt>true</tt> if the reference must be stored in 4
+	 *            bytes, or <tt>false</tt> if it must be stored with 2 bytes.
+	 * @throws IllegalArgumentException if this label has not been created by
+	 *             the given code writer.
 	 */
 	void put(final MethodWriter owner, final ByteVector out, final int source,
 			final boolean wideOffset)
@@ -324,12 +312,11 @@ public class Label
 	 * yet. For backward references, the offset of the reference can be, and
 	 * must be, computed and stored directly.
 	 * 
-	 * @param sourcePosition
-	 *            the position of the referencing instruction. This position
-	 *            will be used to compute the offset of this forward reference.
-	 * @param referencePosition
-	 *            the position where the offset for this forward reference must
-	 *            be stored.
+	 * @param sourcePosition the position of the referencing instruction. This
+	 *            position will be used to compute the offset of this forward
+	 *            reference.
+	 * @param referencePosition the position where the offset for this forward
+	 *            reference must be stored.
 	 */
 	private void addReference(final int sourcePosition,
 			final int referencePosition)
@@ -355,12 +342,9 @@ public class Label
 	 * position becomes known. This method fills in the blanks that where left
 	 * in the bytecode by each forward reference previously added to this label.
 	 * 
-	 * @param owner
-	 *            the code writer that calls this method.
-	 * @param position
-	 *            the position of this label in the bytecode.
-	 * @param data
-	 *            the bytecode of the method.
+	 * @param owner the code writer that calls this method.
+	 * @param position the position of this label in the bytecode.
+	 * @param data the bytecode of the method.
 	 * @return <tt>true</tt> if a blank that was left for this label was to
 	 *         small to store the offset. In such a case the corresponding jump
 	 *         instruction is replaced with a pseudo instruction (using unused
@@ -368,9 +352,8 @@ public class Label
 	 *         instructions will need to be replaced with true instructions with
 	 *         wider offsets (4 bytes instead of 2). This is done in
 	 *         {@link MethodWriter#resizeInstructions}.
-	 * @throws IllegalArgumentException
-	 *             if this label has already been resolved, or if it has not
-	 *             been created by the given code writer.
+	 * @throws IllegalArgumentException if this label has already been resolved,
+	 *             or if it has not been created by the given code writer.
 	 */
 	boolean resolve(final MethodWriter owner, final int position,
 			final byte[] data)
@@ -446,8 +429,7 @@ public class Label
 	/**
 	 * Returns true is this basic block belongs to the given subroutine.
 	 * 
-	 * @param id
-	 *            a subroutine id.
+	 * @param id a subroutine id.
 	 * @return true is this basic block belongs to the given subroutine.
 	 */
 	boolean inSubroutine(final long id)
@@ -463,8 +445,7 @@ public class Label
 	 * Returns true if this basic block and the given one belong to a common
 	 * subroutine.
 	 * 
-	 * @param block
-	 *            another basic block.
+	 * @param block another basic block.
 	 * @return true if this basic block and the given one belong to a common
 	 *         subroutine.
 	 */
@@ -483,10 +464,8 @@ public class Label
 	/**
 	 * Marks this basic block as belonging to the given subroutine.
 	 * 
-	 * @param id
-	 *            a subroutine id.
-	 * @param nbSubroutines
-	 *            the total number of subroutines in the method.
+	 * @param id a subroutine id.
+	 * @param nbSubroutines the total number of subroutines in the method.
 	 */
 	void addToSubroutine(final long id, final int nbSubroutines)
 	{
@@ -504,14 +483,11 @@ public class Label
 	 * flow graph to find all the blocks that are reachable from the current
 	 * block WITHOUT following any JSR target.
 	 * 
-	 * @param JSR
-	 *            a JSR block that jumps to this subroutine. If this JSR is not
+	 * @param JSR a JSR block that jumps to this subroutine. If this JSR is not
 	 *            null it is added to the successor of the RET blocks found in
 	 *            the subroutine.
-	 * @param id
-	 *            the id of this subroutine.
-	 * @param nbSubroutines
-	 *            the total number of subroutines in the method.
+	 * @param id the id of this subroutine.
+	 * @param nbSubroutines the total number of subroutines in the method.
 	 */
 	void visitSubroutine(final Label JSR, final long id, final int nbSubroutines)
 	{

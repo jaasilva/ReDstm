@@ -23,9 +23,7 @@ import java.util.*;
 
 /**
  * An implementation of the Map interface which uses an open addressed hash
- * table to store its contents.
- * 
- * Created: Sun Nov 4 08:52:45 2001
+ * table to store its contents. Created: Sun Nov 4 08:52:45 2001
  * 
  * @author Eric D. Friedman
  * @version $Id: THashMap.java,v 1.33 2008/05/08 17:42:55 robeden Exp $
@@ -51,8 +49,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	 * Creates a new <code>THashMap</code> instance with the default capacity
 	 * and load factor.
 	 * 
-	 * @param strategy
-	 *            used to compute hash codes and to compare objects.
+	 * @param strategy used to compute hash codes and to compare objects.
 	 */
 	public THashMap(TObjectHashingStrategy<K> strategy)
 	{
@@ -64,8 +61,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	 * to or greater than <tt>initialCapacity</tt> and with the default load
 	 * factor.
 	 * 
-	 * @param initialCapacity
-	 *            an <code>int</code> value
+	 * @param initialCapacity an <code>int</code> value
 	 */
 	public THashMap(int initialCapacity)
 	{
@@ -77,10 +73,8 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	 * to or greater than <tt>initialCapacity</tt> and with the default load
 	 * factor.
 	 * 
-	 * @param initialCapacity
-	 *            an <code>int</code> value
-	 * @param strategy
-	 *            used to compute hash codes and to compare objects.
+	 * @param initialCapacity an <code>int</code> value
+	 * @param strategy used to compute hash codes and to compare objects.
 	 */
 	public THashMap(int initialCapacity, TObjectHashingStrategy<K> strategy)
 	{
@@ -92,10 +86,8 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	 * to or greater than <tt>initialCapacity</tt> and with the specified load
 	 * factor.
 	 * 
-	 * @param initialCapacity
-	 *            an <code>int</code> value
-	 * @param loadFactor
-	 *            a <code>float</code> value
+	 * @param initialCapacity an <code>int</code> value
+	 * @param loadFactor a <code>float</code> value
 	 */
 	public THashMap(int initialCapacity, float loadFactor)
 	{
@@ -107,12 +99,9 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	 * to or greater than <tt>initialCapacity</tt> and with the specified load
 	 * factor.
 	 * 
-	 * @param initialCapacity
-	 *            an <code>int</code> value
-	 * @param loadFactor
-	 *            a <code>float</code> value
-	 * @param strategy
-	 *            used to compute hash codes and to compare objects.
+	 * @param initialCapacity an <code>int</code> value
+	 * @param loadFactor a <code>float</code> value
+	 * @param strategy used to compute hash codes and to compare objects.
 	 */
 	public THashMap(int initialCapacity, float loadFactor,
 			TObjectHashingStrategy<K> strategy)
@@ -124,8 +113,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	 * Creates a new <code>THashMap</code> instance which contains the key/value
 	 * pairs in <tt>map</tt>.
 	 * 
-	 * @param map
-	 *            a <code>Map</code> value
+	 * @param map a <code>Map</code> value
 	 */
 	public THashMap(Map<K, V> map)
 	{
@@ -137,10 +125,8 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	 * Creates a new <code>THashMap</code> instance which contains the key/value
 	 * pairs in <tt>map</tt>.
 	 * 
-	 * @param map
-	 *            a <code>Map</code> value
-	 * @param strategy
-	 *            used to compute hash codes and to compare objects.
+	 * @param map a <code>Map</code> value
+	 * @param strategy used to compute hash codes and to compare objects.
 	 */
 	public THashMap(Map<K, V> map, TObjectHashingStrategy<K> strategy)
 	{
@@ -161,8 +147,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	/**
 	 * initialize the value array of the map.
 	 * 
-	 * @param initialCapacity
-	 *            an <code>int</code> value
+	 * @param initialCapacity an <code>int</code> value
 	 * @return an <code>int</code> value
 	 */
 	protected int setUp(int initialCapacity)
@@ -178,10 +163,8 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	/**
 	 * Inserts a key/value pair into the map.
 	 * 
-	 * @param key
-	 *            an <code>Object</code> value
-	 * @param value
-	 *            an <code>Object</code> value
+	 * @param key an <code>Object</code> value
+	 * @param value an <code>Object</code> value
 	 * @return the previous value associated with <tt>key</tt>, or {@code null}
 	 *         if none was found.
 	 */
@@ -195,10 +178,8 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	 * Inserts a key/value pair into the map if the specified key is not already
 	 * associated with a value.
 	 * 
-	 * @param key
-	 *            an <code>Object</code> value
-	 * @param value
-	 *            an <code>Object</code> value
+	 * @param key an <code>Object</code> value
+	 * @param value an <code>Object</code> value
 	 * @return the previous value associated with <tt>key</tt>, or {@code null}
 	 *         if none was found.
 	 */
@@ -235,8 +216,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	/**
 	 * Compares this map with another map for equality of their stored entries.
 	 * 
-	 * @param other
-	 *            an <code>Object</code> value
+	 * @param other an <code>Object</code> value
 	 * @return a <code>boolean</code> value
 	 */
 	public boolean equals(Object other)
@@ -329,8 +309,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	/**
 	 * Executes <tt>procedure</tt> for each key in the map.
 	 * 
-	 * @param procedure
-	 *            a <code>TObjectProcedure</code> value
+	 * @param procedure a <code>TObjectProcedure</code> value
 	 * @return false if the loop over the keys terminated because the procedure
 	 *         returned false for some key.
 	 */
@@ -342,8 +321,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	/**
 	 * Executes <tt>procedure</tt> for each value in the map.
 	 * 
-	 * @param procedure
-	 *            a <code>TObjectProcedure</code> value
+	 * @param procedure a <code>TObjectProcedure</code> value
 	 * @return false if the loop over the values terminated because the
 	 *         procedure returned false for some value.
 	 */
@@ -365,8 +343,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	/**
 	 * Executes <tt>procedure</tt> for each key/value entry in the map.
 	 * 
-	 * @param procedure
-	 *            a <code>TObjectObjectProcedure</code> value
+	 * @param procedure a <code>TObjectObjectProcedure</code> value
 	 * @return false if the loop over the entries terminated because the
 	 *         procedure returned false for some entry.
 	 */
@@ -389,8 +366,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	 * Retains only those entries in the map for which the procedure returns a
 	 * true value.
 	 * 
-	 * @param procedure
-	 *            determines which entries to keep
+	 * @param procedure determines which entries to keep
 	 * @return true if the map was modified.
 	 */
 	public boolean retainEntries(TObjectObjectProcedure<K, V> procedure)
@@ -424,8 +400,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	/**
 	 * Transform the values in this map using <tt>function</tt>.
 	 * 
-	 * @param function
-	 *            a <code>TObjectFunction</code> value
+	 * @param function a <code>TObjectFunction</code> value
 	 */
 	public void transformValues(TObjectFunction<V, V> function)
 	{
@@ -443,8 +418,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	/**
 	 * rehashes the map to the new capacity.
 	 * 
-	 * @param newCapacity
-	 *            an <code>int</code> value
+	 * @param newCapacity an <code>int</code> value
 	 */
 	protected void rehash(int newCapacity)
 	{
@@ -475,8 +449,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	/**
 	 * retrieves the value for <tt>key</tt>
 	 * 
-	 * @param key
-	 *            an <code>Object</code> value
+	 * @param key an <code>Object</code> value
 	 * @return the value of <tt>key</tt> or null if no such mapping exists.
 	 */
 	public V get(Object key)
@@ -487,7 +460,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 
 	/**
 	 * Empties the map.
-	 * 
 	 */
 	public void clear()
 	{
@@ -503,8 +475,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	/**
 	 * Deletes a key/value pair from the map.
 	 * 
-	 * @param key
-	 *            an <code>Object</code> value
+	 * @param key an <code>Object</code> value
 	 * @return an <code>Object</code> value
 	 */
 	public V remove(Object key)
@@ -522,8 +493,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	/**
 	 * removes the mapping at <tt>index</tt> from the map.
 	 * 
-	 * @param index
-	 *            an <code>int</code> value
+	 * @param index an <code>int</code> value
 	 */
 	protected void removeAt(int index)
 	{
@@ -564,8 +534,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	/**
 	 * checks for the presence of <tt>val</tt> in the values of the map.
 	 * 
-	 * @param val
-	 *            an <code>Object</code> value
+	 * @param val an <code>Object</code> value
 	 * @return a <code>boolean</code> value
 	 */
 	public boolean containsValue(Object val)
@@ -602,8 +571,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	/**
 	 * checks for the present of <tt>key</tt> in the keys of the map.
 	 * 
-	 * @param key
-	 *            an <code>Object</code> value
+	 * @param key an <code>Object</code> value
 	 * @return a <code>boolean</code> value
 	 */
 	public boolean containsKey(Object key)
@@ -614,8 +582,7 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 	/**
 	 * copies the key/value mappings in <tt>map</tt> into this map.
 	 * 
-	 * @param map
-	 *            a <code>Map</code> value
+	 * @param map a <code>Map</code> value
 	 */
 	public void putAll(Map<? extends K, ? extends V> map)
 	{
@@ -631,7 +598,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 
 	/**
 	 * a view onto the values of the map.
-	 * 
 	 */
 	protected class ValueView extends MapBackedView<V>
 	{
@@ -673,7 +639,6 @@ public class THashMap<K, V> extends TObjectHash<K> implements Map<K, V>,
 
 	/**
 	 * a view onto the entries of the map.
-	 * 
 	 */
 	protected class EntryView extends MapBackedView<Map.Entry<K, V>>
 	{

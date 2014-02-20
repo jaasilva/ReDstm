@@ -25,12 +25,10 @@ import java.io.ObjectInput;
 
 /**
  * Base class for hashtables that use open addressing to resolve collisions.
- * 
  * Created: Wed Nov 28 21:11:16 2001
  * 
  * @author Eric D. Friedman
  * @author Rob Eden (auto-compaction)
- * 
  * @version $Id: THash.java,v 1.14 2008/10/08 16:39:10 robeden Exp $
  */
 
@@ -99,8 +97,7 @@ abstract public class THash implements Cloneable, Externalizable
 	 * Creates a new <code>THash</code> instance with a prime capacity at or
 	 * near the specified capacity and with the default load factor.
 	 * 
-	 * @param initialCapacity
-	 *            an <code>int</code> value
+	 * @param initialCapacity an <code>int</code> value
 	 */
 	public THash(int initialCapacity)
 	{
@@ -112,10 +109,8 @@ abstract public class THash implements Cloneable, Externalizable
 	 * near the minimum needed to hold <tt>initialCapacity</tt> elements with
 	 * load factor <tt>loadFactor</tt> without triggering a rehash.
 	 * 
-	 * @param initialCapacity
-	 *            an <code>int</code> value
-	 * @param loadFactor
-	 *            a <code>float</code> value
+	 * @param initialCapacity an <code>int</code> value
+	 * @param loadFactor a <code>float</code> value
 	 */
 	public THash(int initialCapacity, float loadFactor)
 	{
@@ -173,8 +168,7 @@ abstract public class THash implements Cloneable, Externalizable
 	 * requiring a rehash.  This is a tuning method you can call
 	 * before doing a large insert.
 	 * 
-	 * @param desiredCapacity
-	 *            an <code>int</code> value
+	 * @param desiredCapacity an <code>int</code> value
 	 */
 	public void ensureCapacity(int desiredCapacity)
 	{
@@ -192,11 +186,9 @@ abstract public class THash implements Cloneable, Externalizable
 	 * If you have done a lot of <tt>remove</tt> operations and plan to do a lot
 	 * of queries or insertions or iteration, it is a good idea to invoke this
 	 * method. Doing so will accomplish two things:
-	 * 
 	 * <ol>
 	 * <li>You'll free memory allocated to the table but no longer needed
 	 * because of the remove()s.</li>
-	 * 
 	 * <li>You'll get better query/insert/iterator performance because there
 	 * won't be any <tt>REMOVED</tt> slots to skip over when probing for indices
 	 * in the table.</li>
@@ -260,8 +252,7 @@ abstract public class THash implements Cloneable, Externalizable
 	 * Delete the record at <tt>index</tt>. Reduces the size of the collection
 	 * by one.
 	 * 
-	 * @param index
-	 *            an <code>int</code> value
+	 * @param index an <code>int</code> value
 	 */
 	protected void removeAt(int index)
 	{
@@ -296,8 +287,7 @@ abstract public class THash implements Cloneable, Externalizable
 	 * initializes the hashtable to a prime capacity which is at least
 	 * <tt>initialCapacity + 1</tt>.
 	 * 
-	 * @param initialCapacity
-	 *            an <code>int</code> value
+	 * @param initialCapacity an <code>int</code> value
 	 * @return the actual capacity chosen
 	 */
 	protected int setUp(int initialCapacity)
@@ -314,8 +304,7 @@ abstract public class THash implements Cloneable, Externalizable
 	/**
 	 * Rehashes the set.
 	 * 
-	 * @param newCapacity
-	 *            an <code>int</code> value
+	 * @param newCapacity an <code>int</code> value
 	 */
 	protected abstract void rehash(int newCapacity);
 
@@ -332,9 +321,9 @@ abstract public class THash implements Cloneable, Externalizable
 	 * Re-enable auto-compaction after it was disabled via
 	 * {@link #tempDisableAutoCompaction()}.
 	 * 
-	 * @param check_for_compaction
-	 *            True if compaction should be performed if needed before
-	 *            returning. If false, no compaction will be performed.
+	 * @param check_for_compaction True if compaction should be performed if
+	 *            needed before returning. If false, no compaction will be
+	 *            performed.
 	 */
 	protected void reenableAutoCompaction(boolean check_for_compaction)
 	{
@@ -355,8 +344,7 @@ abstract public class THash implements Cloneable, Externalizable
 	 * Computes the values of maxSize. There will always be at least one free
 	 * slot required.
 	 * 
-	 * @param capacity
-	 *            an <code>int</code> value
+	 * @param capacity an <code>int</code> value
 	 */
 	private void computeMaxSize(int capacity)
 	{

@@ -6,7 +6,6 @@ import org.deuce.objectweb.asm.Type;
  * Converts {@link Type} to {@link TypeCodeResolver}
  * 
  * @author Guy Korland
- * 
  * @since 1.0
  */
 public class TypeCodeResolverFactory
@@ -40,26 +39,26 @@ public class TypeCodeResolverFactory
 	{
 		switch (type.getSort())
 		{
-			case Type.VOID:
-				return null;
-			case Type.BOOLEAN:
-				return BOOLEAN_RESOLVER;
-			case Type.BYTE:
-				return BYTE_RESOLVER;
-			case Type.CHAR:
-				return CHAR_RESOLVER;
-			case Type.SHORT:
-				return SHORT_RESOLVER;
-			case Type.INT:
-				return INT_RESOLVER;
-			case Type.LONG:
-				return LONG_RESOLVER;
-			case Type.FLOAT:
-				return FLOAT_RESOLVER;
-			case Type.DOUBLE:
-				return DOUBLE_RESOLVER;
-			default:
-				return new ReferenceTypeCodeResolver(type);
+		case Type.VOID:
+			return null;
+		case Type.BOOLEAN:
+			return BOOLEAN_RESOLVER;
+		case Type.BYTE:
+			return BYTE_RESOLVER;
+		case Type.CHAR:
+			return CHAR_RESOLVER;
+		case Type.SHORT:
+			return SHORT_RESOLVER;
+		case Type.INT:
+			return INT_RESOLVER;
+		case Type.LONG:
+			return LONG_RESOLVER;
+		case Type.FLOAT:
+			return FLOAT_RESOLVER;
+		case Type.DOUBLE:
+			return DOUBLE_RESOLVER;
+		default:
+			return new ReferenceTypeCodeResolver(type);
 		}
 	}
 

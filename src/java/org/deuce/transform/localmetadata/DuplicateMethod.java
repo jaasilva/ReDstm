@@ -169,76 +169,76 @@ public class DuplicateMethod extends MethodAdapter
 		final Type type = Type.getType(desc);
 		switch (opcode)
 		{
-			case Opcodes.GETFIELD: // ALOAD 0: this (stack status)
+		case Opcodes.GETFIELD: // ALOAD 0: this (stack status)
 
-				addBeforeReadCall(fieldsHolderName, name, desc, false);
+			addBeforeReadCall(fieldsHolderName, name, desc, false);
 
-				super.visitInsn(Opcodes.DUP);
-				super.visitFieldInsn(opcode, owner, name, desc);
-				loadTargeObject(Opcodes.PUTFIELD, owner,
-						desc.charAt(0) == '[' ? "I" : desc);
-				super.visitFieldInsn(Opcodes.GETFIELD, fieldsHolderName, Util
-						.getAddressField(name), ArrayUtil.getTxType(desc)
-						.getDescriptor());
-				super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
-																		// context
-				super.visitMethodInsn(Opcodes.INVOKESTATIC,
-						ContextDelegator.CONTEXT_DELEGATOR_INTERNAL,
-						ContextDelegator.READ_METHOD_NAME,
-						ContextDelegator.getReadMethodDesc(type));
+			super.visitInsn(Opcodes.DUP);
+			super.visitFieldInsn(opcode, owner, name, desc);
+			loadTargeObject(Opcodes.PUTFIELD, owner,
+					desc.charAt(0) == '[' ? "I" : desc);
+			super.visitFieldInsn(Opcodes.GETFIELD, fieldsHolderName, Util
+					.getAddressField(name), ArrayUtil.getTxType(desc)
+					.getDescriptor());
+			super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
+																	// context
+			super.visitMethodInsn(Opcodes.INVOKESTATIC,
+					ContextDelegator.CONTEXT_DELEGATOR_INTERNAL,
+					ContextDelegator.READ_METHOD_NAME,
+					ContextDelegator.getReadMethodDesc(type));
 
-				if (type.getSort() >= Type.ARRAY)
-				{// non primitive
-					super.visitTypeInsn(Opcodes.CHECKCAST, Type.getType(desc)
-							.getInternalName());
-				}
-				break;
-			case Opcodes.PUTFIELD:
-				loadTargeObject(opcode, owner, desc);
-				super.visitFieldInsn(Opcodes.GETFIELD, fieldsHolderName, Util
-						.getAddressField(name), ArrayUtil.getTxType(desc)
-						.getDescriptor());
-				super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
-																		// context
-				super.visitMethodInsn(Opcodes.INVOKESTATIC,
-						ContextDelegator.CONTEXT_DELEGATOR_INTERNAL,
-						ContextDelegator.WRITE_METHOD_NAME,
-						ContextDelegator.getWriteMethodDesc(type));
-				break;
-			case Opcodes.GETSTATIC: // check support for static fields
+			if (type.getSort() >= Type.ARRAY)
+			{// non primitive
+				super.visitTypeInsn(Opcodes.CHECKCAST, Type.getType(desc)
+						.getInternalName());
+			}
+			break;
+		case Opcodes.PUTFIELD:
+			loadTargeObject(opcode, owner, desc);
+			super.visitFieldInsn(Opcodes.GETFIELD, fieldsHolderName, Util
+					.getAddressField(name), ArrayUtil.getTxType(desc)
+					.getDescriptor());
+			super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
+																	// context
+			super.visitMethodInsn(Opcodes.INVOKESTATIC,
+					ContextDelegator.CONTEXT_DELEGATOR_INTERNAL,
+					ContextDelegator.WRITE_METHOD_NAME,
+					ContextDelegator.getWriteMethodDesc(type));
+			break;
+		case Opcodes.GETSTATIC: // check support for static fields
 
-				addBeforeReadCall(fieldsHolderName, name, desc, true);
+			addBeforeReadCall(fieldsHolderName, name, desc, true);
 
-				super.visitFieldInsn(opcode, owner, name, desc);
-				super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName, Util
-						.getAddressField(name), ArrayUtil.getTxType(desc)
-						.getDescriptor());
-				super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
-																		// context
-				super.visitMethodInsn(Opcodes.INVOKESTATIC,
-						ContextDelegator.CONTEXT_DELEGATOR_INTERNAL,
-						ContextDelegator.READ_METHOD_NAME,
-						ContextDelegator.getReadMethodDesc(type));
+			super.visitFieldInsn(opcode, owner, name, desc);
+			super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName, Util
+					.getAddressField(name), ArrayUtil.getTxType(desc)
+					.getDescriptor());
+			super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
+																	// context
+			super.visitMethodInsn(Opcodes.INVOKESTATIC,
+					ContextDelegator.CONTEXT_DELEGATOR_INTERNAL,
+					ContextDelegator.READ_METHOD_NAME,
+					ContextDelegator.getReadMethodDesc(type));
 
-				if (type.getSort() >= Type.ARRAY)
-				{ // non primitive
-					super.visitTypeInsn(Opcodes.CHECKCAST, Type.getType(desc)
-							.getInternalName());
-				}
-				break;
-			case Opcodes.PUTSTATIC:
-				super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName, Util
-						.getAddressField(name), ArrayUtil.getTxType(desc)
-						.getDescriptor());
-				super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
-																		// context
-				super.visitMethodInsn(Opcodes.INVOKESTATIC,
-						ContextDelegator.CONTEXT_DELEGATOR_INTERNAL,
-						ContextDelegator.STATIC_WRITE_METHOD_NAME,
-						ContextDelegator.getStaticWriteMethodDesc(type));
-				break;
-			default:
-				super.visitFieldInsn(opcode, owner, name, desc);
+			if (type.getSort() >= Type.ARRAY)
+			{ // non primitive
+				super.visitTypeInsn(Opcodes.CHECKCAST, Type.getType(desc)
+						.getInternalName());
+			}
+			break;
+		case Opcodes.PUTSTATIC:
+			super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName, Util
+					.getAddressField(name), ArrayUtil.getTxType(desc)
+					.getDescriptor());
+			super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
+																	// context
+			super.visitMethodInsn(Opcodes.INVOKESTATIC,
+					ContextDelegator.CONTEXT_DELEGATOR_INTERNAL,
+					ContextDelegator.STATIC_WRITE_METHOD_NAME,
+					ContextDelegator.getStaticWriteMethodDesc(type));
+			break;
+		default:
+			super.visitFieldInsn(opcode, owner, name, desc);
 		}
 		mv.visitLabel(l2);
 	}
@@ -285,93 +285,93 @@ public class DuplicateMethod extends MethodAdapter
 
 		switch (opcode)
 		{
-			case Opcodes.AALOAD:
-				if (isMultiArray)
-					desc = ContextDelegator.READ_ARRAY_METHOD_MULTI_DESC_META;
-				else
-					desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.READ_ARRAY_METHOD_OBJ_DESC_META
-							: ContextDelegator.READ_ARRAY_METHOD_OBJ_DESC;
-				load = true;
-				break;
-			case Opcodes.BALOAD:
-				desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.READ_ARRAY_METHOD_BYTE_DESC_META
-						: ContextDelegator.READ_ARRAY_METHOD_BYTE_DESC;
-				load = true;
-				break;
-			case Opcodes.CALOAD:
-				desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.READ_ARRAY_METHOD_CHAR_DESC_META
-						: ContextDelegator.READ_ARRAY_METHOD_CHAR_DESC;
-				load = true;
-				break;
-			case Opcodes.SALOAD:
-				desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.READ_ARRAY_METHOD_SHORT_DESC_META
-						: ContextDelegator.READ_ARRAY_METHOD_SHORT_DESC;
-				load = true;
-				break;
-			case Opcodes.IALOAD:
-				desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.READ_ARRAY_METHOD_INT_DESC_META
-						: ContextDelegator.READ_ARRAY_METHOD_INT_DESC;
-				load = true;
-				break;
-			case Opcodes.LALOAD:
-				desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.READ_ARRAY_METHOD_LONG_DESC_META
-						: ContextDelegator.READ_ARRAY_METHOD_LONG_DESC;
-				load = true;
-				break;
-			case Opcodes.FALOAD:
-				desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.READ_ARRAY_METHOD_FLOAT_DESC_META
-						: ContextDelegator.READ_ARRAY_METHOD_FLOAT_DESC;
-				load = true;
-				break;
-			case Opcodes.DALOAD:
-				desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.READ_ARRAY_METHOD_DOUBLE_DESC_META
-						: ContextDelegator.READ_ARRAY_METHOD_DOUBLE_DESC;
-				load = true;
-				break;
+		case Opcodes.AALOAD:
+			if (isMultiArray)
+				desc = ContextDelegator.READ_ARRAY_METHOD_MULTI_DESC_META;
+			else
+				desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.READ_ARRAY_METHOD_OBJ_DESC_META
+						: ContextDelegator.READ_ARRAY_METHOD_OBJ_DESC;
+			load = true;
+			break;
+		case Opcodes.BALOAD:
+			desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.READ_ARRAY_METHOD_BYTE_DESC_META
+					: ContextDelegator.READ_ARRAY_METHOD_BYTE_DESC;
+			load = true;
+			break;
+		case Opcodes.CALOAD:
+			desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.READ_ARRAY_METHOD_CHAR_DESC_META
+					: ContextDelegator.READ_ARRAY_METHOD_CHAR_DESC;
+			load = true;
+			break;
+		case Opcodes.SALOAD:
+			desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.READ_ARRAY_METHOD_SHORT_DESC_META
+					: ContextDelegator.READ_ARRAY_METHOD_SHORT_DESC;
+			load = true;
+			break;
+		case Opcodes.IALOAD:
+			desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.READ_ARRAY_METHOD_INT_DESC_META
+					: ContextDelegator.READ_ARRAY_METHOD_INT_DESC;
+			load = true;
+			break;
+		case Opcodes.LALOAD:
+			desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.READ_ARRAY_METHOD_LONG_DESC_META
+					: ContextDelegator.READ_ARRAY_METHOD_LONG_DESC;
+			load = true;
+			break;
+		case Opcodes.FALOAD:
+			desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.READ_ARRAY_METHOD_FLOAT_DESC_META
+					: ContextDelegator.READ_ARRAY_METHOD_FLOAT_DESC;
+			load = true;
+			break;
+		case Opcodes.DALOAD:
+			desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.READ_ARRAY_METHOD_DOUBLE_DESC_META
+					: ContextDelegator.READ_ARRAY_METHOD_DOUBLE_DESC;
+			load = true;
+			break;
 
-			case Opcodes.AASTORE:
-				if (isMultiArray)
-					desc = ContextDelegator.WRITE_ARRAY_METHOD_MULTI_DESC_META;
-				else
-					desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.WRITE_ARRAY_METHOD_OBJ_DESC_META
-							: ContextDelegator.WRITE_ARRAY_METHOD_OBJ_DESC;
-				store = true;
-				break;
-			case Opcodes.BASTORE:
-				desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.WRITE_ARRAY_METHOD_BYTE_DESC_META
-						: ContextDelegator.WRITE_ARRAY_METHOD_BYTE_DESC;
-				store = true;
-				break;
-			case Opcodes.CASTORE:
-				desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.WRITE_ARRAY_METHOD_CHAR_DESC_META
-						: ContextDelegator.WRITE_ARRAY_METHOD_CHAR_DESC;
-				store = true;
-				break;
-			case Opcodes.SASTORE:
-				desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.WRITE_ARRAY_METHOD_SHORT_DESC_META
-						: ContextDelegator.WRITE_ARRAY_METHOD_SHORT_DESC;
-				store = true;
-				break;
-			case Opcodes.IASTORE:
-				desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.WRITE_ARRAY_METHOD_INT_DESC_META
-						: ContextDelegator.WRITE_ARRAY_METHOD_INT_DESC;
-				store = true;
-				break;
-			case Opcodes.LASTORE:
-				desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.WRITE_ARRAY_METHOD_LONG_DESC_META
-						: ContextDelegator.WRITE_ARRAY_METHOD_LONG_DESC;
-				store = true;
-				break;
-			case Opcodes.FASTORE:
-				desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.WRITE_ARRAY_METHOD_FLOAT_DESC_META
-						: ContextDelegator.WRITE_ARRAY_METHOD_FLOAT_DESC;
-				store = true;
-				break;
-			case Opcodes.DASTORE:
-				desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.WRITE_ARRAY_METHOD_DOUBLE_DESC_META
-						: ContextDelegator.WRITE_ARRAY_METHOD_DOUBLE_DESC;
-				store = true;
-				break;
+		case Opcodes.AASTORE:
+			if (isMultiArray)
+				desc = ContextDelegator.WRITE_ARRAY_METHOD_MULTI_DESC_META;
+			else
+				desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.WRITE_ARRAY_METHOD_OBJ_DESC_META
+						: ContextDelegator.WRITE_ARRAY_METHOD_OBJ_DESC;
+			store = true;
+			break;
+		case Opcodes.BASTORE:
+			desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.WRITE_ARRAY_METHOD_BYTE_DESC_META
+					: ContextDelegator.WRITE_ARRAY_METHOD_BYTE_DESC;
+			store = true;
+			break;
+		case Opcodes.CASTORE:
+			desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.WRITE_ARRAY_METHOD_CHAR_DESC_META
+					: ContextDelegator.WRITE_ARRAY_METHOD_CHAR_DESC;
+			store = true;
+			break;
+		case Opcodes.SASTORE:
+			desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.WRITE_ARRAY_METHOD_SHORT_DESC_META
+					: ContextDelegator.WRITE_ARRAY_METHOD_SHORT_DESC;
+			store = true;
+			break;
+		case Opcodes.IASTORE:
+			desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.WRITE_ARRAY_METHOD_INT_DESC_META
+					: ContextDelegator.WRITE_ARRAY_METHOD_INT_DESC;
+			store = true;
+			break;
+		case Opcodes.LASTORE:
+			desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.WRITE_ARRAY_METHOD_LONG_DESC_META
+					: ContextDelegator.WRITE_ARRAY_METHOD_LONG_DESC;
+			store = true;
+			break;
+		case Opcodes.FASTORE:
+			desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.WRITE_ARRAY_METHOD_FLOAT_DESC_META
+					: ContextDelegator.WRITE_ARRAY_METHOD_FLOAT_DESC;
+			store = true;
+			break;
+		case Opcodes.DASTORE:
+			desc = ContextDelegator.inLocalMetadata() ? ContextDelegator.WRITE_ARRAY_METHOD_DOUBLE_DESC_META
+					: ContextDelegator.WRITE_ARRAY_METHOD_DOUBLE_DESC;
+			store = true;
+			break;
 		}
 
 		if (load)
@@ -477,8 +477,7 @@ public class DuplicateMethod extends MethodAdapter
 	 * Calculate the new local index according to its position. If it's not a
 	 * function argument (local variable) its index increased by 1.
 	 * 
-	 * @param currIndex
-	 *            current index
+	 * @param currIndex current index
 	 * @return new index
 	 */
 	private int newIndex(int currIndex)

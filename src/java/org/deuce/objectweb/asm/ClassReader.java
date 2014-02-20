@@ -1,29 +1,25 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework Copyright (c)
- * 2000-2007 INRIA, France Telecom All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer. 2. Redistributions in
- * binary form must reproduce the above copyright notice, this list of
- * conditions and the following disclaimer in the documentation and/or other
- * materials provided with the distribution. 3. Neither the name of the
- * copyright holders nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written
- * permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * 2000-2007 INRIA, France Telecom All rights reserved. Redistribution and use
+ * in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met: 1. Redistributions of source
+ * code must retain the above copyright notice, this list of conditions and the
+ * following disclaimer. 2. Redistributions in binary form must reproduce the
+ * above copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the copyright holders nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission. THIS SOFTWARE IS PROVIDED
+ * BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.deuce.objectweb.asm;
 
@@ -145,8 +141,7 @@ public class ClassReader
 	/**
 	 * Constructs a new {@link ClassReader} object.
 	 * 
-	 * @param b
-	 *            the bytecode of the class to be read.
+	 * @param b the bytecode of the class to be read.
 	 */
 	public ClassReader(final byte[] b)
 	{
@@ -156,12 +151,9 @@ public class ClassReader
 	/**
 	 * Constructs a new {@link ClassReader} object.
 	 * 
-	 * @param b
-	 *            the bytecode of the class to be read.
-	 * @param off
-	 *            the start offset of the class data.
-	 * @param len
-	 *            the length of the class data.
+	 * @param b the bytecode of the class to be read.
+	 * @param off the start offset of the class data.
+	 * @param len the length of the class data.
 	 */
 	public ClassReader(final byte[] b, final int off, final int len)
 	{
@@ -178,31 +170,31 @@ public class ClassReader
 			int size;
 			switch (b[index])
 			{
-				case ClassWriter.FIELD:
-				case ClassWriter.METH:
-				case ClassWriter.IMETH:
-				case ClassWriter.INT:
-				case ClassWriter.FLOAT:
-				case ClassWriter.NAME_TYPE:
-					size = 5;
-					break;
-				case ClassWriter.LONG:
-				case ClassWriter.DOUBLE:
-					size = 9;
-					++i;
-					break;
-				case ClassWriter.UTF8:
-					size = 3 + readUnsignedShort(index + 1);
-					if (size > max)
-					{
-						max = size;
-					}
-					break;
-				// case ClassWriter.CLASS:
-				// case ClassWriter.STR:
-				default:
-					size = 3;
-					break;
+			case ClassWriter.FIELD:
+			case ClassWriter.METH:
+			case ClassWriter.IMETH:
+			case ClassWriter.INT:
+			case ClassWriter.FLOAT:
+			case ClassWriter.NAME_TYPE:
+				size = 5;
+				break;
+			case ClassWriter.LONG:
+			case ClassWriter.DOUBLE:
+				size = 9;
+				++i;
+				break;
+			case ClassWriter.UTF8:
+				size = 3 + readUnsignedShort(index + 1);
+				if (size > max)
+				{
+					max = size;
+				}
+				break;
+			// case ClassWriter.CLASS:
+			// case ClassWriter.STR:
+			default:
+				size = 3;
+				break;
 			}
 			index += size;
 		}
@@ -217,7 +209,6 @@ public class ClassReader
 	 * and those flags are represented by attributes.
 	 * 
 	 * @return the class access flags
-	 * 
 	 * @see ClassVisitor#visit(int, int, String, String, String, String[])
 	 */
 	public int getAccess()
@@ -230,7 +221,6 @@ public class ClassReader
 	 * {@link Type#getInternalName() getInternalName}).
 	 * 
 	 * @return the internal class name
-	 * 
 	 * @see ClassVisitor#visit(int, int, String, String, String, String[])
 	 */
 	public String getClassName()
@@ -245,7 +235,6 @@ public class ClassReader
 	 * 
 	 * @return the internal name of super class, or <tt>null</tt> for
 	 *         {@link Object} class.
-	 * 
 	 * @see ClassVisitor#visit(int, int, String, String, String, String[])
 	 */
 	public String getSuperName()
@@ -260,7 +249,6 @@ public class ClassReader
 	 * 
 	 * @return the array of internal names for all implemented interfaces or
 	 *         <tt>null</tt>.
-	 * 
 	 * @see ClassVisitor#visit(int, int, String, String, String, String[])
 	 */
 	public String[] getInterfaces()
@@ -284,8 +272,7 @@ public class ClassReader
 	 * Copies the constant pool data into the given {@link ClassWriter}. Should
 	 * be called before the {@link #accept(ClassVisitor,int)} method.
 	 * 
-	 * @param classWriter
-	 *            the {@link ClassWriter} to copy constant pool into.
+	 * @param classWriter the {@link ClassWriter} to copy constant pool into.
 	 */
 	void copyPool(final ClassWriter classWriter)
 	{
@@ -300,56 +287,55 @@ public class ClassReader
 			int nameType;
 			switch (tag)
 			{
-				case ClassWriter.FIELD:
-				case ClassWriter.METH:
-				case ClassWriter.IMETH:
-					nameType = items[readUnsignedShort(index + 2)];
-					item.set(tag, readClass(index, buf),
-							readUTF8(nameType, buf),
-							readUTF8(nameType + 2, buf));
-					break;
+			case ClassWriter.FIELD:
+			case ClassWriter.METH:
+			case ClassWriter.IMETH:
+				nameType = items[readUnsignedShort(index + 2)];
+				item.set(tag, readClass(index, buf), readUTF8(nameType, buf),
+						readUTF8(nameType + 2, buf));
+				break;
 
-				case ClassWriter.INT:
-					item.set(readInt(index));
-					break;
+			case ClassWriter.INT:
+				item.set(readInt(index));
+				break;
 
-				case ClassWriter.FLOAT:
-					item.set(Float.intBitsToFloat(readInt(index)));
-					break;
+			case ClassWriter.FLOAT:
+				item.set(Float.intBitsToFloat(readInt(index)));
+				break;
 
-				case ClassWriter.NAME_TYPE:
-					item.set(tag, readUTF8(index, buf),
-							readUTF8(index + 2, buf), null);
-					break;
+			case ClassWriter.NAME_TYPE:
+				item.set(tag, readUTF8(index, buf), readUTF8(index + 2, buf),
+						null);
+				break;
 
-				case ClassWriter.LONG:
-					item.set(readLong(index));
-					++i;
-					break;
+			case ClassWriter.LONG:
+				item.set(readLong(index));
+				++i;
+				break;
 
-				case ClassWriter.DOUBLE:
-					item.set(Double.longBitsToDouble(readLong(index)));
-					++i;
-					break;
+			case ClassWriter.DOUBLE:
+				item.set(Double.longBitsToDouble(readLong(index)));
+				++i;
+				break;
 
-				case ClassWriter.UTF8:
+			case ClassWriter.UTF8:
+			{
+				String s = strings[i];
+				if (s == null)
 				{
-					String s = strings[i];
-					if (s == null)
-					{
-						index = items[i];
-						s = strings[i] = readUTF(index + 2,
-								readUnsignedShort(index), buf);
-					}
-					item.set(tag, s, null, null);
+					index = items[i];
+					s = strings[i] = readUTF(index + 2,
+							readUnsignedShort(index), buf);
 				}
-					break;
+				item.set(tag, s, null, null);
+			}
+				break;
 
-				// case ClassWriter.STR:
-				// case ClassWriter.CLASS:
-				default:
-					item.set(tag, readUTF8(index, buf), null, null);
-					break;
+			// case ClassWriter.STR:
+			// case ClassWriter.CLASS:
+			default:
+				item.set(tag, readUTF8(index, buf), null, null);
+				break;
 			}
 
 			int index2 = item.hashCode % items2.length;
@@ -367,10 +353,8 @@ public class ClassReader
 	/**
 	 * Constructs a new {@link ClassReader} object.
 	 * 
-	 * @param is
-	 *            an input stream from which to read the class.
-	 * @throws IOException
-	 *             if a problem occurs during reading.
+	 * @param is an input stream from which to read the class.
+	 * @throws IOException if a problem occurs during reading.
 	 */
 	public ClassReader(final InputStream is) throws IOException
 	{
@@ -380,10 +364,8 @@ public class ClassReader
 	/**
 	 * Constructs a new {@link ClassReader} object.
 	 * 
-	 * @param name
-	 *            the fully qualified name of the class to be read.
-	 * @throws IOException
-	 *             if an exception occurs during reading.
+	 * @param name the fully qualified name of the class to be read.
+	 * @throws IOException if an exception occurs during reading.
 	 */
 	public ClassReader(final String name) throws IOException
 	{
@@ -394,11 +376,9 @@ public class ClassReader
 	/**
 	 * Reads the bytecode of a class.
 	 * 
-	 * @param is
-	 *            an input stream from which to read the class.
+	 * @param is an input stream from which to read the class.
 	 * @return the bytecode read from the given input stream.
-	 * @throws IOException
-	 *             if a problem occurs during reading.
+	 * @throws IOException if a problem occurs during reading.
 	 */
 	private static byte[] readClass(final InputStream is) throws IOException
 	{
@@ -446,10 +426,8 @@ public class ClassReader
 	 * This class is the one specified in the constructor (see
 	 * {@link #ClassReader(byte[]) ClassReader}).
 	 * 
-	 * @param classVisitor
-	 *            the visitor that must visit this class.
-	 * @param flags
-	 *            option flags that can be used to modify the default behavior
+	 * @param classVisitor the visitor that must visit this class.
+	 * @param flags option flags that can be used to modify the default behavior
 	 *            of this class. See {@link #SKIP_DEBUG}, {@link #EXPAND_FRAMES}
 	 *            , {@link #SKIP_FRAMES}, {@link #SKIP_CODE}.
 	 */
@@ -463,10 +441,8 @@ public class ClassReader
 	 * This class is the one specified in the constructor (see
 	 * {@link #ClassReader(byte[]) ClassReader}).
 	 * 
-	 * @param classVisitor
-	 *            the visitor that must visit this class.
-	 * @param attrs
-	 *            prototypes of the attributes that must be parsed during the
+	 * @param classVisitor the visitor that must visit this class.
+	 * @param attrs prototypes of the attributes that must be parsed during the
 	 *            visit of the class. Any attribute whose type is not equal to
 	 *            the type of one the prototypes will not be parsed: its byte
 	 *            array value will be passed unchanged to the ClassWriter.
@@ -474,8 +450,7 @@ public class ClassReader
 	 *            the constant pool, or has syntactic or semantic links with a
 	 *            class element that has been transformed by a class adapter
 	 *            between the reader and the writer</i>.
-	 * @param flags
-	 *            option flags that can be used to modify the default behavior
+	 * @param flags option flags that can be used to modify the default behavior
 	 *            of this class. See {@link #SKIP_DEBUG}, {@link #EXPAND_FRAMES}
 	 *            , {@link #SKIP_FRAMES}, {@link #SKIP_CODE}.
 	 */
@@ -1006,74 +981,74 @@ public class ClassReader
 					int opcode = b[v] & 0xFF;
 					switch (ClassWriter.TYPE[opcode])
 					{
-						case ClassWriter.NOARG_INSN:
-						case ClassWriter.IMPLVAR_INSN:
-							v += 1;
-							break;
-						case ClassWriter.LABEL_INSN:
-							readLabel(w + readShort(v + 1), labels);
-							v += 3;
-							break;
-						case ClassWriter.LABELW_INSN:
-							readLabel(w + readInt(v + 1), labels);
-							v += 5;
-							break;
-						case ClassWriter.WIDE_INSN:
-							opcode = b[v + 1] & 0xFF;
-							if (opcode == Opcodes.IINC)
-							{
-								v += 6;
-							}
-							else
-							{
-								v += 4;
-							}
-							break;
-						case ClassWriter.TABL_INSN:
-							// skips 0 to 3 padding bytes*
-							v = v + 4 - (w & 3);
-							// reads instruction
-							readLabel(w + readInt(v), labels);
-							j = readInt(v + 8) - readInt(v + 4) + 1;
-							v += 12;
-							for (; j > 0; --j)
-							{
-								readLabel(w + readInt(v), labels);
-								v += 4;
-							}
-							break;
-						case ClassWriter.LOOK_INSN:
-							// skips 0 to 3 padding bytes*
-							v = v + 4 - (w & 3);
-							// reads instruction
-							readLabel(w + readInt(v), labels);
-							j = readInt(v + 4);
-							v += 8;
-							for (; j > 0; --j)
-							{
-								readLabel(w + readInt(v + 4), labels);
-								v += 8;
-							}
-							break;
-						case ClassWriter.VAR_INSN:
-						case ClassWriter.SBYTE_INSN:
-						case ClassWriter.LDC_INSN:
-							v += 2;
-							break;
-						case ClassWriter.SHORT_INSN:
-						case ClassWriter.LDCW_INSN:
-						case ClassWriter.FIELDORMETH_INSN:
-						case ClassWriter.TYPE_INSN:
-						case ClassWriter.IINC_INSN:
-							v += 3;
-							break;
-						case ClassWriter.ITFDYNMETH_INSN:
-							v += 5;
-							break;
-						// case MANA_INSN:
-						default:
+					case ClassWriter.NOARG_INSN:
+					case ClassWriter.IMPLVAR_INSN:
+						v += 1;
+						break;
+					case ClassWriter.LABEL_INSN:
+						readLabel(w + readShort(v + 1), labels);
+						v += 3;
+						break;
+					case ClassWriter.LABELW_INSN:
+						readLabel(w + readInt(v + 1), labels);
+						v += 5;
+						break;
+					case ClassWriter.WIDE_INSN:
+						opcode = b[v + 1] & 0xFF;
+						if (opcode == Opcodes.IINC)
+						{
+							v += 6;
+						}
+						else
+						{
 							v += 4;
-							break;
+						}
+						break;
+					case ClassWriter.TABL_INSN:
+						// skips 0 to 3 padding bytes*
+						v = v + 4 - (w & 3);
+						// reads instruction
+						readLabel(w + readInt(v), labels);
+						j = readInt(v + 8) - readInt(v + 4) + 1;
+						v += 12;
+						for (; j > 0; --j)
+						{
+							readLabel(w + readInt(v), labels);
+							v += 4;
+						}
+						break;
+					case ClassWriter.LOOK_INSN:
+						// skips 0 to 3 padding bytes*
+						v = v + 4 - (w & 3);
+						// reads instruction
+						readLabel(w + readInt(v), labels);
+						j = readInt(v + 4);
+						v += 8;
+						for (; j > 0; --j)
+						{
+							readLabel(w + readInt(v + 4), labels);
+							v += 8;
+						}
+						break;
+					case ClassWriter.VAR_INSN:
+					case ClassWriter.SBYTE_INSN:
+					case ClassWriter.LDC_INSN:
+						v += 2;
+						break;
+					case ClassWriter.SHORT_INSN:
+					case ClassWriter.LDCW_INSN:
+					case ClassWriter.FIELDORMETH_INSN:
+					case ClassWriter.TYPE_INSN:
+					case ClassWriter.IINC_INSN:
+						v += 3;
+						break;
+					case ClassWriter.ITFDYNMETH_INSN:
+						v += 5;
+						break;
+					// case MANA_INSN:
+					default:
+						v += 4;
+						break;
 					}
 				}
 				// parses the try catch entries
@@ -1246,48 +1221,47 @@ public class ClassReader
 							k = j;
 							switch (desc.charAt(j++))
 							{
-								case 'Z':
-								case 'C':
-								case 'B':
-								case 'S':
-								case 'I':
-									frameLocal[local++] = Opcodes.INTEGER;
-									break;
-								case 'F':
-									frameLocal[local++] = Opcodes.FLOAT;
-									break;
-								case 'J':
-									frameLocal[local++] = Opcodes.LONG;
-									break;
-								case 'D':
-									frameLocal[local++] = Opcodes.DOUBLE;
-									break;
-								case '[':
-									while (desc.charAt(j) == '[')
-									{
-										++j;
-									}
-									if (desc.charAt(j) == 'L')
-									{
-										++j;
-										while (desc.charAt(j) != ';')
-										{
-											++j;
-										}
-									}
-									frameLocal[local++] = desc
-											.substring(k, ++j);
-									break;
-								case 'L':
+							case 'Z':
+							case 'C':
+							case 'B':
+							case 'S':
+							case 'I':
+								frameLocal[local++] = Opcodes.INTEGER;
+								break;
+							case 'F':
+								frameLocal[local++] = Opcodes.FLOAT;
+								break;
+							case 'J':
+								frameLocal[local++] = Opcodes.LONG;
+								break;
+							case 'D':
+								frameLocal[local++] = Opcodes.DOUBLE;
+								break;
+							case '[':
+								while (desc.charAt(j) == '[')
+								{
+									++j;
+								}
+								if (desc.charAt(j) == 'L')
+								{
+									++j;
 									while (desc.charAt(j) != ';')
 									{
 										++j;
 									}
-									frameLocal[local++] = desc.substring(k + 1,
-											j++);
-									break;
-								default:
-									break loop;
+								}
+								frameLocal[local++] = desc.substring(k, ++j);
+								break;
+							case 'L':
+								while (desc.charAt(j) != ';')
+								{
+									++j;
+								}
+								frameLocal[local++] = desc
+										.substring(k + 1, j++);
+								break;
+							default:
+								break loop;
 							}
 						}
 						frameLocalCount = local;
@@ -1434,154 +1408,149 @@ public class ClassReader
 					int opcode = b[v] & 0xFF;
 					switch (ClassWriter.TYPE[opcode])
 					{
-						case ClassWriter.NOARG_INSN:
-							mv.visitInsn(opcode);
-							v += 1;
-							break;
-						case ClassWriter.IMPLVAR_INSN:
-							if (opcode > Opcodes.ISTORE)
-							{
-								opcode -= 59; // ISTORE_0
-								mv.visitVarInsn(Opcodes.ISTORE + (opcode >> 2),
-										opcode & 0x3);
-							}
-							else
-							{
-								opcode -= 26; // ILOAD_0
-								mv.visitVarInsn(Opcodes.ILOAD + (opcode >> 2),
-										opcode & 0x3);
-							}
-							v += 1;
-							break;
-						case ClassWriter.LABEL_INSN:
-							mv.visitJumpInsn(opcode, labels[w
-									+ readShort(v + 1)]);
-							v += 3;
-							break;
-						case ClassWriter.LABELW_INSN:
-							mv.visitJumpInsn(opcode - 33, labels[w
-									+ readInt(v + 1)]);
-							v += 5;
-							break;
-						case ClassWriter.WIDE_INSN:
-							opcode = b[v + 1] & 0xFF;
-							if (opcode == Opcodes.IINC)
-							{
-								mv.visitIincInsn(readUnsignedShort(v + 2),
-										readShort(v + 4));
-								v += 6;
-							}
-							else
-							{
-								mv.visitVarInsn(opcode,
-										readUnsignedShort(v + 2));
-								v += 4;
-							}
-							break;
-						case ClassWriter.TABL_INSN:
-							// skips 0 to 3 padding bytes
-							v = v + 4 - (w & 3);
-							// reads instruction
-							label = w + readInt(v);
-							int min = readInt(v + 4);
-							int max = readInt(v + 8);
-							v += 12;
-							Label[] table = new Label[max - min + 1];
-							for (j = 0; j < table.length; ++j)
-							{
-								table[j] = labels[w + readInt(v)];
-								v += 4;
-							}
-							mv.visitTableSwitchInsn(min, max, labels[label],
-									table);
-							break;
-						case ClassWriter.LOOK_INSN:
-							// skips 0 to 3 padding bytes
-							v = v + 4 - (w & 3);
-							// reads instruction
-							label = w + readInt(v);
-							j = readInt(v + 4);
-							v += 8;
-							int[] keys = new int[j];
-							Label[] values = new Label[j];
-							for (j = 0; j < keys.length; ++j)
-							{
-								keys[j] = readInt(v);
-								values[j] = labels[w + readInt(v + 4)];
-								v += 8;
-							}
-							mv.visitLookupSwitchInsn(labels[label], keys,
-									values);
-							break;
-						case ClassWriter.VAR_INSN:
-							mv.visitVarInsn(opcode, b[v + 1] & 0xFF);
-							v += 2;
-							break;
-						case ClassWriter.SBYTE_INSN:
-							mv.visitIntInsn(opcode, b[v + 1]);
-							v += 2;
-							break;
-						case ClassWriter.SHORT_INSN:
-							mv.visitIntInsn(opcode, readShort(v + 1));
-							v += 3;
-							break;
-						case ClassWriter.LDC_INSN:
-							mv.visitLdcInsn(readConst(b[v + 1] & 0xFF, c));
-							v += 2;
-							break;
-						case ClassWriter.LDCW_INSN:
-							mv.visitLdcInsn(readConst(readUnsignedShort(v + 1),
-									c));
-							v += 3;
-							break;
-						case ClassWriter.FIELDORMETH_INSN:
-						case ClassWriter.ITFDYNMETH_INSN:
-							int cpIndex = items[readUnsignedShort(v + 1)];
-							String iowner;
-							// INVOKEDYNAMIC is receiverless
-							if (opcode == Opcodes.INVOKEDYNAMIC)
-							{
-								iowner = Opcodes.INVOKEDYNAMIC_OWNER;
-							}
-							else
-							{
-								iowner = readClass(cpIndex, c);
-								cpIndex = items[readUnsignedShort(cpIndex + 2)];
-							}
-							String iname = readUTF8(cpIndex, c);
-							String idesc = readUTF8(cpIndex + 2, c);
-							if (opcode < Opcodes.INVOKEVIRTUAL)
-							{
-								mv.visitFieldInsn(opcode, iowner, iname, idesc);
-							}
-							else
-							{
-								mv.visitMethodInsn(opcode, iowner, iname, idesc);
-							}
-							if (opcode == Opcodes.INVOKEINTERFACE
-									|| opcode == Opcodes.INVOKEDYNAMIC)
-							{
-								v += 5;
-							}
-							else
-							{
-								v += 3;
-							}
-							break;
-						case ClassWriter.TYPE_INSN:
-							mv.visitTypeInsn(opcode, readClass(v + 1, c));
-							v += 3;
-							break;
-						case ClassWriter.IINC_INSN:
-							mv.visitIincInsn(b[v + 1] & 0xFF, b[v + 2]);
-							v += 3;
-							break;
-						// case MANA_INSN:
-						default:
-							mv.visitMultiANewArrayInsn(readClass(v + 1, c),
-									b[v + 3] & 0xFF);
+					case ClassWriter.NOARG_INSN:
+						mv.visitInsn(opcode);
+						v += 1;
+						break;
+					case ClassWriter.IMPLVAR_INSN:
+						if (opcode > Opcodes.ISTORE)
+						{
+							opcode -= 59; // ISTORE_0
+							mv.visitVarInsn(Opcodes.ISTORE + (opcode >> 2),
+									opcode & 0x3);
+						}
+						else
+						{
+							opcode -= 26; // ILOAD_0
+							mv.visitVarInsn(Opcodes.ILOAD + (opcode >> 2),
+									opcode & 0x3);
+						}
+						v += 1;
+						break;
+					case ClassWriter.LABEL_INSN:
+						mv.visitJumpInsn(opcode, labels[w + readShort(v + 1)]);
+						v += 3;
+						break;
+					case ClassWriter.LABELW_INSN:
+						mv.visitJumpInsn(opcode - 33,
+								labels[w + readInt(v + 1)]);
+						v += 5;
+						break;
+					case ClassWriter.WIDE_INSN:
+						opcode = b[v + 1] & 0xFF;
+						if (opcode == Opcodes.IINC)
+						{
+							mv.visitIincInsn(readUnsignedShort(v + 2),
+									readShort(v + 4));
+							v += 6;
+						}
+						else
+						{
+							mv.visitVarInsn(opcode, readUnsignedShort(v + 2));
 							v += 4;
-							break;
+						}
+						break;
+					case ClassWriter.TABL_INSN:
+						// skips 0 to 3 padding bytes
+						v = v + 4 - (w & 3);
+						// reads instruction
+						label = w + readInt(v);
+						int min = readInt(v + 4);
+						int max = readInt(v + 8);
+						v += 12;
+						Label[] table = new Label[max - min + 1];
+						for (j = 0; j < table.length; ++j)
+						{
+							table[j] = labels[w + readInt(v)];
+							v += 4;
+						}
+						mv.visitTableSwitchInsn(min, max, labels[label], table);
+						break;
+					case ClassWriter.LOOK_INSN:
+						// skips 0 to 3 padding bytes
+						v = v + 4 - (w & 3);
+						// reads instruction
+						label = w + readInt(v);
+						j = readInt(v + 4);
+						v += 8;
+						int[] keys = new int[j];
+						Label[] values = new Label[j];
+						for (j = 0; j < keys.length; ++j)
+						{
+							keys[j] = readInt(v);
+							values[j] = labels[w + readInt(v + 4)];
+							v += 8;
+						}
+						mv.visitLookupSwitchInsn(labels[label], keys, values);
+						break;
+					case ClassWriter.VAR_INSN:
+						mv.visitVarInsn(opcode, b[v + 1] & 0xFF);
+						v += 2;
+						break;
+					case ClassWriter.SBYTE_INSN:
+						mv.visitIntInsn(opcode, b[v + 1]);
+						v += 2;
+						break;
+					case ClassWriter.SHORT_INSN:
+						mv.visitIntInsn(opcode, readShort(v + 1));
+						v += 3;
+						break;
+					case ClassWriter.LDC_INSN:
+						mv.visitLdcInsn(readConst(b[v + 1] & 0xFF, c));
+						v += 2;
+						break;
+					case ClassWriter.LDCW_INSN:
+						mv.visitLdcInsn(readConst(readUnsignedShort(v + 1), c));
+						v += 3;
+						break;
+					case ClassWriter.FIELDORMETH_INSN:
+					case ClassWriter.ITFDYNMETH_INSN:
+						int cpIndex = items[readUnsignedShort(v + 1)];
+						String iowner;
+						// INVOKEDYNAMIC is receiverless
+						if (opcode == Opcodes.INVOKEDYNAMIC)
+						{
+							iowner = Opcodes.INVOKEDYNAMIC_OWNER;
+						}
+						else
+						{
+							iowner = readClass(cpIndex, c);
+							cpIndex = items[readUnsignedShort(cpIndex + 2)];
+						}
+						String iname = readUTF8(cpIndex, c);
+						String idesc = readUTF8(cpIndex + 2, c);
+						if (opcode < Opcodes.INVOKEVIRTUAL)
+						{
+							mv.visitFieldInsn(opcode, iowner, iname, idesc);
+						}
+						else
+						{
+							mv.visitMethodInsn(opcode, iowner, iname, idesc);
+						}
+						if (opcode == Opcodes.INVOKEINTERFACE
+								|| opcode == Opcodes.INVOKEDYNAMIC)
+						{
+							v += 5;
+						}
+						else
+						{
+							v += 3;
+						}
+						break;
+					case ClassWriter.TYPE_INSN:
+						mv.visitTypeInsn(opcode, readClass(v + 1, c));
+						v += 3;
+						break;
+					case ClassWriter.IINC_INSN:
+						mv.visitIincInsn(b[v + 1] & 0xFF, b[v + 2]);
+						v += 3;
+						break;
+					// case MANA_INSN:
+					default:
+						mv.visitMultiANewArrayInsn(readClass(v + 1, c),
+								b[v + 3] & 0xFF);
+						v += 4;
+						break;
 					}
 				}
 				l = labels[codeEnd - codeStart];
@@ -1657,19 +1626,14 @@ public class ClassReader
 	/**
 	 * Reads parameter annotations and makes the given visitor visit them.
 	 * 
-	 * @param v
-	 *            start offset in {@link #b b} of the annotations to be read.
-	 * @param desc
-	 *            the method descriptor.
-	 * @param buf
-	 *            buffer to be used to call {@link #readUTF8 readUTF8},
+	 * @param v start offset in {@link #b b} of the annotations to be read.
+	 * @param desc the method descriptor.
+	 * @param buf buffer to be used to call {@link #readUTF8 readUTF8},
 	 *            {@link #readClass(int,char[]) readClass} or {@link #readConst
 	 *            readConst}.
-	 * @param visible
-	 *            <tt>true</tt> if the annotations to be read are visible at
+	 * @param visible <tt>true</tt> if the annotations to be read are visible at
 	 *            runtime.
-	 * @param mv
-	 *            the visitor that must visit the annotations.
+	 * @param mv the visitor that must visit the annotations.
 	 */
 	private void readParameterAnnotations(int v, final String desc,
 			final char[] buf, final boolean visible, final MethodVisitor mv)
@@ -1708,18 +1672,14 @@ public class ClassReader
 	/**
 	 * Reads the values of an annotation and makes the given visitor visit them.
 	 * 
-	 * @param v
-	 *            the start offset in {@link #b b} of the values to be read
+	 * @param v the start offset in {@link #b b} of the values to be read
 	 *            (including the unsigned short that gives the number of
 	 *            values).
-	 * @param buf
-	 *            buffer to be used to call {@link #readUTF8 readUTF8},
+	 * @param buf buffer to be used to call {@link #readUTF8 readUTF8},
 	 *            {@link #readClass(int,char[]) readClass} or {@link #readConst
 	 *            readConst}.
-	 * @param named
-	 *            if the annotation values are named or not.
-	 * @param av
-	 *            the visitor that must visit the values.
+	 * @param named if the annotation values are named or not.
+	 * @param av the visitor that must visit the values.
 	 * @return the end offset of the annotation values.
 	 */
 	private int readAnnotationValues(int v, final char[] buf,
@@ -1751,17 +1711,13 @@ public class ClassReader
 	/**
 	 * Reads a value of an annotation and makes the given visitor visit it.
 	 * 
-	 * @param v
-	 *            the start offset in {@link #b b} of the value to be read
-	 *            (<i>not including the value name constant pool index</i>).
-	 * @param buf
-	 *            buffer to be used to call {@link #readUTF8 readUTF8},
+	 * @param v the start offset in {@link #b b} of the value to be read (<i>not
+	 *            including the value name constant pool index</i>).
+	 * @param buf buffer to be used to call {@link #readUTF8 readUTF8},
 	 *            {@link #readClass(int,char[]) readClass} or {@link #readConst
 	 *            readConst}.
-	 * @param name
-	 *            the name of the value to be read.
-	 * @param av
-	 *            the visitor that must visit the value.
+	 * @param name the name of the value to be read.
+	 * @param av the visitor that must visit the value.
 	 * @return the end offset of the annotation value.
 	 */
 	private int readAnnotationValue(int v, final char[] buf, final String name,
@@ -1772,159 +1728,157 @@ public class ClassReader
 		{
 			switch (b[v] & 0xFF)
 			{
-				case 'e': // enum_const_value
-					return v + 5;
-				case '@': // annotation_value
-					return readAnnotationValues(v + 3, buf, true, null);
-				case '[': // array_value
-					return readAnnotationValues(v + 1, buf, false, null);
-				default:
-					return v + 3;
+			case 'e': // enum_const_value
+				return v + 5;
+			case '@': // annotation_value
+				return readAnnotationValues(v + 3, buf, true, null);
+			case '[': // array_value
+				return readAnnotationValues(v + 1, buf, false, null);
+			default:
+				return v + 3;
 			}
 		}
 		switch (b[v++] & 0xFF)
 		{
-			case 'I': // pointer to CONSTANT_Integer
-			case 'J': // pointer to CONSTANT_Long
-			case 'F': // pointer to CONSTANT_Float
-			case 'D': // pointer to CONSTANT_Double
-				av.visit(name, readConst(readUnsignedShort(v), buf));
-				v += 2;
-				break;
-			case 'B': // pointer to CONSTANT_Byte
-				av.visit(name, new Byte(
-						(byte) readInt(items[readUnsignedShort(v)])));
-				v += 2;
-				break;
-			case 'Z': // pointer to CONSTANT_Boolean
-				av.visit(
-						name,
-						readInt(items[readUnsignedShort(v)]) == 0 ? Boolean.FALSE
-								: Boolean.TRUE);
-				v += 2;
-				break;
-			case 'S': // pointer to CONSTANT_Short
-				av.visit(name, new Short(
-						(short) readInt(items[readUnsignedShort(v)])));
-				v += 2;
-				break;
-			case 'C': // pointer to CONSTANT_Char
-				av.visit(name, new Character(
-						(char) readInt(items[readUnsignedShort(v)])));
-				v += 2;
-				break;
-			case 's': // pointer to CONSTANT_Utf8
-				av.visit(name, readUTF8(v, buf));
-				v += 2;
-				break;
-			case 'e': // enum_const_value
-				av.visitEnum(name, readUTF8(v, buf), readUTF8(v + 2, buf));
-				v += 4;
-				break;
-			case 'c': // class_info
-				av.visit(name, Type.getType(readUTF8(v, buf)));
-				v += 2;
-				break;
-			case '@': // annotation_value
-				v = readAnnotationValues(v + 2, buf, true,
-						av.visitAnnotation(name, readUTF8(v, buf)));
-				break;
-			case '[': // array_value
-				int size = readUnsignedShort(v);
-				v += 2;
-				if (size == 0)
+		case 'I': // pointer to CONSTANT_Integer
+		case 'J': // pointer to CONSTANT_Long
+		case 'F': // pointer to CONSTANT_Float
+		case 'D': // pointer to CONSTANT_Double
+			av.visit(name, readConst(readUnsignedShort(v), buf));
+			v += 2;
+			break;
+		case 'B': // pointer to CONSTANT_Byte
+			av.visit(name,
+					new Byte((byte) readInt(items[readUnsignedShort(v)])));
+			v += 2;
+			break;
+		case 'Z': // pointer to CONSTANT_Boolean
+			av.visit(name,
+					readInt(items[readUnsignedShort(v)]) == 0 ? Boolean.FALSE
+							: Boolean.TRUE);
+			v += 2;
+			break;
+		case 'S': // pointer to CONSTANT_Short
+			av.visit(name, new Short(
+					(short) readInt(items[readUnsignedShort(v)])));
+			v += 2;
+			break;
+		case 'C': // pointer to CONSTANT_Char
+			av.visit(name, new Character(
+					(char) readInt(items[readUnsignedShort(v)])));
+			v += 2;
+			break;
+		case 's': // pointer to CONSTANT_Utf8
+			av.visit(name, readUTF8(v, buf));
+			v += 2;
+			break;
+		case 'e': // enum_const_value
+			av.visitEnum(name, readUTF8(v, buf), readUTF8(v + 2, buf));
+			v += 4;
+			break;
+		case 'c': // class_info
+			av.visit(name, Type.getType(readUTF8(v, buf)));
+			v += 2;
+			break;
+		case '@': // annotation_value
+			v = readAnnotationValues(v + 2, buf, true,
+					av.visitAnnotation(name, readUTF8(v, buf)));
+			break;
+		case '[': // array_value
+			int size = readUnsignedShort(v);
+			v += 2;
+			if (size == 0)
+			{
+				return readAnnotationValues(v - 2, buf, false,
+						av.visitArray(name));
+			}
+			switch (this.b[v++] & 0xFF)
+			{
+			case 'B':
+				byte[] bv = new byte[size];
+				for (i = 0; i < size; i++)
 				{
-					return readAnnotationValues(v - 2, buf, false,
-							av.visitArray(name));
+					bv[i] = (byte) readInt(items[readUnsignedShort(v)]);
+					v += 3;
 				}
-				switch (this.b[v++] & 0xFF)
+				av.visit(name, bv);
+				--v;
+				break;
+			case 'Z':
+				boolean[] zv = new boolean[size];
+				for (i = 0; i < size; i++)
 				{
-					case 'B':
-						byte[] bv = new byte[size];
-						for (i = 0; i < size; i++)
-						{
-							bv[i] = (byte) readInt(items[readUnsignedShort(v)]);
-							v += 3;
-						}
-						av.visit(name, bv);
-						--v;
-						break;
-					case 'Z':
-						boolean[] zv = new boolean[size];
-						for (i = 0; i < size; i++)
-						{
-							zv[i] = readInt(items[readUnsignedShort(v)]) != 0;
-							v += 3;
-						}
-						av.visit(name, zv);
-						--v;
-						break;
-					case 'S':
-						short[] sv = new short[size];
-						for (i = 0; i < size; i++)
-						{
-							sv[i] = (short) readInt(items[readUnsignedShort(v)]);
-							v += 3;
-						}
-						av.visit(name, sv);
-						--v;
-						break;
-					case 'C':
-						char[] cv = new char[size];
-						for (i = 0; i < size; i++)
-						{
-							cv[i] = (char) readInt(items[readUnsignedShort(v)]);
-							v += 3;
-						}
-						av.visit(name, cv);
-						--v;
-						break;
-					case 'I':
-						int[] iv = new int[size];
-						for (i = 0; i < size; i++)
-						{
-							iv[i] = readInt(items[readUnsignedShort(v)]);
-							v += 3;
-						}
-						av.visit(name, iv);
-						--v;
-						break;
-					case 'J':
-						long[] lv = new long[size];
-						for (i = 0; i < size; i++)
-						{
-							lv[i] = readLong(items[readUnsignedShort(v)]);
-							v += 3;
-						}
-						av.visit(name, lv);
-						--v;
-						break;
-					case 'F':
-						float[] fv = new float[size];
-						for (i = 0; i < size; i++)
-						{
-							fv[i] = Float
-									.intBitsToFloat(readInt(items[readUnsignedShort(v)]));
-							v += 3;
-						}
-						av.visit(name, fv);
-						--v;
-						break;
-					case 'D':
-						double[] dv = new double[size];
-						for (i = 0; i < size; i++)
-						{
-							dv[i] = Double
-									.longBitsToDouble(readLong(items[readUnsignedShort(v)]));
-							v += 3;
-						}
-						av.visit(name, dv);
-						--v;
-						break;
-					default:
-						v = readAnnotationValues(v - 3, buf, false,
-								av.visitArray(name));
+					zv[i] = readInt(items[readUnsignedShort(v)]) != 0;
+					v += 3;
 				}
+				av.visit(name, zv);
+				--v;
+				break;
+			case 'S':
+				short[] sv = new short[size];
+				for (i = 0; i < size; i++)
+				{
+					sv[i] = (short) readInt(items[readUnsignedShort(v)]);
+					v += 3;
+				}
+				av.visit(name, sv);
+				--v;
+				break;
+			case 'C':
+				char[] cv = new char[size];
+				for (i = 0; i < size; i++)
+				{
+					cv[i] = (char) readInt(items[readUnsignedShort(v)]);
+					v += 3;
+				}
+				av.visit(name, cv);
+				--v;
+				break;
+			case 'I':
+				int[] iv = new int[size];
+				for (i = 0; i < size; i++)
+				{
+					iv[i] = readInt(items[readUnsignedShort(v)]);
+					v += 3;
+				}
+				av.visit(name, iv);
+				--v;
+				break;
+			case 'J':
+				long[] lv = new long[size];
+				for (i = 0; i < size; i++)
+				{
+					lv[i] = readLong(items[readUnsignedShort(v)]);
+					v += 3;
+				}
+				av.visit(name, lv);
+				--v;
+				break;
+			case 'F':
+				float[] fv = new float[size];
+				for (i = 0; i < size; i++)
+				{
+					fv[i] = Float
+							.intBitsToFloat(readInt(items[readUnsignedShort(v)]));
+					v += 3;
+				}
+				av.visit(name, fv);
+				--v;
+				break;
+			case 'D':
+				double[] dv = new double[size];
+				for (i = 0; i < size; i++)
+				{
+					dv[i] = Double
+							.longBitsToDouble(readLong(items[readUnsignedShort(v)]));
+					v += 3;
+				}
+				av.visit(name, dv);
+				--v;
+				break;
+			default:
+				v = readAnnotationValues(v - 3, buf, false, av.visitArray(name));
+			}
 		}
 		return v;
 	}
@@ -1935,34 +1889,34 @@ public class ClassReader
 		int type = b[v++] & 0xFF;
 		switch (type)
 		{
-			case 0:
-				frame[index] = Opcodes.TOP;
-				break;
-			case 1:
-				frame[index] = Opcodes.INTEGER;
-				break;
-			case 2:
-				frame[index] = Opcodes.FLOAT;
-				break;
-			case 3:
-				frame[index] = Opcodes.DOUBLE;
-				break;
-			case 4:
-				frame[index] = Opcodes.LONG;
-				break;
-			case 5:
-				frame[index] = Opcodes.NULL;
-				break;
-			case 6:
-				frame[index] = Opcodes.UNINITIALIZED_THIS;
-				break;
-			case 7: // Object
-				frame[index] = readClass(v, buf);
-				v += 2;
-				break;
-			default: // Uninitialized
-				frame[index] = readLabel(readUnsignedShort(v), labels);
-				v += 2;
+		case 0:
+			frame[index] = Opcodes.TOP;
+			break;
+		case 1:
+			frame[index] = Opcodes.INTEGER;
+			break;
+		case 2:
+			frame[index] = Opcodes.FLOAT;
+			break;
+		case 3:
+			frame[index] = Opcodes.DOUBLE;
+			break;
+		case 4:
+			frame[index] = Opcodes.LONG;
+			break;
+		case 5:
+			frame[index] = Opcodes.NULL;
+			break;
+		case 6:
+			frame[index] = Opcodes.UNINITIALIZED_THIS;
+			break;
+		case 7: // Object
+			frame[index] = readClass(v, buf);
+			v += 2;
+			break;
+		default: // Uninitialized
+			frame[index] = readLabel(readUnsignedShort(v), labels);
+			v += 2;
 		}
 		return v;
 	}
@@ -1972,10 +1926,8 @@ public class ClassReader
 	 * implementation of this method creates a label for the given offset if it
 	 * has not been already created.
 	 * 
-	 * @param offset
-	 *            a bytecode offset in a method.
-	 * @param labels
-	 *            the already created labels, indexed by their offset. If a
+	 * @param offset a bytecode offset in a method.
+	 * @param labels the already created labels, indexed by their offset. If a
 	 *            label already exists for offset this method must not create a
 	 *            new one. Otherwise it must store the new label in this array.
 	 * @return a non null Label, which must be equal to labels[offset].
@@ -1992,32 +1944,25 @@ public class ClassReader
 	/**
 	 * Reads an attribute in {@link #b b}.
 	 * 
-	 * @param attrs
-	 *            prototypes of the attributes that must be parsed during the
+	 * @param attrs prototypes of the attributes that must be parsed during the
 	 *            visit of the class. Any attribute whose type is not equal to
 	 *            the type of one the prototypes is ignored (i.e. an empty
 	 *            {@link Attribute} instance is returned).
-	 * @param type
-	 *            the type of the attribute.
-	 * @param off
-	 *            index of the first byte of the attribute's content in
+	 * @param type the type of the attribute.
+	 * @param off index of the first byte of the attribute's content in
 	 *            {@link #b b}. The 6 attribute header bytes, containing the
 	 *            type and the length of the attribute, are not taken into
 	 *            account here (they have already been read).
-	 * @param len
-	 *            the length of the attribute's content.
-	 * @param buf
-	 *            buffer to be used to call {@link #readUTF8 readUTF8},
+	 * @param len the length of the attribute's content.
+	 * @param buf buffer to be used to call {@link #readUTF8 readUTF8},
 	 *            {@link #readClass(int,char[]) readClass} or {@link #readConst
 	 *            readConst}.
-	 * @param codeOff
-	 *            index of the first byte of code's attribute content in
+	 * @param codeOff index of the first byte of code's attribute content in
 	 *            {@link #b b}, or -1 if the attribute to be read is not a code
 	 *            attribute. The 6 attribute header bytes, containing the type
 	 *            and the length of the attribute, are not taken into account
 	 *            here.
-	 * @param labels
-	 *            the labels of the method's code, or <tt>null</tt> if the
+	 * @param labels the labels of the method's code, or <tt>null</tt> if the
 	 *            attribute to be read is not a code attribute.
 	 * @return the attribute that has been read, or <tt>null</tt> to skip this
 	 *         attribute.
@@ -2045,8 +1990,7 @@ public class ClassReader
 	 * one. <i>This method is intended for {@link Attribute} sub classes, and is
 	 * normally not needed by class generators or adapters.</i>
 	 * 
-	 * @param item
-	 *            the index a constant pool item.
+	 * @param item the index a constant pool item.
 	 * @return the start index of the constant pool item in {@link #b b}, plus
 	 *         one.
 	 */
@@ -2060,8 +2004,7 @@ public class ClassReader
 	 * {@link Attribute} sub classes, and is normally not needed by class
 	 * generators or adapters.</i>
 	 * 
-	 * @param index
-	 *            the start index of the value to be read in {@link #b b}.
+	 * @param index the start index of the value to be read in {@link #b b}.
 	 * @return the read value.
 	 */
 	public int readByte(final int index)
@@ -2074,8 +2017,7 @@ public class ClassReader
 	 * for {@link Attribute} sub classes, and is normally not needed by class
 	 * generators or adapters.</i>
 	 * 
-	 * @param index
-	 *            the start index of the value to be read in {@link #b b}.
+	 * @param index the start index of the value to be read in {@link #b b}.
 	 * @return the read value.
 	 */
 	public int readUnsignedShort(final int index)
@@ -2089,8 +2031,7 @@ public class ClassReader
 	 * for {@link Attribute} sub classes, and is normally not needed by class
 	 * generators or adapters.</i>
 	 * 
-	 * @param index
-	 *            the start index of the value to be read in {@link #b b}.
+	 * @param index the start index of the value to be read in {@link #b b}.
 	 * @return the read value.
 	 */
 	public short readShort(final int index)
@@ -2104,8 +2045,7 @@ public class ClassReader
 	 * {@link Attribute} sub classes, and is normally not needed by class
 	 * generators or adapters.</i>
 	 * 
-	 * @param index
-	 *            the start index of the value to be read in {@link #b b}.
+	 * @param index the start index of the value to be read in {@link #b b}.
 	 * @return the read value.
 	 */
 	public int readInt(final int index)
@@ -2120,8 +2060,7 @@ public class ClassReader
 	 * {@link Attribute} sub classes, and is normally not needed by class
 	 * generators or adapters.</i>
 	 * 
-	 * @param index
-	 *            the start index of the value to be read in {@link #b b}.
+	 * @param index the start index of the value to be read in {@link #b b}.
 	 * @return the read value.
 	 */
 	public long readLong(final int index)
@@ -2136,11 +2075,9 @@ public class ClassReader
 	 * is intended for {@link Attribute} sub classes, and is normally not needed
 	 * by class generators or adapters.</i>
 	 * 
-	 * @param index
-	 *            the start index of an unsigned short value in {@link #b b},
+	 * @param index the start index of an unsigned short value in {@link #b b},
 	 *            whose value is the index of an UTF8 constant pool item.
-	 * @param buf
-	 *            buffer to be used to read the item. This buffer must be
+	 * @param buf buffer to be used to read the item. This buffer must be
 	 *            sufficiently large. It is not automatically resized.
 	 * @return the String corresponding to the specified UTF8 item.
 	 */
@@ -2159,12 +2096,9 @@ public class ClassReader
 	/**
 	 * Reads UTF8 string in {@link #b b}.
 	 * 
-	 * @param index
-	 *            start offset of the UTF8 string to be read.
-	 * @param utfLen
-	 *            length of the UTF8 string to be read.
-	 * @param buf
-	 *            buffer to be used to read the string. This buffer must be
+	 * @param index start offset of the UTF8 string to be read.
+	 * @param utfLen length of the UTF8 string to be read.
+	 * @param buf buffer to be used to read the string. This buffer must be
 	 *            sufficiently large. It is not automatically resized.
 	 * @return the String corresponding to the specified UTF8 string.
 	 */
@@ -2181,33 +2115,33 @@ public class ClassReader
 			c = b[index++];
 			switch (st)
 			{
-				case 0:
-					c = c & 0xFF;
-					if (c < 0x80)
-					{ // 0xxxxxxx
-						buf[strLen++] = (char) c;
-					}
-					else if (c < 0xE0 && c > 0xBF)
-					{ // 110x xxxx 10xx xxxx
-						cc = (char) (c & 0x1F);
-						st = 1;
-					}
-					else
-					{ // 1110 xxxx 10xx xxxx 10xx xxxx
-						cc = (char) (c & 0x0F);
-						st = 2;
-					}
-					break;
-
-				case 1: // byte 2 of 2-byte char or byte 3 of 3-byte char
-					buf[strLen++] = (char) ((cc << 6) | (c & 0x3F));
-					st = 0;
-					break;
-
-				case 2: // byte 2 of 3-byte char
-					cc = (char) ((cc << 6) | (c & 0x3F));
+			case 0:
+				c = c & 0xFF;
+				if (c < 0x80)
+				{ // 0xxxxxxx
+					buf[strLen++] = (char) c;
+				}
+				else if (c < 0xE0 && c > 0xBF)
+				{ // 110x xxxx 10xx xxxx
+					cc = (char) (c & 0x1F);
 					st = 1;
-					break;
+				}
+				else
+				{ // 1110 xxxx 10xx xxxx 10xx xxxx
+					cc = (char) (c & 0x0F);
+					st = 2;
+				}
+				break;
+
+			case 1: // byte 2 of 2-byte char or byte 3 of 3-byte char
+				buf[strLen++] = (char) ((cc << 6) | (c & 0x3F));
+				st = 0;
+				break;
+
+			case 2: // byte 2 of 3-byte char
+				cc = (char) ((cc << 6) | (c & 0x3F));
+				st = 1;
+				break;
 			}
 		}
 		return new String(buf, 0, strLen);
@@ -2218,11 +2152,9 @@ public class ClassReader
 	 * intended for {@link Attribute} sub classes, and is normally not needed by
 	 * class generators or adapters.</i>
 	 * 
-	 * @param index
-	 *            the start index of an unsigned short value in {@link #b b},
+	 * @param index the start index of an unsigned short value in {@link #b b},
 	 *            whose value is the index of a class constant pool item.
-	 * @param buf
-	 *            buffer to be used to read the item. This buffer must be
+	 * @param buf buffer to be used to read the item. This buffer must be
 	 *            sufficiently large. It is not automatically resized.
 	 * @return the String corresponding to the specified class item.
 	 */
@@ -2239,10 +2171,8 @@ public class ClassReader
 	 * method is intended for {@link Attribute} sub classes, and is normally not
 	 * needed by class generators or adapters.</i>
 	 * 
-	 * @param item
-	 *            the index of a constant pool item.
-	 * @param buf
-	 *            buffer to be used to read the item. This buffer must be
+	 * @param item the index of a constant pool item.
+	 * @param buf buffer to be used to read the item. This buffer must be
 	 *            sufficiently large. It is not automatically resized.
 	 * @return the {@link Integer}, {@link Float}, {@link Long}, {@link Double},
 	 *         {@link String} or {@link Type} corresponding to the given
@@ -2253,19 +2183,19 @@ public class ClassReader
 		int index = items[item];
 		switch (b[index - 1])
 		{
-			case ClassWriter.INT:
-				return new Integer(readInt(index));
-			case ClassWriter.FLOAT:
-				return new Float(Float.intBitsToFloat(readInt(index)));
-			case ClassWriter.LONG:
-				return new Long(readLong(index));
-			case ClassWriter.DOUBLE:
-				return new Double(Double.longBitsToDouble(readLong(index)));
-			case ClassWriter.CLASS:
-				return Type.getObjectType(readUTF8(index, buf));
-				// case ClassWriter.STR:
-			default:
-				return readUTF8(index, buf);
+		case ClassWriter.INT:
+			return new Integer(readInt(index));
+		case ClassWriter.FLOAT:
+			return new Float(Float.intBitsToFloat(readInt(index)));
+		case ClassWriter.LONG:
+			return new Long(readLong(index));
+		case ClassWriter.DOUBLE:
+			return new Double(Double.longBitsToDouble(readLong(index)));
+		case ClassWriter.CLASS:
+			return Type.getObjectType(readUTF8(index, buf));
+			// case ClassWriter.STR:
+		default:
+			return readUTF8(index, buf);
 		}
 	}
 }

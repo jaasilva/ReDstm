@@ -136,7 +136,7 @@ public class SCOReProtocol_cache extends SCOReProtocol
 
 	private void updateCache(ObjectMetadata metadata, ReadDone read)
 	{ // put received version in cache
-	// System.out.println("------ " + read); // XXX
+		// System.out.println("------ " + read); // XXX
 		CacheMsg msg = (CacheMsg) read.piggyback;
 		CacheContainer v = new CacheContainer();
 		v.value = read.value;

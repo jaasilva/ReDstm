@@ -116,25 +116,29 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 			{
 				if (other.insnDesc != null)
 					return false;
-			} else if (!insnDesc.equals(other.insnDesc))
+			}
+			else if (!insnDesc.equals(other.insnDesc))
 				return false;
 			if (origDesc == null)
 			{
 				if (other.origDesc != null)
 					return false;
-			} else if (!origDesc.equals(other.origDesc))
+			}
+			else if (!origDesc.equals(other.origDesc))
 				return false;
 			if (insnName == null)
 			{
 				if (other.insnName != null)
 					return false;
-			} else if (!insnName.equals(other.insnName))
+			}
+			else if (!insnName.equals(other.insnName))
 				return false;
 			if (insnOwner == null)
 			{
 				if (other.insnOwner != null)
 					return false;
-			} else if (!insnOwner.equals(other.insnOwner))
+			}
+			else if (!insnOwner.equals(other.insnOwner))
 				return false;
 			return true;
 		}
@@ -213,7 +217,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 			interfacesWithUniqueObject[interfaces.length] = UniqueObject.NAME;
 			super.visit(version, access, name, signature, superName,
 					interfacesWithUniqueObject);
-		} else
+		}
+		else
 		{
 			super.visit(version, access, name, signature, superName, interfaces);
 		}
@@ -280,7 +285,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 			fieldsHolder.addField(fieldAccess | Opcodes.ACC_STATIC,
 					"__STATIC__" + addressFieldName,
 					Type.LONG_TYPE.getDescriptor(), -1L);
-		} else
+		}
+		else
 		{
 			fieldsHolder.addField(fieldAccess, addressFieldName, ArrayUtil
 					.getTxType(desc).getDescriptor(), null);
@@ -455,7 +461,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 		if (returnReolver == null)
 		{
 			copyMethod.visitInsn(Opcodes.RETURN); // return;
-		} else
+		}
+		else
 		{
 			copyMethod.visitInsn(returnReolver.returnCode());
 		}
@@ -616,7 +623,8 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 			newArguments[0] = Type.getType("L" + owner + ";");
 			// add as a constant
 			newArguments[newArguments.length - 1] = Context.CONTEXT_TYPE;
-		} else
+		}
+		else
 		{
 			newArguments = new Type[arguments.length + 1];
 			System.arraycopy(arguments, 0, newArguments, 0, arguments.length);

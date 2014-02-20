@@ -29,9 +29,8 @@ import org.deuce.trove.HashFunctions;
 // ////////////////////////////////////////////////
 
 /**
- * A resizable, array-backed list of int primitives.
- * 
- * Created: Sat Dec 29 14:21:12 2001
+ * A resizable, array-backed list of int primitives. Created: Sat Dec 29
+ * 14:21:12 2001
  * 
  * @author Eric D. Friedman
  * @author Rob Eden
@@ -63,8 +62,7 @@ public class TArrayList implements Cloneable
 	 * Creates a new <code>TIntArrayList</code> instance with the specified
 	 * capacity.
 	 * 
-	 * @param capacity
-	 *            an <code>int</code> value
+	 * @param capacity an <code>int</code> value
 	 */
 	public TArrayList(int capacity)
 	{
@@ -77,8 +75,7 @@ public class TArrayList implements Cloneable
 	 * greater of the length of <tt>values</tt> and DEFAULT_CAPACITY and whose
 	 * initial contents are the specified values.
 	 * 
-	 * @param values
-	 *            an <code>int[]</code> value
+	 * @param values an <code>int[]</code> value
 	 */
 	public TArrayList(int[] values)
 	{
@@ -93,8 +90,7 @@ public class TArrayList implements Cloneable
 	 * elements. The size of the array ints on each resize unless
 	 * <tt>capacity</tt> requires more than twice the current capacity.
 	 * 
-	 * @param capacity
-	 *            an <code>int</code> value
+	 * @param capacity an <code>int</code> value
 	 */
 	public void ensureCapacity(int capacity)
 	{
@@ -145,8 +141,7 @@ public class TArrayList implements Cloneable
 	/**
 	 * Adds <tt>val</tt> to the end of the list, growing as needed.
 	 * 
-	 * @param val
-	 *            an <code>int</code> value
+	 * @param val an <code>int</code> value
 	 */
 	public void add(Object val)
 	{
@@ -158,8 +153,7 @@ public class TArrayList implements Cloneable
 	 * Adds the values in the array <tt>vals</tt> to the end of the list, in
 	 * order.
 	 * 
-	 * @param vals
-	 *            an <code>int[]</code> value
+	 * @param vals an <code>int[]</code> value
 	 */
 	public void add(int[] vals)
 	{
@@ -170,12 +164,9 @@ public class TArrayList implements Cloneable
 	 * Adds a subset of the values in the array <tt>vals</tt> to the end of the
 	 * list, in order.
 	 * 
-	 * @param vals
-	 *            an <code>int[]</code> value
-	 * @param offset
-	 *            the offset at which to start copying
-	 * @param length
-	 *            the number of values to copy.
+	 * @param vals an <code>int[]</code> value
+	 * @param offset the offset at which to start copying
+	 * @param length the number of values to copy.
 	 */
 	public void add(int[] vals, int offset, int length)
 	{
@@ -188,10 +179,8 @@ public class TArrayList implements Cloneable
 	 * Inserts <tt>value</tt> into the list at <tt>offset</tt>. All values
 	 * including and to the right of <tt>offset</tt> are shifted to the right.
 	 * 
-	 * @param offset
-	 *            an <code>int</code> value
-	 * @param value
-	 *            an <code>int</code> value
+	 * @param offset an <code>int</code> value
+	 * @param value an <code>int</code> value
 	 */
 	public void insert(int offset, int value)
 	{
@@ -213,10 +202,8 @@ public class TArrayList implements Cloneable
 	 * All values including and to the right of <tt>offset</tt> are shifted to
 	 * the right.
 	 * 
-	 * @param offset
-	 *            an <code>int</code> value
-	 * @param values
-	 *            an <code>int[]</code> value
+	 * @param offset an <code>int</code> value
+	 * @param values an <code>int[]</code> value
 	 */
 	public void insert(int offset, int[] values)
 	{
@@ -228,14 +215,11 @@ public class TArrayList implements Cloneable
 	 * <tt>offset</tt>. All values including and to the right of <tt>offset</tt>
 	 * are shifted to the right.
 	 * 
-	 * @param offset
-	 *            an <code>int</code> value
-	 * @param values
-	 *            an <code>int[]</code> value
-	 * @param valOffset
-	 *            the offset in the values array at which to start copying.
-	 * @param len
-	 *            the number of values to copy from the values array
+	 * @param offset an <code>int</code> value
+	 * @param values an <code>int[]</code> value
+	 * @param valOffset the offset in the values array at which to start
+	 *            copying.
+	 * @param len the number of values to copy from the values array
 	 */
 	public void insert(int offset, int[] values, int valOffset, int len)
 	{
@@ -256,8 +240,7 @@ public class TArrayList implements Cloneable
 	/**
 	 * Returns the value at the specified offset.
 	 * 
-	 * @param offset
-	 *            an <code>int</code> value
+	 * @param offset an <code>int</code> value
 	 * @return an <code>int</code> value
 	 */
 	public Object get(int offset)
@@ -273,8 +256,7 @@ public class TArrayList implements Cloneable
 	 * Returns the value at the specified offset without doing any bounds
 	 * checking.
 	 * 
-	 * @param offset
-	 *            an <code>int</code> value
+	 * @param offset an <code>int</code> value
 	 * @return an <code>int</code> value
 	 */
 	public Object getQuick(int offset)
@@ -285,10 +267,8 @@ public class TArrayList implements Cloneable
 	/**
 	 * Sets the value at the specified offset.
 	 * 
-	 * @param offset
-	 *            an <code>int</code> value
-	 * @param val
-	 *            an <code>int</code> value
+	 * @param offset an <code>int</code> value
+	 * @param val an <code>int</code> value
 	 */
 	public void set(int offset, int val)
 	{
@@ -303,10 +283,8 @@ public class TArrayList implements Cloneable
 	 * Sets the value at the specified offset and returns the previously stored
 	 * value.
 	 * 
-	 * @param offset
-	 *            an <code>int</code> value
-	 * @param val
-	 *            an <code>int</code> value
+	 * @param offset an <code>int</code> value
+	 * @param val an <code>int</code> value
 	 * @return the value previously stored at offset.
 	 */
 	public Object getSet(int offset, Object val)
@@ -324,10 +302,8 @@ public class TArrayList implements Cloneable
 	 * Replace the values in the list starting at <tt>offset</tt> with the
 	 * contents of the <tt>values</tt> array.
 	 * 
-	 * @param offset
-	 *            the first offset to replace
-	 * @param values
-	 *            the source of the new values
+	 * @param offset the first offset to replace
+	 * @param values the source of the new values
 	 */
 	public void set(int offset, Object[] values)
 	{
@@ -339,14 +315,10 @@ public class TArrayList implements Cloneable
 	 * <tt>length</tt> values from the <tt>values</tt> array, starting at
 	 * valOffset.
 	 * 
-	 * @param offset
-	 *            the first offset to replace
-	 * @param values
-	 *            the source of the new values
-	 * @param valOffset
-	 *            the first value to copy from the values array
-	 * @param length
-	 *            the number of values to copy
+	 * @param offset the first offset to replace
+	 * @param values the source of the new values
+	 * @param valOffset the first value to copy from the values array
+	 * @param length the number of values to copy
 	 */
 	public void set(int offset, Object[] values, int valOffset, int length)
 	{
@@ -360,10 +332,8 @@ public class TArrayList implements Cloneable
 	/**
 	 * Sets the value at the specified offset without doing any bounds checking.
 	 * 
-	 * @param offset
-	 *            an <code>int</code> value
-	 * @param val
-	 *            an <code>int</code> value
+	 * @param offset an <code>int</code> value
+	 * @param val an <code>int</code> value
 	 */
 	public void setQuick(int offset, Object val)
 	{
@@ -383,8 +353,7 @@ public class TArrayList implements Cloneable
 	 * Flushes the internal state of the list, setting the capacity of the empty
 	 * list to <tt>capacity</tt>.
 	 * 
-	 * @param capacity
-	 *            an <code>int</code> value
+	 * @param capacity an <code>int</code> value
 	 */
 	public void clear(int capacity)
 	{
@@ -440,8 +409,7 @@ public class TArrayList implements Cloneable
 	/**
 	 * Removes the value at <tt>offset</tt> from the list.
 	 * 
-	 * @param offset
-	 *            an <code>int</code> value
+	 * @param offset an <code>int</code> value
 	 * @return the value previously stored at offset.
 	 */
 	public Object remove(int offset)
@@ -454,10 +422,8 @@ public class TArrayList implements Cloneable
 	/**
 	 * Removes <tt>length</tt> values from the list, starting at <tt>offset</tt>
 	 * 
-	 * @param offset
-	 *            an <code>int</code> value
-	 * @param length
-	 *            an <code>int</code> value
+	 * @param offset an <code>int</code> value
+	 * @param length an <code>int</code> value
 	 */
 	public void remove(int offset, int length)
 	{
@@ -491,8 +457,7 @@ public class TArrayList implements Cloneable
 	/**
 	 * Transform each value in the list using the specified function.
 	 * 
-	 * @param function
-	 *            a <code>TIntFunction</code> value
+	 * @param function a <code>TIntFunction</code> value
 	 */
 	// public void transformValues(TIntFunction function) {
 	// for (int i = _pos; i-- > 0;) {
@@ -511,10 +476,8 @@ public class TArrayList implements Cloneable
 	/**
 	 * Reverse the order of the elements in the range of the list.
 	 * 
-	 * @param from
-	 *            the inclusive index at which to start reversing
-	 * @param to
-	 *            the exclusive index at which to stop reversing
+	 * @param from the inclusive index at which to start reversing
+	 * @param to the exclusive index at which to stop reversing
 	 */
 	public void reverse(int from, int to)
 	{
@@ -536,8 +499,7 @@ public class TArrayList implements Cloneable
 	 * Shuffle the elements of the list using the specified random number
 	 * generator.
 	 * 
-	 * @param rand
-	 *            a <code>Random</code> value
+	 * @param rand a <code>Random</code> value
 	 */
 	public void shuffle(Random rand)
 	{
@@ -550,10 +512,8 @@ public class TArrayList implements Cloneable
 	/**
 	 * Swap the values at offsets <tt>i</tt> and <tt>j</tt>.
 	 * 
-	 * @param i
-	 *            an offset into the data array
-	 * @param j
-	 *            an offset into the data array
+	 * @param i an offset into the data array
+	 * @param j an offset into the data array
 	 */
 	private final void swap(int i, int j)
 	{
@@ -588,15 +548,11 @@ public class TArrayList implements Cloneable
 	/**
 	 * Returns a sublist of this list.
 	 * 
-	 * @param begin
-	 *            low endpoint (inclusive) of the subList.
-	 * @param end
-	 *            high endpoint (exclusive) of the subList.
+	 * @param begin low endpoint (inclusive) of the subList.
+	 * @param end high endpoint (exclusive) of the subList.
 	 * @return sublist of this list from begin, inclusive to end, exclusive.
-	 * @throws IndexOutOfBoundsException
-	 *             - endpoint out of range
-	 * @throws IllegalArgumentException
-	 *             - endpoints out of order (end > begin)
+	 * @throws IndexOutOfBoundsException - endpoint out of range
+	 * @throws IllegalArgumentException - endpoints out of order (end > begin)
 	 */
 	public TArrayList subList(int begin, int end)
 	{
@@ -628,10 +584,8 @@ public class TArrayList implements Cloneable
 	/**
 	 * Copies a slice of the list into a native array.
 	 * 
-	 * @param offset
-	 *            the offset at which to start copying
-	 * @param len
-	 *            the number of values to copy.
+	 * @param offset the offset at which to start copying
+	 * @param len the number of values to copy.
 	 * @return an <code>int[]</code> value
 	 */
 	public Object[] toNativeArray(int offset, int len)
@@ -644,12 +598,9 @@ public class TArrayList implements Cloneable
 	/**
 	 * Copies a slice of the list into a native array.
 	 * 
-	 * @param dest
-	 *            the array to copy into.
-	 * @param offset
-	 *            the offset of the first value to copy
-	 * @param len
-	 *            the number of values to copy.
+	 * @param dest the array to copy into.
+	 * @param offset the offset of the first value to copy
+	 * @param len the number of values to copy.
 	 */
 	public void toNativeArray(Object[] dest, int offset, int len)
 	{
@@ -669,8 +620,7 @@ public class TArrayList implements Cloneable
 	/**
 	 * Compares this list to another list, value by value.
 	 * 
-	 * @param other
-	 *            the object to compare against
+	 * @param other the object to compare against
 	 * @return true if other is a TIntArrayList and has exactly the same values.
 	 */
 	public boolean equals(Object other)
@@ -720,8 +670,7 @@ public class TArrayList implements Cloneable
 	 * Applies the procedure to each value in the list in ascending (front to
 	 * back) order.
 	 * 
-	 * @param procedure
-	 *            a <code>TIntProcedure</code> value
+	 * @param procedure a <code>TIntProcedure</code> value
 	 * @return true if the procedure did not terminate prematurely.
 	 */
 	// public boolean forEach(TIntProcedure procedure) {
@@ -737,8 +686,7 @@ public class TArrayList implements Cloneable
 	 * Applies the procedure to each value in the list in descending (back to
 	 * front) order.
 	 * 
-	 * @param procedure
-	 *            a <code>TIntProcedure</code> value
+	 * @param procedure a <code>TIntProcedure</code> value
 	 * @return true if the procedure did not terminate prematurely.
 	 */
 	// public boolean forEachDescending(TIntProcedure procedure) {
@@ -767,10 +715,8 @@ public class TArrayList implements Cloneable
 	 * Sort a slice of the list (ascending) using the Sun quicksort
 	 * implementation.
 	 * 
-	 * @param fromIndex
-	 *            the index at which to start sorting (inclusive)
-	 * @param toIndex
-	 *            the index at which to stop sorting (exclusive)
+	 * @param fromIndex the index at which to start sorting (inclusive)
+	 * @param toIndex the index at which to stop sorting (exclusive)
 	 * @see java.util.Arrays#sort
 	 */
 	public void sort(int fromIndex, int toIndex)
@@ -783,8 +729,7 @@ public class TArrayList implements Cloneable
 	/**
 	 * Fills every slot in the list with the specified value.
 	 * 
-	 * @param val
-	 *            the value to use when filling
+	 * @param val the value to use when filling
 	 */
 	public void fill(int val)
 	{
@@ -794,12 +739,9 @@ public class TArrayList implements Cloneable
 	/**
 	 * Fills a range in the list with the specified value.
 	 * 
-	 * @param fromIndex
-	 *            the offset at which to start filling (inclusive)
-	 * @param toIndex
-	 *            the offset at which to stop filling (exclusive)
-	 * @param val
-	 *            the value to use when filling
+	 * @param fromIndex the offset at which to start filling (inclusive)
+	 * @param toIndex the offset at which to stop filling (exclusive)
+	 * @param val the value to use when filling
 	 */
 	public void fill(int fromIndex, int toIndex, int val)
 	{
@@ -817,8 +759,7 @@ public class TArrayList implements Cloneable
 	 * Performs a binary search for <tt>value</tt> in the entire list. Note that
 	 * you <b>must</b> @{link #sort sort} the list before doing a search.
 	 * 
-	 * @param value
-	 *            the value to search for
+	 * @param value the value to search for
 	 * @return the absolute offset in the list of the value, or its negative
 	 *         insertion point into the sorted list.
 	 */
@@ -831,12 +772,9 @@ public class TArrayList implements Cloneable
 	 * that you <b>must</b> @{link #sort sort} the list or the range before
 	 * doing a search.
 	 * 
-	 * @param value
-	 *            the value to search for
-	 * @param fromIndex
-	 *            the lower boundary of the range (inclusive)
-	 * @param toIndex
-	 *            the upper boundary of the range (exclusive)
+	 * @param value the value to search for
+	 * @param fromIndex the lower boundary of the range (inclusive)
+	 * @param toIndex the upper boundary of the range (exclusive)
 	 * @return the absolute offset in the list of the value, or its negative
 	 *         insertion point into the sorted list.
 	 */
@@ -869,8 +807,7 @@ public class TArrayList implements Cloneable
 	/**
 	 * Searches the list front to back for the index of <tt>value</tt>.
 	 * 
-	 * @param value
-	 *            an <code>int</code> value
+	 * @param value an <code>int</code> value
 	 * @return the first offset of the value, or -1 if it is not in the list.
 	 * @see #binarySearch for faster searches on sorted lists
 	 */
@@ -883,10 +820,8 @@ public class TArrayList implements Cloneable
 	 * Searches the list front to back for the index of <tt>value</tt>, starting
 	 * at <tt>offset</tt>.
 	 * 
-	 * @param offset
-	 *            the offset at which to start the linear search (inclusive)
-	 * @param value
-	 *            an <code>int</code> value
+	 * @param offset the offset at which to start the linear search (inclusive)
+	 * @param value an <code>int</code> value
 	 * @return the first offset of the value, or -1 if it is not in the list.
 	 * @see #binarySearch for faster searches on sorted lists
 	 */
@@ -905,8 +840,7 @@ public class TArrayList implements Cloneable
 	/**
 	 * Searches the list back to front for the last index of <tt>value</tt>.
 	 * 
-	 * @param value
-	 *            an <code>int</code> value
+	 * @param value an <code>int</code> value
 	 * @return the last offset of the value, or -1 if it is not in the list.
 	 * @see #binarySearch for faster searches on sorted lists
 	 */
@@ -919,10 +853,8 @@ public class TArrayList implements Cloneable
 	 * Searches the list back to front for the last index of <tt>value</tt>,
 	 * starting at <tt>offset</tt>.
 	 * 
-	 * @param offset
-	 *            the offset at which to start the linear search (exclusive)
-	 * @param value
-	 *            an <code>int</code> value
+	 * @param offset the offset at which to start the linear search (exclusive)
+	 * @param value an <code>int</code> value
 	 * @return the last offset of the value, or -1 if it is not in the list.
 	 * @see #binarySearch for faster searches on sorted lists
 	 */
@@ -941,8 +873,7 @@ public class TArrayList implements Cloneable
 	/**
 	 * Searches the list for <tt>value</tt>
 	 * 
-	 * @param value
-	 *            an <code>int</code> value
+	 * @param value an <code>int</code> value
 	 * @return true if value is in the list.
 	 */
 	public boolean contains(Object value)
@@ -954,8 +885,7 @@ public class TArrayList implements Cloneable
 	 * Searches the list for values satisfying <tt>condition</tt> in the manner
 	 * of the *nix <tt>grep</tt> utility.
 	 * 
-	 * @param condition
-	 *            a condition to apply to each element in the list
+	 * @param condition a condition to apply to each element in the list
 	 * @return a list of values which match the condition.
 	 */
 	// public TArrayList grep(TIntProcedure condition) {
@@ -972,8 +902,7 @@ public class TArrayList implements Cloneable
 	 * Searches the list for values which do <b>not</b> satisfy
 	 * <tt>condition</tt>. This is akin to *nix <code>grep -v</code>.
 	 * 
-	 * @param condition
-	 *            a condition to apply to each element in the list
+	 * @param condition a condition to apply to each element in the list
 	 * @return a list of values which do not match the condition.
 	 */
 	// public TArrayList inverseGrep(TIntProcedure condition) {
@@ -990,8 +919,7 @@ public class TArrayList implements Cloneable
 	 * Finds the maximum value in the list.
 	 * 
 	 * @return the largest value in the list.
-	 * @exception IllegalStateException
-	 *                if the list is empty
+	 * @exception IllegalStateException if the list is empty
 	 */
 	// public int max() {
 	// if (size() == 0) {
@@ -1010,8 +938,7 @@ public class TArrayList implements Cloneable
 	 * Finds the minimum value in the list.
 	 * 
 	 * @return the smallest value in the list.
-	 * @exception IllegalStateException
-	 *                if the list is empty
+	 * @exception IllegalStateException if the list is empty
 	 */
 	// public int min() {
 	// if (size() == 0) {

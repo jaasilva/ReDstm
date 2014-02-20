@@ -13,12 +13,12 @@ public class List<T>
 	{
 		switch (mode)
 		{
-			case PARTIAL:
-				head = new PartialNode<T>(null, null);
-				break;
-			case TOTAL:
-				head = new TotalNode<T>(null, null);
-				break;
+		case PARTIAL:
+			head = new PartialNode<T>(null, null);
+			break;
+		case TOTAL:
+			head = new TotalNode<T>(null, null);
+			break;
 		}
 	}
 

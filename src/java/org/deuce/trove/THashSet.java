@@ -27,9 +27,7 @@ import java.lang.reflect.Array;
 
 /**
  * An implementation of the <tt>Set</tt> interface that uses an open-addressed
- * hash table to store its contents.
- * 
- * Created: Sat Nov 3 10:38:17 2001
+ * hash table to store its contents. Created: Sat Nov 3 10:38:17 2001
  * 
  * @author Eric D. Friedman
  * @version $Id: THashSet.java,v 1.21 2008/10/07 20:33:56 robeden Exp $
@@ -54,8 +52,7 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 	 * Creates a new <code>THashSet</code> instance with the default capacity
 	 * and load factor.
 	 * 
-	 * @param strategy
-	 *            used to compute hash codes and to compare objects.
+	 * @param strategy used to compute hash codes and to compare objects.
 	 */
 	public THashSet(TObjectHashingStrategy<E> strategy)
 	{
@@ -67,8 +64,7 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 	 * to or greater than <tt>initialCapacity</tt> and with the default load
 	 * factor.
 	 * 
-	 * @param initialCapacity
-	 *            an <code>int</code> value
+	 * @param initialCapacity an <code>int</code> value
 	 */
 	public THashSet(int initialCapacity)
 	{
@@ -80,10 +76,8 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 	 * to or greater than <tt>initialCapacity</tt> and with the default load
 	 * factor.
 	 * 
-	 * @param initialCapacity
-	 *            an <code>int</code> value
-	 * @param strategy
-	 *            used to compute hash codes and to compare objects.
+	 * @param initialCapacity an <code>int</code> value
+	 * @param strategy used to compute hash codes and to compare objects.
 	 */
 	public THashSet(int initialCapacity, TObjectHashingStrategy<E> strategy)
 	{
@@ -95,10 +89,8 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 	 * to or greater than <tt>initialCapacity</tt> and with the specified load
 	 * factor.
 	 * 
-	 * @param initialCapacity
-	 *            an <code>int</code> value
-	 * @param loadFactor
-	 *            a <code>float</code> value
+	 * @param initialCapacity an <code>int</code> value
+	 * @param loadFactor a <code>float</code> value
 	 */
 	public THashSet(int initialCapacity, float loadFactor)
 	{
@@ -110,12 +102,9 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 	 * to or greater than <tt>initialCapacity</tt> and with the specified load
 	 * factor.
 	 * 
-	 * @param initialCapacity
-	 *            an <code>int</code> value
-	 * @param loadFactor
-	 *            a <code>float</code> value
-	 * @param strategy
-	 *            used to compute hash codes and to compare objects.
+	 * @param initialCapacity an <code>int</code> value
+	 * @param loadFactor a <code>float</code> value
+	 * @param strategy used to compute hash codes and to compare objects.
 	 */
 	public THashSet(int initialCapacity, float loadFactor,
 			TObjectHashingStrategy<E> strategy)
@@ -127,8 +116,7 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 	 * Creates a new <code>THashSet</code> instance containing the elements of
 	 * <tt>collection</tt>.
 	 * 
-	 * @param collection
-	 *            a <code>Collection</code> value
+	 * @param collection a <code>Collection</code> value
 	 */
 	public THashSet(Collection<? extends E> collection)
 	{
@@ -140,10 +128,8 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 	 * Creates a new <code>THashSet</code> instance containing the elements of
 	 * <tt>collection</tt>.
 	 * 
-	 * @param collection
-	 *            a <code>Collection</code> value
-	 * @param strategy
-	 *            used to compute hash codes and to compare objects.
+	 * @param collection a <code>Collection</code> value
+	 * @param strategy used to compute hash codes and to compare objects.
 	 */
 	public THashSet(Collection<? extends E> collection,
 			TObjectHashingStrategy<E> strategy)
@@ -161,8 +147,7 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 	/**
 	 * Inserts a value into the set.
 	 * 
-	 * @param obj
-	 *            an <code>Object</code> value
+	 * @param obj an <code>Object</code> value
 	 * @return true if the set was modified by the add operation
 	 */
 	public boolean add(E obj)
@@ -232,8 +217,7 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 	/**
 	 * Expands the set to accommodate new values.
 	 * 
-	 * @param newCapacity
-	 *            an <code>int</code> value
+	 * @param newCapacity an <code>int</code> value
 	 */
 	protected void rehash(int newCapacity)
 	{
@@ -273,8 +257,7 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 	/**
 	 * Returns a typed array of the objects in the set.
 	 * 
-	 * @param a
-	 *            an <code>Object[]</code> value
+	 * @param a an <code>Object[]</code> value
 	 * @return an <code>Object[]</code> value
 	 */
 	public <T> T[] toArray(T[] a)
@@ -314,8 +297,7 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 	/**
 	 * Removes <tt>obj</tt> from the set.
 	 * 
-	 * @param obj
-	 *            an <code>Object</code> value
+	 * @param obj an <code>Object</code> value
 	 * @return true if the set was modified by the remove operation.
 	 */
 	public boolean remove(Object obj)
@@ -344,8 +326,7 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 	 * Tests the set to determine if all of the elements in <tt>collection</tt>
 	 * are present.
 	 * 
-	 * @param collection
-	 *            a <code>Collection</code> value
+	 * @param collection a <code>Collection</code> value
 	 * @return true if all elements were present in the set.
 	 */
 	public boolean containsAll(Collection<?> collection)
@@ -363,8 +344,7 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 	/**
 	 * Adds all of the elements in <tt>collection</tt> to the set.
 	 * 
-	 * @param collection
-	 *            a <code>Collection</code> value
+	 * @param collection a <code>Collection</code> value
 	 * @return true if the set was modified by the add all operation.
 	 */
 	public boolean addAll(Collection<? extends E> collection)
@@ -387,8 +367,7 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 	/**
 	 * Removes all of the elements in <tt>collection</tt> from the set.
 	 * 
-	 * @param collection
-	 *            a <code>Collection</code> value
+	 * @param collection a <code>Collection</code> value
 	 * @return true if the set was modified by the remove all operation.
 	 */
 	public boolean removeAll(Collection<?> collection)
@@ -412,8 +391,7 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 	 * Removes any values in the set which are not contained in
 	 * <tt>collection</tt>.
 	 * 
-	 * @param collection
-	 *            a <code>Collection</code> value
+	 * @param collection a <code>Collection</code> value
 	 * @return true if the set was modified by the retain all operation
 	 */
 	public boolean retainAll(Collection<?> collection)

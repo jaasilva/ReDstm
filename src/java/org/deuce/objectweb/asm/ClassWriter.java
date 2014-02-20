@@ -1,29 +1,25 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework Copyright (c)
- * 2000-2007 INRIA, France Telecom All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer. 2. Redistributions in
- * binary form must reproduce the above copyright notice, this list of
- * conditions and the following disclaimer in the documentation and/or other
- * materials provided with the distribution. 3. Neither the name of the
- * copyright holders nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written
- * permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * 2000-2007 INRIA, France Telecom All rights reserved. Redistribution and use
+ * in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met: 1. Redistributions of source
+ * code must retain the above copyright notice, this list of conditions and the
+ * following disclaimer. 2. Redistributions in binary form must reproduce the
+ * above copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the copyright holders nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission. THIS SOFTWARE IS PROVIDED
+ * BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.deuce.objectweb.asm;
 
@@ -530,8 +526,7 @@ public class ClassWriter implements ClassVisitor
 	/**
 	 * Constructs a new {@link ClassWriter} object.
 	 * 
-	 * @param flags
-	 *            option flags that can be used to modify the default behavior
+	 * @param flags option flags that can be used to modify the default behavior
 	 *            of this class. See {@link #COMPUTE_MAXS},
 	 *            {@link #COMPUTE_FRAMES}.
 	 */
@@ -552,7 +547,6 @@ public class ClassWriter implements ClassVisitor
 	 * Constructs a new {@link ClassWriter} object and enables optimizations for
 	 * "mostly add" bytecode transformations. These optimizations are the
 	 * following:
-	 * 
 	 * <ul>
 	 * <li>The constant pool from the original class is copied as is in the new
 	 * class, which saves time. New constant pool entries will be added at the
@@ -567,13 +561,11 @@ public class ClassWriter implements ClassVisitor
 	 * other {@link ClassVisitor} instance).</li>
 	 * </ul>
 	 * 
-	 * @param classReader
-	 *            the {@link ClassReader} used to read the original class. It
-	 *            will be used to copy the entire constant pool from the
-	 *            original class and also to copy other fragments of original
-	 *            bytecode where applicable.
-	 * @param flags
-	 *            option flags that can be used to modify the default behavior
+	 * @param classReader the {@link ClassReader} used to read the original
+	 *            class. It will be used to copy the entire constant pool from
+	 *            the original class and also to copy other fragments of
+	 *            original bytecode where applicable.
+	 * @param flags option flags that can be used to modify the default behavior
 	 *            of this class. See {@link #COMPUTE_MAXS},
 	 *            {@link #COMPUTE_FRAMES}.
 	 */
@@ -877,8 +869,7 @@ public class ClassWriter implements ClassVisitor
 	 * Adds a number or string constant to the constant pool of the class being
 	 * build. Does nothing if the constant pool already contains a similar item.
 	 * 
-	 * @param cst
-	 *            the value of the constant to be added to the constant pool.
+	 * @param cst the value of the constant to be added to the constant pool.
 	 *            This parameter must be an {@link Integer}, a {@link Float}, a
 	 *            {@link Long}, a {@link Double}, a {@link String} or a
 	 *            {@link Type}.
@@ -948,8 +939,7 @@ public class ClassWriter implements ClassVisitor
 	 * <i>This method is intended for {@link Attribute} sub classes, and is
 	 * normally not needed by class generators or adapters.</i>
 	 * 
-	 * @param cst
-	 *            the value of the constant to be added to the constant pool.
+	 * @param cst the value of the constant to be added to the constant pool.
 	 *            This parameter must be an {@link Integer}, a {@link Float}, a
 	 *            {@link Long}, a {@link Double} or a {@link String}.
 	 * @return the index of a new or already existing constant item with the
@@ -966,8 +956,7 @@ public class ClassWriter implements ClassVisitor
 	 * method is intended for {@link Attribute} sub classes, and is normally not
 	 * needed by class generators or adapters.</i>
 	 * 
-	 * @param value
-	 *            the String value.
+	 * @param value the String value.
 	 * @return the index of a new or already existing UTF8 item.
 	 */
 	public int newUTF8(final String value)
@@ -989,8 +978,7 @@ public class ClassWriter implements ClassVisitor
 	 * <i>This method is intended for {@link Attribute} sub classes, and is
 	 * normally not needed by class generators or adapters.</i>
 	 * 
-	 * @param value
-	 *            the internal name of the class.
+	 * @param value the internal name of the class.
 	 * @return a new or already existing class reference item.
 	 */
 	Item newClassItem(final String value)
@@ -1012,8 +1000,7 @@ public class ClassWriter implements ClassVisitor
 	 * <i>This method is intended for {@link Attribute} sub classes, and is
 	 * normally not needed by class generators or adapters.</i>
 	 * 
-	 * @param value
-	 *            the internal name of the class.
+	 * @param value the internal name of the class.
 	 * @return the index of a new or already existing class reference item.
 	 */
 	public int newClass(final String value)
@@ -1025,12 +1012,9 @@ public class ClassWriter implements ClassVisitor
 	 * Adds a field reference to the constant pool of the class being build.
 	 * Does nothing if the constant pool already contains a similar item.
 	 * 
-	 * @param owner
-	 *            the internal name of the field's owner class.
-	 * @param name
-	 *            the field's name.
-	 * @param desc
-	 *            the field's descriptor.
+	 * @param owner the internal name of the field's owner class.
+	 * @param name the field's name.
+	 * @param desc the field's descriptor.
 	 * @return a new or already existing field reference item.
 	 */
 	Item newFieldItem(final String owner, final String name, final String desc)
@@ -1052,12 +1036,9 @@ public class ClassWriter implements ClassVisitor
 	 * <i>This method is intended for {@link Attribute} sub classes, and is
 	 * normally not needed by class generators or adapters.</i>
 	 * 
-	 * @param owner
-	 *            the internal name of the field's owner class.
-	 * @param name
-	 *            the field's name.
-	 * @param desc
-	 *            the field's descriptor.
+	 * @param owner the internal name of the field's owner class.
+	 * @param name the field's name.
+	 * @param desc the field's descriptor.
 	 * @return the index of a new or already existing field reference item.
 	 */
 	public int newField(final String owner, final String name, final String desc)
@@ -1069,14 +1050,10 @@ public class ClassWriter implements ClassVisitor
 	 * Adds a method reference to the constant pool of the class being build.
 	 * Does nothing if the constant pool already contains a similar item.
 	 * 
-	 * @param owner
-	 *            the internal name of the method's owner class.
-	 * @param name
-	 *            the method's name.
-	 * @param desc
-	 *            the method's descriptor.
-	 * @param itf
-	 *            <tt>true</tt> if <tt>owner</tt> is an interface.
+	 * @param owner the internal name of the method's owner class.
+	 * @param name the method's name.
+	 * @param desc the method's descriptor.
+	 * @param itf <tt>true</tt> if <tt>owner</tt> is an interface.
 	 * @return a new or already existing method reference item.
 	 */
 	Item newMethodItem(final String owner, final String name,
@@ -1100,14 +1077,10 @@ public class ClassWriter implements ClassVisitor
 	 * <i>This method is intended for {@link Attribute} sub classes, and is
 	 * normally not needed by class generators or adapters.</i>
 	 * 
-	 * @param owner
-	 *            the internal name of the method's owner class.
-	 * @param name
-	 *            the method's name.
-	 * @param desc
-	 *            the method's descriptor.
-	 * @param itf
-	 *            <tt>true</tt> if <tt>owner</tt> is an interface.
+	 * @param owner the internal name of the method's owner class.
+	 * @param name the method's name.
+	 * @param desc the method's descriptor.
+	 * @param itf <tt>true</tt> if <tt>owner</tt> is an interface.
 	 * @return the index of a new or already existing method reference item.
 	 */
 	public int newMethod(final String owner, final String name,
@@ -1120,8 +1093,7 @@ public class ClassWriter implements ClassVisitor
 	 * Adds an integer to the constant pool of the class being build. Does
 	 * nothing if the constant pool already contains a similar item.
 	 * 
-	 * @param value
-	 *            the int value.
+	 * @param value the int value.
 	 * @return a new or already existing int item.
 	 */
 	Item newInteger(final int value)
@@ -1141,8 +1113,7 @@ public class ClassWriter implements ClassVisitor
 	 * Adds a float to the constant pool of the class being build. Does nothing
 	 * if the constant pool already contains a similar item.
 	 * 
-	 * @param value
-	 *            the float value.
+	 * @param value the float value.
 	 * @return a new or already existing float item.
 	 */
 	Item newFloat(final float value)
@@ -1162,8 +1133,7 @@ public class ClassWriter implements ClassVisitor
 	 * Adds a long to the constant pool of the class being build. Does nothing
 	 * if the constant pool already contains a similar item.
 	 * 
-	 * @param value
-	 *            the long value.
+	 * @param value the long value.
 	 * @return a new or already existing long item.
 	 */
 	Item newLong(final long value)
@@ -1184,8 +1154,7 @@ public class ClassWriter implements ClassVisitor
 	 * Adds a double to the constant pool of the class being build. Does nothing
 	 * if the constant pool already contains a similar item.
 	 * 
-	 * @param value
-	 *            the double value.
+	 * @param value the double value.
 	 * @return a new or already existing double item.
 	 */
 	Item newDouble(final double value)
@@ -1206,8 +1175,7 @@ public class ClassWriter implements ClassVisitor
 	 * Adds a string to the constant pool of the class being build. Does nothing
 	 * if the constant pool already contains a similar item.
 	 * 
-	 * @param value
-	 *            the String value.
+	 * @param value the String value.
 	 * @return a new or already existing string item.
 	 */
 	private Item newString(final String value)
@@ -1229,10 +1197,8 @@ public class ClassWriter implements ClassVisitor
 	 * method is intended for {@link Attribute} sub classes, and is normally not
 	 * needed by class generators or adapters.</i>
 	 * 
-	 * @param name
-	 *            a name.
-	 * @param desc
-	 *            a type descriptor.
+	 * @param name a name.
+	 * @param desc a type descriptor.
 	 * @return the index of a new or already existing name and type item.
 	 */
 	public int newNameType(final String name, final String desc)
@@ -1244,10 +1210,8 @@ public class ClassWriter implements ClassVisitor
 	 * Adds a name and type to the constant pool of the class being build. Does
 	 * nothing if the constant pool already contains a similar item.
 	 * 
-	 * @param name
-	 *            a name.
-	 * @param desc
-	 *            a type descriptor.
+	 * @param name a name.
+	 * @param desc a type descriptor.
 	 * @return a new or already existing name and type item.
 	 */
 	Item newNameTypeItem(final String name, final String desc)
@@ -1267,8 +1231,7 @@ public class ClassWriter implements ClassVisitor
 	 * Adds the given internal name to {@link #typeTable} and returns its index.
 	 * Does nothing if the type table already contains this internal name.
 	 * 
-	 * @param type
-	 *            the internal name to be added to the type table.
+	 * @param type the internal name to be added to the type table.
 	 * @return the index of this internal name in the type table.
 	 */
 	int addType(final String type)
@@ -1287,11 +1250,9 @@ public class ClassWriter implements ClassVisitor
 	 * index. This method is used for UNINITIALIZED types, made of an internal
 	 * name and a bytecode offset.
 	 * 
-	 * @param type
-	 *            the internal name to be added to the type table.
-	 * @param offset
-	 *            the bytecode offset of the NEW instruction that created this
-	 *            UNINITIALIZED type value.
+	 * @param type the internal name to be added to the type table.
+	 * @param offset the bytecode offset of the NEW instruction that created
+	 *            this UNINITIALIZED type value.
 	 * @return the index of this internal name in the type table.
 	 */
 	int addUninitializedType(final String type, final int offset)
@@ -1311,8 +1272,7 @@ public class ClassWriter implements ClassVisitor
 	/**
 	 * Adds the given Item to {@link #typeTable}.
 	 * 
-	 * @param item
-	 *            the value to be added to the type table.
+	 * @param item the value to be added to the type table.
 	 * @return the added Item, which a new Item instance with the same value as
 	 *         the given Item.
 	 */
@@ -1341,10 +1301,8 @@ public class ClassWriter implements ClassVisitor
 	 * {@link #items} hash table to speedup future calls with the same
 	 * parameters.
 	 * 
-	 * @param type1
-	 *            index of an internal name in {@link #typeTable}.
-	 * @param type2
-	 *            index of an internal name in {@link #typeTable}.
+	 * @param type1 index of an internal name in {@link #typeTable}.
+	 * @param type2 index of an internal name in {@link #typeTable}.
 	 * @return the index of the common super type of the two given types.
 	 */
 	int getMergedType(final int type1, final int type2)
@@ -1373,10 +1331,8 @@ public class ClassWriter implements ClassVisitor
 	 * that is currently being generated by this ClassWriter, which can of
 	 * course not be loaded since it is under construction.
 	 * 
-	 * @param type1
-	 *            the internal name of a class.
-	 * @param type2
-	 *            the internal name of another class.
+	 * @param type1 the internal name of a class.
+	 * @param type2 the internal name of another class.
 	 * @return the internal name of the common super class of the two given
 	 *         classes.
 	 */
@@ -1409,8 +1365,7 @@ public class ClassWriter implements ClassVisitor
 			do
 			{
 				c = c.getSuperclass();
-			}
-			while (!c.isAssignableFrom(d));
+			} while (!c.isAssignableFrom(d));
 			return c.getName().replace('.', '/');
 		}
 	}
@@ -1419,8 +1374,7 @@ public class ClassWriter implements ClassVisitor
 	 * Returns the constant pool's hash table item which is equal to the given
 	 * item.
 	 * 
-	 * @param key
-	 *            a constant pool item.
+	 * @param key a constant pool item.
 	 * @return the constant pool's hash table item which is equal to the given
 	 *         item, or <tt>null</tt> if there is no such item.
 	 */
@@ -1438,8 +1392,7 @@ public class ClassWriter implements ClassVisitor
 	 * Puts the given item in the constant pool's hash table. The hash table
 	 * <i>must</i> not already contains this item.
 	 * 
-	 * @param i
-	 *            the item to be added to the constant pool's hash table.
+	 * @param i the item to be added to the constant pool's hash table.
 	 */
 	private void put(final Item i)
 	{
@@ -1471,12 +1424,9 @@ public class ClassWriter implements ClassVisitor
 	/**
 	 * Puts one byte and two shorts into the constant pool.
 	 * 
-	 * @param b
-	 *            a byte.
-	 * @param s1
-	 *            a short.
-	 * @param s2
-	 *            another short.
+	 * @param b a byte.
+	 * @param s1 a short.
+	 * @param s2 another short.
 	 */
 	private void put122(final int b, final int s1, final int s2)
 	{

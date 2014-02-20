@@ -104,24 +104,24 @@ public class ArrayUtil
 		{
 			switch (t.getSort())
 			{
-				case Type.INT:
-					return Type.getType(IntArrayContainer.class);
-				case Type.SHORT:
-					return Type.getType(ShortArrayContainer.class);
-				case Type.LONG:
-					return Type.getType(LongArrayContainer.class);
-				case Type.BYTE:
-					return Type.getType(ByteArrayContainer.class);
-				case Type.BOOLEAN:
-					return Type.getType(BooleanArrayContainer.class);
-				case Type.CHAR:
-					return Type.getType(CharArrayContainer.class);
-				case Type.FLOAT:
-					return Type.getType(FloatArrayContainer.class);
-				case Type.DOUBLE:
-					return Type.getType(DoubleArrayContainer.class);
-				default:
-					return Type.getType(ObjectArrayContainer.class);
+			case Type.INT:
+				return Type.getType(IntArrayContainer.class);
+			case Type.SHORT:
+				return Type.getType(ShortArrayContainer.class);
+			case Type.LONG:
+				return Type.getType(LongArrayContainer.class);
+			case Type.BYTE:
+				return Type.getType(ByteArrayContainer.class);
+			case Type.BOOLEAN:
+				return Type.getType(BooleanArrayContainer.class);
+			case Type.CHAR:
+				return Type.getType(CharArrayContainer.class);
+			case Type.FLOAT:
+				return Type.getType(FloatArrayContainer.class);
+			case Type.DOUBLE:
+				return Type.getType(DoubleArrayContainer.class);
+			default:
+				return Type.getType(ObjectArrayContainer.class);
 			}
 		}
 		return Type.getType(MultiArrayContainer.class);
@@ -152,24 +152,24 @@ public class ArrayUtil
 	{
 		switch (t.getSort())
 		{
-			case Type.INT:
-				return IntArrayContainer.CTOR_DESC;
-			case Type.SHORT:
-				return ShortArrayContainer.CTOR_DESC;
-			case Type.LONG:
-				return LongArrayContainer.CTOR_DESC;
-			case Type.BYTE:
-				return ByteArrayContainer.CTOR_DESC;
-			case Type.BOOLEAN:
-				return BooleanArrayContainer.CTOR_DESC;
-			case Type.CHAR:
-				return CharArrayContainer.CTOR_DESC;
-			case Type.FLOAT:
-				return FloatArrayContainer.CTOR_DESC;
-			case Type.DOUBLE:
-				return DoubleArrayContainer.CTOR_DESC;
-			default:
-				return ObjectArrayContainer.CTOR_DESC;
+		case Type.INT:
+			return IntArrayContainer.CTOR_DESC;
+		case Type.SHORT:
+			return ShortArrayContainer.CTOR_DESC;
+		case Type.LONG:
+			return LongArrayContainer.CTOR_DESC;
+		case Type.BYTE:
+			return ByteArrayContainer.CTOR_DESC;
+		case Type.BOOLEAN:
+			return BooleanArrayContainer.CTOR_DESC;
+		case Type.CHAR:
+			return CharArrayContainer.CTOR_DESC;
+		case Type.FLOAT:
+			return FloatArrayContainer.CTOR_DESC;
+		case Type.DOUBLE:
+			return DoubleArrayContainer.CTOR_DESC;
+		default:
+			return ObjectArrayContainer.CTOR_DESC;
 		}
 	}
 
@@ -177,24 +177,24 @@ public class ArrayUtil
 	{
 		switch (opcode)
 		{
-			case Opcodes.T_BOOLEAN:
-				return Type.BOOLEAN_TYPE;
-			case Opcodes.T_CHAR:
-				return Type.CHAR_TYPE;
-			case Opcodes.T_FLOAT:
-				return Type.FLOAT_TYPE;
-			case Opcodes.T_DOUBLE:
-				return Type.DOUBLE_TYPE;
-			case Opcodes.T_BYTE:
-				return Type.BYTE_TYPE;
-			case Opcodes.T_SHORT:
-				return Type.SHORT_TYPE;
-			case Opcodes.T_INT:
-				return Type.INT_TYPE;
-			case Opcodes.T_LONG:
-				return Type.LONG_TYPE;
-			default:
-				return null;
+		case Opcodes.T_BOOLEAN:
+			return Type.BOOLEAN_TYPE;
+		case Opcodes.T_CHAR:
+			return Type.CHAR_TYPE;
+		case Opcodes.T_FLOAT:
+			return Type.FLOAT_TYPE;
+		case Opcodes.T_DOUBLE:
+			return Type.DOUBLE_TYPE;
+		case Opcodes.T_BYTE:
+			return Type.BYTE_TYPE;
+		case Opcodes.T_SHORT:
+			return Type.SHORT_TYPE;
+		case Opcodes.T_INT:
+			return Type.INT_TYPE;
+		case Opcodes.T_LONG:
+			return Type.LONG_TYPE;
+		default:
+			return null;
 		}
 	}
 
@@ -231,24 +231,24 @@ public class ArrayUtil
 	{
 		switch (t.getSort())
 		{
-			case Type.INT:
-				return Opcodes.T_INT;
-			case Type.SHORT:
-				return Opcodes.T_SHORT;
-			case Type.BYTE:
-				return Opcodes.T_BYTE;
-			case Type.BOOLEAN:
-				return Opcodes.T_BOOLEAN;
-			case Type.FLOAT:
-				return Opcodes.T_FLOAT;
-			case Type.CHAR:
-				return Opcodes.T_CHAR;
-			case Type.DOUBLE:
-				return Opcodes.T_DOUBLE;
-			case Type.LONG:
-				return Opcodes.T_LONG;
-			default:
-				return -1;
+		case Type.INT:
+			return Opcodes.T_INT;
+		case Type.SHORT:
+			return Opcodes.T_SHORT;
+		case Type.BYTE:
+			return Opcodes.T_BYTE;
+		case Type.BOOLEAN:
+			return Opcodes.T_BOOLEAN;
+		case Type.FLOAT:
+			return Opcodes.T_FLOAT;
+		case Type.CHAR:
+			return Opcodes.T_CHAR;
+		case Type.DOUBLE:
+			return Opcodes.T_DOUBLE;
+		case Type.LONG:
+			return Opcodes.T_LONG;
+		default:
+			return -1;
 		}
 	}
 

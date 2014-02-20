@@ -1,29 +1,25 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework Copyright (c)
- * 2000-2007 INRIA, France Telecom All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer. 2. Redistributions in
- * binary form must reproduce the above copyright notice, this list of
- * conditions and the following disclaimer in the documentation and/or other
- * materials provided with the distribution. 3. Neither the name of the
- * copyright holders nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written
- * permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * 2000-2007 INRIA, France Telecom All rights reserved. Redistribution and use
+ * in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met: 1. Redistributions of source
+ * code must retain the above copyright notice, this list of conditions and the
+ * following disclaimer. 2. Redistributions in binary form must reproduce the
+ * above copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the copyright holders nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission. THIS SOFTWARE IS PROVIDED
+ * BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.deuce.objectweb.asm;
 
@@ -174,8 +170,7 @@ public class Type
 	/**
 	 * Constructs a primitive type.
 	 * 
-	 * @param sort
-	 *            the sort of the primitive type to be constructed.
+	 * @param sort the sort of the primitive type to be constructed.
 	 */
 	private Type(final int sort)
 	{
@@ -185,14 +180,10 @@ public class Type
 	/**
 	 * Constructs a reference type.
 	 * 
-	 * @param sort
-	 *            the sort of the reference type to be constructed.
-	 * @param buf
-	 *            a buffer containing the descriptor of the previous type.
-	 * @param off
-	 *            the offset of this descriptor in the previous buffer.
-	 * @param len
-	 *            the length of this descriptor.
+	 * @param sort the sort of the reference type to be constructed.
+	 * @param buf a buffer containing the descriptor of the previous type.
+	 * @param off the offset of this descriptor in the previous buffer.
+	 * @param len the length of this descriptor.
 	 */
 	private Type(final int sort, final char[] buf, final int off, final int len)
 	{
@@ -205,8 +196,7 @@ public class Type
 	/**
 	 * Returns the Java type corresponding to the given type descriptor.
 	 * 
-	 * @param typeDescriptor
-	 *            a type descriptor.
+	 * @param typeDescriptor a type descriptor.
 	 * @return the Java type corresponding to the given type descriptor.
 	 */
 	public static Type getType(final String typeDescriptor)
@@ -217,8 +207,7 @@ public class Type
 	/**
 	 * Returns the Java type corresponding to the given internal name.
 	 * 
-	 * @param internalName
-	 *            an internal name.
+	 * @param internalName an internal name.
 	 * @return the Java type corresponding to the given internal name.
 	 */
 	public static Type getObjectType(final String internalName)
@@ -230,8 +219,7 @@ public class Type
 	/**
 	 * Returns the Java type corresponding to the given class.
 	 * 
-	 * @param c
-	 *            a class.
+	 * @param c a class.
 	 * @return the Java type corresponding to the given class.
 	 */
 	public static Type getType(final Class c)
@@ -285,8 +273,7 @@ public class Type
 	 * Returns the Java types corresponding to the argument types of the given
 	 * method descriptor.
 	 * 
-	 * @param methodDescriptor
-	 *            a method descriptor.
+	 * @param methodDescriptor a method descriptor.
 	 * @return the Java types corresponding to the argument types of the given
 	 *         method descriptor.
 	 */
@@ -330,8 +317,7 @@ public class Type
 	 * Returns the Java types corresponding to the argument types of the given
 	 * method.
 	 * 
-	 * @param method
-	 *            a method.
+	 * @param method a method.
 	 * @return the Java types corresponding to the argument types of the given
 	 *         method.
 	 */
@@ -350,8 +336,7 @@ public class Type
 	 * Returns the Java type corresponding to the return type of the given
 	 * method descriptor.
 	 * 
-	 * @param methodDescriptor
-	 *            a method descriptor.
+	 * @param methodDescriptor a method descriptor.
 	 * @return the Java type corresponding to the return type of the given
 	 *         method descriptor.
 	 */
@@ -365,8 +350,7 @@ public class Type
 	 * Returns the Java type corresponding to the return type of the given
 	 * method.
 	 * 
-	 * @param method
-	 *            a method.
+	 * @param method a method.
 	 * @return the Java type corresponding to the return type of the given
 	 *         method.
 	 */
@@ -378,8 +362,7 @@ public class Type
 	/**
 	 * Computes the size of the arguments and of the return value of a method.
 	 * 
-	 * @param desc
-	 *            the descriptor of a method.
+	 * @param desc the descriptor of a method.
 	 * @return the size of the arguments of the method (plus one for the
 	 *         implicit this argument), argSize, and the size of its return
 	 *         value, retSize, packed into a single int i =
@@ -431,10 +414,8 @@ public class Type
 	/**
 	 * Returns the Java type corresponding to the given type descriptor.
 	 * 
-	 * @param buf
-	 *            a buffer containing a type descriptor.
-	 * @param off
-	 *            the offset of this descriptor in the previous buffer.
+	 * @param buf a buffer containing a type descriptor.
+	 * @param off the offset of this descriptor in the previous buffer.
 	 * @return the Java type corresponding to the given type descriptor.
 	 */
 	private static Type getType(final char[] buf, final int off)
@@ -442,47 +423,47 @@ public class Type
 		int len;
 		switch (buf[off])
 		{
-			case 'V':
-				return VOID_TYPE;
-			case 'Z':
-				return BOOLEAN_TYPE;
-			case 'C':
-				return CHAR_TYPE;
-			case 'B':
-				return BYTE_TYPE;
-			case 'S':
-				return SHORT_TYPE;
-			case 'I':
-				return INT_TYPE;
-			case 'F':
-				return FLOAT_TYPE;
-			case 'J':
-				return LONG_TYPE;
-			case 'D':
-				return DOUBLE_TYPE;
-			case '[':
-				len = 1;
-				while (buf[off + len] == '[')
-				{
-					++len;
-				}
-				if (buf[off + len] == 'L')
-				{
-					++len;
-					while (buf[off + len] != ';')
-					{
-						++len;
-					}
-				}
-				return new Type(ARRAY, buf, off, len + 1);
-				// case 'L':
-			default:
-				len = 1;
+		case 'V':
+			return VOID_TYPE;
+		case 'Z':
+			return BOOLEAN_TYPE;
+		case 'C':
+			return CHAR_TYPE;
+		case 'B':
+			return BYTE_TYPE;
+		case 'S':
+			return SHORT_TYPE;
+		case 'I':
+			return INT_TYPE;
+		case 'F':
+			return FLOAT_TYPE;
+		case 'J':
+			return LONG_TYPE;
+		case 'D':
+			return DOUBLE_TYPE;
+		case '[':
+			len = 1;
+			while (buf[off + len] == '[')
+			{
+				++len;
+			}
+			if (buf[off + len] == 'L')
+			{
+				++len;
 				while (buf[off + len] != ';')
 				{
 					++len;
 				}
-				return new Type(OBJECT, buf, off + 1, len - 1);
+			}
+			return new Type(ARRAY, buf, off, len + 1);
+			// case 'L':
+		default:
+			len = 1;
+			while (buf[off + len] != ';')
+			{
+				++len;
+			}
+			return new Type(OBJECT, buf, off + 1, len - 1);
 		}
 	}
 
@@ -539,35 +520,34 @@ public class Type
 	{
 		switch (sort)
 		{
-			case VOID:
-				return "void";
-			case BOOLEAN:
-				return "boolean";
-			case CHAR:
-				return "char";
-			case BYTE:
-				return "byte";
-			case SHORT:
-				return "short";
-			case INT:
-				return "int";
-			case FLOAT:
-				return "float";
-			case LONG:
-				return "long";
-			case DOUBLE:
-				return "double";
-			case ARRAY:
-				StringBuffer b = new StringBuffer(getElementType()
-						.getClassName());
-				for (int i = getDimensions(); i > 0; --i)
-				{
-					b.append("[]");
-				}
-				return b.toString();
-				// case OBJECT:
-			default:
-				return new String(buf, off, len).replace('/', '.');
+		case VOID:
+			return "void";
+		case BOOLEAN:
+			return "boolean";
+		case CHAR:
+			return "char";
+		case BYTE:
+			return "byte";
+		case SHORT:
+			return "short";
+		case INT:
+			return "int";
+		case FLOAT:
+			return "float";
+		case LONG:
+			return "long";
+		case DOUBLE:
+			return "double";
+		case ARRAY:
+			StringBuffer b = new StringBuffer(getElementType().getClassName());
+			for (int i = getDimensions(); i > 0; --i)
+			{
+				b.append("[]");
+			}
+			return b.toString();
+			// case OBJECT:
+		default:
+			return new String(buf, off, len).replace('/', '.');
 		}
 	}
 
@@ -604,10 +584,8 @@ public class Type
 	 * Returns the descriptor corresponding to the given argument and return
 	 * types.
 	 * 
-	 * @param returnType
-	 *            the return type of the method.
-	 * @param argumentTypes
-	 *            the argument types of the method.
+	 * @param returnType the return type of the method.
+	 * @param argumentTypes the argument types of the method.
 	 * @return the descriptor corresponding to the given argument and return
 	 *         types.
 	 */
@@ -629,48 +607,47 @@ public class Type
 	 * Appends the descriptor corresponding to this Java type to the given
 	 * string buffer.
 	 * 
-	 * @param buf
-	 *            the string buffer to which the descriptor must be appended.
+	 * @param buf the string buffer to which the descriptor must be appended.
 	 */
 	private void getDescriptor(final StringBuffer buf)
 	{
 		switch (sort)
 		{
-			case VOID:
-				buf.append('V');
-				return;
-			case BOOLEAN:
-				buf.append('Z');
-				return;
-			case CHAR:
-				buf.append('C');
-				return;
-			case BYTE:
-				buf.append('B');
-				return;
-			case SHORT:
-				buf.append('S');
-				return;
-			case INT:
-				buf.append('I');
-				return;
-			case FLOAT:
-				buf.append('F');
-				return;
-			case LONG:
-				buf.append('J');
-				return;
-			case DOUBLE:
-				buf.append('D');
-				return;
-			case ARRAY:
-				buf.append(this.buf, off, len);
-				return;
-				// case OBJECT:
-			default:
-				buf.append('L');
-				buf.append(this.buf, off, len);
-				buf.append(';');
+		case VOID:
+			buf.append('V');
+			return;
+		case BOOLEAN:
+			buf.append('Z');
+			return;
+		case CHAR:
+			buf.append('C');
+			return;
+		case BYTE:
+			buf.append('B');
+			return;
+		case SHORT:
+			buf.append('S');
+			return;
+		case INT:
+			buf.append('I');
+			return;
+		case FLOAT:
+			buf.append('F');
+			return;
+		case LONG:
+			buf.append('J');
+			return;
+		case DOUBLE:
+			buf.append('D');
+			return;
+		case ARRAY:
+			buf.append(this.buf, off, len);
+			return;
+			// case OBJECT:
+		default:
+			buf.append('L');
+			buf.append(this.buf, off, len);
+			buf.append(';');
 		}
 	}
 
@@ -684,8 +661,7 @@ public class Type
 	 * class is its fully qualified name, as returned by Class.getName(), where
 	 * '.' are replaced by '/'.
 	 * 
-	 * @param c
-	 *            an object or array class.
+	 * @param c an object or array class.
 	 * @return the internal name of the given class.
 	 */
 	public static String getInternalName(final Class c)
@@ -696,8 +672,7 @@ public class Type
 	/**
 	 * Returns the descriptor corresponding to the given Java type.
 	 * 
-	 * @param c
-	 *            an object class, a primitive class or an array class.
+	 * @param c an object class, a primitive class or an array class.
 	 * @return the descriptor corresponding to the given class.
 	 */
 	public static String getDescriptor(final Class c)
@@ -710,8 +685,7 @@ public class Type
 	/**
 	 * Returns the descriptor corresponding to the given constructor.
 	 * 
-	 * @param c
-	 *            a {@link Constructor Constructor} object.
+	 * @param c a {@link Constructor Constructor} object.
 	 * @return the descriptor of the given constructor.
 	 */
 	public static String getConstructorDescriptor(final Constructor c)
@@ -729,8 +703,7 @@ public class Type
 	/**
 	 * Returns the descriptor corresponding to the given method.
 	 * 
-	 * @param m
-	 *            a {@link Method Method} object.
+	 * @param m a {@link Method Method} object.
 	 * @return the descriptor of the given method.
 	 */
 	public static String getMethodDescriptor(final Method m)
@@ -750,10 +723,8 @@ public class Type
 	/**
 	 * Appends the descriptor of the given class to the given string buffer.
 	 * 
-	 * @param buf
-	 *            the string buffer to which the descriptor must be appended.
-	 * @param c
-	 *            the class whose descriptor must be computed.
+	 * @param buf the string buffer to which the descriptor must be appended.
+	 * @param c the class whose descriptor must be computed.
 	 */
 	private static void getDescriptor(final StringBuffer buf, final Class c)
 	{
@@ -841,8 +812,7 @@ public class Type
 	/**
 	 * Returns a JVM instruction opcode adapted to this Java type.
 	 * 
-	 * @param opcode
-	 *            a JVM instruction opcode. This opcode must be one of ILOAD,
+	 * @param opcode a JVM instruction opcode. This opcode must be one of ILOAD,
 	 *            ISTORE, IALOAD, IASTORE, IADD, ISUB, IMUL, IDIV, IREM, INEG,
 	 *            ISHL, ISHR, IUSHR, IAND, IOR, IXOR and IRETURN.
 	 * @return an opcode that is similar to the given opcode, but adapted to
@@ -855,49 +825,49 @@ public class Type
 		{
 			switch (sort)
 			{
-				case BOOLEAN:
-				case BYTE:
-					return opcode + 5;
-				case CHAR:
-					return opcode + 6;
-				case SHORT:
-					return opcode + 7;
-				case INT:
-					return opcode;
-				case FLOAT:
-					return opcode + 2;
-				case LONG:
-					return opcode + 1;
-				case DOUBLE:
-					return opcode + 3;
-					// case ARRAY:
-					// case OBJECT:
-				default:
-					return opcode + 4;
+			case BOOLEAN:
+			case BYTE:
+				return opcode + 5;
+			case CHAR:
+				return opcode + 6;
+			case SHORT:
+				return opcode + 7;
+			case INT:
+				return opcode;
+			case FLOAT:
+				return opcode + 2;
+			case LONG:
+				return opcode + 1;
+			case DOUBLE:
+				return opcode + 3;
+				// case ARRAY:
+				// case OBJECT:
+			default:
+				return opcode + 4;
 			}
 		}
 		else
 		{
 			switch (sort)
 			{
-				case VOID:
-					return opcode + 5;
-				case BOOLEAN:
-				case CHAR:
-				case BYTE:
-				case SHORT:
-				case INT:
-					return opcode;
-				case FLOAT:
-					return opcode + 2;
-				case LONG:
-					return opcode + 1;
-				case DOUBLE:
-					return opcode + 3;
-					// case ARRAY:
-					// case OBJECT:
-				default:
-					return opcode + 4;
+			case VOID:
+				return opcode + 5;
+			case BOOLEAN:
+			case CHAR:
+			case BYTE:
+			case SHORT:
+			case INT:
+				return opcode;
+			case FLOAT:
+				return opcode + 2;
+			case LONG:
+				return opcode + 1;
+			case DOUBLE:
+				return opcode + 3;
+				// case ARRAY:
+				// case OBJECT:
+			default:
+				return opcode + 4;
 			}
 		}
 	}
@@ -909,8 +879,7 @@ public class Type
 	/**
 	 * Tests if the given object is equal to this type.
 	 * 
-	 * @param o
-	 *            the object to be compared to this type.
+	 * @param o the object to be compared to this type.
 	 * @return <tt>true</tt> if the given object is equal to this type.
 	 */
 	public boolean equals(final Object o)

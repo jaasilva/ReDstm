@@ -92,71 +92,69 @@ public class DuplicateMethod extends MethodAdapter
 		final Type type = Type.getType(desc);
 		switch (opcode)
 		{
-			case Opcodes.GETFIELD: // ALOAD 0: this (stack status)
+		case Opcodes.GETFIELD: // ALOAD 0: this (stack status)
 
-				addBeforeReadCall(fieldsHolderName, name);
+			addBeforeReadCall(fieldsHolderName, name);
 
-				super.visitInsn(Opcodes.DUP);
-				super.visitFieldInsn(opcode, owner, name, desc);
-				super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName,
-						Util.getAddressField(name), "J");
-				super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
-																		// context
-				super.visitMethodInsn(Opcodes.INVOKESTATIC,
-						ContextDelegator.CONTEXT_DELEGATOR_INTERNAL,
-						ContextDelegator.READ_METHOD_NAME,
-						ContextDelegator.getReadMethodDesc(type));
+			super.visitInsn(Opcodes.DUP);
+			super.visitFieldInsn(opcode, owner, name, desc);
+			super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName,
+					Util.getAddressField(name), "J");
+			super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
+																	// context
+			super.visitMethodInsn(Opcodes.INVOKESTATIC,
+					ContextDelegator.CONTEXT_DELEGATOR_INTERNAL,
+					ContextDelegator.READ_METHOD_NAME,
+					ContextDelegator.getReadMethodDesc(type));
 
-				if (type.getSort() >= Type.ARRAY) // non primitive
-					super.visitTypeInsn(Opcodes.CHECKCAST, Type.getType(desc)
-							.getInternalName());
-				break;
-			case Opcodes.PUTFIELD:
-				super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName,
-						Util.getAddressField(name), "J");
-				super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
-																		// context
-				super.visitMethodInsn(Opcodes.INVOKESTATIC,
-						ContextDelegator.CONTEXT_DELEGATOR_INTERNAL,
-						ContextDelegator.WRITE_METHOD_NAME,
-						ContextDelegator.getWriteMethodDesc(type));
-				break;
-			case Opcodes.GETSTATIC: // check support for static fields
-				super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName,
-						StaticMethodTransformer.CLASS_BASE,
-						"Ljava/lang/Object;");
+			if (type.getSort() >= Type.ARRAY) // non primitive
+				super.visitTypeInsn(Opcodes.CHECKCAST, Type.getType(desc)
+						.getInternalName());
+			break;
+		case Opcodes.PUTFIELD:
+			super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName,
+					Util.getAddressField(name), "J");
+			super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
+																	// context
+			super.visitMethodInsn(Opcodes.INVOKESTATIC,
+					ContextDelegator.CONTEXT_DELEGATOR_INTERNAL,
+					ContextDelegator.WRITE_METHOD_NAME,
+					ContextDelegator.getWriteMethodDesc(type));
+			break;
+		case Opcodes.GETSTATIC: // check support for static fields
+			super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName,
+					StaticMethodTransformer.CLASS_BASE, "Ljava/lang/Object;");
 
-				addBeforeReadCall(fieldsHolderName, name);
+			addBeforeReadCall(fieldsHolderName, name);
 
-				super.visitFieldInsn(opcode, owner, name, desc);
-				super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName,
-						Util.getAddressField(name), "J");
-				super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
-																		// context
-				super.visitMethodInsn(Opcodes.INVOKESTATIC,
-						ContextDelegator.CONTEXT_DELEGATOR_INTERNAL,
-						ContextDelegator.READ_METHOD_NAME,
-						ContextDelegator.getReadMethodDesc(type));
+			super.visitFieldInsn(opcode, owner, name, desc);
+			super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName,
+					Util.getAddressField(name), "J");
+			super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
+																	// context
+			super.visitMethodInsn(Opcodes.INVOKESTATIC,
+					ContextDelegator.CONTEXT_DELEGATOR_INTERNAL,
+					ContextDelegator.READ_METHOD_NAME,
+					ContextDelegator.getReadMethodDesc(type));
 
-				if (type.getSort() >= Type.ARRAY) // non primitive
-					super.visitTypeInsn(Opcodes.CHECKCAST, Type.getType(desc)
-							.getInternalName());
-				break;
-			case Opcodes.PUTSTATIC:
-				super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName,
-						StaticMethodTransformer.CLASS_BASE,
-						"Ljava/lang/Object;");
-				super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName,
-						Util.getAddressField(name), "J");
-				super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
-																		// context
-				super.visitMethodInsn(Opcodes.INVOKESTATIC,
-						ContextDelegator.CONTEXT_DELEGATOR_INTERNAL,
-						ContextDelegator.STATIC_WRITE_METHOD_NAME,
-						ContextDelegator.getStaticWriteMethodDesc(type));
-				break;
-			default:
-				super.visitFieldInsn(opcode, owner, name, desc);
+			if (type.getSort() >= Type.ARRAY) // non primitive
+				super.visitTypeInsn(Opcodes.CHECKCAST, Type.getType(desc)
+						.getInternalName());
+			break;
+		case Opcodes.PUTSTATIC:
+			super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName,
+					StaticMethodTransformer.CLASS_BASE, "Ljava/lang/Object;");
+			super.visitFieldInsn(Opcodes.GETSTATIC, fieldsHolderName,
+					Util.getAddressField(name), "J");
+			super.visitVarInsn(Opcodes.ALOAD, argumentsSize - 1); // load
+																	// context
+			super.visitMethodInsn(Opcodes.INVOKESTATIC,
+					ContextDelegator.CONTEXT_DELEGATOR_INTERNAL,
+					ContextDelegator.STATIC_WRITE_METHOD_NAME,
+					ContextDelegator.getStaticWriteMethodDesc(type));
+			break;
+		default:
+			super.visitFieldInsn(opcode, owner, name, desc);
 		}
 		mv.visitLabel(l2);
 	}
@@ -186,78 +184,78 @@ public class DuplicateMethod extends MethodAdapter
 		switch (opcode)
 		{
 
-			case Opcodes.AALOAD:
-				// handle Object[] arrays type, the type before the last is the
-				// array.
-				// The substring removes the '[' from the array type
-				String arrayType = (String) this.analyzerAdapter.stack
-						.get(this.analyzerAdapter.stack.size() - 2);
-				arrayMemeberType = getArrayMemberType(arrayType);
+		case Opcodes.AALOAD:
+			// handle Object[] arrays type, the type before the last is the
+			// array.
+			// The substring removes the '[' from the array type
+			String arrayType = (String) this.analyzerAdapter.stack
+					.get(this.analyzerAdapter.stack.size() - 2);
+			arrayMemeberType = getArrayMemberType(arrayType);
 
-				desc = ContextDelegator.READ_ARRAY_METHOD_OBJ_DESC;
-				load = true;
-				break;
-			case Opcodes.BALOAD:
-				desc = ContextDelegator.READ_ARRAY_METHOD_BYTE_DESC;
-				load = true;
-				break;
-			case Opcodes.CALOAD:
-				desc = ContextDelegator.READ_ARRAY_METHOD_CHAR_DESC;
-				load = true;
-				break;
-			case Opcodes.SALOAD:
-				desc = ContextDelegator.READ_ARRAY_METHOD_SHORT_DESC;
-				load = true;
-				break;
-			case Opcodes.IALOAD:
-				desc = ContextDelegator.READ_ARRAY_METHOD_INT_DESC;
-				load = true;
-				break;
-			case Opcodes.LALOAD:
-				desc = ContextDelegator.READ_ARRAY_METHOD_LONG_DESC;
-				load = true;
-				break;
-			case Opcodes.FALOAD:
-				desc = ContextDelegator.READ_ARRAY_METHOD_FLOAT_DESC;
-				load = true;
-				break;
-			case Opcodes.DALOAD:
-				desc = ContextDelegator.READ_ARRAY_METHOD_DOUBLE_DESC;
-				load = true;
-				break;
+			desc = ContextDelegator.READ_ARRAY_METHOD_OBJ_DESC;
+			load = true;
+			break;
+		case Opcodes.BALOAD:
+			desc = ContextDelegator.READ_ARRAY_METHOD_BYTE_DESC;
+			load = true;
+			break;
+		case Opcodes.CALOAD:
+			desc = ContextDelegator.READ_ARRAY_METHOD_CHAR_DESC;
+			load = true;
+			break;
+		case Opcodes.SALOAD:
+			desc = ContextDelegator.READ_ARRAY_METHOD_SHORT_DESC;
+			load = true;
+			break;
+		case Opcodes.IALOAD:
+			desc = ContextDelegator.READ_ARRAY_METHOD_INT_DESC;
+			load = true;
+			break;
+		case Opcodes.LALOAD:
+			desc = ContextDelegator.READ_ARRAY_METHOD_LONG_DESC;
+			load = true;
+			break;
+		case Opcodes.FALOAD:
+			desc = ContextDelegator.READ_ARRAY_METHOD_FLOAT_DESC;
+			load = true;
+			break;
+		case Opcodes.DALOAD:
+			desc = ContextDelegator.READ_ARRAY_METHOD_DOUBLE_DESC;
+			load = true;
+			break;
 
-			case Opcodes.AASTORE:
-				desc = ContextDelegator.WRITE_ARRAY_METHOD_OBJ_DESC;
-				store = true;
-				break;
-			case Opcodes.BASTORE:
-				desc = ContextDelegator.WRITE_ARRAY_METHOD_BYTE_DESC;
-				store = true;
-				break;
-			case Opcodes.CASTORE:
-				desc = ContextDelegator.WRITE_ARRAY_METHOD_CHAR_DESC;
-				store = true;
-				break;
-			case Opcodes.SASTORE:
-				desc = ContextDelegator.WRITE_ARRAY_METHOD_SHORT_DESC;
-				store = true;
-				break;
-			case Opcodes.IASTORE:
-				desc = ContextDelegator.WRITE_ARRAY_METHOD_INT_DESC;
-				store = true;
-				break;
-			case Opcodes.LASTORE:
-				desc = ContextDelegator.WRITE_ARRAY_METHOD_LONG_DESC;
-				store = true;
-				break;
-			case Opcodes.FASTORE:
-				desc = ContextDelegator.WRITE_ARRAY_METHOD_FLOAT_DESC;
-				store = true;
-				break;
-			case Opcodes.DASTORE:
-				desc = ContextDelegator.WRITE_ARRAY_METHOD_DOUBLE_DESC;
-				store = true;
-				break;
+		case Opcodes.AASTORE:
+			desc = ContextDelegator.WRITE_ARRAY_METHOD_OBJ_DESC;
+			store = true;
+			break;
+		case Opcodes.BASTORE:
+			desc = ContextDelegator.WRITE_ARRAY_METHOD_BYTE_DESC;
+			store = true;
+			break;
+		case Opcodes.CASTORE:
+			desc = ContextDelegator.WRITE_ARRAY_METHOD_CHAR_DESC;
+			store = true;
+			break;
+		case Opcodes.SASTORE:
+			desc = ContextDelegator.WRITE_ARRAY_METHOD_SHORT_DESC;
+			store = true;
+			break;
+		case Opcodes.IASTORE:
+			desc = ContextDelegator.WRITE_ARRAY_METHOD_INT_DESC;
+			store = true;
+			break;
+		case Opcodes.LASTORE:
+			desc = ContextDelegator.WRITE_ARRAY_METHOD_LONG_DESC;
+			store = true;
+			break;
+		case Opcodes.FASTORE:
+			desc = ContextDelegator.WRITE_ARRAY_METHOD_FLOAT_DESC;
+			store = true;
+			break;
+		case Opcodes.DASTORE:
+			desc = ContextDelegator.WRITE_ARRAY_METHOD_DOUBLE_DESC;
+			store = true;
+			break;
 		}
 
 		if (load)
@@ -346,8 +344,7 @@ public class DuplicateMethod extends MethodAdapter
 	 * Calculate the new local index according to its position. If it's not a
 	 * function argument (local variable) its index increased by 1.
 	 * 
-	 * @param currIndex
-	 *            current index
+	 * @param currIndex current index
 	 * @return new index
 	 */
 	private int newIndex(int currIndex)

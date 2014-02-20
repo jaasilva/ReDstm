@@ -348,97 +348,95 @@ public class MethodTransformer implements MethodVisitor
 
 				switch (opcode)
 				{
-					case Opcodes.AALOAD:
-						if (isMultiArray)
-						{
-							arrCntType = Type
-									.getType(MultiArrayContainer.class);
-							arrDesc = MultiArrayContainer.NEXTDIM_FIELD_DESC;
-							arrField = MultiArrayContainer.NEXTDIM_FIELD_NAME;
-							// methodName = ContextDelegator
-							// .getTxFieldReadMethodName(Type
-							// .getType(Object[].class));
-							// methodDesc = ContextDelegator
-							// .getTxFieldReadMethodDesc(Type
-							// .getType(Object[].class));
-						}
-						else
-						{
-							arrCntType = Type
-									.getType(ObjectArrayContainer.class);
-							arrDesc = ObjectArrayContainer.ARRAY_FIELD_DESC;
-							arrField = ArrayContainer.ARRAY_FIELD_NAME;
-							// methodName = ContextDelegator
-							// .getTxFieldReadMethodName(Type
-							// .getType(Object.class));
-							// methodDesc = ContextDelegator
-							// .getTxFieldReadMethodDesc(Type
-							// .getType(Object.class));
-						}
-						break;
-					case Opcodes.BALOAD:
-						arrCntType = Type.getType(ByteArrayContainer.class);
-						arrDesc = ByteArrayContainer.ARRAY_FIELD_DESC;
+				case Opcodes.AALOAD:
+					if (isMultiArray)
+					{
+						arrCntType = Type.getType(MultiArrayContainer.class);
+						arrDesc = MultiArrayContainer.NEXTDIM_FIELD_DESC;
+						arrField = MultiArrayContainer.NEXTDIM_FIELD_NAME;
+						// methodName = ContextDelegator
+						// .getTxFieldReadMethodName(Type
+						// .getType(Object[].class));
+						// methodDesc = ContextDelegator
+						// .getTxFieldReadMethodDesc(Type
+						// .getType(Object[].class));
+					}
+					else
+					{
+						arrCntType = Type.getType(ObjectArrayContainer.class);
+						arrDesc = ObjectArrayContainer.ARRAY_FIELD_DESC;
 						arrField = ArrayContainer.ARRAY_FIELD_NAME;
 						// methodName = ContextDelegator
-						// .getTxFieldReadMethodName(Type.BYTE_TYPE);
+						// .getTxFieldReadMethodName(Type
+						// .getType(Object.class));
 						// methodDesc = ContextDelegator
-						// .getTxFieldReadMethodDesc(Type.BYTE_TYPE);
-						break;
-					case Opcodes.CALOAD:
-						arrCntType = Type.getType(CharArrayContainer.class);
-						arrDesc = CharArrayContainer.ARRAY_FIELD_DESC;
-						arrField = ArrayContainer.ARRAY_FIELD_NAME;
-						// methodName = ContextDelegator
-						// .getTxFieldReadMethodName(Type.CHAR_TYPE);
-						// methodDesc = ContextDelegator
-						// .getTxFieldReadMethodDesc(Type.CHAR_TYPE);
-						break;
-					case Opcodes.SALOAD:
-						arrCntType = Type.getType(ShortArrayContainer.class);
-						arrDesc = ShortArrayContainer.ARRAY_FIELD_DESC;
-						arrField = ArrayContainer.ARRAY_FIELD_NAME;
-						// methodName = ContextDelegator
-						// .getTxFieldReadMethodName(Type.SHORT_TYPE);
-						// methodDesc = ContextDelegator
-						// .getTxFieldReadMethodDesc(Type.SHORT_TYPE);
-						break;
-					case Opcodes.IALOAD:
-						arrCntType = Type.getType(IntArrayContainer.class);
-						arrDesc = IntArrayContainer.ARRAY_FIELD_DESC;
-						arrField = ArrayContainer.ARRAY_FIELD_NAME;
-						// methodName = ContextDelegator
-						// .getTxFieldReadMethodName(Type.INT_TYPE);
-						// methodDesc = ContextDelegator
-						// .getTxFieldReadMethodDesc(Type.INT_TYPE);
-						break;
-					case Opcodes.LALOAD:
-						arrCntType = Type.getType(LongArrayContainer.class);
-						arrDesc = LongArrayContainer.ARRAY_FIELD_DESC;
-						arrField = ArrayContainer.ARRAY_FIELD_NAME;
-						// methodName = ContextDelegator
-						// .getTxFieldReadMethodName(Type.LONG_TYPE);
-						// methodDesc = ContextDelegator
-						// .getTxFieldReadMethodDesc(Type.LONG_TYPE);
-						break;
-					case Opcodes.FALOAD:
-						arrCntType = Type.getType(FloatArrayContainer.class);
-						arrDesc = FloatArrayContainer.ARRAY_FIELD_DESC;
-						arrField = ArrayContainer.ARRAY_FIELD_NAME;
-						// methodName = ContextDelegator
-						// .getTxFieldReadMethodName(Type.FLOAT_TYPE);
-						// methodDesc = ContextDelegator
-						// .getTxFieldReadMethodDesc(Type.FLOAT_TYPE);
-						break;
-					case Opcodes.DALOAD:
-						arrCntType = Type.getType(DoubleArrayContainer.class);
-						arrDesc = DoubleArrayContainer.ARRAY_FIELD_DESC;
-						arrField = ArrayContainer.ARRAY_FIELD_NAME;
-						// methodName = ContextDelegator
-						// .getTxFieldReadMethodName(Type.DOUBLE_TYPE);
-						// methodDesc = ContextDelegator
-						// .getTxFieldReadMethodDesc(Type.DOUBLE_TYPE);
-						break;
+						// .getTxFieldReadMethodDesc(Type
+						// .getType(Object.class));
+					}
+					break;
+				case Opcodes.BALOAD:
+					arrCntType = Type.getType(ByteArrayContainer.class);
+					arrDesc = ByteArrayContainer.ARRAY_FIELD_DESC;
+					arrField = ArrayContainer.ARRAY_FIELD_NAME;
+					// methodName = ContextDelegator
+					// .getTxFieldReadMethodName(Type.BYTE_TYPE);
+					// methodDesc = ContextDelegator
+					// .getTxFieldReadMethodDesc(Type.BYTE_TYPE);
+					break;
+				case Opcodes.CALOAD:
+					arrCntType = Type.getType(CharArrayContainer.class);
+					arrDesc = CharArrayContainer.ARRAY_FIELD_DESC;
+					arrField = ArrayContainer.ARRAY_FIELD_NAME;
+					// methodName = ContextDelegator
+					// .getTxFieldReadMethodName(Type.CHAR_TYPE);
+					// methodDesc = ContextDelegator
+					// .getTxFieldReadMethodDesc(Type.CHAR_TYPE);
+					break;
+				case Opcodes.SALOAD:
+					arrCntType = Type.getType(ShortArrayContainer.class);
+					arrDesc = ShortArrayContainer.ARRAY_FIELD_DESC;
+					arrField = ArrayContainer.ARRAY_FIELD_NAME;
+					// methodName = ContextDelegator
+					// .getTxFieldReadMethodName(Type.SHORT_TYPE);
+					// methodDesc = ContextDelegator
+					// .getTxFieldReadMethodDesc(Type.SHORT_TYPE);
+					break;
+				case Opcodes.IALOAD:
+					arrCntType = Type.getType(IntArrayContainer.class);
+					arrDesc = IntArrayContainer.ARRAY_FIELD_DESC;
+					arrField = ArrayContainer.ARRAY_FIELD_NAME;
+					// methodName = ContextDelegator
+					// .getTxFieldReadMethodName(Type.INT_TYPE);
+					// methodDesc = ContextDelegator
+					// .getTxFieldReadMethodDesc(Type.INT_TYPE);
+					break;
+				case Opcodes.LALOAD:
+					arrCntType = Type.getType(LongArrayContainer.class);
+					arrDesc = LongArrayContainer.ARRAY_FIELD_DESC;
+					arrField = ArrayContainer.ARRAY_FIELD_NAME;
+					// methodName = ContextDelegator
+					// .getTxFieldReadMethodName(Type.LONG_TYPE);
+					// methodDesc = ContextDelegator
+					// .getTxFieldReadMethodDesc(Type.LONG_TYPE);
+					break;
+				case Opcodes.FALOAD:
+					arrCntType = Type.getType(FloatArrayContainer.class);
+					arrDesc = FloatArrayContainer.ARRAY_FIELD_DESC;
+					arrField = ArrayContainer.ARRAY_FIELD_NAME;
+					// methodName = ContextDelegator
+					// .getTxFieldReadMethodName(Type.FLOAT_TYPE);
+					// methodDesc = ContextDelegator
+					// .getTxFieldReadMethodDesc(Type.FLOAT_TYPE);
+					break;
+				case Opcodes.DALOAD:
+					arrCntType = Type.getType(DoubleArrayContainer.class);
+					arrDesc = DoubleArrayContainer.ARRAY_FIELD_DESC;
+					arrField = ArrayContainer.ARRAY_FIELD_NAME;
+					// methodName = ContextDelegator
+					// .getTxFieldReadMethodName(Type.DOUBLE_TYPE);
+					// methodDesc = ContextDelegator
+					// .getTxFieldReadMethodDesc(Type.DOUBLE_TYPE);
+					break;
 				}
 
 				// ..., cnt, idx =>
@@ -508,82 +506,80 @@ public class MethodTransformer implements MethodVisitor
 				Type originalArrElemType = null;
 				switch (opcode)
 				{
-					case Opcodes.AASTORE:
-						originalArrElemType = Type.getType(Object.class);
-						if (isMultiArray)
-						{
-							arrCntType = Type
-									.getType(MultiArrayContainer.class);
-							arrDesc = MultiArrayContainer.NEXTDIM_FIELD_DESC;
-							arrField = MultiArrayContainer.NEXTDIM_FIELD_NAME;
-						}
-						else
-						{
-							arrCntType = Type
-									.getType(ObjectArrayContainer.class);
-							arrDesc = ObjectArrayContainer.ARRAY_FIELD_DESC;
-							arrField = ArrayContainer.ARRAY_FIELD_NAME;
-						}
-						// methodDesc = ContextDelegator
-						// .getTxFieldWriteMethodDesc(Type
-						// .getType(newValueDesc));
-						break;
-					case Opcodes.BASTORE:
-						originalArrElemType = Type.BYTE_TYPE;
-						arrCntType = Type.getType(ByteArrayContainer.class);
-						arrDesc = ByteArrayContainer.ARRAY_FIELD_DESC;
+				case Opcodes.AASTORE:
+					originalArrElemType = Type.getType(Object.class);
+					if (isMultiArray)
+					{
+						arrCntType = Type.getType(MultiArrayContainer.class);
+						arrDesc = MultiArrayContainer.NEXTDIM_FIELD_DESC;
+						arrField = MultiArrayContainer.NEXTDIM_FIELD_NAME;
+					}
+					else
+					{
+						arrCntType = Type.getType(ObjectArrayContainer.class);
+						arrDesc = ObjectArrayContainer.ARRAY_FIELD_DESC;
 						arrField = ArrayContainer.ARRAY_FIELD_NAME;
-						// methodDesc = ContextDelegator
-						// .getTxFieldWriteMethodDesc(originalArrElemType);
-						break;
-					case Opcodes.CASTORE:
-						originalArrElemType = Type.CHAR_TYPE;
-						arrCntType = Type.getType(CharArrayContainer.class);
-						arrDesc = CharArrayContainer.ARRAY_FIELD_DESC;
-						arrField = ArrayContainer.ARRAY_FIELD_NAME;
-						// methodDesc = ContextDelegator
-						// .getTxFieldWriteMethodDesc(originalArrElemType);
-						break;
-					case Opcodes.SASTORE:
-						originalArrElemType = Type.SHORT_TYPE;
-						arrCntType = Type.getType(ShortArrayContainer.class);
-						arrDesc = ShortArrayContainer.ARRAY_FIELD_DESC;
-						arrField = ArrayContainer.ARRAY_FIELD_NAME;
-						// methodDesc = ContextDelegator
-						// .getTxFieldWriteMethodDesc(originalArrElemType);
-						break;
-					case Opcodes.IASTORE:
-						originalArrElemType = Type.INT_TYPE;
-						arrCntType = Type.getType(IntArrayContainer.class);
-						arrDesc = IntArrayContainer.ARRAY_FIELD_DESC;
-						arrField = ArrayContainer.ARRAY_FIELD_NAME;
-						// methodDesc = ContextDelegator
-						// .getTxFieldWriteMethodDesc(originalArrElemType);
-						break;
-					case Opcodes.LASTORE:
-						originalArrElemType = Type.LONG_TYPE;
-						arrCntType = Type.getType(LongArrayContainer.class);
-						arrDesc = LongArrayContainer.ARRAY_FIELD_DESC;
-						arrField = ArrayContainer.ARRAY_FIELD_NAME;
-						// methodDesc = ContextDelegator
-						// .getTxFieldWriteMethodDesc(originalArrElemType);
-						break;
-					case Opcodes.FASTORE:
-						originalArrElemType = Type.FLOAT_TYPE;
-						arrCntType = Type.getType(FloatArrayContainer.class);
-						arrDesc = FloatArrayContainer.ARRAY_FIELD_DESC;
-						arrField = ArrayContainer.ARRAY_FIELD_NAME;
-						// methodDesc = ContextDelegator
-						// .getTxFieldWriteMethodDesc(originalArrElemType);
-						break;
-					case Opcodes.DASTORE:
-						originalArrElemType = Type.DOUBLE_TYPE;
-						arrCntType = Type.getType(DoubleArrayContainer.class);
-						arrDesc = DoubleArrayContainer.ARRAY_FIELD_DESC;
-						arrField = ArrayContainer.ARRAY_FIELD_NAME;
-						// methodDesc = ContextDelegator
-						// .getTxFieldWriteMethodDesc(originalArrElemType);
-						break;
+					}
+					// methodDesc = ContextDelegator
+					// .getTxFieldWriteMethodDesc(Type
+					// .getType(newValueDesc));
+					break;
+				case Opcodes.BASTORE:
+					originalArrElemType = Type.BYTE_TYPE;
+					arrCntType = Type.getType(ByteArrayContainer.class);
+					arrDesc = ByteArrayContainer.ARRAY_FIELD_DESC;
+					arrField = ArrayContainer.ARRAY_FIELD_NAME;
+					// methodDesc = ContextDelegator
+					// .getTxFieldWriteMethodDesc(originalArrElemType);
+					break;
+				case Opcodes.CASTORE:
+					originalArrElemType = Type.CHAR_TYPE;
+					arrCntType = Type.getType(CharArrayContainer.class);
+					arrDesc = CharArrayContainer.ARRAY_FIELD_DESC;
+					arrField = ArrayContainer.ARRAY_FIELD_NAME;
+					// methodDesc = ContextDelegator
+					// .getTxFieldWriteMethodDesc(originalArrElemType);
+					break;
+				case Opcodes.SASTORE:
+					originalArrElemType = Type.SHORT_TYPE;
+					arrCntType = Type.getType(ShortArrayContainer.class);
+					arrDesc = ShortArrayContainer.ARRAY_FIELD_DESC;
+					arrField = ArrayContainer.ARRAY_FIELD_NAME;
+					// methodDesc = ContextDelegator
+					// .getTxFieldWriteMethodDesc(originalArrElemType);
+					break;
+				case Opcodes.IASTORE:
+					originalArrElemType = Type.INT_TYPE;
+					arrCntType = Type.getType(IntArrayContainer.class);
+					arrDesc = IntArrayContainer.ARRAY_FIELD_DESC;
+					arrField = ArrayContainer.ARRAY_FIELD_NAME;
+					// methodDesc = ContextDelegator
+					// .getTxFieldWriteMethodDesc(originalArrElemType);
+					break;
+				case Opcodes.LASTORE:
+					originalArrElemType = Type.LONG_TYPE;
+					arrCntType = Type.getType(LongArrayContainer.class);
+					arrDesc = LongArrayContainer.ARRAY_FIELD_DESC;
+					arrField = ArrayContainer.ARRAY_FIELD_NAME;
+					// methodDesc = ContextDelegator
+					// .getTxFieldWriteMethodDesc(originalArrElemType);
+					break;
+				case Opcodes.FASTORE:
+					originalArrElemType = Type.FLOAT_TYPE;
+					arrCntType = Type.getType(FloatArrayContainer.class);
+					arrDesc = FloatArrayContainer.ARRAY_FIELD_DESC;
+					arrField = ArrayContainer.ARRAY_FIELD_NAME;
+					// methodDesc = ContextDelegator
+					// .getTxFieldWriteMethodDesc(originalArrElemType);
+					break;
+				case Opcodes.DASTORE:
+					originalArrElemType = Type.DOUBLE_TYPE;
+					arrCntType = Type.getType(DoubleArrayContainer.class);
+					arrDesc = DoubleArrayContainer.ARRAY_FIELD_DESC;
+					arrField = ArrayContainer.ARRAY_FIELD_NAME;
+					// methodDesc = ContextDelegator
+					// .getTxFieldWriteMethodDesc(originalArrElemType);
+					break;
 				}
 
 				// methodName = ContextDelegator.TXFIELD_WRITE_METHOD_NAME;
@@ -668,46 +664,46 @@ public class MethodTransformer implements MethodVisitor
 						switch (ArrayUtil.getArrayType(arrayDesc.substring(1))
 								.getSort())
 						{
-							case Type.ARRAY:
-								owner = MultiArrayContainer.NAME;
-								desc = MultiArrayContainer.ARRAY_FIELD_DESC;
-								break;
-							case Type.BOOLEAN:
-								owner = BooleanArrayContainer.NAME;
-								desc = BooleanArrayContainer.ARRAY_FIELD_DESC;
-								break;
-							case Type.BYTE:
-								owner = ByteArrayContainer.NAME;
-								desc = ByteArrayContainer.ARRAY_FIELD_DESC;
-								break;
-							case Type.CHAR:
-								owner = CharArrayContainer.NAME;
-								desc = CharArrayContainer.ARRAY_FIELD_DESC;
-								break;
-							case Type.DOUBLE:
-								owner = DoubleArrayContainer.NAME;
-								desc = DoubleArrayContainer.ARRAY_FIELD_DESC;
-								break;
-							case Type.FLOAT:
-								owner = FloatArrayContainer.NAME;
-								desc = FloatArrayContainer.ARRAY_FIELD_DESC;
-								break;
-							case Type.INT:
-								owner = IntArrayContainer.NAME;
-								desc = IntArrayContainer.ARRAY_FIELD_DESC;
-								break;
-							case Type.LONG:
-								owner = LongArrayContainer.NAME;
-								desc = LongArrayContainer.ARRAY_FIELD_DESC;
-								break;
-							case Type.OBJECT:
-								owner = ObjectArrayContainer.NAME;
-								desc = ObjectArrayContainer.ARRAY_FIELD_DESC;
-								break;
-							case Type.SHORT:
-								owner = ShortArrayContainer.NAME;
-								desc = ShortArrayContainer.ARRAY_FIELD_DESC;
-								break;
+						case Type.ARRAY:
+							owner = MultiArrayContainer.NAME;
+							desc = MultiArrayContainer.ARRAY_FIELD_DESC;
+							break;
+						case Type.BOOLEAN:
+							owner = BooleanArrayContainer.NAME;
+							desc = BooleanArrayContainer.ARRAY_FIELD_DESC;
+							break;
+						case Type.BYTE:
+							owner = ByteArrayContainer.NAME;
+							desc = ByteArrayContainer.ARRAY_FIELD_DESC;
+							break;
+						case Type.CHAR:
+							owner = CharArrayContainer.NAME;
+							desc = CharArrayContainer.ARRAY_FIELD_DESC;
+							break;
+						case Type.DOUBLE:
+							owner = DoubleArrayContainer.NAME;
+							desc = DoubleArrayContainer.ARRAY_FIELD_DESC;
+							break;
+						case Type.FLOAT:
+							owner = FloatArrayContainer.NAME;
+							desc = FloatArrayContainer.ARRAY_FIELD_DESC;
+							break;
+						case Type.INT:
+							owner = IntArrayContainer.NAME;
+							desc = IntArrayContainer.ARRAY_FIELD_DESC;
+							break;
+						case Type.LONG:
+							owner = LongArrayContainer.NAME;
+							desc = LongArrayContainer.ARRAY_FIELD_DESC;
+							break;
+						case Type.OBJECT:
+							owner = ObjectArrayContainer.NAME;
+							desc = ObjectArrayContainer.ARRAY_FIELD_DESC;
+							break;
+						case Type.SHORT:
+							owner = ShortArrayContainer.NAME;
+							desc = ShortArrayContainer.ARRAY_FIELD_DESC;
+							break;
 						}
 					}
 					originalMethod.visitFieldInsn(Opcodes.GETFIELD, owner,

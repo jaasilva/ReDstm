@@ -68,7 +68,6 @@ public class FramesCodeVisitor extends ClassAdapter
 	 * overriding the getCommonSuperClass we avoid loading
 	 * 
 	 * @author Guy Korland
-	 * 
 	 */
 	@ExcludeTM
 	private static class CommonClassWriter extends ClassWriter

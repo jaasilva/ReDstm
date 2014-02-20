@@ -441,8 +441,7 @@ public class Sequencer
 						}
 						prevOverlap = constructEntryPtr.overlap;
 						constructEntryPtr = constructEntryPtr.nextPtr;
-					}
-					while (constructEntryPtr != null);
+					} while (constructEntryPtr != null);
 				}
 			}
 		}

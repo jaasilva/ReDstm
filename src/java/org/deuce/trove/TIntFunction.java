@@ -23,9 +23,8 @@ package org.deuce.trove;
 // ////////////////////////////////////////////////
 
 /**
- * Interface for functions that accept and return one int primitive.
- * 
- * Created: Mon Nov 5 22:19:36 2001
+ * Interface for functions that accept and return one int primitive. Created:
+ * Mon Nov 5 22:19:36 2001
  * 
  * @author Eric D. Friedman
  * @version $Id: PFunction.template,v 1.1 2006/11/10 23:28:00 robeden Exp $
@@ -36,8 +35,7 @@ public interface TIntFunction
 	/**
 	 * Execute this function with <tt>value</tt>
 	 * 
-	 * @param value
-	 *            a <code>int</code> input
+	 * @param value a <code>int</code> input
 	 * @return a <code>int</code> result
 	 */
 	public int execute(int value);

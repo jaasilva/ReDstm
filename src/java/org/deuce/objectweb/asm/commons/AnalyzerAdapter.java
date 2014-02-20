@@ -1,29 +1,25 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework Copyright (c)
- * 2000-2007 INRIA, France Telecom All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer. 2. Redistributions in
- * binary form must reproduce the above copyright notice, this list of
- * conditions and the following disclaimer in the documentation and/or other
- * materials provided with the distribution. 3. Neither the name of the
- * copyright holders nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written
- * permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * 2000-2007 INRIA, France Telecom All rights reserved. Redistribution and use
+ * in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met: 1. Redistributions of source
+ * code must retain the above copyright notice, this list of conditions and the
+ * following disclaimer. 2. Redistributions in binary form must reproduce the
+ * above copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the copyright holders nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission. THIS SOFTWARE IS PROVIDED
+ * BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.deuce.objectweb.asm.commons;
 
@@ -112,16 +108,11 @@ public class AnalyzerAdapter extends MethodAdapter
 	/**
 	 * Creates a new {@link AnalyzerAdapter}.
 	 * 
-	 * @param owner
-	 *            the owner's class name.
-	 * @param access
-	 *            the method's access flags (see {@link Opcodes}).
-	 * @param name
-	 *            the method's name.
-	 * @param desc
-	 *            the method's descriptor (see {@link Type Type}).
-	 * @param mv
-	 *            the method visitor to which this adapter delegates calls. May
+	 * @param owner the owner's class name.
+	 * @param access the method's access flags (see {@link Opcodes}).
+	 * @param name the method's name.
+	 * @param desc the method's descriptor (see {@link Type Type}).
+	 * @param mv the method visitor to which this adapter delegates calls. May
 	 *            be <tt>null</tt>.
 	 */
 	public AnalyzerAdapter(final String owner, final int access,
@@ -149,30 +140,30 @@ public class AnalyzerAdapter extends MethodAdapter
 			Type type = types[i];
 			switch (type.getSort())
 			{
-				case Type.BOOLEAN:
-				case Type.CHAR:
-				case Type.BYTE:
-				case Type.SHORT:
-				case Type.INT:
-					locals.add(Opcodes.INTEGER);
-					break;
-				case Type.FLOAT:
-					locals.add(Opcodes.FLOAT);
-					break;
-				case Type.LONG:
-					locals.add(Opcodes.LONG);
-					locals.add(Opcodes.TOP);
-					break;
-				case Type.DOUBLE:
-					locals.add(Opcodes.DOUBLE);
-					locals.add(Opcodes.TOP);
-					break;
-				case Type.ARRAY:
-					locals.add(types[i].getDescriptor());
-					break;
-				// case Type.OBJECT:
-				default:
-					locals.add(types[i].getInternalName());
+			case Type.BOOLEAN:
+			case Type.CHAR:
+			case Type.BYTE:
+			case Type.SHORT:
+			case Type.INT:
+				locals.add(Opcodes.INTEGER);
+				break;
+			case Type.FLOAT:
+				locals.add(Opcodes.FLOAT);
+				break;
+			case Type.LONG:
+				locals.add(Opcodes.LONG);
+				locals.add(Opcodes.TOP);
+				break;
+			case Type.DOUBLE:
+				locals.add(Opcodes.DOUBLE);
+				locals.add(Opcodes.TOP);
+				break;
+			case Type.ARRAY:
+				locals.add(types[i].getDescriptor());
+				break;
+			// case Type.OBJECT:
+			default:
+				locals.add(types[i].getInternalName());
 			}
 		}
 	}
@@ -478,46 +469,46 @@ public class AnalyzerAdapter extends MethodAdapter
 		int index = desc.charAt(0) == '(' ? desc.indexOf(')') + 1 : 0;
 		switch (desc.charAt(index))
 		{
-			case 'V':
-				return;
-			case 'Z':
-			case 'C':
-			case 'B':
-			case 'S':
-			case 'I':
-				push(Opcodes.INTEGER);
-				return;
-			case 'F':
-				push(Opcodes.FLOAT);
-				return;
-			case 'J':
-				push(Opcodes.LONG);
-				push(Opcodes.TOP);
-				return;
-			case 'D':
-				push(Opcodes.DOUBLE);
-				push(Opcodes.TOP);
-				return;
-			case '[':
-				if (index == 0)
-				{
-					push(desc);
-				}
-				else
-				{
-					push(desc.substring(index, desc.length()));
-				}
-				break;
-			// case 'L':
-			default:
-				if (index == 0)
-				{
-					push(desc.substring(1, desc.length() - 1));
-				}
-				else
-				{
-					push(desc.substring(index + 1, desc.length() - 1));
-				}
+		case 'V':
+			return;
+		case 'Z':
+		case 'C':
+		case 'B':
+		case 'S':
+		case 'I':
+			push(Opcodes.INTEGER);
+			return;
+		case 'F':
+			push(Opcodes.FLOAT);
+			return;
+		case 'J':
+			push(Opcodes.LONG);
+			push(Opcodes.TOP);
+			return;
+		case 'D':
+			push(Opcodes.DOUBLE);
+			push(Opcodes.TOP);
+			return;
+		case '[':
+			if (index == 0)
+			{
+				push(desc);
+			}
+			else
+			{
+				push(desc.substring(index, desc.length()));
+			}
+			break;
+		// case 'L':
+		default:
+			if (index == 0)
+			{
+				push(desc.substring(1, desc.length() - 1));
+			}
+			else
+			{
+				push(desc.substring(index + 1, desc.length() - 1));
+			}
 		}
 	}
 
@@ -568,365 +559,365 @@ public class AnalyzerAdapter extends MethodAdapter
 		Object t1, t2, t3, t4;
 		switch (opcode)
 		{
-			case Opcodes.NOP:
-			case Opcodes.INEG:
-			case Opcodes.LNEG:
-			case Opcodes.FNEG:
-			case Opcodes.DNEG:
-			case Opcodes.I2B:
-			case Opcodes.I2C:
-			case Opcodes.I2S:
-			case Opcodes.GOTO:
-			case Opcodes.RETURN:
-				break;
-			case Opcodes.ACONST_NULL:
-				push(Opcodes.NULL);
-				break;
-			case Opcodes.ICONST_M1:
-			case Opcodes.ICONST_0:
-			case Opcodes.ICONST_1:
-			case Opcodes.ICONST_2:
-			case Opcodes.ICONST_3:
-			case Opcodes.ICONST_4:
-			case Opcodes.ICONST_5:
-			case Opcodes.BIPUSH:
-			case Opcodes.SIPUSH:
-				push(Opcodes.INTEGER);
-				break;
-			case Opcodes.LCONST_0:
-			case Opcodes.LCONST_1:
-				push(Opcodes.LONG);
-				push(Opcodes.TOP);
-				break;
-			case Opcodes.FCONST_0:
-			case Opcodes.FCONST_1:
-			case Opcodes.FCONST_2:
-				push(Opcodes.FLOAT);
-				break;
-			case Opcodes.DCONST_0:
-			case Opcodes.DCONST_1:
-				push(Opcodes.DOUBLE);
-				push(Opcodes.TOP);
-				break;
-			case Opcodes.ILOAD:
-			case Opcodes.FLOAD:
-			case Opcodes.ALOAD:
-				push(get(iarg));
-				break;
-			case Opcodes.LLOAD:
-			case Opcodes.DLOAD:
-				push(get(iarg));
-				push(Opcodes.TOP);
-				break;
-			case Opcodes.IALOAD:
-			case Opcodes.BALOAD:
-			case Opcodes.CALOAD:
-			case Opcodes.SALOAD:
-				pop(2);
-				push(Opcodes.INTEGER);
-				break;
-			case Opcodes.LALOAD:
-			case Opcodes.D2L:
-				pop(2);
-				push(Opcodes.LONG);
-				push(Opcodes.TOP);
-				break;
-			case Opcodes.FALOAD:
-				pop(2);
-				push(Opcodes.FLOAT);
-				break;
-			case Opcodes.DALOAD:
-			case Opcodes.L2D:
-				pop(2);
-				push(Opcodes.DOUBLE);
-				push(Opcodes.TOP);
-				break;
-			case Opcodes.AALOAD:
-				pop(1);
-				t1 = pop();
-				pushDesc(((String) t1).substring(1));
-				break;
-			case Opcodes.ISTORE:
-			case Opcodes.FSTORE:
-			case Opcodes.ASTORE:
-				t1 = pop();
-				set(iarg, t1);
-				if (iarg > 0)
+		case Opcodes.NOP:
+		case Opcodes.INEG:
+		case Opcodes.LNEG:
+		case Opcodes.FNEG:
+		case Opcodes.DNEG:
+		case Opcodes.I2B:
+		case Opcodes.I2C:
+		case Opcodes.I2S:
+		case Opcodes.GOTO:
+		case Opcodes.RETURN:
+			break;
+		case Opcodes.ACONST_NULL:
+			push(Opcodes.NULL);
+			break;
+		case Opcodes.ICONST_M1:
+		case Opcodes.ICONST_0:
+		case Opcodes.ICONST_1:
+		case Opcodes.ICONST_2:
+		case Opcodes.ICONST_3:
+		case Opcodes.ICONST_4:
+		case Opcodes.ICONST_5:
+		case Opcodes.BIPUSH:
+		case Opcodes.SIPUSH:
+			push(Opcodes.INTEGER);
+			break;
+		case Opcodes.LCONST_0:
+		case Opcodes.LCONST_1:
+			push(Opcodes.LONG);
+			push(Opcodes.TOP);
+			break;
+		case Opcodes.FCONST_0:
+		case Opcodes.FCONST_1:
+		case Opcodes.FCONST_2:
+			push(Opcodes.FLOAT);
+			break;
+		case Opcodes.DCONST_0:
+		case Opcodes.DCONST_1:
+			push(Opcodes.DOUBLE);
+			push(Opcodes.TOP);
+			break;
+		case Opcodes.ILOAD:
+		case Opcodes.FLOAD:
+		case Opcodes.ALOAD:
+			push(get(iarg));
+			break;
+		case Opcodes.LLOAD:
+		case Opcodes.DLOAD:
+			push(get(iarg));
+			push(Opcodes.TOP);
+			break;
+		case Opcodes.IALOAD:
+		case Opcodes.BALOAD:
+		case Opcodes.CALOAD:
+		case Opcodes.SALOAD:
+			pop(2);
+			push(Opcodes.INTEGER);
+			break;
+		case Opcodes.LALOAD:
+		case Opcodes.D2L:
+			pop(2);
+			push(Opcodes.LONG);
+			push(Opcodes.TOP);
+			break;
+		case Opcodes.FALOAD:
+			pop(2);
+			push(Opcodes.FLOAT);
+			break;
+		case Opcodes.DALOAD:
+		case Opcodes.L2D:
+			pop(2);
+			push(Opcodes.DOUBLE);
+			push(Opcodes.TOP);
+			break;
+		case Opcodes.AALOAD:
+			pop(1);
+			t1 = pop();
+			pushDesc(((String) t1).substring(1));
+			break;
+		case Opcodes.ISTORE:
+		case Opcodes.FSTORE:
+		case Opcodes.ASTORE:
+			t1 = pop();
+			set(iarg, t1);
+			if (iarg > 0)
+			{
+				t2 = get(iarg - 1);
+				if (t2 == Opcodes.LONG || t2 == Opcodes.DOUBLE)
 				{
-					t2 = get(iarg - 1);
-					if (t2 == Opcodes.LONG || t2 == Opcodes.DOUBLE)
-					{
-						set(iarg - 1, Opcodes.TOP);
-					}
+					set(iarg - 1, Opcodes.TOP);
 				}
-				break;
-			case Opcodes.LSTORE:
-			case Opcodes.DSTORE:
-				pop(1);
-				t1 = pop();
-				set(iarg, t1);
-				set(iarg + 1, Opcodes.TOP);
-				if (iarg > 0)
+			}
+			break;
+		case Opcodes.LSTORE:
+		case Opcodes.DSTORE:
+			pop(1);
+			t1 = pop();
+			set(iarg, t1);
+			set(iarg + 1, Opcodes.TOP);
+			if (iarg > 0)
+			{
+				t2 = get(iarg - 1);
+				if (t2 == Opcodes.LONG || t2 == Opcodes.DOUBLE)
 				{
-					t2 = get(iarg - 1);
-					if (t2 == Opcodes.LONG || t2 == Opcodes.DOUBLE)
-					{
-						set(iarg - 1, Opcodes.TOP);
-					}
+					set(iarg - 1, Opcodes.TOP);
 				}
+			}
+			break;
+		case Opcodes.IASTORE:
+		case Opcodes.BASTORE:
+		case Opcodes.CASTORE:
+		case Opcodes.SASTORE:
+		case Opcodes.FASTORE:
+		case Opcodes.AASTORE:
+			pop(3);
+			break;
+		case Opcodes.LASTORE:
+		case Opcodes.DASTORE:
+			pop(4);
+			break;
+		case Opcodes.POP:
+		case Opcodes.IFEQ:
+		case Opcodes.IFNE:
+		case Opcodes.IFLT:
+		case Opcodes.IFGE:
+		case Opcodes.IFGT:
+		case Opcodes.IFLE:
+		case Opcodes.IRETURN:
+		case Opcodes.FRETURN:
+		case Opcodes.ARETURN:
+		case Opcodes.TABLESWITCH:
+		case Opcodes.LOOKUPSWITCH:
+		case Opcodes.ATHROW:
+		case Opcodes.MONITORENTER:
+		case Opcodes.MONITOREXIT:
+		case Opcodes.IFNULL:
+		case Opcodes.IFNONNULL:
+			pop(1);
+			break;
+		case Opcodes.POP2:
+		case Opcodes.IF_ICMPEQ:
+		case Opcodes.IF_ICMPNE:
+		case Opcodes.IF_ICMPLT:
+		case Opcodes.IF_ICMPGE:
+		case Opcodes.IF_ICMPGT:
+		case Opcodes.IF_ICMPLE:
+		case Opcodes.IF_ACMPEQ:
+		case Opcodes.IF_ACMPNE:
+		case Opcodes.LRETURN:
+		case Opcodes.DRETURN:
+			pop(2);
+			break;
+		case Opcodes.DUP:
+			t1 = pop();
+			push(t1);
+			push(t1);
+			break;
+		case Opcodes.DUP_X1:
+			t1 = pop();
+			t2 = pop();
+			push(t1);
+			push(t2);
+			push(t1);
+			break;
+		case Opcodes.DUP_X2:
+			t1 = pop();
+			t2 = pop();
+			t3 = pop();
+			push(t1);
+			push(t3);
+			push(t2);
+			push(t1);
+			break;
+		case Opcodes.DUP2:
+			t1 = pop();
+			t2 = pop();
+			push(t2);
+			push(t1);
+			push(t2);
+			push(t1);
+			break;
+		case Opcodes.DUP2_X1:
+			t1 = pop();
+			t2 = pop();
+			t3 = pop();
+			push(t2);
+			push(t1);
+			push(t3);
+			push(t2);
+			push(t1);
+			break;
+		case Opcodes.DUP2_X2:
+			t1 = pop();
+			t2 = pop();
+			t3 = pop();
+			t4 = pop();
+			push(t2);
+			push(t1);
+			push(t4);
+			push(t3);
+			push(t2);
+			push(t1);
+			break;
+		case Opcodes.SWAP:
+			t1 = pop();
+			t2 = pop();
+			push(t1);
+			push(t2);
+			break;
+		case Opcodes.IADD:
+		case Opcodes.ISUB:
+		case Opcodes.IMUL:
+		case Opcodes.IDIV:
+		case Opcodes.IREM:
+		case Opcodes.IAND:
+		case Opcodes.IOR:
+		case Opcodes.IXOR:
+		case Opcodes.ISHL:
+		case Opcodes.ISHR:
+		case Opcodes.IUSHR:
+		case Opcodes.L2I:
+		case Opcodes.D2I:
+		case Opcodes.FCMPL:
+		case Opcodes.FCMPG:
+			pop(2);
+			push(Opcodes.INTEGER);
+			break;
+		case Opcodes.LADD:
+		case Opcodes.LSUB:
+		case Opcodes.LMUL:
+		case Opcodes.LDIV:
+		case Opcodes.LREM:
+		case Opcodes.LAND:
+		case Opcodes.LOR:
+		case Opcodes.LXOR:
+			pop(4);
+			push(Opcodes.LONG);
+			push(Opcodes.TOP);
+			break;
+		case Opcodes.FADD:
+		case Opcodes.FSUB:
+		case Opcodes.FMUL:
+		case Opcodes.FDIV:
+		case Opcodes.FREM:
+		case Opcodes.L2F:
+		case Opcodes.D2F:
+			pop(2);
+			push(Opcodes.FLOAT);
+			break;
+		case Opcodes.DADD:
+		case Opcodes.DSUB:
+		case Opcodes.DMUL:
+		case Opcodes.DDIV:
+		case Opcodes.DREM:
+			pop(4);
+			push(Opcodes.DOUBLE);
+			push(Opcodes.TOP);
+			break;
+		case Opcodes.LSHL:
+		case Opcodes.LSHR:
+		case Opcodes.LUSHR:
+			pop(3);
+			push(Opcodes.LONG);
+			push(Opcodes.TOP);
+			break;
+		case Opcodes.IINC:
+			set(iarg, Opcodes.INTEGER);
+			break;
+		case Opcodes.I2L:
+		case Opcodes.F2L:
+			pop(1);
+			push(Opcodes.LONG);
+			push(Opcodes.TOP);
+			break;
+		case Opcodes.I2F:
+			pop(1);
+			push(Opcodes.FLOAT);
+			break;
+		case Opcodes.I2D:
+		case Opcodes.F2D:
+			pop(1);
+			push(Opcodes.DOUBLE);
+			push(Opcodes.TOP);
+			break;
+		case Opcodes.F2I:
+		case Opcodes.ARRAYLENGTH:
+		case Opcodes.INSTANCEOF:
+			pop(1);
+			push(Opcodes.INTEGER);
+			break;
+		case Opcodes.LCMP:
+		case Opcodes.DCMPL:
+		case Opcodes.DCMPG:
+			pop(4);
+			push(Opcodes.INTEGER);
+			break;
+		case Opcodes.JSR:
+		case Opcodes.RET:
+			throw new RuntimeException("JSR/RET are not supported");
+		case Opcodes.GETSTATIC:
+			pushDesc(sarg);
+			break;
+		case Opcodes.PUTSTATIC:
+			pop(sarg);
+			break;
+		case Opcodes.GETFIELD:
+			pop(1);
+			pushDesc(sarg);
+			break;
+		case Opcodes.PUTFIELD:
+			pop(sarg);
+			pop();
+			break;
+		case Opcodes.NEW:
+			push(labels.get(0));
+			break;
+		case Opcodes.NEWARRAY:
+			pop();
+			switch (iarg)
+			{
+			case Opcodes.T_BOOLEAN:
+				pushDesc("[Z");
 				break;
-			case Opcodes.IASTORE:
-			case Opcodes.BASTORE:
-			case Opcodes.CASTORE:
-			case Opcodes.SASTORE:
-			case Opcodes.FASTORE:
-			case Opcodes.AASTORE:
-				pop(3);
+			case Opcodes.T_CHAR:
+				pushDesc("[C");
 				break;
-			case Opcodes.LASTORE:
-			case Opcodes.DASTORE:
-				pop(4);
+			case Opcodes.T_BYTE:
+				pushDesc("[B");
 				break;
-			case Opcodes.POP:
-			case Opcodes.IFEQ:
-			case Opcodes.IFNE:
-			case Opcodes.IFLT:
-			case Opcodes.IFGE:
-			case Opcodes.IFGT:
-			case Opcodes.IFLE:
-			case Opcodes.IRETURN:
-			case Opcodes.FRETURN:
-			case Opcodes.ARETURN:
-			case Opcodes.TABLESWITCH:
-			case Opcodes.LOOKUPSWITCH:
-			case Opcodes.ATHROW:
-			case Opcodes.MONITORENTER:
-			case Opcodes.MONITOREXIT:
-			case Opcodes.IFNULL:
-			case Opcodes.IFNONNULL:
-				pop(1);
+			case Opcodes.T_SHORT:
+				pushDesc("[S");
 				break;
-			case Opcodes.POP2:
-			case Opcodes.IF_ICMPEQ:
-			case Opcodes.IF_ICMPNE:
-			case Opcodes.IF_ICMPLT:
-			case Opcodes.IF_ICMPGE:
-			case Opcodes.IF_ICMPGT:
-			case Opcodes.IF_ICMPLE:
-			case Opcodes.IF_ACMPEQ:
-			case Opcodes.IF_ACMPNE:
-			case Opcodes.LRETURN:
-			case Opcodes.DRETURN:
-				pop(2);
+			case Opcodes.T_INT:
+				pushDesc("[I");
 				break;
-			case Opcodes.DUP:
-				t1 = pop();
-				push(t1);
-				push(t1);
+			case Opcodes.T_FLOAT:
+				pushDesc("[F");
 				break;
-			case Opcodes.DUP_X1:
-				t1 = pop();
-				t2 = pop();
-				push(t1);
-				push(t2);
-				push(t1);
+			case Opcodes.T_DOUBLE:
+				pushDesc("[D");
 				break;
-			case Opcodes.DUP_X2:
-				t1 = pop();
-				t2 = pop();
-				t3 = pop();
-				push(t1);
-				push(t3);
-				push(t2);
-				push(t1);
-				break;
-			case Opcodes.DUP2:
-				t1 = pop();
-				t2 = pop();
-				push(t2);
-				push(t1);
-				push(t2);
-				push(t1);
-				break;
-			case Opcodes.DUP2_X1:
-				t1 = pop();
-				t2 = pop();
-				t3 = pop();
-				push(t2);
-				push(t1);
-				push(t3);
-				push(t2);
-				push(t1);
-				break;
-			case Opcodes.DUP2_X2:
-				t1 = pop();
-				t2 = pop();
-				t3 = pop();
-				t4 = pop();
-				push(t2);
-				push(t1);
-				push(t4);
-				push(t3);
-				push(t2);
-				push(t1);
-				break;
-			case Opcodes.SWAP:
-				t1 = pop();
-				t2 = pop();
-				push(t1);
-				push(t2);
-				break;
-			case Opcodes.IADD:
-			case Opcodes.ISUB:
-			case Opcodes.IMUL:
-			case Opcodes.IDIV:
-			case Opcodes.IREM:
-			case Opcodes.IAND:
-			case Opcodes.IOR:
-			case Opcodes.IXOR:
-			case Opcodes.ISHL:
-			case Opcodes.ISHR:
-			case Opcodes.IUSHR:
-			case Opcodes.L2I:
-			case Opcodes.D2I:
-			case Opcodes.FCMPL:
-			case Opcodes.FCMPG:
-				pop(2);
-				push(Opcodes.INTEGER);
-				break;
-			case Opcodes.LADD:
-			case Opcodes.LSUB:
-			case Opcodes.LMUL:
-			case Opcodes.LDIV:
-			case Opcodes.LREM:
-			case Opcodes.LAND:
-			case Opcodes.LOR:
-			case Opcodes.LXOR:
-				pop(4);
-				push(Opcodes.LONG);
-				push(Opcodes.TOP);
-				break;
-			case Opcodes.FADD:
-			case Opcodes.FSUB:
-			case Opcodes.FMUL:
-			case Opcodes.FDIV:
-			case Opcodes.FREM:
-			case Opcodes.L2F:
-			case Opcodes.D2F:
-				pop(2);
-				push(Opcodes.FLOAT);
-				break;
-			case Opcodes.DADD:
-			case Opcodes.DSUB:
-			case Opcodes.DMUL:
-			case Opcodes.DDIV:
-			case Opcodes.DREM:
-				pop(4);
-				push(Opcodes.DOUBLE);
-				push(Opcodes.TOP);
-				break;
-			case Opcodes.LSHL:
-			case Opcodes.LSHR:
-			case Opcodes.LUSHR:
-				pop(3);
-				push(Opcodes.LONG);
-				push(Opcodes.TOP);
-				break;
-			case Opcodes.IINC:
-				set(iarg, Opcodes.INTEGER);
-				break;
-			case Opcodes.I2L:
-			case Opcodes.F2L:
-				pop(1);
-				push(Opcodes.LONG);
-				push(Opcodes.TOP);
-				break;
-			case Opcodes.I2F:
-				pop(1);
-				push(Opcodes.FLOAT);
-				break;
-			case Opcodes.I2D:
-			case Opcodes.F2D:
-				pop(1);
-				push(Opcodes.DOUBLE);
-				push(Opcodes.TOP);
-				break;
-			case Opcodes.F2I:
-			case Opcodes.ARRAYLENGTH:
-			case Opcodes.INSTANCEOF:
-				pop(1);
-				push(Opcodes.INTEGER);
-				break;
-			case Opcodes.LCMP:
-			case Opcodes.DCMPL:
-			case Opcodes.DCMPG:
-				pop(4);
-				push(Opcodes.INTEGER);
-				break;
-			case Opcodes.JSR:
-			case Opcodes.RET:
-				throw new RuntimeException("JSR/RET are not supported");
-			case Opcodes.GETSTATIC:
-				pushDesc(sarg);
-				break;
-			case Opcodes.PUTSTATIC:
-				pop(sarg);
-				break;
-			case Opcodes.GETFIELD:
-				pop(1);
-				pushDesc(sarg);
-				break;
-			case Opcodes.PUTFIELD:
-				pop(sarg);
-				pop();
-				break;
-			case Opcodes.NEW:
-				push(labels.get(0));
-				break;
-			case Opcodes.NEWARRAY:
-				pop();
-				switch (iarg)
-				{
-					case Opcodes.T_BOOLEAN:
-						pushDesc("[Z");
-						break;
-					case Opcodes.T_CHAR:
-						pushDesc("[C");
-						break;
-					case Opcodes.T_BYTE:
-						pushDesc("[B");
-						break;
-					case Opcodes.T_SHORT:
-						pushDesc("[S");
-						break;
-					case Opcodes.T_INT:
-						pushDesc("[I");
-						break;
-					case Opcodes.T_FLOAT:
-						pushDesc("[F");
-						break;
-					case Opcodes.T_DOUBLE:
-						pushDesc("[D");
-						break;
-					// case Opcodes.T_LONG:
-					default:
-						pushDesc("[J");
-						break;
-				}
-				break;
-			case Opcodes.ANEWARRAY:
-				pop();
-				pushDesc("[" + Type.getObjectType(sarg));
-				break;
-			case Opcodes.CHECKCAST:
-				pop();
-				pushDesc(Type.getObjectType(sarg).getDescriptor());
-				break;
-			// case Opcodes.MULTIANEWARRAY:
+			// case Opcodes.T_LONG:
 			default:
-				pop(iarg);
-				pushDesc(sarg);
+				pushDesc("[J");
 				break;
+			}
+			break;
+		case Opcodes.ANEWARRAY:
+			pop();
+			pushDesc("[" + Type.getObjectType(sarg));
+			break;
+		case Opcodes.CHECKCAST:
+			pop();
+			pushDesc(Type.getObjectType(sarg).getDescriptor());
+			break;
+		// case Opcodes.MULTIANEWARRAY:
+		default:
+			pop(iarg);
+			pushDesc(sarg);
+			break;
 		}
 		labels = null;
 	}

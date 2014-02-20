@@ -1,29 +1,25 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework Copyright (c)
- * 2000-2007 INRIA, France Telecom All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer. 2. Redistributions in
- * binary form must reproduce the above copyright notice, this list of
- * conditions and the following disclaimer in the documentation and/or other
- * materials provided with the distribution. 3. Neither the name of the
- * copyright holders nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written
- * permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * 2000-2007 INRIA, France Telecom All rights reserved. Redistribution and use
+ * in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met: 1. Redistributions of source
+ * code must retain the above copyright notice, this list of conditions and the
+ * following disclaimer. 2. Redistributions in binary form must reproduce the
+ * above copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the copyright holders nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission. THIS SOFTWARE IS PROVIDED
+ * BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.deuce.objectweb.asm.tree;
 
@@ -107,11 +103,9 @@ public class InsnList
 	 * time it is called. Once the cache is built, this method run in constant
 	 * time. This cache is invalidated by all the methods that modify the list.
 	 * 
-	 * @param index
-	 *            the index of the instruction that must be returned.
+	 * @param index the index of the instruction that must be returned.
 	 * @return the instruction whose index is given.
-	 * @throws IndexOutOfBoundsException
-	 *             if (index < 0 || index >= size()).
+	 * @throws IndexOutOfBoundsException if (index < 0 || index >= size()).
 	 */
 	public AbstractInsnNode get(final int index)
 	{
@@ -131,8 +125,7 @@ public class InsnList
 	 * method always scans the instructions of this list until it finds the
 	 * given instruction or reaches the end of the list.
 	 * 
-	 * @param insn
-	 *            an instruction.
+	 * @param insn an instruction.
 	 * @return <tt>true</tt> if the given instruction belongs to this list.
 	 */
 	public boolean contains(final AbstractInsnNode insn)
@@ -152,15 +145,13 @@ public class InsnList
 	 * constant time. The cache is invalidated by all the methods that modify
 	 * the list.
 	 * 
-	 * @param insn
-	 *            an instruction <i>of this list</i>.
+	 * @param insn an instruction <i>of this list</i>.
 	 * @return the index of the given instruction in this list. <i>The result of
 	 *         this method is undefined if the given instruction does not belong
 	 *         to this list</i>. Use {@link #contains contains} to test if an
 	 *         instruction belongs to an instruction list or not.
-	 * @throws IllegalArgumentException
-	 *             if {@link #check} is <tt>true</tt> and if insn does not
-	 *             belong to this list.
+	 * @throws IllegalArgumentException if {@link #check} is <tt>true</tt> and
+	 *             if insn does not belong to this list.
 	 */
 	public int indexOf(final AbstractInsnNode insn)
 	{
@@ -178,8 +169,7 @@ public class InsnList
 	/**
 	 * Makes the given visitor visit all of the instructions in this list.
 	 * 
-	 * @param mv
-	 *            the method visitor that must visit the instructions.
+	 * @param mv the method visitor that must visit the instructions.
 	 */
 	public void accept(final MethodVisitor mv)
 	{
@@ -233,14 +223,12 @@ public class InsnList
 	/**
 	 * Replaces an instruction of this list with another instruction.
 	 * 
-	 * @param location
-	 *            an instruction <i>of this list</i>.
-	 * @param insn
-	 *            another instruction, <i>which must not belong to any
+	 * @param location an instruction <i>of this list</i>.
+	 * @param insn another instruction, <i>which must not belong to any
 	 *            {@link InsnList}</i>.
-	 * @throws IllegalArgumentException
-	 *             if {@link #check} is <tt>true</tt>, and if i does not belong
-	 *             to this list or if insn belongs to an instruction list.
+	 * @throws IllegalArgumentException if {@link #check} is <tt>true</tt>, and
+	 *             if i does not belong to this list or if insn belongs to an
+	 *             instruction list.
 	 */
 	public void set(final AbstractInsnNode location, final AbstractInsnNode insn)
 	{
@@ -286,12 +274,10 @@ public class InsnList
 	/**
 	 * Adds the given instruction to the end of this list.
 	 * 
-	 * @param insn
-	 *            an instruction, <i>which must not belong to any
+	 * @param insn an instruction, <i>which must not belong to any
 	 *            {@link InsnList}</i>.
-	 * @throws IllegalArgumentException
-	 *             if {@link #check} is <tt>true</tt>, and if insn belongs to an
-	 *             instruction list.
+	 * @throws IllegalArgumentException if {@link #check} is <tt>true</tt>, and
+	 *             if insn belongs to an instruction list.
 	 */
 	public void add(final AbstractInsnNode insn)
 	{
@@ -318,10 +304,9 @@ public class InsnList
 	/**
 	 * Adds the given instructions to the end of this list.
 	 * 
-	 * @param insns
-	 *            an instruction list, which is cleared during the process.
-	 * @throws IllegalArgumentException
-	 *             if {@link #check} is <tt>true</tt>, and if insn == this.
+	 * @param insns an instruction list, which is cleared during the process.
+	 * @throws IllegalArgumentException if {@link #check} is <tt>true</tt>, and
+	 *             if insn == this.
 	 */
 	public void add(final InsnList insns)
 	{
@@ -353,12 +338,10 @@ public class InsnList
 	/**
 	 * Inserts the given instruction at the begining of this list.
 	 * 
-	 * @param insn
-	 *            an instruction, <i>which must not belong to any
+	 * @param insn an instruction, <i>which must not belong to any
 	 *            {@link InsnList}</i>.
-	 * @throws IllegalArgumentException
-	 *             if {@link #check} is <tt>true</tt>, and if insn belongs to an
-	 *             instruction list.
+	 * @throws IllegalArgumentException if {@link #check} is <tt>true</tt>, and
+	 *             if insn belongs to an instruction list.
 	 */
 	public void insert(final AbstractInsnNode insn)
 	{
@@ -385,10 +368,9 @@ public class InsnList
 	/**
 	 * Inserts the given instructions at the begining of this list.
 	 * 
-	 * @param insns
-	 *            an instruction list, which is cleared during the process.
-	 * @throws IllegalArgumentException
-	 *             if {@link #check} is <tt>true</tt>, and if insn == this.
+	 * @param insns an instruction list, which is cleared during the process.
+	 * @throws IllegalArgumentException if {@link #check} is <tt>true</tt>, and
+	 *             if insn == this.
 	 */
 	public void insert(final InsnList insns)
 	{
@@ -420,15 +402,13 @@ public class InsnList
 	/**
 	 * Inserts the given instruction after the specified instruction.
 	 * 
-	 * @param location
-	 *            an instruction <i>of this list</i> after which insn must be
-	 *            inserted.
-	 * @param insn
-	 *            the instruction to be inserted, <i>which must not belong to
+	 * @param location an instruction <i>of this list</i> after which insn must
+	 *            be inserted.
+	 * @param insn the instruction to be inserted, <i>which must not belong to
 	 *            any {@link InsnList}</i>.
-	 * @throws IllegalArgumentException
-	 *             if {@link #check} is <tt>true</tt>, and if i does not belong
-	 *             to this list or if insn belongs to an instruction list.
+	 * @throws IllegalArgumentException if {@link #check} is <tt>true</tt>, and
+	 *             if i does not belong to this list or if insn belongs to an
+	 *             instruction list.
 	 */
 	public void insert(final AbstractInsnNode location,
 			final AbstractInsnNode insn)
@@ -457,15 +437,12 @@ public class InsnList
 	/**
 	 * Inserts the given instructions after the specified instruction.
 	 * 
-	 * @param location
-	 *            an instruction <i>of this list</i> after which the
+	 * @param location an instruction <i>of this list</i> after which the
 	 *            instructions must be inserted.
-	 * @param insns
-	 *            the instruction list to be inserted, which is cleared during
+	 * @param insns the instruction list to be inserted, which is cleared during
 	 *            the process.
-	 * @throws IllegalArgumentException
-	 *             if {@link #check} is <tt>true</tt>, and if i does not belong
-	 *             to this list or if insns == this.
+	 * @throws IllegalArgumentException if {@link #check} is <tt>true</tt>, and
+	 *             if i does not belong to this list or if insns == this.
 	 */
 	public void insert(final AbstractInsnNode location, final InsnList insns)
 	{
@@ -499,15 +476,13 @@ public class InsnList
 	/**
 	 * Inserts the given instruction before the specified instruction.
 	 * 
-	 * @param location
-	 *            an instruction <i>of this list</i> before which insn must be
-	 *            inserted.
-	 * @param insn
-	 *            the instruction to be inserted, <i>which must not belong to
+	 * @param location an instruction <i>of this list</i> before which insn must
+	 *            be inserted.
+	 * @param insn the instruction to be inserted, <i>which must not belong to
 	 *            any {@link InsnList}</i>.
-	 * @throws IllegalArgumentException
-	 *             if {@link #check} is <tt>true</tt>, and if i does not belong
-	 *             to this list or if insn belongs to an instruction list.
+	 * @throws IllegalArgumentException if {@link #check} is <tt>true</tt>, and
+	 *             if i does not belong to this list or if insn belongs to an
+	 *             instruction list.
 	 */
 	public void insertBefore(final AbstractInsnNode location,
 			final AbstractInsnNode insn)
@@ -536,15 +511,12 @@ public class InsnList
 	/**
 	 * Inserts the given instructions before the specified instruction.
 	 * 
-	 * @param location
-	 *            an instruction <i>of this list</i> before which the
+	 * @param location an instruction <i>of this list</i> before which the
 	 *            instructions must be inserted.
-	 * @param insns
-	 *            the instruction list to be inserted, which is cleared during
+	 * @param insns the instruction list to be inserted, which is cleared during
 	 *            the process.
-	 * @throws IllegalArgumentException
-	 *             if {@link #check} is <tt>true</tt>, and if i does not belong
-	 *             to this list or if insns == this.
+	 * @throws IllegalArgumentException if {@link #check} is <tt>true</tt>, and
+	 *             if i does not belong to this list or if insns == this.
 	 */
 	public void insertBefore(final AbstractInsnNode location,
 			final InsnList insns)
@@ -579,11 +551,9 @@ public class InsnList
 	/**
 	 * Removes the given instruction from this list.
 	 * 
-	 * @param insn
-	 *            the instruction <i>of this list</i> that must be removed.
-	 * @throws IllegalArgumentException
-	 *             if {@link #check} is <tt>true</tt>, and if insn does not
-	 *             belong to this list.
+	 * @param insn the instruction <i>of this list</i> that must be removed.
+	 * @throws IllegalArgumentException if {@link #check} is <tt>true</tt>, and
+	 *             if insn does not belong to this list.
 	 */
 	public void remove(final AbstractInsnNode insn)
 	{
@@ -629,8 +599,7 @@ public class InsnList
 	/**
 	 * Removes all of the instructions of this list.
 	 * 
-	 * @param mark
-	 *            if the instructions must be marked as no longer belonging to
+	 * @param mark if the instructions must be marked as no longer belonging to
 	 *            any {@link InsnList}.
 	 */
 	private void removeAll(final boolean mark)

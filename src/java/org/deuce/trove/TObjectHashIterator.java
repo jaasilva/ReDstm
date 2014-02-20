@@ -19,7 +19,6 @@
 package org.deuce.trove;
 
 /**
- * 
  * Created: Wed Nov 28 21:30:53 2001
  * 
  * @author Eric D. Friedman

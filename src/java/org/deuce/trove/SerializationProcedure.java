@@ -26,12 +26,10 @@ import java.io.ObjectOutput;
  * writing the arguments to the procedure out on an ObjectOutputStream. In the
  * case of two-argument procedures, the arguments are written out in the order
  * received.
- * 
  * <p>
  * Any IOException is trapped here so that it can be rethrown in a writeObject
  * method.
  * </p>
- * 
  * Created: Sun Jul 7 00:14:18 2002
  * 
  * @author Eric D. Friedman

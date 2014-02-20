@@ -26,7 +26,6 @@ import java.util.NoSuchElementException;
  * Implements all iterator functions for the hashed object set. Subclasses may
  * override objectAtIndex to vary the object returned by calls to next() (e.g.
  * for values, and Map.Entry objects).
- * 
  * <p>
  * Note that iteration is fastest if you forego the calls to <tt>hasNext</tt> in
  * favor of checking the size of the structure yourself and then call next()
@@ -39,12 +38,10 @@ import java.util.NoSuchElementException;
  * 	Object o = i.next();
  * }
  * </pre>
- * 
  * <p>
  * You may, of course, use the hasNext(), next() idiom too if you aren't in a
  * performance critical spot.
  * </p>
- * 
  */
 abstract class THashIterator<V> extends TIterator implements Iterator<V>
 {
@@ -63,11 +60,10 @@ abstract class THashIterator<V> extends TIterator implements Iterator<V>
 	 * Moves the iterator to the next Object and returns it.
 	 * 
 	 * @return an <code>Object</code> value
-	 * @exception ConcurrentModificationException
-	 *                if the structure was changed using a method that isn't on
-	 *                this iterator.
-	 * @exception NoSuchElementException
-	 *                if this is called on an exhausted iterator.
+	 * @exception ConcurrentModificationException if the structure was changed
+	 *                using a method that isn't on this iterator.
+	 * @exception NoSuchElementException if this is called on an exhausted
+	 *                iterator.
 	 */
 	public V next()
 	{
@@ -80,9 +76,8 @@ abstract class THashIterator<V> extends TIterator implements Iterator<V>
 	 * value if the iterator is exhausted.
 	 * 
 	 * @return an <code>int</code> value
-	 * @exception ConcurrentModificationException
-	 *                if the underlying collection's size has been modified
-	 *                since the iterator was created.
+	 * @exception ConcurrentModificationException if the underlying collection's
+	 *                size has been modified since the iterator was created.
 	 */
 	protected final int nextIndex()
 	{
@@ -103,8 +98,7 @@ abstract class THashIterator<V> extends TIterator implements Iterator<V>
 	 * Returns the object at the specified index. Subclasses should implement
 	 * this to return the appropriate object for the given index.
 	 * 
-	 * @param index
-	 *            the index of the value to return.
+	 * @param index the index of the value to return.
 	 * @return an <code>Object</code> value
 	 */
 	abstract protected V objectAtIndex(int index);

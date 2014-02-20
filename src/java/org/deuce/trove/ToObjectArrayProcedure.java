@@ -19,9 +19,8 @@
 package org.deuce.trove;
 
 /**
- * A procedure which stores each value it receives into a target array.
- * 
- * Created: Sat Jan 12 10:13:42 2002
+ * A procedure which stores each value it receives into a target array. Created:
+ * Sat Jan 12 10:13:42 2002
  * 
  * @author Eric D. Friedman
  * @version $Id: ToObjectArrayProcedure.java,v 1.2 2006/11/10 23:27:57 robeden

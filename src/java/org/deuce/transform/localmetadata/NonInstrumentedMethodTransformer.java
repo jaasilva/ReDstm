@@ -55,28 +55,28 @@ public class NonInstrumentedMethodTransformer extends MethodAdapter
 		{
 			switch (t.getSort())
 			{
-				case Type.INT:
-				case Type.SHORT:
-				case Type.BYTE:
-				case Type.BOOLEAN:
-				case Type.CHAR:
-					super.visitVarInsn(Opcodes.ILOAD, i);
-					break;
-				case Type.LONG:
-					super.visitVarInsn(Opcodes.LLOAD, i);
-					break;
-				case Type.DOUBLE:
-					super.visitVarInsn(Opcodes.DLOAD, i);
-					break;
-				case Type.ARRAY:
-					super.visitVarInsn(Opcodes.ALOAD, i);
-					// txArrayToArray(ArrayUtil.getArrayType(t), mv);
-					containerToArray(t, mv);
-					super.visitInsn(Opcodes.DUP);
-					super.visitVarInsn(Opcodes.ASTORE, varbase++);
-					break;
-				default:
-					super.visitVarInsn(Opcodes.ALOAD, i);
+			case Type.INT:
+			case Type.SHORT:
+			case Type.BYTE:
+			case Type.BOOLEAN:
+			case Type.CHAR:
+				super.visitVarInsn(Opcodes.ILOAD, i);
+				break;
+			case Type.LONG:
+				super.visitVarInsn(Opcodes.LLOAD, i);
+				break;
+			case Type.DOUBLE:
+				super.visitVarInsn(Opcodes.DLOAD, i);
+				break;
+			case Type.ARRAY:
+				super.visitVarInsn(Opcodes.ALOAD, i);
+				// txArrayToArray(ArrayUtil.getArrayType(t), mv);
+				containerToArray(t, mv);
+				super.visitInsn(Opcodes.DUP);
+				super.visitVarInsn(Opcodes.ASTORE, varbase++);
+				break;
+			default:
+				super.visitVarInsn(Opcodes.ALOAD, i);
 			}
 			i++;
 		}
@@ -98,29 +98,29 @@ public class NonInstrumentedMethodTransformer extends MethodAdapter
 
 		switch (mm.getReturnType().getSort())
 		{
-			case Type.INT:
-			case Type.SHORT:
-			case Type.BYTE:
-			case Type.BOOLEAN:
-			case Type.CHAR:
-				super.visitInsn(Opcodes.IRETURN);
-				break;
-			case Type.FLOAT:
-				super.visitInsn(Opcodes.FRETURN);
-				break;
-			case Type.LONG:
-				super.visitInsn(Opcodes.LRETURN);
-				break;
-			case Type.DOUBLE:
-				super.visitInsn(Opcodes.DRETURN);
-				break;
-			case Type.ARRAY:
-			case Type.OBJECT:
-				super.visitInsn(Opcodes.ARETURN);
-				break;
-			case Type.VOID:
-				super.visitInsn(Opcodes.RETURN);
-				break;
+		case Type.INT:
+		case Type.SHORT:
+		case Type.BYTE:
+		case Type.BOOLEAN:
+		case Type.CHAR:
+			super.visitInsn(Opcodes.IRETURN);
+			break;
+		case Type.FLOAT:
+			super.visitInsn(Opcodes.FRETURN);
+			break;
+		case Type.LONG:
+			super.visitInsn(Opcodes.LRETURN);
+			break;
+		case Type.DOUBLE:
+			super.visitInsn(Opcodes.DRETURN);
+			break;
+		case Type.ARRAY:
+		case Type.OBJECT:
+			super.visitInsn(Opcodes.ARETURN);
+			break;
+		case Type.VOID:
+			super.visitInsn(Opcodes.RETURN);
+			break;
 		}
 	}
 
@@ -157,12 +157,10 @@ public class NonInstrumentedMethodTransformer extends MethodAdapter
 	/**
 	 * This method must be called only when the TxTypeField array reference is
 	 * on top of the stack. All we need to do is get the array pointed by the
-	 * array field of one of the metadata array elements.
+	 * array field of one of the metadata array elements. // ...,txarrayref =>
+	 * ... // ...,arrayref =>
 	 * 
-	 * // ...,txarrayref => ... // ...,arrayref =>
-	 * 
-	 * @param arrT
-	 *            the original type of the array
+	 * @param arrT the original type of the array
 	 */
 	private void txArrayToArray(Type arrT, MethodVisitor mv)
 	{
@@ -212,12 +210,9 @@ public class NonInstrumentedMethodTransformer extends MethodAdapter
 
 	/**
 	 * This method must be called only when the array reference is on top of the
-	 * stack.
+	 * stack. // ...,arrayref => ... // ...,txarrayref =>
 	 * 
-	 * // ...,arrayref => ... // ...,txarrayref =>
-	 * 
-	 * @param arrT
-	 *            the original type of the array
+	 * @param arrT the original type of the array
 	 */
 	private void arrayToTxArray(Type arrT, MethodVisitor mv)
 	{

@@ -24,7 +24,6 @@ package org.deuce.trove;
 
 /**
  * Interface for procedures that take two parameters of type Object and long.
- * 
  * Created: Mon Nov 5 22:03:30 2001
  * 
  * @author Eric D. Friedman
@@ -39,10 +38,8 @@ public interface TObjectLongProcedure<K>
 	 * application executing this procedure should not invoke this procedure
 	 * again.
 	 * 
-	 * @param a
-	 *            an <code>Object</code> value
-	 * @param b
-	 *            a <code>long</code> value
+	 * @param a an <code>Object</code> value
+	 * @param b a <code>long</code> value
 	 * @return true if additional invocations of the procedure are allowed.
 	 */
 	public boolean execute(K a, long b);

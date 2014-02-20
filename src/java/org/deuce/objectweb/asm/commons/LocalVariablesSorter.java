@@ -1,29 +1,25 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework Copyright (c)
- * 2000-2007 INRIA, France Telecom All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer. 2. Redistributions in
- * binary form must reproduce the above copyright notice, this list of
- * conditions and the following disclaimer in the documentation and/or other
- * materials provided with the distribution. 3. Neither the name of the
- * copyright holders nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written
- * permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * 2000-2007 INRIA, France Telecom All rights reserved. Redistribution and use
+ * in source and binary forms, with or without modification, are permitted
+ * provided that the following conditions are met: 1. Redistributions of source
+ * code must retain the above copyright notice, this list of conditions and the
+ * following disclaimer. 2. Redistributions in binary form must reproduce the
+ * above copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the copyright holders nor the names of its
+ * contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission. THIS SOFTWARE IS PROVIDED
+ * BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.deuce.objectweb.asm.commons;
 
@@ -81,12 +77,9 @@ public class LocalVariablesSorter extends MethodAdapter
 	/**
 	 * Creates a new {@link LocalVariablesSorter}.
 	 * 
-	 * @param access
-	 *            access flags of the adapted method.
-	 * @param desc
-	 *            the method's descriptor (see {@link Type Type}).
-	 * @param mv
-	 *            the method visitor to which this adapter delegates calls.
+	 * @param access access flags of the adapted method.
+	 * @param desc the method's descriptor (see {@link Type Type}).
+	 * @param mv the method visitor to which this adapter delegates calls.
 	 */
 	public LocalVariablesSorter(final int access, final String desc,
 			final MethodVisitor mv)
@@ -106,34 +99,34 @@ public class LocalVariablesSorter extends MethodAdapter
 		Type type;
 		switch (opcode)
 		{
-			case Opcodes.LLOAD:
-			case Opcodes.LSTORE:
-				type = Type.LONG_TYPE;
-				break;
+		case Opcodes.LLOAD:
+		case Opcodes.LSTORE:
+			type = Type.LONG_TYPE;
+			break;
 
-			case Opcodes.DLOAD:
-			case Opcodes.DSTORE:
-				type = Type.DOUBLE_TYPE;
-				break;
+		case Opcodes.DLOAD:
+		case Opcodes.DSTORE:
+			type = Type.DOUBLE_TYPE;
+			break;
 
-			case Opcodes.FLOAD:
-			case Opcodes.FSTORE:
-				type = Type.FLOAT_TYPE;
-				break;
+		case Opcodes.FLOAD:
+		case Opcodes.FSTORE:
+			type = Type.FLOAT_TYPE;
+			break;
 
-			case Opcodes.ILOAD:
-			case Opcodes.ISTORE:
-				type = Type.INT_TYPE;
-				break;
+		case Opcodes.ILOAD:
+		case Opcodes.ISTORE:
+			type = Type.INT_TYPE;
+			break;
 
-			case Opcodes.ALOAD:
-			case Opcodes.ASTORE:
-				type = OBJECT_TYPE;
-				break;
+		case Opcodes.ALOAD:
+		case Opcodes.ASTORE:
+			type = OBJECT_TYPE;
+			break;
 
-			// case RET:
-			default:
-				type = Type.VOID_TYPE;
+		// case RET:
+		default:
+			type = Type.VOID_TYPE;
 		}
 		mv.visitVarInsn(opcode, remap(var, type));
 	}
@@ -225,8 +218,7 @@ public class LocalVariablesSorter extends MethodAdapter
 	/**
 	 * Creates a new local variable of the given type.
 	 * 
-	 * @param type
-	 *            the type of the local variable to be created.
+	 * @param type the type of the local variable to be created.
 	 * @return the identifier of the newly created local variable.
 	 */
 	public int newLocal(final Type type)
@@ -234,29 +226,29 @@ public class LocalVariablesSorter extends MethodAdapter
 		Object t;
 		switch (type.getSort())
 		{
-			case Type.BOOLEAN:
-			case Type.CHAR:
-			case Type.BYTE:
-			case Type.SHORT:
-			case Type.INT:
-				t = Opcodes.INTEGER;
-				break;
-			case Type.FLOAT:
-				t = Opcodes.FLOAT;
-				break;
-			case Type.LONG:
-				t = Opcodes.LONG;
-				break;
-			case Type.DOUBLE:
-				t = Opcodes.DOUBLE;
-				break;
-			case Type.ARRAY:
-				t = type.getDescriptor();
-				break;
-			// case Type.OBJECT:
-			default:
-				t = type.getInternalName();
-				break;
+		case Type.BOOLEAN:
+		case Type.CHAR:
+		case Type.BYTE:
+		case Type.SHORT:
+		case Type.INT:
+			t = Opcodes.INTEGER;
+			break;
+		case Type.FLOAT:
+			t = Opcodes.FLOAT;
+			break;
+		case Type.LONG:
+			t = Opcodes.LONG;
+			break;
+		case Type.DOUBLE:
+			t = Opcodes.DOUBLE;
+			break;
+		case Type.ARRAY:
+			t = type.getDescriptor();
+			break;
+		// case Type.OBJECT:
+		default:
+			t = type.getInternalName();
+			break;
 		}
 		int local = nextLocal;
 		nextLocal += type.getSize();
@@ -269,11 +261,9 @@ public class LocalVariablesSorter extends MethodAdapter
 	 * Sets the current type of the given local variable. The default
 	 * implementation of this method does nothing.
 	 * 
-	 * @param local
-	 *            a local variable identifier, as returned by {@link #newLocal
-	 *            newLocal()}.
-	 * @param type
-	 *            the type of the value being stored in the local variable
+	 * @param local a local variable identifier, as returned by
+	 *            {@link #newLocal newLocal()}.
+	 * @param type the type of the value being stored in the local variable
 	 */
 	protected void setLocalType(final int local, final Type type)
 	{
