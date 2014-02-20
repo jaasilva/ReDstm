@@ -67,10 +67,10 @@ _TASKS=4096
 # vacation-low+   -n2 -q90 -u98 -r1048576 -t4096
 # vacation-low++  -n2 -q90 -u98 -r1048576 -t4194304
 
-_CTX=score.SCOReContext
-_PROTO=score.SCOReProtocol
-#_PROTO=scoreSCOReProtocol_noReadOpt
-#_PROTO=score.SCOReProtocol_cache
+_CTX=score.Context
+_PROTO=score.SCORe
+#_PROTO=scoreSCORe_noReadOpt
+#_PROTO=score.SCORe_cache
 _GCS=jgroups.JGroups
 #_GCS=appia.Appia
 #_GCS=spread.Spread

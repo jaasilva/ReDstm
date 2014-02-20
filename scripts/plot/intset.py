@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 
 CTXS = {'tl2.Context': 'TL2', 
 	'mvstm.Context': 'MVSTM',
-	'score.SCOReContext': 'SCORe'}
+	'score.Context': 'SCORe'}
 
 PROTOS = {'nonvoting.NonVoting': 'NonVoting',
 	'voting.Voting': 'Voting',
-	'score.SCOReProtocol': 'SCORe',
-	'score.SCOReProtocol_noReadOpt': 'SCORe w/o read opt.',
-	'score.SCOReProtocol_cache': 'SCORe w/ cache'}
+	'score.SCORe': 'SCORe',
+	'score.SCORe_noReadOpt': 'SCORe w/o read opt.',
+	'score.SCORe_cache': 'SCORe w/ cache'}
 
 VERBOSE = False
 VISUAL = False
@@ -619,7 +619,7 @@ def create_parser():
 		const='nonvoting.NonVoting', default='nonvoting.NonVoting')
 	parser.add_argument('-pp', '--protopartial', 
 		help='what protocol should I use for partial replication?', nargs='?', 
-		const='score.SCOReProtocol', default='score.SCOReProtocol')
+		const='score.SCORe', default='score.SCORe')
 	parser.add_argument('-r', '--replicas', 
 		help='how many replicas where used?', nargs='?', const=8, default=8, 
 		type=int)
@@ -657,9 +657,9 @@ def main(argv):
 	_bench = args.benchmark # RedBTreeZ
 	_comm = args.communication # jgroups.JGroups
 	_ctx_full = args.context # mvstm.Context
-	_ctx_par = 'score.SCOReContext'
+	_ctx_par = 'score.Context'
 	_proto_full = args.protofull # nonvoting.NonVoting
-	_proto_par = args.protopartial # score.SCOReProtocol
+	_proto_par = args.protopartial # score.SCORe
 	_dir = args.directory # logs
 	
 	_reps = args.replicas # 8

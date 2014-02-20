@@ -55,10 +55,10 @@ _BENCH=$1
 _WRITES=$5
 _PARTIAL_OPS=$7
 
-_CTX=score.SCOReContext
-#_PROTO=score.SCOReProtocol
-#_PROTO=score.SCOReProtocol_noReadOpt
-_PROTO=score.SCOReProtocol_cache
+_CTX=score.Context
+#_PROTO=score.SCORe
+#_PROTO=score.SCORe_noReadOpt
+_PROTO=score.SCORe_cache
 _GCS=jgroups.JGroups
 #_GCS=appia.Appia
 #_GCS=spread.Spread
