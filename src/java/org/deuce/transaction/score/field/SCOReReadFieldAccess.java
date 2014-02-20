@@ -30,12 +30,14 @@ public class SCOReReadFieldAccess implements Serializable
 		this.field = field;
 	}
 
+	@Override
 	public boolean equals(Object obj)
 	{
 		SCOReReadFieldAccess other = (SCOReReadFieldAccess) obj;
 		return field == other.field;
 	}
 
+	@Override
 	public int hashCode()
 	{
 		return field.hashCode();
@@ -46,13 +48,14 @@ public class SCOReReadFieldAccess implements Serializable
 		field = null;
 	}
 
+	@Override
 	public String toString()
 	{
 		return field.getMetadata().toString();
 	}
 
 	protected Object readResolve() throws ObjectStreamException
-	{
+	{ // XXX recheck
 		if (field == null)
 		{
 			return null;
@@ -64,7 +67,7 @@ public class SCOReReadFieldAccess implements Serializable
 	}
 
 	public ObjectMetadata getDistMetadata()
-	{
+	{ // XXX this is used for what?
 		return field.getMetadata();
 	}
 }

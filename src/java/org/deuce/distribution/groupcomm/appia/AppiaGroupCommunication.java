@@ -47,12 +47,13 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		super();
 	}
 
+	@Override
 	public void init()
 	{
 		config = new AppiaGroup();
 		config.setGroupName(System.getProperty(Defaults._COMM_GROUP,
 				Defaults.COMM_GROUP));
-		config.setConfigFileName("etc/appia-tob.xml");
+		config.setConfigFileName(Defaults.APPIA_CONFIG_FILE);
 		try
 		{
 			protocol = new AppiaProtocolFactory().createProtocol();
@@ -79,6 +80,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		}
 	}
 
+	@Override
 	public void close()
 	{
 		try
@@ -92,6 +94,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		dataSession.close();
 	}
 
+	@Override
 	public void sendTotalOrdered(byte[] payload)
 	{
 		try
@@ -108,6 +111,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		}
 	}
 
+	@Override
 	public void sendReliably(byte[] payload)
 	{
 		try
@@ -124,12 +128,13 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		}
 	}
 
+	@Override
 	public void onMembershipChange()
 	{
 		try
 		{
 			Membership membership = controlSession.getMembership();
-			System.err.println(">>> " + membership.getMembershipList());
+			System.err.println("N_VIEW: " + membership.getMembershipList());
 			int replicas = Integer.getInteger(Defaults._REPLICAS).intValue();
 			if (membership.getMembershipList().size() == replicas)
 			{
@@ -142,10 +147,12 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		}
 	}
 
+	@Override
 	public void onExcluded()
 	{
 	}
 
+	@Override
 	public void onBlock()
 	{
 		try
@@ -158,6 +165,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		}
 	}
 
+	@Override
 	public void onServiceEnsured(Object context, Service service)
 	{
 		try
@@ -176,6 +184,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		}
 	}
 
+	@Override
 	public Object onMessage(Message msg)
 	{
 		byte[] payload = msg.getPayload();
@@ -194,6 +203,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		return new Tuple(obj, src, payload.length);
 	}
 
+	@Override
 	public void onException(JGCSException exception)
 	{
 	}
@@ -222,7 +232,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 	}
 
 	@Override
-	public void sendTo(byte[] payload, Address addr)
+	public void sendReliably(byte[] payload, Address addr)
 	{
 		try
 		{
@@ -241,7 +251,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 	}
 
 	@Override
-	public void sendToGroup(byte[] payload, Group group)
+	public void sendReliably(byte[] payload, Group group)
 	{
 		Message msg = null;
 		try

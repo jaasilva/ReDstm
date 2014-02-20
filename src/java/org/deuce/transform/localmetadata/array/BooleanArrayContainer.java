@@ -83,11 +83,13 @@ public class BooleanArrayContainer extends ArrayContainer
 		}
 	}
 
+	@Override
 	public Object getArray()
 	{
 		return array;
 	}
 
+	@Override
 	public Object getArray(IContext ctx)
 	{
 		return array;

@@ -423,6 +423,7 @@ public class SCOReContext extends DistributedContext
 
 	private final TObjectProcedure<SCOReWriteFieldAccess> putProcedure = new TObjectProcedure<SCOReWriteFieldAccess>()
 	{
+		@Override
 		public boolean execute(SCOReWriteFieldAccess wfa)
 		{
 			PartialReplicationOID meta = (PartialReplicationOID) wfa.field
@@ -441,6 +442,7 @@ public class SCOReContext extends DistributedContext
 		writeSet.forEach(putProcedure);
 	}
 
+	@Override
 	public void recreateContextFromState(DistributedContextState ctxState)
 	{
 		super.recreateContextFromState(ctxState);
@@ -486,6 +488,7 @@ public class SCOReContext extends DistributedContext
 		return involvedNodes;
 	}
 
+	@Override
 	public boolean commit()
 	{
 		Profiler.onTxAppFinish(threadID);

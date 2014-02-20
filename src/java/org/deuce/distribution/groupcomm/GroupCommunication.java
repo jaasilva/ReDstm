@@ -52,9 +52,9 @@ public abstract class GroupCommunication
 
 	public abstract void sendReliably(byte[] payload);
 
-	public abstract void sendTo(byte[] payload, Address addr);
+	public abstract void sendReliably(byte[] payload, Address addr);
 
-	public abstract void sendToGroup(byte[] payload, Group group);
+	public abstract void sendReliably(byte[] payload, Group group);
 
 	public abstract List<Address> getMembers();
 

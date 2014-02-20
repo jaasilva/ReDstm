@@ -41,6 +41,7 @@ public class TL2Field extends TxField implements InPlaceLock,
 		lock = 0;
 	}
 
+	@Override
 	public int checkLock(int clock)
 	{
 		int l = lock;
@@ -52,6 +53,7 @@ public class TL2Field extends TxField implements InPlaceLock,
 		return l;
 	}
 
+	@Override
 	public int checkLock(int clock, DistributedContext lockChecker)
 	{
 		int l = lock;
@@ -70,6 +72,7 @@ public class TL2Field extends TxField implements InPlaceLock,
 		return l;
 	}
 
+	@Override
 	public void checkLock(int clock, int expected)
 	{
 		int l = lock;
@@ -83,6 +86,7 @@ public class TL2Field extends TxField implements InPlaceLock,
 		}
 	}
 
+	@Override
 	public boolean lock(DistributedContext locker)
 	{
 		int l = lock;
@@ -105,18 +109,21 @@ public class TL2Field extends TxField implements InPlaceLock,
 		return true;
 	}
 
+	@Override
 	public void setAndReleaseLock(int newClock)
 	{
 		lockHolder = null;
 		lock = newClock;
 	}
 
+	@Override
 	public void unLock()
 	{
 		lockHolder = null;
 		lock = lock & LockTable.UNLOCK;
 	}
 
+	@Override
 	public void checkLock2(int clock)
 	{
 		int l = lock;

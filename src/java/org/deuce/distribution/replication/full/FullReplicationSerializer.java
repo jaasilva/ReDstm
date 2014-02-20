@@ -33,6 +33,7 @@ public class FullReplicationSerializer extends ObjectSerializer
 	 *         otherwise returns this object.
 	 * @throws ObjectStreamException
 	 */
+	@Override
 	public Object writeReplaceHook(UniqueObject obj)
 			throws ObjectStreamException
 	{
@@ -55,6 +56,7 @@ public class FullReplicationSerializer extends ObjectSerializer
 	 * 
 	 * @throws ObjectStreamException
 	 */
+	@Override
 	public Object readResolveHook(UniqueObject obj)
 			throws ObjectStreamException
 	{
@@ -70,6 +72,7 @@ public class FullReplicationSerializer extends ObjectSerializer
 		return obj; // return received object
 	}
 
+	@Override
 	public ObjectMetadata createMetadata()
 	{
 		return factory.generateOID();

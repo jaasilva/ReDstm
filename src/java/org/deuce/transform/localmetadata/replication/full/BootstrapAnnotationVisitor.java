@@ -21,6 +21,7 @@ public class BootstrapAnnotationVisitor extends AnnotationVisitorAdapter
 		this.field = field;
 	}
 
+	@Override
 	public void visit(String name, Object value)
 	{
 		if (name.equals(DistributedProtocol.BOOTSTRAP_ID_PARAM_NAME))

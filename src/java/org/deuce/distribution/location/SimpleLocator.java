@@ -17,12 +17,14 @@ public class SimpleLocator implements Locator
 			.synchronizedMap(new WeakHashMap<ObjectMetadata, Reference<UniqueObject>>(
 					50000));
 
+	@Override
 	public void put(ObjectMetadata metadata, UniqueObject obj)
 	{
 		map.put(metadata, new SoftReference<UniqueObject>(obj));
 		// map.put(metadata, new WeakReference<UniqueObject>(obj));
 	}
 
+	@Override
 	public UniqueObject get(ObjectMetadata metadata)
 	{
 		Reference<UniqueObject> ref = map.get(metadata);

@@ -61,10 +61,13 @@ public interface PartialReplicationOID extends OID
 	 */
 	public void setPartialGroup(Group group);
 
+	@Override
 	public String toString();
 
+	@Override
 	public boolean equals(Object obj);
 
+	@Override
 	public int hashCode();
 
 	/**

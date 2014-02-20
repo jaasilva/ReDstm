@@ -67,4 +67,7 @@ public class Defaults
 	public static final int _RBTREE_PARTIAL_OPS = 0;
 	public static final String RBTREE_INITIAL = "benchmarks.rbtree.initial";
 	public static final int _RBTREE_INITIAL = 32768;
+
+	public static final String APPIA_CONFIG_FILE = "etc/appia-tob.xml";
+	public static final String JGROUPS_CONFIG_FILE = "etc/jgroups.xml";
 }

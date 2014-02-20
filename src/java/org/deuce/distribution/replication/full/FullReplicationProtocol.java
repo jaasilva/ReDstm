@@ -9,6 +9,7 @@ public abstract class FullReplicationProtocol implements DistributedProtocol
 {
 	private FullReplicationSerializer serializer = new FullReplicationSerializer();
 
+	@Override
 	public ObjectSerializer getObjectSerializer()
 	{
 		return serializer;

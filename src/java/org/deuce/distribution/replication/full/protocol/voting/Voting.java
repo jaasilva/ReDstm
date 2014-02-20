@@ -31,11 +31,13 @@ public class Voting extends FullReplicationProtocol implements
 	private final List<PendingTx> pendingTxs = new LinkedList<PendingTx>();
 	private final List<PendingResult> pendingResults = new LinkedList<PendingResult>();
 
+	@Override
 	public void init()
 	{
 		TribuDSTM.subscribeDeliveries(this);
 	}
 
+	@Override
 	public void onDelivery(Object obj, Address src, int payloadSize)
 	{
 		Profiler.newMsgRecv(payloadSize);
@@ -173,10 +175,12 @@ public class Voting extends FullReplicationProtocol implements
 		}
 	}
 
+	@Override
 	public void onTxBegin(DistributedContext ctx)
 	{
 	}
 
+	@Override
 	public void onTxCommit(DistributedContext ctx)
 	{
 		Profiler.onTxDistCommitBegin(ctx.threadID);
@@ -191,10 +195,12 @@ public class Voting extends FullReplicationProtocol implements
 		TribuDSTM.sendTotalOrdered(payload);
 	}
 
+	@Override
 	public void onTxFinished(DistributedContext ctx, boolean committed)
 	{
 	}
 
+	@Override
 	public void onTxContextCreation(DistributedContext ctx)
 	{
 		ctxs.put(ctx.threadID, ctx);

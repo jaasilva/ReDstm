@@ -55,6 +55,7 @@ public class Context extends DistributedContext
 	private final LockProcedure lockProcedure = new LockProcedure(this);
 	private final TObjectProcedure<WriteFieldAccess> putProcedure = new TObjectProcedure<WriteFieldAccess>()
 	{
+		@Override
 		public boolean execute(WriteFieldAccess wfa)
 		{
 			wfa.put(localClock);
@@ -145,6 +146,7 @@ public class Context extends DistributedContext
 
 	protected Version lastReadVersion;
 
+	@Override
 	public void beforeReadAccess(TxField field)
 	{
 		lastReadVersion = ((VBoxField) field).get(localClock);
@@ -162,6 +164,7 @@ public class Context extends DistributedContext
 	 * ON READ ACCESS
 	 **************************************/
 
+	@Override
 	public ArrayContainer onReadAccess(ArrayContainer value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -182,6 +185,7 @@ public class Context extends DistributedContext
 				: lastReadVersion.value);
 	}
 
+	@Override
 	public Object onReadAccess(Object value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -202,6 +206,7 @@ public class Context extends DistributedContext
 				: lastReadVersion.value;
 	}
 
+	@Override
 	public boolean onReadAccess(boolean value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -222,6 +227,7 @@ public class Context extends DistributedContext
 				: lastReadVersion.value);
 	}
 
+	@Override
 	public byte onReadAccess(byte value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -242,6 +248,7 @@ public class Context extends DistributedContext
 				: lastReadVersion.value);
 	}
 
+	@Override
 	public char onReadAccess(char value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -262,6 +269,7 @@ public class Context extends DistributedContext
 				: lastReadVersion.value);
 	}
 
+	@Override
 	public short onReadAccess(short value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -282,6 +290,7 @@ public class Context extends DistributedContext
 				: lastReadVersion.value);
 	}
 
+	@Override
 	public int onReadAccess(int value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -302,6 +311,7 @@ public class Context extends DistributedContext
 				: lastReadVersion.value);
 	}
 
+	@Override
 	public long onReadAccess(long value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -322,6 +332,7 @@ public class Context extends DistributedContext
 				: lastReadVersion.value);
 	}
 
+	@Override
 	public float onReadAccess(float value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -342,6 +353,7 @@ public class Context extends DistributedContext
 				: lastReadVersion.value);
 	}
 
+	@Override
 	public double onReadAccess(double value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -366,6 +378,7 @@ public class Context extends DistributedContext
 	 * ON WRITE ACCESS
 	 **************************************/
 
+	@Override
 	public void onWriteAccess(ArrayContainer value, TxField field)
 	{
 		if (!readWriteHint)
@@ -379,6 +392,7 @@ public class Context extends DistributedContext
 		writeSet.put(write);
 	}
 
+	@Override
 	public void onWriteAccess(Object value, TxField field)
 	{
 		if (!readWriteHint)
@@ -392,6 +406,7 @@ public class Context extends DistributedContext
 		writeSet.put(write);
 	}
 
+	@Override
 	public void onWriteAccess(boolean value, TxField field)
 	{
 		if (!readWriteHint)
@@ -405,6 +420,7 @@ public class Context extends DistributedContext
 		writeSet.put(write);
 	}
 
+	@Override
 	public void onWriteAccess(byte value, TxField field)
 	{
 		if (!readWriteHint)
@@ -418,6 +434,7 @@ public class Context extends DistributedContext
 		writeSet.put(write);
 	}
 
+	@Override
 	public void onWriteAccess(char value, TxField field)
 	{
 		if (!readWriteHint)
@@ -431,6 +448,7 @@ public class Context extends DistributedContext
 		writeSet.put(write);
 	}
 
+	@Override
 	public void onWriteAccess(short value, TxField field)
 	{
 		if (!readWriteHint)
@@ -444,6 +462,7 @@ public class Context extends DistributedContext
 		writeSet.put(write);
 	}
 
+	@Override
 	public void onWriteAccess(int value, TxField field)
 	{
 		if (!readWriteHint)
@@ -457,6 +476,7 @@ public class Context extends DistributedContext
 		writeSet.put(write);
 	}
 
+	@Override
 	public void onWriteAccess(long value, TxField field)
 	{
 		if (!readWriteHint)
@@ -470,6 +490,7 @@ public class Context extends DistributedContext
 		writeSet.put(write);
 	}
 
+	@Override
 	public void onWriteAccess(float value, TxField field)
 	{
 		if (!readWriteHint)
@@ -483,6 +504,7 @@ public class Context extends DistributedContext
 		writeSet.put(write);
 	}
 
+	@Override
 	public void onWriteAccess(double value, TxField field)
 	{
 		if (!readWriteHint)
@@ -499,6 +521,7 @@ public class Context extends DistributedContext
 	private static class WFAResourceFactory implements
 			ResourceFactory<WriteFieldAccess>
 	{
+		@Override
 		public WriteFieldAccess newInstance()
 		{
 			return new WriteFieldAccess();
@@ -513,6 +536,7 @@ public class Context extends DistributedContext
 	{
 	}
 
+	@Override
 	public boolean commit()
 	{
 		Profiler.onTxAppFinish(threadID);

@@ -24,11 +24,13 @@ public class NonVoting extends FullReplicationProtocol implements
 
 	private final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 
+	@Override
 	public void init()
 	{
 		TribuDSTM.subscribeDeliveries(this);
 	}
 
+	@Override
 	public void onDelivery(Object obj, Address src, int payloadSize)
 	{
 		Profiler.newMsgRecv(payloadSize);
@@ -71,10 +73,12 @@ public class NonVoting extends FullReplicationProtocol implements
 		}
 	}
 
+	@Override
 	public void onTxBegin(DistributedContext ctx)
 	{
 	}
 
+	@Override
 	public void onTxCommit(DistributedContext ctx)
 	{
 		Profiler.onTxDistCommitBegin(ctx.threadID);
@@ -87,15 +91,18 @@ public class NonVoting extends FullReplicationProtocol implements
 		TribuDSTM.sendTotalOrdered(payload);
 	}
 
+	@Override
 	public void onTxFinished(DistributedContext ctx, boolean committed)
 	{
 	}
 
+	@Override
 	public void onTxContextCreation(DistributedContext ctx)
 	{
 		ctxs.put(ctx.threadID, ctx);
 	}
 
+	@Override
 	public Object onTxRead(DistributedContext ctx, TxField field)
 	{
 		return null;

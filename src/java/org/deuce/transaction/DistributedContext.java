@@ -62,6 +62,7 @@ public abstract class DistributedContext implements ContextMetadata
 	/**
 	 * Resets the state to begin a new transaction.
 	 */
+	@Override
 	public void init(int atomicBlockId, String metainf)
 	{
 		this.atomicBlockId = atomicBlockId;
@@ -127,6 +128,7 @@ public abstract class DistributedContext implements ContextMetadata
 		trxProcessed.release(); // Release semaphore
 	}
 
+	@Override
 	public void rollback()
 	{
 		Profiler.txProcessed(false);

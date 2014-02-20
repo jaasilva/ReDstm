@@ -1,14 +1,12 @@
 package org.deuce.distribution.replication.full.protocol.voting.msgs;
 
 import org.deuce.distribution.groupcomm.Address;
-import org.deuce.distribution.replication.msgs.ProtocolMessage;
 import org.deuce.transaction.DistributedContextState;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
-public class PendingTx extends ProtocolMessage
+public class PendingTx
 {
-	private static final long serialVersionUID = 1L;
 	public static final int WAITING = 0;
 	public static final int VALIDATED = 1;
 	public static final int COMMITTED = 2;

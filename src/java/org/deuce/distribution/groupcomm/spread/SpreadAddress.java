@@ -13,6 +13,7 @@ public class SpreadAddress extends Address
 		this.addr = addr;
 	}
 
+	@Override
 	public boolean equals(Object obj)
 	{
 		if (obj instanceof SpreadAddress)
@@ -26,6 +27,7 @@ public class SpreadAddress extends Address
 		}
 	}
 
+	@Override
 	public String toString()
 	{
 		return this.addr.toString();

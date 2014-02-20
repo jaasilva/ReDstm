@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.deuce.Defaults;
 import org.deuce.distribution.ObjectSerializer;
-import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;
 import org.deuce.distribution.replication.group.Group;
@@ -25,33 +24,23 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		Receiver
 {
 	private JChannel channel;
-	private int numNodes;
 
 	public JGroupsGroupCommunication()
 	{
 		super();
 	}
 
+	@Override
 	public void init()
 	{
 		try
 		{
-			channel = new JChannel("etc/jgroups.xml");
-
-			if (TribuDSTM.PARTIAL)
-			{ // XXX Partial Replication Mode (increase receiver threads)
-				channel.getProtocolStack()
-						.findProtocol("UDP")
-						.setValue("thread_pool_max_threads",
-								Defaults.JGROUPS_PARTIAL_MAX_RECEIVER_THREADS);
-			}
-
+			channel = new JChannel(Defaults.JGROUPS_CONFIG_FILE);
 			channel.setReceiver(this);
 			channel.connect(System.getProperty(Defaults._COMM_GROUP,
 					Defaults.COMM_GROUP));
 
 			myAddress = new JGroupsAddress(channel.getAddress());
-			numNodes = Integer.getInteger(Defaults._REPLICAS);
 		}
 		catch (Exception e)
 		{
@@ -61,11 +50,13 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		}
 	}
 
+	@Override
 	public void close()
 	{
 		channel.close();
 	}
 
+	@Override
 	public void sendTotalOrdered(final byte[] payload)
 	{
 		try
@@ -80,6 +71,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		}
 	}
 
+	@Override
 	public void sendReliably(byte[] payload)
 	{
 		final Message msg = new Message();
@@ -104,6 +96,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		}
 	}
 
+	@Override
 	public void receive(Message msg)
 	{
 		byte[] payload = msg.getRawBuffer();
@@ -120,30 +113,36 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		notifyDelivery(obj, new JGroupsAddress(msg.getSrc()), payload.length);
 	}
 
+	@Override
 	public void getState(OutputStream output) throws Exception
 	{
 	}
 
+	@Override
 	public void setState(InputStream input) throws Exception
 	{
 	}
 
+	@Override
 	public void viewAccepted(View new_view)
 	{
-		// System.err.println("N_VIEW: " + new_view);
+		System.err.println("N_VIEW: " + new_view);
 		if (new_view.getMembers().size() == Integer
 				.getInteger(Defaults._REPLICAS))
 			membersArrived();
 	}
 
+	@Override
 	public void suspect(org.jgroups.Address suspected_mbr)
 	{
 	}
 
+	@Override
 	public void block()
 	{
 	}
 
+	@Override
 	public void unblock()
 	{
 	}
@@ -174,7 +173,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	}
 
 	@Override
-	public void sendTo(byte[] payload, Address addr)
+	public void sendReliably(byte[] payload, Address addr)
 	{
 		try
 		{
@@ -195,9 +194,9 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	}
 
 	@Override
-	public void sendToGroup(byte[] payload, Group group)
+	public void sendReliably(byte[] payload, Group group)
 	{
-		if (group.size() == numNodes)
+		if (group.isAll())
 		{
 			sendReliably(payload); // XXX trying to optimize
 		}

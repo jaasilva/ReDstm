@@ -17,6 +17,7 @@ public interface PartialReplicationOIDFactory extends OIDFactory
 	 * 
 	 * @return the newly created metadata.
 	 */
+	@Override
 	public PartialReplicationOID generateOID();
 
 	/**
@@ -41,5 +42,6 @@ public interface PartialReplicationOIDFactory extends OIDFactory
 	 * @param oid - the seed for the id creation.
 	 * @return the newly created metadata.
 	 */
+	@Override
 	public PartialReplicationOID generateOID(int oid);
 }

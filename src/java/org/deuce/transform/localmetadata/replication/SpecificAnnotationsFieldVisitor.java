@@ -28,6 +28,7 @@ public class SpecificAnnotationsFieldVisitor extends FieldVisitorAdapter
 		this.field = field;
 	}
 
+	@Override
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible)
 	{
 		AnnotationVisitor va = super.visitAnnotation(desc, visible);

@@ -1,13 +1,11 @@
 package org.deuce.distribution.replication.full.protocol.voting.msgs;
 
 import org.deuce.distribution.groupcomm.Address;
-import org.deuce.distribution.replication.msgs.ProtocolMessage;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
-public class PendingResult extends ProtocolMessage
+public class PendingResult
 {
-	private static final long serialVersionUID = 1L;
 	public Address src;
 	public ResultMessage msg;
 

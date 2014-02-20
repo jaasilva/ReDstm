@@ -54,6 +54,7 @@ public class Context extends DistributedContext
 	final private LockProcedure lockProcedure = new LockProcedure(this);
 	final private TObjectProcedure<WriteFieldAccess> putProcedure = new TObjectProcedure<WriteFieldAccess>()
 	{
+		@Override
 		public boolean execute(WriteFieldAccess writeField)
 		{
 			writeField.put();
@@ -71,6 +72,7 @@ public class Context extends DistributedContext
 		localClock = clock.get();
 	}
 
+	@Override
 	public void recreateContextFromState(DistributedContextState ctxState)
 	{
 		super.recreateContextFromState(ctxState);
@@ -95,12 +97,14 @@ public class Context extends DistributedContext
 		doublePool.clear();
 	}
 
+	@Override
 	public DistributedContextState createState()
 	{
 		return new ContextState(readSet, writeSet, threadID, atomicBlockId,
 				localClock);
 	}
 
+	@Override
 	public void initialise(int atomicBlockId, String metainf)
 	{
 		readSet.clear();
@@ -121,6 +125,7 @@ public class Context extends DistributedContext
 		doublePool.clear();
 	}
 
+	@Override
 	protected boolean performValidation()
 	{
 		try
@@ -137,6 +142,7 @@ public class Context extends DistributedContext
 		return true;
 	}
 
+	@Override
 	protected void applyUpdates()
 	{ // commit new values and release locks
 		writeSet.forEach(putProcedure);
@@ -175,6 +181,7 @@ public class Context extends DistributedContext
 		writeSet.put(write);
 	}
 
+	@Override
 	public void beforeReadAccess(TxField field)
 	{
 		if (!TX_LOAD_OPT)
@@ -192,6 +199,7 @@ public class Context extends DistributedContext
 	 * ON READ ACCESS
 	 **************************************/
 
+	@Override
 	public ArrayContainer onReadAccess(ArrayContainer value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -211,6 +219,7 @@ public class Context extends DistributedContext
 		return res;
 	}
 
+	@Override
 	public Object onReadAccess(Object value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -230,6 +239,7 @@ public class Context extends DistributedContext
 		return res;
 	}
 
+	@Override
 	public boolean onReadAccess(boolean value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -249,6 +259,7 @@ public class Context extends DistributedContext
 		return res;
 	}
 
+	@Override
 	public byte onReadAccess(byte value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -268,6 +279,7 @@ public class Context extends DistributedContext
 		return res;
 	}
 
+	@Override
 	public char onReadAccess(char value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -287,6 +299,7 @@ public class Context extends DistributedContext
 		return res;
 	}
 
+	@Override
 	public short onReadAccess(short value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -307,6 +320,7 @@ public class Context extends DistributedContext
 
 	}
 
+	@Override
 	public int onReadAccess(int value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -326,6 +340,7 @@ public class Context extends DistributedContext
 		return res;
 	}
 
+	@Override
 	public long onReadAccess(long value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -345,6 +360,7 @@ public class Context extends DistributedContext
 		return res;
 	}
 
+	@Override
 	public float onReadAccess(float value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -364,6 +380,7 @@ public class Context extends DistributedContext
 		return res;
 	}
 
+	@Override
 	public double onReadAccess(double value, TxField field)
 	{
 		Profiler.onTxCompleteReadBegin(threadID);
@@ -387,6 +404,7 @@ public class Context extends DistributedContext
 	 * ON WRITE ACCESS
 	 **************************************/
 
+	@Override
 	public void onWriteAccess(ArrayContainer value, TxField field)
 	{
 		ArrayWriteFieldAccess next = arrayPool.getNext();
@@ -394,6 +412,7 @@ public class Context extends DistributedContext
 		addWriteAccess0(next);
 	}
 
+	@Override
 	public void onWriteAccess(Object value, TxField field)
 	{
 		ObjectWriteFieldAccess next = objectPool.getNext();
@@ -401,6 +420,7 @@ public class Context extends DistributedContext
 		addWriteAccess0(next);
 	}
 
+	@Override
 	public void onWriteAccess(boolean value, TxField field)
 	{
 		BooleanWriteFieldAccess next = booleanPool.getNext();
@@ -408,6 +428,7 @@ public class Context extends DistributedContext
 		addWriteAccess0(next);
 	}
 
+	@Override
 	public void onWriteAccess(byte value, TxField field)
 	{
 		ByteWriteFieldAccess next = bytePool.getNext();
@@ -415,6 +436,7 @@ public class Context extends DistributedContext
 		addWriteAccess0(next);
 	}
 
+	@Override
 	public void onWriteAccess(char value, TxField field)
 	{
 		CharWriteFieldAccess next = charPool.getNext();
@@ -422,6 +444,7 @@ public class Context extends DistributedContext
 		addWriteAccess0(next);
 	}
 
+	@Override
 	public void onWriteAccess(short value, TxField field)
 	{
 		ShortWriteFieldAccess next = shortPool.getNext();
@@ -429,6 +452,7 @@ public class Context extends DistributedContext
 		addWriteAccess0(next);
 	}
 
+	@Override
 	public void onWriteAccess(int value, TxField field)
 	{
 		IntWriteFieldAccess next = intPool.getNext();
@@ -436,6 +460,7 @@ public class Context extends DistributedContext
 		addWriteAccess0(next);
 	}
 
+	@Override
 	public void onWriteAccess(long value, TxField field)
 	{
 		LongWriteFieldAccess next = longPool.getNext();
@@ -443,6 +468,7 @@ public class Context extends DistributedContext
 		addWriteAccess0(next);
 	}
 
+	@Override
 	public void onWriteAccess(float value, TxField field)
 	{
 		FloatWriteFieldAccess next = floatPool.getNext();
@@ -450,6 +476,7 @@ public class Context extends DistributedContext
 		addWriteAccess0(next);
 	}
 
+	@Override
 	public void onWriteAccess(double value, TxField field)
 	{
 		DoubleWriteFieldAccess next = doublePool.getNext();
@@ -460,6 +487,7 @@ public class Context extends DistributedContext
 	private static class ArrayResourceFactory implements
 			ResourceFactory<ArrayWriteFieldAccess>
 	{
+		@Override
 		public ArrayWriteFieldAccess newInstance()
 		{
 			return new ArrayWriteFieldAccess();
@@ -484,6 +512,7 @@ public class Context extends DistributedContext
 	private static class BooleanResourceFactory implements
 			ResourceFactory<BooleanWriteFieldAccess>
 	{
+		@Override
 		public BooleanWriteFieldAccess newInstance()
 		{
 			return new BooleanWriteFieldAccess();
@@ -496,6 +525,7 @@ public class Context extends DistributedContext
 	private static class ByteResourceFactory implements
 			ResourceFactory<ByteWriteFieldAccess>
 	{
+		@Override
 		public ByteWriteFieldAccess newInstance()
 		{
 			return new ByteWriteFieldAccess();
@@ -508,6 +538,7 @@ public class Context extends DistributedContext
 	private static class CharResourceFactory implements
 			ResourceFactory<CharWriteFieldAccess>
 	{
+		@Override
 		public CharWriteFieldAccess newInstance()
 		{
 			return new CharWriteFieldAccess();
@@ -520,6 +551,7 @@ public class Context extends DistributedContext
 	private static class ShortResourceFactory implements
 			ResourceFactory<ShortWriteFieldAccess>
 	{
+		@Override
 		public ShortWriteFieldAccess newInstance()
 		{
 			return new ShortWriteFieldAccess();
@@ -532,6 +564,7 @@ public class Context extends DistributedContext
 	private static class IntResourceFactory implements
 			ResourceFactory<IntWriteFieldAccess>
 	{
+		@Override
 		public IntWriteFieldAccess newInstance()
 		{
 			return new IntWriteFieldAccess();
@@ -544,6 +577,7 @@ public class Context extends DistributedContext
 	private static class LongResourceFactory implements
 			ResourceFactory<LongWriteFieldAccess>
 	{
+		@Override
 		public LongWriteFieldAccess newInstance()
 		{
 			return new LongWriteFieldAccess();
@@ -556,6 +590,7 @@ public class Context extends DistributedContext
 	private static class FloatResourceFactory implements
 			ResourceFactory<FloatWriteFieldAccess>
 	{
+		@Override
 		public FloatWriteFieldAccess newInstance()
 		{
 			return new FloatWriteFieldAccess();
@@ -568,6 +603,7 @@ public class Context extends DistributedContext
 	private static class DoubleResourceFactory implements
 			ResourceFactory<DoubleWriteFieldAccess>
 	{
+		@Override
 		public DoubleWriteFieldAccess newInstance()
 		{
 			return new DoubleWriteFieldAccess();
@@ -585,6 +621,7 @@ public class Context extends DistributedContext
 	/**
 	 * Triggers the distributed commit, and waits until it is processed.
 	 */
+	@Override
 	public boolean commit()
 	{
 		Profiler.onTxAppFinish(threadID);

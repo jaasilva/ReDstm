@@ -39,21 +39,25 @@ public abstract class ArrayContainer implements UniqueObject
 
 	private ObjectMetadata metadata;
 
+	@Override
 	public ObjectMetadata getMetadata()
 	{
 		return metadata;
 	}
 
+	@Override
 	public void setMetadata(ObjectMetadata metadata)
 	{
 		this.metadata = metadata;
 	}
 
+	@Override
 	public Object writeReplace() throws ObjectStreamException
 	{
 		return TribuDSTM.getObjectSerializer().writeReplaceHook(this);
 	}
 
+	@Override
 	public Object readResolve() throws ObjectStreamException
 	{
 		return TribuDSTM.getObjectSerializer().readResolveHook(this);

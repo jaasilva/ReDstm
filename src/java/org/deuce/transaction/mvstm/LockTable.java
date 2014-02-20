@@ -6,9 +6,8 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class LockTable
 {
-	// Failure transaction
 	final public static TransactionException LOCKED_VERSION_EXCEPTION = new TransactionException(
-			"Faild on locking version.");
+			"Faild on locking version."); // Failure transaction
 	final public static int LOCK = 1 << 31;
 	final public static int UNLOCK = ~LOCK;
 }

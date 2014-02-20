@@ -52,6 +52,7 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	private static final Logger LOGGER = Logger.getLogger(SCOReProtocol.class);
 	private final Comparator<Pair<String, Integer>> comp = new Comparator<Pair<String, Integer>>()
 	{
+		@Override
 		public int compare(Pair<String, Integer> o1, Pair<String, Integer> o2)
 		{
 			return o1.second - o2.second;

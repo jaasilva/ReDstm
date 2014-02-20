@@ -26,6 +26,7 @@ public abstract class Partitioner implements GroupPartitioner
 		numGroups = 0;
 	}
 
+	@Override
 	public void init(int numGroups)
 	{
 		groups = new ArrayList<Group>(numGroups);

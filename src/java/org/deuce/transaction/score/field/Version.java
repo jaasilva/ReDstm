@@ -60,6 +60,7 @@ public class Version implements Serializable
 		return res;
 	}
 
+	@Override
 	public boolean equals(Object other)
 	{
 		return other instanceof Version

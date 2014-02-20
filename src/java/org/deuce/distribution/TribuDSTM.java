@@ -435,7 +435,7 @@ public class TribuDSTM
 	 */
 	public static final void sendTo(byte[] payload, Address addr)
 	{
-		groupComm.sendTo(payload, addr);
+		groupComm.sendReliably(payload, addr);
 	}
 
 	/**
@@ -446,7 +446,7 @@ public class TribuDSTM
 	 */
 	public static final void sendToGroup(byte[] payload, Group group)
 	{
-		groupComm.sendToGroup(payload, group);
+		groupComm.sendReliably(payload, group);
 	}
 
 	/**

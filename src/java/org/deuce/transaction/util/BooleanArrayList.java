@@ -8,7 +8,6 @@ package org.deuce.transaction.util;
  */
 public class BooleanArrayList
 {
-
 	private static final int DEFAULT_CAPACITY = 100;
 	private boolean[] array = new boolean[DEFAULT_CAPACITY];
 
@@ -34,5 +33,4 @@ public class BooleanArrayList
 			array = tmp;
 		}
 	}
-
 }

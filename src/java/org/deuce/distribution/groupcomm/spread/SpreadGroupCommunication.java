@@ -30,6 +30,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		super();
 	}
 
+	@Override
 	public void init()
 	{
 		connection = new SpreadConnection();
@@ -39,12 +40,12 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 			String daemon = System.getProperty(Defaults._COMM_SPREAD_DAEMON,
 					Defaults.COMM_SPREAD_DAEMON);
 			String privateName = "replica" + Integer.getInteger(Defaults._SITE);
-
 			connection.connect(InetAddress.getByName(daemon), 0, privateName,
 					false, true);
 			connection.add(this);
 			group.join(connection, System.getProperty(Defaults._COMM_GROUP,
 					Defaults.COMM_GROUP));
+
 			myAddress = new SpreadAddress(connection.getPrivateGroup()
 					.toString());
 		}
@@ -56,6 +57,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		}
 	}
 
+	@Override
 	public void close()
 	{
 		try
@@ -70,6 +72,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		}
 	}
 
+	@Override
 	public void sendTotalOrdered(byte[] payload)
 	{
 		SpreadMessage message = new SpreadMessage();
@@ -89,6 +92,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		}
 	}
 
+	@Override
 	public void sendReliably(byte[] payload)
 	{
 		SpreadMessage message = new SpreadMessage();
@@ -108,6 +112,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		}
 	}
 
+	@Override
 	public void regularMessageReceived(SpreadMessage message)
 	{
 		byte[] payload = message.getData();
@@ -126,6 +131,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 				payload.length);
 	}
 
+	@Override
 	public void membershipMessageReceived(SpreadMessage message)
 	{
 		SpreadGroup[] members = null;
@@ -137,7 +143,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 			this.members = members;
 			membersArrived();
 		}
-		System.err.println(">>> " + members);
+		System.err.println("N_VIEW: " + members);
 	}
 
 	@Override
@@ -148,12 +154,13 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 	}
 
 	@Override
-	public void sendTo(byte[] payload, Address addr)
+	public void sendReliably(byte[] payload, Address addr)
 	{
 		SpreadMessage message = new SpreadMessage();
 		message.setData(payload);
 		message.addGroup((String) addr.getSpecificAddress());
 		message.setFifo();
+		// message.setReliable(); XXX
 
 		try
 		{
@@ -168,7 +175,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 	}
 
 	@Override
-	public void sendToGroup(byte[] payload, Group group)
+	public void sendReliably(byte[] payload, Group group)
 	{
 		SpreadMessage message = new SpreadMessage();
 		message.setData(payload);
@@ -178,6 +185,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		}
 
 		message.setFifo();
+		// message.setReliable(); XXX
 
 		try
 		{

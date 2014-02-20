@@ -19,6 +19,7 @@ public class LockProcedure implements TObjectProcedure<WriteFieldAccess>
 
 	public final TObjectProcedure<WriteFieldAccess> unlockProcedure = new TObjectProcedure<WriteFieldAccess>()
 	{
+		@Override
 		public boolean execute(WriteFieldAccess field)
 		{
 			if (i > 0)
@@ -36,6 +37,7 @@ public class LockProcedure implements TObjectProcedure<WriteFieldAccess>
 		this.owner = locker;
 	}
 
+	@Override
 	public boolean execute(WriteFieldAccess writeField)
 	{
 		if (((InPlaceLock) writeField.field).lock(owner))
