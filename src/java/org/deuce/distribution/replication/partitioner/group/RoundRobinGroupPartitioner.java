@@ -3,7 +3,6 @@ package org.deuce.distribution.replication.partitioner.group;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.transform.ExcludeTM;
@@ -14,9 +13,6 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class RoundRobinGroupPartitioner extends Partitioner
 {
-	private static final Logger LOGGER = Logger
-			.getLogger(RoundRobinGroupPartitioner.class);
-
 	public RoundRobinGroupPartitioner()
 	{
 		super();
@@ -38,6 +34,5 @@ public class RoundRobinGroupPartitioner extends Partitioner
 			}
 			group++;
 		}
-		LOGGER.warn(super.toString());
 	}
 }

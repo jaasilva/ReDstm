@@ -186,6 +186,8 @@ public class TribuDSTM
 		if (PARTIAL)
 		{
 			groupPart.partitionGroups(getAllMembers());
+			LOGGER.warn(groupPart.toString());
+
 			dataPart.init();
 			initCache();
 

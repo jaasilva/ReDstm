@@ -86,15 +86,11 @@ public class SCOReProtocol extends PartialReplicationProtocol implements
 	public void onTxContextCreation(DistributedContext ctx)
 	{
 		ctxs.put(ctx.threadID, ctx);
-		LOGGER.trace("Created DistributedContext: " + ctx.threadID);
 	}
 
 	@Override
 	public void onTxBegin(DistributedContext ctx)
 	{
-		SCOReContext sctx = (SCOReContext) ctx;
-		LOGGER.debug("BEGIN " + sctx.threadID + ":" + sctx.atomicBlockId + ":"
-				+ sctx.trxID.split("-")[0]);
 	}
 
 	@Override

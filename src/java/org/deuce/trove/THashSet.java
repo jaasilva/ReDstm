@@ -473,7 +473,14 @@ public class THashSet<E> extends TObjectHash<E> implements Set<E>, Iterable<E>,
 		{
 			E val = (E) in.readObject();
 			if (val != null)
-			{
+			{/*
+			 * When *de-serializing*, if the field if not group local, it will
+			 * be null. When accessing the a writeSet (backed by a THashSet)
+			 * received through the network, we have to be careful with this.
+			 * The serialization mechanism of the THashSet only adds elements to
+			 * the set if they are not null, so when accessing the writeSet we
+			 * don't need to to the null check.
+			 */
 				add(val);
 			}
 		}

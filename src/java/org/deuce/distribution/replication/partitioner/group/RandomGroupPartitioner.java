@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.transform.ExcludeTM;
@@ -15,8 +14,6 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class RandomGroupPartitioner extends Partitioner
 {
-	private static final Logger LOGGER = Logger
-			.getLogger(RandomGroupPartitioner.class);
 	private Random rand;
 
 	public RandomGroupPartitioner()
@@ -39,6 +36,5 @@ public class RandomGroupPartitioner extends Partitioner
 				super.setLocalGroup(selectedGroup);
 			}
 		}
-		LOGGER.warn(super.toString());
 	}
 }

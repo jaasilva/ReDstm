@@ -55,19 +55,17 @@ public class SCOReReadFieldAccess implements Serializable
 	}
 
 	protected Object readResolve() throws ObjectStreamException
-	{ // XXX recheck
-		if (field == null)
-		{
-			return null;
-		}
-		else
-		{
-			return this;
-		}
+	{ /*
+	 * When *de-serializing*, if the field is not group local, it will be null.
+	 * When accessing read or write sets received through the network, we have
+	 * to be careful with this, and need to do the null check (when traversing
+	 * the readSet array or the writeSet hashSet).
+	 */
+		return field == null ? null : this;
 	}
 
 	public ObjectMetadata getDistMetadata()
-	{ // XXX this is used for what?
+	{ // Used for cache stuff (invalidation set construction)
 		return field.getMetadata();
 	}
 }

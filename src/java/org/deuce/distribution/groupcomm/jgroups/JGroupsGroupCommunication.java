@@ -80,8 +80,11 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		msg.setFlag(Message.Flag.NO_TOTAL_ORDER);
 
 		if (PartialReplicationProtocol.serializationReadCtx.get())
-		{
-			msg.setFlag(Message.Flag.OOB); // XXX trying to optimize
+		{/*
+		 * *OPTIMIZATION* If in a read context, the message can be passed
+		 * out-of-band safely and avoid the protocol stack overhead.
+		 */
+			msg.setFlag(Message.Flag.OOB);
 		}
 
 		try
@@ -179,10 +182,15 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		{
 			final Message msg = new Message(
 					(org.jgroups.Address) addr.getSpecificAddress(), payload);
+
 			if (PartialReplicationProtocol.serializationReadCtx.get())
-			{
-				msg.setFlag(Message.Flag.OOB); // XXX trying to optimize
+			{/*
+			 * *OPTIMIZATION* If in a read context, the message can be passed
+			 * out-of-band safely and avoid the protocol stack overhead.
+			 */
+				msg.setFlag(Message.Flag.OOB);
 			}
+
 			channel.send(msg);
 		}
 		catch (Exception e)
@@ -197,8 +205,8 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	public void sendReliably(byte[] payload, Group group)
 	{
 		if (group.isAll())
-		{
-			sendReliably(payload); // XXX trying to optimize
+		{ // if group isAll, we can multicast instead of doing the for cycle
+			sendReliably(payload);
 		}
 		else
 		{

@@ -176,7 +176,5 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		obj.setMetadata(meta);
 		meta.publish(); // bootstrap objects are created already published
 		TribuDSTM.putObject(meta, obj);
-
-		LOGGER.info(String.format("@Bootstrap(%d) = %s", id, meta));
 	}
 }
