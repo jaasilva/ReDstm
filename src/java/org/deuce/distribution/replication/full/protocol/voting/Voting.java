@@ -163,6 +163,7 @@ public class Voting extends FullReplicationProtocol implements
 				ctx = ctxs.get(tx.ctxState.ctxID);
 				boolean valid = ctx.validate();
 				tx.result = PendingTx.VALIDATED;
+
 				Profiler.onSerializationBegin(ctx.threadID);
 				byte[] payload = ObjectSerializer
 						.object2ByteArray(new ResultMessage(tx.ctxState.ctxID,
@@ -184,8 +185,10 @@ public class Voting extends FullReplicationProtocol implements
 	public void onTxCommit(DistributedContext ctx)
 	{
 		Profiler.onTxDistCommitBegin(ctx.threadID);
+
 		DistributedContextState ctxState = ctx.createState();
-		ctxState.rs = null;
+		ctxState.rs = null; // cleaning readSet
+
 		Profiler.onSerializationBegin(ctx.threadID);
 		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
 		Profiler.onSerializationFinish(ctx.threadID);

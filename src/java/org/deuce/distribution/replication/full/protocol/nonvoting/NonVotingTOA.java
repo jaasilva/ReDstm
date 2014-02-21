@@ -83,6 +83,7 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 	public void onTxCommit(DistributedContext ctx)
 	{
 		Profiler.onTxDistCommitBegin(ctx.threadID);
+
 		Profiler.onSerializationBegin(ctx.threadID);
 		byte[] payload = ObjectSerializer.object2ByteArray(ctx.createState());
 		Profiler.onSerializationFinish(ctx.threadID);

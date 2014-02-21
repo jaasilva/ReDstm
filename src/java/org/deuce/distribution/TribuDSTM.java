@@ -435,7 +435,7 @@ public class TribuDSTM
 	 * @param payload - the byte array to be sent.
 	 * @param addr - the specific member that will receive the message.
 	 */
-	public static final void sendTo(byte[] payload, Address addr)
+	public static final void sendReliably(byte[] payload, Address addr)
 	{
 		groupComm.sendReliably(payload, addr);
 	}
@@ -446,7 +446,7 @@ public class TribuDSTM
 	 * @param payload - the byte array to be sent.
 	 * @param group - the group of members that will receive the message.
 	 */
-	public static final void sendToGroup(byte[] payload, Group group)
+	public static final void sendReliably(byte[] payload, Group group)
 	{
 		groupComm.sendReliably(payload, group);
 	}

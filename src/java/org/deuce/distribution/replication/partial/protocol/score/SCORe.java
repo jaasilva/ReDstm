@@ -97,6 +97,7 @@ public class SCORe extends PartialReplicationProtocol implements
 	public void onTxCommit(DistributedContext ctx)
 	{ // I am the coordinator of this commit.
 		Profiler.onTxDistCommitBegin(ctx.threadID);
+
 		Context sctx = (Context) ctx;
 		DistributedContextState ctxState = sctx.createState();
 
@@ -114,7 +115,7 @@ public class SCORe extends PartialReplicationProtocol implements
 
 		Profiler.newMsgSent(payload.length);
 		Profiler.onPrepSend(ctx.threadID);
-		TribuDSTM.sendToGroup(payload, resGroup);
+		TribuDSTM.sendReliably(payload, resGroup);
 
 		LOGGER.debug("SEND PREP " + sctx.threadID + ":" + sctx.atomicBlockId
 				+ ":" + sctx.trxID.split("-")[0]);
@@ -187,7 +188,7 @@ public class SCORe extends PartialReplicationProtocol implements
 		Profiler.onSerializationFinish(sctx.threadID);
 
 		Profiler.newMsgSent(payload.length);
-		TribuDSTM.sendToGroup(payload, p_group);
+		TribuDSTM.sendReliably(payload, p_group);
 
 		LOGGER.debug("SEND READ REQ " + sctx.trxID.split("-")[0] + " "
 				+ sctx.requestVersion);
@@ -262,7 +263,7 @@ public class SCORe extends PartialReplicationProtocol implements
 
 		Profiler.newMsgSent(payload.length);
 		serializationReadCtx.set(true); // enter read context
-		TribuDSTM.sendTo(payload, src);
+		TribuDSTM.sendReliably(payload, src);
 		serializationReadCtx.set(false); // exit read context
 		updateNodeTimestamps(msg.readSid);
 
@@ -394,7 +395,7 @@ public class SCORe extends PartialReplicationProtocol implements
 		Profiler.onSerializationFinish(ctxID);
 
 		Profiler.newMsgSent(payload.length);
-		TribuDSTM.sendTo(payload, src);
+		TribuDSTM.sendReliably(payload, src);
 
 		LOGGER.debug("PREP (" + src + ") " + ctxID + ":" + atomicBlockId + ":"
 				+ trxID.split("-")[0] + " " + next);
@@ -458,7 +459,7 @@ public class SCORe extends PartialReplicationProtocol implements
 		Profiler.onSerializationFinish(ctx.threadID);
 
 		Profiler.newMsgSent(payload.length);
-		TribuDSTM.sendToGroup(payload, group);
+		TribuDSTM.sendReliably(payload, group);
 
 		LOGGER.debug("SEND DEC " + ctx.threadID + ":" + ctx.atomicBlockId + ":"
 				+ ctx.trxID.split("-")[0] + " " + finalSid);

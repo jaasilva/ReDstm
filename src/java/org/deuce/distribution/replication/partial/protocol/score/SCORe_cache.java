@@ -114,7 +114,7 @@ public class SCORe_cache extends SCORe
 		Profiler.onSerializationFinish(sctx.threadID);
 
 		Profiler.newMsgSent(payload.length);
-		TribuDSTM.sendToGroup(payload, p_group); // XXX id is -2 (NIL)
+		TribuDSTM.sendReliably(payload, p_group); // XXX id is -2 (NIL)
 
 		LOGGER.debug("SEND READ REQ " + sctx.trxID.split("-")[0] + " "
 				+ sctx.requestVersion);

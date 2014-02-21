@@ -22,7 +22,7 @@ public class UnicastTest implements DeliverySubscriber
 		{
 			byte[] payload = ObjectSerializer.object2ByteArray(new Integer(i));
 			Thread.sleep(r.nextInt(1000));
-			TribuDSTM.sendToGroup(payload, group);
+			TribuDSTM.sendReliably(payload, group);
 		}
 	}
 
