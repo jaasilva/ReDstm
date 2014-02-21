@@ -119,7 +119,6 @@ public class Context extends DistributedContext
 		}
 		else
 		{ // *NOT* in the writeSet. Do regular read operation
-			Profiler.onTxCompleteReadBegin(threadID);
 			if (!this.firstReadDone) // if this is the first read
 			{
 				this.sid = commitId.get();
@@ -142,7 +141,7 @@ public class Context extends DistributedContext
 			{
 				this.firstReadDone = true;
 			}
-			Profiler.onTxCompleteReadFinish(threadID);
+
 			return read.value; // XXX read == null sometimes
 		}
 	}
@@ -485,8 +484,6 @@ public class Context extends DistributedContext
 	@Override
 	public boolean commit()
 	{
-		Profiler.onTxAppFinish(threadID);
-
 		if (writeSet.isEmpty())
 		{ // read-only transaction
 			Profiler.txProcessed(true);

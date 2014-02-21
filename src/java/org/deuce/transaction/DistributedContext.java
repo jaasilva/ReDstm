@@ -68,7 +68,6 @@ public abstract class DistributedContext implements ContextMetadata
 		this.atomicBlockId = atomicBlockId;
 		initialise(atomicBlockId, metainf);
 		TribuDSTM.onTxBegin(this);
-		Profiler.onTxAppBegin(threadID);
 	}
 
 	/**

@@ -635,8 +635,7 @@ public class TribuDSTM
 	 * 
 	 * @param set - the new set of committed keys.
 	 */
-	public static final void cacheAddCommittedKeys(
-			Set<WriteFieldAccess> set)
+	public static final void cacheAddCommittedKeys(Set<WriteFieldAccess> set)
 	{
 		cache.addCommittedKeys(set);
 	}

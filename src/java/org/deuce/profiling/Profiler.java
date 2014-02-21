@@ -19,36 +19,30 @@ public class Profiler
 	/**
 	 * Incremental average.
 	 */
-	private static long txDurationIt = 0, txVotesIt = 0, txValidateIt = 0,
-			txCommitIt = 0, msgSent = 0, msgRecv = 0, txRReadIt = 0,
-			txLReadIt = 0, txCReadIt = 0, serIt = 0, waitingReadIt = 0,
-			distCommitIt = 0, confirmationIt = 0, remoteReadMsgIt = 0;
+	private static long txVotesIt = 0, txValidateIt = 0, txCommitIt = 0,
+			msgSent = 0, msgRecv = 0, txRReadIt = 0, txLReadIt = 0, serIt = 0,
+			waitingReadIt = 0, distCommitIt = 0, confirmationIt = 0,
+			remoteReadMsgIt = 0;
 
 	/**
 	 * Time related, in nanoseconds.
 	 */
-	private static long[] txAppDuration = new long[THREADS];
 	private static long[] txVotes = new long[THREADS];
 	private static long[] txValidate = new long[THREADS];
 	private static long[] txCommit = new long[THREADS];
 	private static long[] txRRead = new long[THREADS];
 	private static long[] txLRead = new long[THREADS];
-	private static long[] txCRead = new long[THREADS];
 	private static long[] serialization = new long[THREADS];
 	private static long[] distCommit = new long[THREADS];
 	private static long[] confirmation = new long[THREADS];
-	private static long txAppDurationAvg = 0,
-			txAppDurationMax = Long.MIN_VALUE,
-			txAppDurationMin = Long.MAX_VALUE, txVotesAvg = 0,
-			txVotesMax = Long.MIN_VALUE, txVotesMin = Long.MAX_VALUE,
-			txValidateAvg = 0, txValidateMax = Long.MIN_VALUE,
-			txValidateMin = Long.MAX_VALUE, txCommitAvg = 0,
-			txCommitMax = Long.MIN_VALUE, txCommitMin = Long.MAX_VALUE,
-			txRReadAvg = 0, txRReadMax = Long.MIN_VALUE,
-			txRReadMin = Long.MAX_VALUE, txLReadAvg = 0,
-			txLReadMax = Long.MIN_VALUE, txLReadMin = Long.MAX_VALUE,
-			txCReadAvg = 0, txCReadMax = Long.MIN_VALUE,
-			txCReadMin = Long.MAX_VALUE, serAvg = 0, serMax = Long.MIN_VALUE,
+	private static long txVotesAvg = 0, txVotesMax = Long.MIN_VALUE,
+			txVotesMin = Long.MAX_VALUE, txValidateAvg = 0,
+			txValidateMax = Long.MIN_VALUE, txValidateMin = Long.MAX_VALUE,
+			txCommitAvg = 0, txCommitMax = Long.MIN_VALUE,
+			txCommitMin = Long.MAX_VALUE, txRReadAvg = 0,
+			txRReadMax = Long.MIN_VALUE, txRReadMin = Long.MAX_VALUE,
+			txLReadAvg = 0, txLReadMax = Long.MIN_VALUE,
+			txLReadMin = Long.MAX_VALUE, serAvg = 0, serMax = Long.MIN_VALUE,
 			serMin = Long.MAX_VALUE, waitingReadAvg = 0,
 			waitingReadMax = Long.MIN_VALUE, waitingReadMin = Long.MAX_VALUE,
 			txLocalRead = 0, txRemoteRead = 0, txReads = 0, txWsReads = 0,
@@ -133,44 +127,6 @@ public class Profiler
 			{
 				txTimeout++;
 			}
-		}
-	}
-
-	public static void onTxAppBegin(int ctxID)
-	{
-		if (ENABLED)
-		{
-			long txAppStart = System.nanoTime();
-			txAppDuration[ctxID] = txAppStart;
-		}
-	}
-
-	private static final Object lock4 = new Object();
-
-	public static void onTxAppFinish(int ctxID)
-	{
-		if (ENABLED)
-		{
-			long txAppEnd = System.nanoTime();
-			long elapsed = txAppEnd - txAppDuration[ctxID];
-
-			if (elapsed != txAppEnd && elapsed > 0)
-			{
-				synchronized (lock4)
-				{
-					if (elapsed < txAppDurationMin)
-					{
-						txAppDurationMin = elapsed;
-					}
-					if (elapsed > txAppDurationMax)
-					{
-						txAppDurationMax = elapsed;
-					}
-					txAppDurationAvg = incAvg(txAppDurationAvg, elapsed,
-							txDurationIt++);
-				}
-			}
-			txAppDuration[ctxID] = 0;
 		}
 	}
 
@@ -297,6 +253,7 @@ public class Profiler
 			txRRead[ctxID] = txReadStart;
 			synchronized (lock8)
 			{
+				txReads++;
 				txRemoteRead++;
 			}
 		}
@@ -330,16 +287,15 @@ public class Profiler
 		}
 	}
 
-	private static final Object lock10 = new Object();
-
 	public static void onTxLocalReadBegin(int ctxID)
 	{
 		if (ENABLED)
 		{
 			long txReadStart = System.nanoTime();
 			txLRead[ctxID] = txReadStart;
-			synchronized (lock10)
+			synchronized (lock8)
 			{
+				txReads++;
 				txLocalRead++;
 			}
 		}
@@ -373,56 +329,11 @@ public class Profiler
 		}
 	}
 
-	private static final Object lock12 = new Object();
-
-	public static void onTxCompleteReadBegin(int ctxID)
-	{
-		if (ENABLED)
-		{
-			long txReadStart = System.nanoTime();
-			txCRead[ctxID] = txReadStart;
-			synchronized (lock12)
-			{
-				txReads++;
-			}
-		}
-	}
-
-	private static final Object lock13 = new Object();
-
-	public static void onTxCompleteReadFinish(int ctxID)
-	{
-		if (ENABLED)
-		{
-			long txReadEnd = System.nanoTime();
-			long elapsed = txReadEnd - txCRead[ctxID];
-
-			if (elapsed != txReadEnd && elapsed > 0)
-			{
-				synchronized (lock13)
-				{
-					if (elapsed < txCReadMin)
-					{
-						txCReadMin = elapsed;
-					}
-					if (elapsed > txCReadMax)
-					{
-						txCReadMax = elapsed;
-					}
-					txCReadAvg = incAvg(txCReadAvg, elapsed, txCReadIt++);
-				}
-			}
-			txCRead[ctxID] = 0;
-		}
-	}
-
-	private static final Object lock14 = new Object();
-
 	public static void onTxWsRead(int ctxID)
 	{
 		if (ENABLED)
 		{
-			synchronized (lock14)
+			synchronized (lock8)
 			{
 				txReads++;
 				txWsReads++;
@@ -744,14 +655,6 @@ public class Profiler
 
 		stats.append("=== Transactions\n");
 
-		stats.append("  Tx App Duration\n");
-		str = formatter.format(txAppDurationAvg / 1000.0);
-		stats.append("    avg = " + str + " µs\n");
-		str = formatter.format(txAppDurationMax / 1000.0);
-		stats.append("    max = " + str + " µs\n");
-		str = formatter.format(txAppDurationMin / 1000.0);
-		stats.append("    min = " + str + " µs\n");
-
 		stats.append("  Validation Operation\n");
 		str = formatter.format(txValidateAvg / 1000.0);
 		stats.append("    avg = " + str + " µs\n");
@@ -769,7 +672,7 @@ public class Profiler
 		stats.append("    min = " + str + " µs\n");
 
 		stats.append("  Distributed Commit\n");
-		stats.append("    Total Number = " + distCommitIt + "\n");
+		stats.append("    Total = " + distCommitIt + "\n");
 		str = formatter.format((totalCommit * 100.0) / distCommitIt);
 		stats.append("    Full Commits = " + totalCommit + " (" + str + ")\n");
 
@@ -781,15 +684,14 @@ public class Profiler
 		stats.append("    min = " + str + " ms\n");
 
 		boolean correct = (txReads == (txWsReads + txRemoteRead + txLocalRead));
-		stats.append("  Reads (" + correct + ")\n");
+		stats.append("  Reads " + txReads + " (" + correct + ")\n");
 
-		stats.append("    Total Number = " + txReads + "\n");
 		str = formatter.format((txLocalRead * 100.0) / txReads);
-		stats.append("    Local Reads  = " + str + " (" + txLocalRead + ")\n");
+		stats.append("    Local  = " + txLocalRead + " (" + str + ")\n");
 		str = formatter.format((txWsReads * 100.0) / txReads);
-		stats.append("    WS Reads     = " + str + " (" + txWsReads + ")\n");
+		stats.append("    WS     = " + txWsReads + " (" + str + ")\n");
 		str = formatter.format((txRemoteRead * 100.0) / txReads);
-		stats.append("    Remote Reads = " + str + " (" + txRemoteRead + ")\n");
+		stats.append("    Remote = " + txRemoteRead + " (" + str + ")\n");
 
 		stats.append("    --Local Reads\n");
 		str = formatter.format(txLReadAvg / 1000.0);
@@ -808,19 +710,11 @@ public class Profiler
 		stats.append("      min = " + str + " ms\n");
 
 		str = formatter.format((cacheHit * 100.0) / cacheTry);
-		stats.append("    --Cache Hits " + str + " (" + cacheHit + ") ("
-				+ cacheTry + ")\n");
+		stats.append("    --Cache Hits " + cacheHit + "/" + cacheTry + " ("
+				+ str + ")\n");
 		stats.append("      no key = " + cacheNoKey + "\n");
 		stats.append("      no vis ver = " + cacheNoVisibleVersion + "\n");
 		stats.append("      no val ver = " + cacheNoValidVersion + "\n");
-
-		stats.append("    --Complete Reads\n");
-		str = formatter.format(txCReadAvg / 1000.0);
-		stats.append("      avg = " + str + " µs\n");
-		str = formatter.format(txCReadMax / 1000.0);
-		stats.append("      max = " + str + " µs\n");
-		str = formatter.format(txCReadMin / 1000.0);
-		stats.append("      min = " + str + " µs\n");
 
 		stats.append("  Waiting for doRead\n");
 		str = formatter.format(waitingReadAvg / 1000.0);
@@ -866,8 +760,9 @@ public class Profiler
 		stats.append("    max = " + msgRecvSizeMax + " bytes\n");
 		stats.append("    min = " + msgRecvSizeMin + " bytes\n");
 
-		stats.append("  Remote Read Msgs Recv = " + remoteReadMsgIt + " ("
-				+ remoteReadOk + ")\n");
+		str = formatter.format((remoteReadOk * 100.0) / remoteReadMsgIt);
+		stats.append("  Remote Read Msgs Recv = " + remoteReadOk + "/"
+				+ remoteReadMsgIt + " (" + str + ")\n");
 		stats.append("    avg = " + remoteReadMsgSizeAvg + " bytes\n");
 		stats.append("    max = " + remoteMsgSizeMax + " bytes\n");
 		stats.append("    min = " + remoteMsgSizeMin + " bytes\n");

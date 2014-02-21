@@ -14,8 +14,8 @@ public class ContextState extends DistributedContextState
 	public String trxID;
 	public Address src; // XXX check (really needed?)
 
-	public ContextState(ReadSet rs, WriteSet ws, int ctxID,
-			int atomicBlockId, int sid, String trxID)
+	public ContextState(ReadSet rs, WriteSet ws, int ctxID, int atomicBlockId,
+			int sid, String trxID)
 	{
 		super(rs, ws, ctxID, atomicBlockId);
 		this.sid = sid;

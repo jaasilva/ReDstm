@@ -591,10 +591,9 @@ public class SCORe extends PartialReplicationProtocol implements
 		while (it.hasNext())
 		{
 			ContextState ctx = (ContextState) it.next();
-			Context sctx = null;
 			if (ctx.src.isLocal())
 			{ // context is local. access directly
-				sctx = (Context) ctxs.get(ctx.ctxID);
+				Context sctx = (Context) ctxs.get(ctx.ctxID);
 				Profiler.onTxDistCommitFinish(sctx.threadID);
 				sctx.processed(true);
 			}
