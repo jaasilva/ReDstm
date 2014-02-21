@@ -2,7 +2,6 @@ package org.deuce.distribution.replication.partial;
 
 import java.io.ObjectStreamException;
 
-import org.apache.log4j.Logger;
 import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
@@ -19,8 +18,6 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class PartialReplicationSerializer extends ObjectSerializer
 {
-	private static final Logger LOGGER = Logger
-			.getLogger(PartialReplicationSerializer.class);
 	public final static String NAME = Type
 			.getInternalName(PartialReplicationSerializer.class);
 	public final static String DESC = Type

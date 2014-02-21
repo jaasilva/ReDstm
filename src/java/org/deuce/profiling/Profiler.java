@@ -647,11 +647,13 @@ public class Profiler
 		stats.append("################## STATISTICS ##################\n");
 		stats.append("################################################\n");
 
-		stats.append("=== System Throughput\n");
+		stats.append("=== Throughput\n");
 
 		stats.append("  Committed = " + txCommitted + "\n");
-		stats.append("  Aborted   = " + txAborted + "\n");
-		stats.append("  Timetout  = " + txTimeout + "\n");
+		str = formatter.format((txAborted * 100.0) / txCommitted);
+		stats.append("  Aborted   = " + txAborted + " (" + str + ")\n");
+		str = formatter.format((txTimeout * 100.0) / txCommitted);
+		stats.append("  Timetout  = " + txTimeout + " (" + str + ")\n");
 
 		stats.append("=== Transactions\n");
 
@@ -674,7 +676,7 @@ public class Profiler
 		stats.append("  Distributed Commit\n");
 		stats.append("    Total = " + distCommitIt + "\n");
 		str = formatter.format((totalCommit * 100.0) / distCommitIt);
-		stats.append("    Full Commits = " + totalCommit + " (" + str + ")\n");
+		stats.append("    Full  = " + totalCommit + " (" + str + ")\n");
 
 		str = formatter.format(distCommitAvg / 1000000.0);
 		stats.append("    avg = " + str + " ms\n");
