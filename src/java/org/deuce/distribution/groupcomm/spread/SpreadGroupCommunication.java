@@ -159,8 +159,8 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 		SpreadMessage message = new SpreadMessage();
 		message.setData(payload);
 		message.addGroup((String) addr.getSpecificAddress());
+		message.setReliable();
 		message.setFifo();
-		// message.setReliable(); CHECKME
 
 		try
 		{
@@ -184,8 +184,8 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 			message.addGroup((String) addr.getSpecificAddress());
 		}
 
+		message.setReliable();
 		message.setFifo();
-		// message.setReliable(); CHECKME
 
 		try
 		{
