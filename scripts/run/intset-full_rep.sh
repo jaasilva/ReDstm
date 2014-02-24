@@ -30,8 +30,8 @@ _EXCLUDE="${_EXCLUDE},spread.*"
 _EXCLUDE="${_EXCLUDE},org.deuce.trove.*"
 _EXCLUDE="${_EXCLUDE},org.deuce.benchmark.intset.MyObjectBackend"
 
-#_BENCH_BIG=false
-_BENCH_BIG=true
+_BENCH_BIG=false
+#_BENCH_BIG=true
 
 if $_BENCH_BIG ; then # big values
 	_SIZE=32768 # 2^15
