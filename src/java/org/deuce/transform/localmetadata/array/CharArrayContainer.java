@@ -8,7 +8,6 @@ import org.deuce.objectweb.asm.Type;
 import org.deuce.reflection.AddressUtil;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.IContext;
-import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
@@ -49,34 +48,34 @@ public class CharArrayContainer extends ArrayContainer
 				field.init(arr, base + scale * i);
 
 				if (TribuDSTM.PARTIAL)
-				{ // XXX check arrays stuff partial rep.
+				{
 					final PartialReplicationSerializer s = (PartialReplicationSerializer) TribuDSTM
 							.getObjectSerializer();
 					s.createFullReplicationMetadata(field);
+
 					final Group g = ((PartialReplicationOID) this.getMetadata())
 							.getGroup();
 					final PartialReplicationOID field_metadata = (PartialReplicationOID) field
 							.getMetadata();
 					field_metadata.setGroup(g);
 					field_metadata.setPartialGroup(g);
+
+					if (field instanceof org.deuce.transaction.score.field.VBoxField)
+					{
+						org.deuce.transaction.score.field.VBoxField vbox = (org.deuce.transaction.score.field.VBoxField) field;
+						vbox.setType(Type.CHAR);
+					}
 				}
-				if (TribuDSTM.PARTIAL && field instanceof VBoxField)
-				{ // XXX check arrays stuff partial rep.
-					VBoxField vbox = (VBoxField) field;
-					vbox.setType(Type.CHAR);
-				}
+
 				if (field instanceof org.deuce.transaction.mvstm.field.VBoxField)
 				{
 					org.deuce.transaction.mvstm.field.VBoxField vbox = (org.deuce.transaction.mvstm.field.VBoxField) field;
 					vbox.setType(Type.CHAR);
 				}
+
 				metadata[i] = field;
 			}
-			catch (InstantiationException e)
-			{
-				e.printStackTrace();
-			}
-			catch (IllegalAccessException e)
+			catch (Exception e)
 			{
 				e.printStackTrace();
 			}

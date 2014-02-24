@@ -26,7 +26,7 @@ public abstract class ArrayContainer implements UniqueObject
 	public ArrayContainer()
 	{
 		if (TribuDSTM.PARTIAL)
-		{ // XXX check arrays stuff partial rep.
+		{
 			final PartialReplicationSerializer s = (PartialReplicationSerializer) TribuDSTM
 					.getObjectSerializer();
 			s.createFullReplicationMetadata(this);

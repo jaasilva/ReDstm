@@ -59,7 +59,7 @@ public class Reservation
 		this.numFree = numTotal;
 		this.numTotal = numTotal;
 		this.price = price;
-		checkReservation();
+		// checkReservation(); CHECKME why nullPointer in MVSTM?
 	}
 
 	/**

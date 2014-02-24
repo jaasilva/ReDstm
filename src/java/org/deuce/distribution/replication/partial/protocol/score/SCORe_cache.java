@@ -114,7 +114,7 @@ public class SCORe_cache extends SCORe
 		Profiler.onSerializationFinish(sctx.threadID);
 
 		Profiler.newMsgSent(payload.length);
-		TribuDSTM.sendReliably(payload, p_group); // XXX id is -2 (NIL)
+		TribuDSTM.sendReliably(payload, p_group); // CHECKME id is -2 (NIL)
 
 		LOGGER.debug("SEND READ REQ " + sctx.trxID.split("-")[0] + " "
 				+ sctx.requestVersion);
@@ -128,14 +128,12 @@ public class SCORe_cache extends SCORe
 			e.printStackTrace();
 		}
 
-		// System.out.println(sctx.response); // XXX
 		updateCache(metadata, sctx.response); // update cache versions
 		return sctx.response;
 	}
 
 	private void updateCache(ObjectMetadata metadata, ReadDone read)
 	{ // put received version in cache
-		// System.out.println("------ " + read); // XXX
 		CacheMsg msg = (CacheMsg) read.piggyback;
 		CacheContainer v = new CacheContainer();
 		v.value = read.value;

@@ -290,7 +290,7 @@ public class Cache
 
 				byte[] payload = ObjectSerializer.object2ByteArray(msg);
 				PartialReplicationProtocol.serializationReadCtx.set(true);
-				TribuDSTM.sendReliably(payload); // XXX send to other groups
+				TribuDSTM.sendReliably(payload); // CHECKME send to other groups
 				PartialReplicationProtocol.serializationReadCtx.set(false);
 			}
 		}

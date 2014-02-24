@@ -160,8 +160,14 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 						PartialReplicationSerializer.NAME,
 						PartialReplicationSerializer.CREATE_PARTIAL_METADATA_METHOD_NAME,
 						PartialReplicationSerializer.CREATE_PARTIAL_METADATA_METHOD_DESC);
+
+				/*
+				 * #############################################################
+				 * INHERIT GROUP FROM PARENT OBJECT (t.vale)
+				 * #############################################################
+				 */
+
 				// stack: ..., Object (this), TxField =>
-				/* XXX t.vale: inherit group from parent object. */
 				mv.visitInsn(Opcodes.DUP2);
 				// stack: ..., Object (this), TxField, Object (this), TxField =>
 				mv.visitInsn(Opcodes.SWAP);
@@ -206,8 +212,14 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 						PartialReplicationSerializer.NAME,
 						PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_NAME,
 						PartialReplicationSerializer.CREATE_FULL_METADATA_METHOD_DESC);
+
+				/*
+				 * #############################################################
+				 * INHERIT GROUP FROM PARENT OBJECT (t.vale)
+				 * #############################################################
+				 */
+
 				// stack: ..., Object (this), TxField =>
-				/* XXX t.vale: inherit group from parent object. */
 				mv.visitInsn(Opcodes.DUP2);
 				// stack: ..., Object (this), TxField, Object (this), TxField =>
 				mv.visitInsn(Opcodes.SWAP);

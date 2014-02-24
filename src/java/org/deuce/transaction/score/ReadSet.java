@@ -114,7 +114,7 @@ public class ReadSet implements Serializable
 	}
 
 	public Group getInvolvedNodes()
-	{ // XXX check
+	{ // CHECKME
 		Group resGroup = new PartialReplicationGroup();
 		for (int i = 0; i < next; i++)
 		{

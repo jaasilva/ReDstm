@@ -159,7 +159,7 @@ public class SCORe extends PartialReplicationProtocol implements
 
 			if (read == null)
 			{
-				System.out.println("LOCAL"); // XXX
+				System.out.println("LOCAL"); // CHECKME
 			}
 		}
 		else
@@ -170,7 +170,7 @@ public class SCORe extends PartialReplicationProtocol implements
 
 			if (read == null)
 			{
-				System.out.println("REMOTE"); // XXX
+				System.out.println("REMOTE"); // CHECKME
 			}
 		}
 
@@ -363,7 +363,7 @@ public class SCORe extends PartialReplicationProtocol implements
 
 		if (rejectTrxs.contains(trxID))
 		{ // late PREPARE msg (already received DECIDE msg (NO) for this tx)
-			// rejectTrxs.remove(ctx.trxID); XXX why?
+			// rejectTrxs.remove(ctx.trxID); CHECKME why?
 			return;
 		}
 		receivedTrxs.put(trxID, ctx);

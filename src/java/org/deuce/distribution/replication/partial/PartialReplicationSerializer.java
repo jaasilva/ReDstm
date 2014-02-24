@@ -78,13 +78,13 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		PartialReplicationOID oid = (PartialReplicationOID) obj.getMetadata();
 		Group group = oid.getGroup();
 
-		boolean isLocalGroup = true; // XXX why?
+		boolean isLocalGroup = true; // CHECKME why?
 		try
 		{
 			isLocalGroup = group.isLocal();
 		}
 		catch (NullPointerException e)
-		{ // XXX why does this happen?
+		{ // CHECKME why does this happen?
 		}
 
 		if (isLocalGroup)
@@ -134,8 +134,8 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		obj.setMetadata(meta);
 		final Group toPublish = TribuDSTM.publishObjectTo(obj);
 		((PartialReplicationOID) meta).getPartialGroup().getAll()
-				.addAll(toPublish.getAll()); // XXX find better way!!!
-		TribuDSTM.putObject(meta, obj); // XXX check
+				.addAll(toPublish.getAll()); // CHECKME find better way!!!
+		TribuDSTM.putObject(meta, obj); // CHECKME
 	}
 
 	public static final String CREATE_FULL_METADATA_METHOD_NAME = "createFullReplicationMetadata";
@@ -152,7 +152,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 	{ // id = rand(), group = partialGroup = ALL
 		ObjectMetadata meta = factory.generateFullReplicationOID();
 		obj.setMetadata(meta);
-		TribuDSTM.putObject(meta, obj); // XXX check
+		TribuDSTM.putObject(meta, obj); // CHECKME
 	}
 
 	public static final String BOOTSTRAP_METHOD_NAME = "createBootstrapMetadata";

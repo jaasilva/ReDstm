@@ -14,7 +14,7 @@ import org.deuce.transform.ExcludeTM;
 public class PartialReplicationGroup implements Group
 {
 	private static final long serialVersionUID = 1L;
-	private Collection<Address> addrs; // XXX group
+	private Collection<Address> addrs; // CHECKME group
 	private int id;
 
 	public PartialReplicationGroup()

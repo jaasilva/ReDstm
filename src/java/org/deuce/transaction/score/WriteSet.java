@@ -39,7 +39,7 @@ public class WriteSet implements Serializable
 	}
 
 	public Group getInvolvedNodes()
-	{ // XXX check
+	{ // CHECKME
 		Group resGroup = new PartialReplicationGroup();
 
 		for (WriteFieldAccess wfa : writeSet)

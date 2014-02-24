@@ -7,7 +7,6 @@ import org.deuce.distribution.replication.partial.PartialReplicationSerializer;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transaction.IContext;
-import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
@@ -125,34 +124,34 @@ public class MultiArrayContainer extends ArrayContainer
 				field.init(nextDim, i, matrix);
 
 				if (TribuDSTM.PARTIAL)
-				{ // XXX check arrays stuff partial rep.
+				{
 					final PartialReplicationSerializer s = (PartialReplicationSerializer) TribuDSTM
 							.getObjectSerializer();
 					s.createFullReplicationMetadata(field);
+
 					final Group g = ((PartialReplicationOID) this.getMetadata())
 							.getGroup();
 					final PartialReplicationOID field_metadata = (PartialReplicationOID) field
 							.getMetadata();
 					field_metadata.setGroup(g);
 					field_metadata.setPartialGroup(g);
+
+					if (field instanceof org.deuce.transaction.score.field.VBoxField)
+					{
+						org.deuce.transaction.score.field.VBoxField vbox = (org.deuce.transaction.score.field.VBoxField) field;
+						vbox.setType(Type.ARRAY);
+					}
 				}
-				if (TribuDSTM.PARTIAL && field instanceof VBoxField)
-				{ // XXX check arrays stuff partial rep.
-					VBoxField vbox = (VBoxField) field;
-					vbox.setType(Type.ARRAY);
-				}
+
 				if (field instanceof org.deuce.transaction.mvstm.field.VBoxField)
 				{
 					org.deuce.transaction.mvstm.field.VBoxField vbox = (org.deuce.transaction.mvstm.field.VBoxField) field;
 					vbox.setType(Type.ARRAY);
 				}
+
 				metadata[i] = field;
 			}
-			catch (InstantiationException e)
-			{
-				e.printStackTrace();
-			}
-			catch (IllegalAccessException e)
+			catch (Exception e)
 			{
 				e.printStackTrace();
 			}

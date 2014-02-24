@@ -12,7 +12,7 @@ public class ContextState extends DistributedContextState
 	private static final long serialVersionUID = 1L;
 	public int sid;
 	public String trxID;
-	public Address src; // XXX check (really needed?)
+	public Address src; // CHECKME really needed?
 
 	public ContextState(ReadSet rs, WriteSet ws, int ctxID, int atomicBlockId,
 			int sid, String trxID)

@@ -66,9 +66,7 @@ public class Manager
 	 */
 	private boolean addReservation(RBTree tablePtr, int id, int num, int price)
 	{
-		Reservation reservationPtr;
-
-		reservationPtr = (Reservation) tablePtr.find(id);
+		Reservation reservationPtr = (Reservation) tablePtr.find(id);
 		if (reservationPtr == null)
 		{ // Create new reservation
 			if (num < 1 || price < 0)

@@ -49,7 +49,7 @@ public class TribuDSTM
 	public static boolean PARTIAL; // check runtime mode
 	public static boolean CACHE; // check cache on/off
 
-	// XXX group
+	// CHECKME group
 	public static final Collection<Address> ALL = new HashSet<Address>();
 
 	/*
@@ -191,7 +191,7 @@ public class TribuDSTM
 			dataPart.init();
 			initCache();
 
-			ALL.addAll(getAllMembers()); // XXX group
+			ALL.addAll(getAllMembers()); // CHECKME group
 
 			System.out.println("GROUP: " + getLocalGroup().getId());
 		}
@@ -529,7 +529,7 @@ public class TribuDSTM
 	 */
 	public static final boolean isLocalGroup(Group group)
 	{
-		return group.contains(getLocalAddress()); // XXX group (use id)
+		return group.contains(getLocalAddress()); // CHECKME group (use id)
 	}
 
 	/**
@@ -540,7 +540,7 @@ public class TribuDSTM
 	 */
 	public static final boolean groupIsAll(Group group)
 	{
-		return group.getAll().equals(ALL); // XXX group (use id)
+		return group.getAll().equals(ALL); // CHECKME group (use id)
 	}
 
 	/**

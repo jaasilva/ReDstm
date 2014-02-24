@@ -66,9 +66,9 @@ public class Vacation
 	@Bootstrap(id = 2)
 	static public org.deuce.benchmark.Barrier finishBarrier;
 	@Bootstrap(id = 3)
-	static org.deuce.benchmark.Barrier benchBarrier;
+	static public org.deuce.benchmark.Barrier benchBarrier;
 	@Bootstrap(id = 4)
-	static Manager managerPtr;
+	static public Manager managerPtr;
 
 	@Atomic
 	private static void initBarriers()
@@ -87,10 +87,10 @@ public class Vacation
 		benchBarrier = new org.deuce.benchmark.Barrier(numThreads);
 	}
 
-	public static AtomicInteger reservations = new AtomicInteger(0),
-			deleteCustomers = new AtomicInteger(0),
-			updateTables = new AtomicInteger(0),
-			consults = new AtomicInteger(0);
+	public static final AtomicInteger reservations = new AtomicInteger(0);
+	public static final AtomicInteger deleteCustomers = new AtomicInteger(0);
+	public static final AtomicInteger updateTables = new AtomicInteger(0);
+	public static final AtomicInteger consults = new AtomicInteger(0);
 
 	public Vacation()
 	{

@@ -13,7 +13,7 @@ public class CacheMsg implements Serializable
 	private static final long serialVersionUID = 1L;
 	public int validity;
 	public int version;
-	public int groupId; // XXX check. I think I dont need this
+	public int groupId; // CHECKME I think I dont need this
 	public iSetMsg piggyback = null;
 
 	public CacheMsg()
