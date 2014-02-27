@@ -148,11 +148,10 @@ public class Context extends DistributedContext
 
 	public ReadDone doReadLocal(VBoxField field)
 	{
-		int origNextId;
-		do
+		synchronized (nextId)
 		{
-			origNextId = nextId.get();
-		} while (!nextId.compareAndSet(origNextId, Math.max(origNextId, sid)));
+			nextId.set(Math.max(nextId.get(), sid));
+		}
 
 		long st = System.nanoTime();
 		while ((commitId.get() < sid)

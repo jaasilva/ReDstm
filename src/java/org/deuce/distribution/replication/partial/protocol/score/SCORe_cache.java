@@ -151,12 +151,10 @@ public class SCORe_cache extends SCORe
 	@Override
 	protected ReadDone doReadRemote(int sid, ObjectMetadata metadata)
 	{
-		int origNextId;
-		do
+		synchronized (Context.nextId)
 		{
-			origNextId = Context.nextId.get();
-		} while (!Context.nextId.compareAndSet(origNextId,
-				Math.max(origNextId, sid)));
+			Context.nextId.set(Math.max(Context.nextId.get(), sid));
+		}
 
 		VBoxField field = (VBoxField) TribuDSTM.getObject(metadata);
 

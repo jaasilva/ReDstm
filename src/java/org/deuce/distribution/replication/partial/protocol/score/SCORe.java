@@ -207,19 +207,17 @@ public class SCORe extends PartialReplicationProtocol implements
 
 	protected void updateNodeTimestamps(int lastCommitted)
 	{
-		int origNextId;
-		do
+		synchronized (Context.nextId)
 		{
-			origNextId = Context.nextId.get();
-		} while (!Context.nextId.compareAndSet(origNextId,
-				Math.max(origNextId, lastCommitted)));
+			Context.nextId.set(Math.max(Context.nextId.get(), lastCommitted));
+		}
 
-		int origMaxSeenId;
-		do
+		synchronized (Context.maxSeenId)
 		{
-			origMaxSeenId = Context.maxSeenId.get();
-		} while (!Context.maxSeenId.compareAndSet(origMaxSeenId,
-				Math.max(origMaxSeenId, lastCommitted)));
+			Context.maxSeenId.set(Math.max(Context.maxSeenId.get(),
+					lastCommitted));
+		}
+
 		advanceCommitId();
 	}
 
@@ -273,12 +271,10 @@ public class SCORe extends PartialReplicationProtocol implements
 
 	protected ReadDone doReadRemote(int sid, ObjectMetadata metadata)
 	{
-		int origNextId;
-		do
+		synchronized (Context.nextId)
 		{
-			origNextId = Context.nextId.get();
-		} while (!Context.nextId.compareAndSet(origNextId,
-				Math.max(origNextId, sid)));
+			Context.nextId.set(Math.max(Context.nextId.get(), sid));
+		}
 
 		VBoxField field = (VBoxField) TribuDSTM.getObject(metadata);
 
@@ -384,7 +380,10 @@ public class SCORe extends PartialReplicationProtocol implements
 		int next = -1;
 		if (outcome) // valid trx
 		{
-			next = Context.nextId.incrementAndGet();
+			synchronized (Context.nextId)
+			{
+				next = Context.nextId.incrementAndGet();
+			}
 			pendQ.add(new Pair<String, Integer>(trxID, next));
 		}
 
@@ -477,12 +476,11 @@ public class SCORe extends PartialReplicationProtocol implements
 
 		if (result)
 		{ // DECIDE YES
-			int origNextId;
-			do
+			synchronized (Context.nextId)
 			{
-				origNextId = Context.nextId.get();
-			} while (!Context.nextId.compareAndSet(origNextId,
-					Math.max(origNextId, finalSid)));
+				Context.nextId.set(Math.max(Context.nextId.get(), finalSid));
+			}
+
 			stableQ.add(new Pair<String, Integer>(trxID, finalSid));
 		}
 
@@ -530,7 +528,10 @@ public class SCORe extends PartialReplicationProtocol implements
 			{ // nothing to do
 				if (snId != -1)
 				{ // it is safe to make snapshot visible
-					Context.commitId.set(snId);
+					synchronized (Context.commitId)
+					{
+						Context.commitId.set(snId);
+					}
 					releaseTrxs();
 				}
 				advanceCommitId();
@@ -545,7 +546,10 @@ public class SCORe extends PartialReplicationProtocol implements
 				// sTx
 				if (snId != -1)
 				{ // it is safe to make snapshot visible
-					Context.commitId.set(snId);
+					synchronized (Context.commitId)
+					{
+						Context.commitId.set(snId);
+					}
 					releaseTrxs();
 				}
 				return;
@@ -568,8 +572,11 @@ public class SCORe extends PartialReplicationProtocol implements
 			ctx.sid = sTx.second;
 			if (snId != -1 && ctx.sid > snId)
 			{ // this snapshot is fresher than snId, it is safe to make
-				Context.commitId.set(snId); // the previous snapshot
-											// visible
+				// the previous snapshot visible
+				synchronized (Context.commitId)
+				{
+					Context.commitId.set(snId);
+				}
 				releaseTrxs();
 			}
 			snId = ctx.sid;
@@ -604,17 +611,14 @@ public class SCORe extends PartialReplicationProtocol implements
 
 	private void advanceCommitId()
 	{ /* atomically do */
-		int origCommitId;
-		do
+		synchronized (Context.commitId)
 		{
-			origCommitId = Context.commitId.get();
-			if (origCommitId >= Context.maxSeenId.get() || !pendQ.isEmpty()
-					|| !stableQ.isEmpty())
+			if (Context.maxSeenId.get() > Context.commitId.get()
+					&& pendQ.isEmpty() && stableQ.isEmpty())
 			{
-				return;
+				Context.commitId.set(Context.maxSeenId.get());
 			}
-		} while (!Context.commitId.compareAndSet(origCommitId,
-				Context.maxSeenId.get()));
+		}
 	}
 
 	@ExcludeTM
