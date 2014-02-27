@@ -96,8 +96,6 @@ public class SCORe extends PartialReplicationProtocol implements
 	@Override
 	public void onTxCommit(DistributedContext ctx)
 	{ // I am the coordinator of this commit.
-		Profiler.onTxDistCommitBegin(ctx.threadID);
-
 		Context sctx = (Context) ctx;
 		DistributedContextState ctxState = sctx.createState();
 
@@ -509,7 +507,6 @@ public class SCORe extends PartialReplicationProtocol implements
 			if (src.isLocal())
 			{ // context is local. access directly
 				Context ctx = (Context) ctxs.get(ctxID);
-				Profiler.onTxDistCommitFinish(ctxID);
 				ctx.processed(false);
 			}
 		}
@@ -602,7 +599,6 @@ public class SCORe extends PartialReplicationProtocol implements
 			if (ctx.src.isLocal())
 			{ // context is local. access directly
 				Context sctx = (Context) ctxs.get(ctx.ctxID);
-				Profiler.onTxDistCommitFinish(sctx.threadID);
 				sctx.processed(true);
 			}
 			it.remove();

@@ -33,7 +33,6 @@ public class Profiler
 	private static long[] txRRead = new long[THREADS];
 	private static long[] txLRead = new long[THREADS];
 	private static long[] serialization = new long[THREADS];
-	private static long[] distCommit = new long[THREADS];
 	private static long[] confirmation = new long[THREADS];
 	private static long txVotesAvg = 0, txVotesMax = Long.MIN_VALUE,
 			txVotesMin = Long.MAX_VALUE, txValidateAvg = 0,
@@ -46,11 +45,10 @@ public class Profiler
 			serMin = Long.MAX_VALUE, waitingReadAvg = 0,
 			waitingReadMax = Long.MIN_VALUE, waitingReadMin = Long.MAX_VALUE,
 			txLocalRead = 0, txRemoteRead = 0, txReads = 0, txWsReads = 0,
-			distCommitMax = Long.MIN_VALUE, distCommitMin = Long.MAX_VALUE,
-			distCommitAvg = 0, totalCommit = 0,
-			confirmationMax = Long.MIN_VALUE, confirmationMin = Long.MAX_VALUE,
-			confirmationAvg = 0, cacheTry = 0, cacheHit = 0,
-			remoteReadMsgSizeAvg = 0, remoteMsgSizeMin = Long.MAX_VALUE,
+			totalCommit = 0, confirmationMax = Long.MIN_VALUE,
+			confirmationMin = Long.MAX_VALUE, confirmationAvg = 0,
+			cacheTry = 0, cacheHit = 0, remoteReadMsgSizeAvg = 0,
+			remoteMsgSizeMin = Long.MAX_VALUE,
 			remoteMsgSizeMax = Long.MIN_VALUE, remoteReadOk = 0,
 			cacheNoKey = 0, cacheNoVisibleVersion = 0, cacheNoValidVersion = 0;
 
@@ -202,44 +200,6 @@ public class Profiler
 				}
 			}
 			txCommit[ctxID] = 0;
-		}
-	}
-
-	public static void onTxDistCommitBegin(int ctxID)
-	{
-		if (ENABLED)
-		{
-			long start = System.nanoTime();
-			distCommit[ctxID] = start;
-		}
-	}
-
-	private static final Object lock7 = new Object();
-
-	public static void onTxDistCommitFinish(int ctxID)
-	{
-		if (ENABLED)
-		{
-			long end = System.nanoTime();
-			long elapsed = end - distCommit[ctxID];
-
-			if (elapsed != end && elapsed > 0)
-			{
-				synchronized (lock7)
-				{
-					if (elapsed < distCommitMin)
-					{
-						distCommitMin = elapsed;
-					}
-					if (elapsed > distCommitMax)
-					{
-						distCommitMax = elapsed;
-					}
-					distCommitAvg = incAvg(distCommitAvg, elapsed,
-							distCommitIt++);
-				}
-			}
-			distCommit[ctxID] = 0;
 		}
 	}
 
@@ -678,11 +638,11 @@ public class Profiler
 		str = formatter.format((totalCommit * 100.0) / distCommitIt);
 		stats.append("    Full  = " + totalCommit + " (" + str + ")\n");
 
-		str = formatter.format(distCommitAvg / 1000000.0);
+		str = formatter.format(confirmationAvg / 1000000.0);
 		stats.append("    avg = " + str + " ms\n");
-		str = formatter.format(distCommitMax / 1000000.0);
+		str = formatter.format(confirmationMax / 1000000.0);
 		stats.append("    max = " + str + " ms\n");
-		str = formatter.format(distCommitMin / 1000000.0);
+		str = formatter.format(confirmationMin / 1000000.0);
 		stats.append("    min = " + str + " ms\n");
 
 		boolean correct = (txReads == (txWsReads + txRemoteRead + txLocalRead));
@@ -732,14 +692,6 @@ public class Profiler
 		str = formatter.format(serMax / 1000000.0);
 		stats.append("    max = " + str + " ms\n");
 		str = formatter.format(serMin / 1000000.0);
-		stats.append("    min = " + str + " ms\n");
-
-		stats.append("  Confirmation\n");
-		str = formatter.format(confirmationAvg / 1000000.0);
-		stats.append("    avg = " + str + " ms\n");
-		str = formatter.format(confirmationMax / 1000000.0);
-		stats.append("    max = " + str + " ms\n");
-		str = formatter.format(confirmationMin / 1000000.0);
 		stats.append("    min = " + str + " ms\n");
 
 		stats.append("=== Network\n");

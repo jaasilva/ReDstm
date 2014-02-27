@@ -136,10 +136,6 @@ public class Voting extends FullReplicationProtocol implements
 				if (tx.result == PendingTx.COMMITTED)
 				{
 					ctx.applyWriteSet();
-					if (tx.src.isLocal())
-					{
-						Profiler.onTxDistCommitFinish(tx.ctxState.ctxID);
-					}
 					ctx.processed(true);
 
 					LOGGER.debug(tx.src + ":" + tx.ctxState.ctxID + ":"
@@ -147,10 +143,6 @@ public class Voting extends FullReplicationProtocol implements
 				}
 				else
 				{
-					if (tx.src.isLocal())
-					{
-						Profiler.onTxDistCommitFinish(tx.ctxState.ctxID);
-					}
 					ctx.processed(false);
 
 					LOGGER.debug(tx.src + ":" + tx.ctxState.ctxID + ":"
@@ -184,8 +176,6 @@ public class Voting extends FullReplicationProtocol implements
 	@Override
 	public void onTxCommit(DistributedContext ctx)
 	{
-		Profiler.onTxDistCommitBegin(ctx.threadID);
-
 		DistributedContextState ctxState = ctx.createState();
 		ctxState.rs = null; // cleaning readSet
 

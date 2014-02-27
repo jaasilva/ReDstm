@@ -52,10 +52,6 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 		if (ctx.validate())
 		{
 			ctx.applyWriteSet();
-			if (src.isLocal())
-			{
-				Profiler.onTxDistCommitFinish(ctxState.ctxID);
-			}
 			ctx.processed(true);
 
 			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
@@ -63,10 +59,6 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 		}
 		else
 		{
-			if (src.isLocal())
-			{
-				Profiler.onTxDistCommitFinish(ctxState.ctxID);
-			}
 			ctx.processed(false);
 
 			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
@@ -82,8 +74,6 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 	@Override
 	public void onTxCommit(DistributedContext ctx)
 	{
-		Profiler.onTxDistCommitBegin(ctx.threadID);
-
 		Profiler.onSerializationBegin(ctx.threadID);
 		byte[] payload = ObjectSerializer.object2ByteArray(ctx.createState());
 		Profiler.onSerializationFinish(ctx.threadID);
