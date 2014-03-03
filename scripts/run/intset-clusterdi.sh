@@ -1,7 +1,4 @@
 #!/bin/bash
-###############################################################################
-# <partial_rep> <full_rep>
-###############################################################################
 
 echo "#####"
 echo "Start: `date +'%F %H:%M:%S'`"
@@ -10,13 +7,10 @@ echo "#####"
 _start=`date +%s`
 _replicas=8
 _bench=RedBTreeZ
-#_bench=$1
 _runs=10
 
 _partial_rep=false
 #_partial_rep=true
-#_partial_rep=$1
-#_full_rep=$2
 #_full_rep=false
 _full_rep=true
 
@@ -47,14 +41,29 @@ echo "Time: `date +'%F %H:%M:%S'`"
 echo "#####"
 
 _start2=`date +%s`
+pids=()
+i=0
 
+# launch jobs in nodes
 for _node in node1 node2 node3 node4 node5 node6 node7 node8
 do
 	ssh $_node "cd ./repos/pardstm; ./scripts/run/intset-par_rep.sh ${_bench} \
-		${_thrs} ${_replicas} ${_run} ${_writes} ${_groups} ${_partial_ops} > $_node.out 2>&1" &
+		${_thrs} ${_replicas} ${_run} ${_writes} ${_groups} \
+		${_partial_ops} > $_node.out 2>&1" & pids[$i]=$!
+	(( i++ ))
 done
 
-wait
+# launch watchdog
+./scripts/misc/watchdog.sh $_writes $_partial_ops $_run $_groups & _PID2=$!
+
+# wait for nodes to finish
+for p in ${pids[@]}
+do
+	wait $p
+done
+
+# if in time, kill watchdog
+kill $_PID2 2> /dev/null
 
 _end2=`date +%s`
 echo "> $(( ($_end2-$_start2) ))s"
@@ -71,6 +80,8 @@ _end=`date +%s`
 echo "$(( ($_end-$_start)/60 ))min"
 
 fi # end partial_rep
+
+echo "" >> error
 
 ###############################################################################
 # FULL REPLICATION
@@ -97,14 +108,29 @@ echo "Time: `date +'%F %H:%M:%S'`"
 echo "#####"
 
 _start2=`date +%s`
+pids=()
+i=0
 
+# launch jobs in nodes
 for _node in node1 node2 node3 node4 node5 node6 node7 node8
 do
 	ssh $_node "cd ./repos/pardstm; ./scripts/run/intset-full_rep.sh ${_bench} \
-		${_thrs} ${_replicas} ${_run} ${_writes} ${_partial_ops} > $_node.out 2>&1" &
+		${_thrs} ${_replicas} ${_run} ${_writes} \
+		${_partial_ops} > $_node.out 2>&1" & pids[$i]=$!
+	(( i++ ))
 done
 
-wait
+# launch watchdog
+./scripts/misc/watchdog.sh $_writes $_partial_ops $_run 0 & _PID2=$!
+
+# wait for nodes to finish
+for p in ${pids[@]}
+do
+	wait $p
+done
+
+# if in time, kill watchdog
+kill $_PID2 2> /dev/null
 
 _end2=`date +%s`
 echo "> $(( ($_end2-$_start2) ))s"

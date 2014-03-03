@@ -41,32 +41,29 @@ else # small values
 	_RANGE=4096 #1024 #2048 #4096 # SIZE*4
 fi
 
-_WARMUP=0 #30000
-#_DURATION=10000 # s
-_DURATION=30000 # s
+_WARMUP=0
+_DURATION=30000
 
-_SITE=`hostname | cut -c 5-`
+_BENCH=$1
 _THREADS=$2
 _REPLICAS=$3
 _RUN=$4
-_GROUPS=$6
-
-_BENCH=$1
 _WRITES=$5
+_GROUPS=$6
 _PARTIAL_OPS=$7
 
 _CTX=score.Context
-#_PROTO=score.SCORe
+_PROTO=score.SCORe
 #_PROTO=score.SCORe_noReadOpt
-_PROTO=score.SCORe_cache
+#_PROTO=score.SCORe_cache
 _GCS=jgroups.JGroups
 #_GCS=appia.Appia
 #_GCS=spread.Spread
 #_DPART=Random
 _DPART=RoundRobin
 #_DPART=Simple
-_CACHE=true
-#_CACHE=false
+#_CACHE=true
+_CACHE=false
 #_CACHE_INV=$8
 #_CACHE_INV=eager
 _CACHE_INV=batch
@@ -79,6 +76,7 @@ _DATAPART="org.deuce.distribution.replication.partitioner.data.${_DPART}DataPart
 
 _GROUPCOMM="${_BENCH}_${_SIZE}_${_WRITES}_${_THREADS}_${_PROTO}_${_CTX}_${_REPLICAS}_${_RUN}_${_PARTIAL_OPS}"
 
+_SITE=`hostname | cut -c 5-`
 _FNAME="${_BENCH}_i${_SIZE}_w${_WRITES}_t${_THREADS}_${_PROTO}_${_CTX}_${_GCS}_id${_SITE}-${_REPLICAS}_run${_RUN}_g${_GROUPS}_${_DPART}_${_PARTIAL_OPS}"
 
 _LOG=logs/${_FNAME}.res
@@ -88,7 +86,7 @@ _PROFILE_MEM=false
 
 echo "#####"
 echo "Benchmark: ${_BENCH} -i ${_SIZE} -w ${_WRITES}, run ${_RUN}"
-echo "Threads: ${_THREADS}, site ${_SITE} of ${_REPLICAS}, groups: ${_GROUPS}"
+echo "Threads: ${_THREADS}, replicas: ${_REPLICAS}, groups: ${_GROUPS}"
 echo "Protocol: ${_PROTO}, context: ${_CTX}"
 echo "Comm: ${_GCS}, data partitioner: ${_DPART}"
 echo "Start: `date +'%F %H:%M:%S'`"

@@ -1,10 +1,10 @@
 #!/bin/bash
 ###############################################################################
-# <threads> <replicas> <run> <groups>
+# <threads> <replicas> <run> <groups> <reads>
 ###############################################################################
 
 if [ $1 = "-h" ]; then
-	echo "<threads> <replicas> <run> <groups>"
+	echo "<threads> <replicas> <run> <groups> <reads>"
 	exit
 fi
 
@@ -31,13 +31,12 @@ _EXCLUDE="${_EXCLUDE},org.deuce.trove.*"
 _EXCLUDE="${_EXCLUDE},org.deuce.benchmark.intset.MyObjectBackend"
 _EXCLUDE="${_EXCLUDE},jstamp.vacation.Random"
 
-_SITE=`hostname | cut -c 5-`
+_BENCH=Vacation
 _THREADS=$1
 _REPLICAS=$2
 _RUN=$3
 _GROUPS=$4
 
-_BENCH=Vacation
 #_VACATION_HIGH=true
 _VACATION_HIGH=false
 
@@ -51,14 +50,11 @@ else # vacation-low
 	_PERC_RESERVATION=98
 fi
 
-_USER_CONSULT=0
-#_USER_CONSULT=90
+_USER_CONSULT=$5
 #_RELATIONS=1048576
 _RELATIONS=16384
-#_RELATIONS=13
 #_TASKS=4194304
 _TASKS=4096
-#_TASKS=50
 
 # vacation-high   -n4 -q60 -u90 -r16384   -t4096
 # vacation-high+  -n4 -q60 -u90 -r1048576 -t4096
@@ -75,8 +71,8 @@ _GCS=jgroups.JGroups
 #_GCS=appia.Appia
 #_GCS=spread.Spread
 #_DPART=Random
-#_DPART=RoundRobin
-_DPART=Simple
+_DPART=RoundRobin
+#_DPART=Simple
 
 _STM="org.deuce.transaction.${_CTX}"
 _COMM="org.deuce.distribution.groupcomm.${_GCS}GroupCommunication"
@@ -85,6 +81,7 @@ _DATAPART="org.deuce.distribution.replication.partitioner.data.${_DPART}DataPart
 
 _GROUPCOMM="${_BENCH}_${_TASK_QUERIES}_${_PERC_QUERIED}_${_PERC_RESERVATION}_${_USER_CONSULT}_${_RELATIONS}_${_TASKS}_${_THREADS}_${_PROTO}_${_CTX}_${_REPLICAS}_${_RUN}"
 
+_SITE=`hostname | cut -c 5-`
 _FNAME="${_BENCH}_n${_TASK_QUERIES}_q${_PERC_QUERIED}_u${_PERC_RESERVATION}_uc${_USER_CONSULT}_r${_RELATIONS}_t${_TASKS}_t${_THREADS}_${_PROTO}_${_CTX}_${_GCS}_id${_SITE}-${_REPLICAS}_run${_RUN}_g${_GROUPS}_${_DPART}"
 
 _LOG=logs/${_FNAME}.res
@@ -94,7 +91,7 @@ _PROFILE_MEM=false
 
 echo "#####"
 echo "Benchmark: ${_BENCH}, run ${_RUN}"
-echo "Threads: ${_THREADS}, site ${_SITE} of ${_REPLICAS}"
+echo "Threads: ${_THREADS}, replicas: ${_REPLICAS}"
 echo "Protocol: ${_PROTO}, context: ${_CTX}"
 echo "Comm: ${_GCS}"
 echo "Start: `date +'%F %H:%M:%S'`"

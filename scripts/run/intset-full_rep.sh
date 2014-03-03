@@ -42,15 +42,12 @@ else # small values
 fi
 
 _WARMUP=0
-#_DURATION=10000 # s
-_DURATION=30000 # s
+_DURATION=30000
 
-_SITE=`hostname | cut -c 5-`
+_BENCH=$1
 _THREADS=$2
 _REPLICAS=$3
 _RUN=$4
-
-_BENCH=$1
 _WRITES=$5
 _PARTIAL_OPS=$6
 
@@ -68,6 +65,7 @@ _REP="org.deuce.distribution.replication.full.protocol.${_PROTO}"
 
 _GROUPCOMM="${_BENCH}_${_SIZE}_${_WRITES}_${_THREADS}_${_PROTO}_${_CTX}_${_REPLICAS}_${_RUN}_${_PARTIAL_OPS}"
 
+_SITE=`hostname | cut -c 5-`
 _FNAME="${_BENCH}_i${_SIZE}_w${_WRITES}_t${_THREADS}_${_PROTO}_${_CTX}_${_GCS}_id${_SITE}-${_REPLICAS}_run${_RUN}_${_PARTIAL_OPS}"
 
 _LOG=logs/${_FNAME}.res
@@ -77,7 +75,7 @@ _PROFILE_MEM=false
 
 echo "#####"
 echo "Benchmark: ${_BENCH} -i ${_SIZE} -w ${_WRITES}, run ${_RUN}"
-echo "Threads: ${_THREADS}, site ${_SITE} of ${_REPLICAS}"
+echo "Threads: ${_THREADS}, replicas: ${_REPLICAS}"
 echo "Protocol: ${_PROTO}, context: ${_CTX}"
 echo "Comm: ${_GCS}"
 echo "Start: `date +'%F %H:%M:%S'`"

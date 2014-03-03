@@ -1,7 +1,7 @@
 package org.deuce.benchmark;
 
-import java.util.Random;
-
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
@@ -19,7 +19,6 @@ public class Driver
 	static public Barrier finishBarrier;
 
 	static public int n_threads;
-	private static final Random rand = new Random();
 
 	public static void main(String[] args)
 	{
@@ -89,13 +88,14 @@ public class Driver
 		}
 
 		b.init(args);
-
 		initBarriers();
 		setupBarrier.join();
 
 		BenchmarkThread[] bt = new BenchmarkThread[nb_threads];
 		for (int i = 0; i < bt.length; i++)
+		{
 			bt[i] = b.createThread(i, bt.length);
+		}
 
 		Thread[] t = new Thread[bt.length];
 		for (int i = 0; i < t.length; i++)
@@ -103,11 +103,14 @@ public class Driver
 			t[i] = new Thread(bt[i]);
 		}
 
+		System.out.print("Starting threads...");
 		for (int i = 0; i < t.length; i++)
 		{
+			System.out.print(" " + i);
 			bt[i].setPhase(Benchmark.WARMUP_PHASE);
 			t[i].start();
 		}
+		System.out.println();
 
 		long wstart = System.currentTimeMillis();
 		try
@@ -119,6 +122,7 @@ public class Driver
 		}
 		long wend = System.currentTimeMillis();
 
+		System.out.println("End of warmup phase...");
 		Profiler.enable();
 		for (int i = 0; i < bt.length; i++)
 		{
@@ -139,9 +143,9 @@ public class Driver
 		{
 			bt[i].setPhase(Benchmark.SHUTDOWN_PHASE);
 		}
-		System.err.println("done.");
 
-		// LogManager.getRootLogger().setLevel(Level.ALL);
+		System.out.print("Waiting for threads to finish...");
+		LogManager.getRootLogger().setLevel(Level.ALL);
 		for (int i = 0; i < t.length; i++)
 		{
 			try
@@ -153,7 +157,6 @@ public class Driver
 			}
 		}
 		Profiler.disable();
-		System.err.println("done2.");
 
 		System.out.println();
 		System.out.println("All threads returned successfully");
@@ -176,13 +179,6 @@ public class Driver
 		}
 		Profiler.print();
 
-		try
-		{
-			Thread.sleep(rand.nextInt(3000));
-		}
-		catch (InterruptedException e)
-		{
-		}
 		finishBarrier.join();
 
 		// if (Integer.getInteger("tribu.site") == 1)
