@@ -109,14 +109,12 @@ public class SCORe_cache extends SCORe
 		ReadReq req = new ReadReq(sctx.threadID, metadata, sctx.sid, firstRead,
 				sctx.requestVersion);
 
-		Profiler.onSerializationBegin(sctx.threadID);
 		byte[] payload = ObjectSerializer.object2ByteArray(req);
-		Profiler.onSerializationFinish(sctx.threadID);
 
 		Profiler.newMsgSent(payload.length);
 		TribuDSTM.sendReliably(payload, p_group); // CHECKME id is -2 (NIL)
 
-		LOGGER.debug("SEND READ REQ " + sctx.trxID.split("-")[0] + " "
+		LOGGER.debug("SEND READ REQ " + sctx.txnID.split("-")[0] + " "
 				+ sctx.requestVersion);
 
 		try
@@ -207,7 +205,7 @@ public class SCORe_cache extends SCORe
 		}
 
 		LOGGER.debug("FINISH " + sctx.threadID + ":" + sctx.atomicBlockId + ":"
-				+ sctx.trxID.split("-")[0] + "= " + committed);
+				+ sctx.txnID.split("-")[0] + "= " + committed);
 	}
 
 	@Override

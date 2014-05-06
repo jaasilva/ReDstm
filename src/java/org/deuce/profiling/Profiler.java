@@ -32,7 +32,6 @@ public class Profiler
 	private static long[] txCommit = new long[THREADS];
 	private static long[] txRRead = new long[THREADS];
 	private static long[] txLRead = new long[THREADS];
-	private static long[] serialization = new long[THREADS];
 	private static long[] confirmation = new long[THREADS];
 	private static long txVotesAvg = 0, txVotesMax = Long.MIN_VALUE,
 			txVotesMin = Long.MAX_VALUE, txValidateAvg = 0,
@@ -326,40 +325,24 @@ public class Profiler
 		}
 	}
 
-	public static void onSerializationBegin(int ctxID)
-	{
-		if (ENABLED)
-		{
-			long serStart = System.nanoTime();
-			serialization[ctxID] = serStart;
-		}
-	}
-
 	private static final Object lock16 = new Object();
 
-	public static void onSerializationFinish(int ctxID)
+	public static void onSerializationFinish(long elapsed)
 	{
 		if (ENABLED)
 		{
-			long serEnd = System.nanoTime();
-			long elapsed = serEnd - serialization[ctxID];
-
-			if (elapsed != serEnd && elapsed > 0)
+			synchronized (lock16)
 			{
-				synchronized (lock16)
+				if (elapsed < serMin)
 				{
-					if (elapsed < serMin)
-					{
-						serMin = elapsed;
-					}
-					if (elapsed > serMax)
-					{
-						serMax = elapsed;
-					}
-					serAvg = incAvg(serAvg, elapsed, serIt++);
+					serMin = elapsed;
 				}
+				if (elapsed > serMax)
+				{
+					serMax = elapsed;
+				}
+				serAvg = incAvg(serAvg, elapsed, serIt++);
 			}
-			serialization[ctxID] = 0;
 		}
 	}
 

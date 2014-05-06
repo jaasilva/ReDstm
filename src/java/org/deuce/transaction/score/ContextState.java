@@ -11,7 +11,7 @@ public class ContextState extends DistributedContextState
 {
 	private static final long serialVersionUID = 1L;
 	public int sid;
-	public String trxID;
+	public String txnID;
 	public Address src; // CHECKME really needed?
 
 	public ContextState(ReadSet rs, WriteSet ws, int ctxID, int atomicBlockId,
@@ -19,7 +19,7 @@ public class ContextState extends DistributedContextState
 	{
 		super(rs, ws, ctxID, atomicBlockId);
 		this.sid = sid;
-		this.trxID = trxID;
+		this.txnID = trxID;
 		this.src = TribuDSTM.getLocalAddress();
 	}
 }

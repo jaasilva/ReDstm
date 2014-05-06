@@ -13,7 +13,7 @@ public class VoteMsg extends ProtocolMessage
 	public boolean outcome;
 	public int proposedTimestamp;
 	public int ctxID;
-	public String trxID;
+	public String txnID;
 
 	public VoteMsg(boolean outcome, int proposedTimestamp, int ctxID,
 			String trxID)
@@ -21,6 +21,6 @@ public class VoteMsg extends ProtocolMessage
 		this.outcome = outcome;
 		this.proposedTimestamp = proposedTimestamp;
 		this.ctxID = ctxID;
-		this.trxID = trxID;
+		this.txnID = trxID;
 	}
 }

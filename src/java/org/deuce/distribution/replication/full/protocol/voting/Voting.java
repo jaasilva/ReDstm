@@ -156,11 +156,9 @@ public class Voting extends FullReplicationProtocol implements
 				boolean valid = ctx.validate();
 				tx.result = PendingTx.VALIDATED;
 
-				Profiler.onSerializationBegin(ctx.threadID);
 				byte[] payload = ObjectSerializer
 						.object2ByteArray(new ResultMessage(tx.ctxState.ctxID,
 								valid));
-				Profiler.onSerializationFinish(ctx.threadID);
 
 				Profiler.newMsgSent(payload.length);
 				TribuDSTM.sendReliably(payload);
@@ -179,9 +177,7 @@ public class Voting extends FullReplicationProtocol implements
 		DistributedContextState ctxState = ctx.createState();
 		ctxState.rs = null; // cleaning readSet
 
-		Profiler.onSerializationBegin(ctx.threadID);
 		byte[] payload = ObjectSerializer.object2ByteArray(ctxState);
-		Profiler.onSerializationFinish(ctx.threadID);
 
 		Profiler.newMsgSent(payload.length);
 		Profiler.onPrepSend(ctx.threadID);

@@ -64,7 +64,7 @@ public class Context extends DistributedContext
 	public int maxVote;
 	public int receivedVotes;
 	public int expectedVotes;
-	public String trxID;
+	public String txnID;
 	private Group involvedNodes;
 
 	public Semaphore syncMsg;
@@ -361,7 +361,7 @@ public class Context extends DistributedContext
 	public DistributedContextState createState()
 	{
 		return new ContextState(readSet, writeSet, threadID, atomicBlockId,
-				sid, trxID);
+				sid, txnID);
 	}
 
 	@Override
@@ -376,7 +376,7 @@ public class Context extends DistributedContext
 		this.receivedVotes = 0;
 		this.expectedVotes = 0;
 		this.response = null;
-		this.trxID = java.util.UUID.randomUUID().toString();
+		this.txnID = java.util.UUID.randomUUID().toString();
 		this.involvedNodes = null;
 		// syncMsg = new Semaphore(0);
 
@@ -387,10 +387,10 @@ public class Context extends DistributedContext
 	protected boolean performValidation()
 	{
 		boolean exclusiveLocks = false, sharedLocks = false, validate = false;
-		exclusiveLocks = writeSet.getExclusiveLocks(trxID);
+		exclusiveLocks = writeSet.getExclusiveLocks(txnID);
 		if (exclusiveLocks) // only continue validation if I can succeed
 		{
-			sharedLocks = readSet.getSharedLocks(trxID);
+			sharedLocks = readSet.getSharedLocks(txnID);
 		}
 		if (sharedLocks)
 		{
@@ -402,11 +402,11 @@ public class Context extends DistributedContext
 		{ // vote NO! do not need the locks
 			if (sharedLocks)
 			{
-				readSet.releaseSharedLocks(trxID);
+				readSet.releaseSharedLocks(txnID);
 			}
 			if (exclusiveLocks)
 			{
-				writeSet.releaseExclusiveLocks(trxID);
+				writeSet.releaseExclusiveLocks(txnID);
 			}
 		}
 
@@ -446,7 +446,7 @@ public class Context extends DistributedContext
 		writeSet = (WriteSet) ctxState.ws;
 
 		sid = sctx.sid;
-		trxID = sctx.trxID;
+		txnID = sctx.txnID;
 
 		WFAPool.clear();
 	}
@@ -458,12 +458,12 @@ public class Context extends DistributedContext
 
 	public void unlock()
 	{
-		readSet.releaseSharedLocks(trxID);
-		writeSet.releaseExclusiveLocks(trxID);
+		readSet.releaseSharedLocks(txnID);
+		writeSet.releaseExclusiveLocks(txnID);
 	}
 
 	public Group getInvolvedNodes()
-	{ // !!! be careful when to call this CHECKME groups
+	{ // called on TxCommit CHECKME groups
 		if (involvedNodes == null)
 		{
 			Group group1 = readSet.getInvolvedNodes();

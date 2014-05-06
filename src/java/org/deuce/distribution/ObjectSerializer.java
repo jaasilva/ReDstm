@@ -14,6 +14,7 @@ import java.util.zip.GZIPOutputStream;
 import org.deuce.Defaults;
 import org.deuce.distribution.serialization.GCPayloadException;
 import org.deuce.objectweb.asm.Type;
+import org.deuce.profiling.Profiler;
 import org.deuce.transform.ExcludeTM;
 
 /**
@@ -41,6 +42,7 @@ public abstract class ObjectSerializer
 	 */
 	public static byte[] object2ByteArray(Object obj)
 	{
+		long serStart = System.nanoTime();
 		byte[] payload = null;
 		try
 		{
@@ -75,6 +77,8 @@ public abstract class ObjectSerializer
 			e.printStackTrace();
 			System.exit(-1);
 		}
+		long serEnd = System.nanoTime();
+		Profiler.onSerializationFinish(serEnd - serStart);
 		return payload;
 	}
 
