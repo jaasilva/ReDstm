@@ -602,19 +602,19 @@ public class Profiler
 
 		stats.append("  Validation Operation\n");
 		str = formatter.format(txValidateAvg / 1000.0);
-		stats.append("    avg = " + str + " µs\n");
+		stats.append("    avg = " + str + " mms\n");
 		str = formatter.format(txValidateMax / 1000.0);
-		stats.append("    max = " + str + " µs\n");
+		stats.append("    max = " + str + " mms\n");
 		str = formatter.format(txValidateMin / 1000.0);
-		stats.append("    min = " + str + " µs\n");
+		stats.append("    min = " + str + " mms\n");
 
 		stats.append("  Commit Operation\n");
 		str = formatter.format(txCommitAvg / 1000.0);
-		stats.append("    avg = " + str + " µs\n");
+		stats.append("    avg = " + str + " mms\n");
 		str = formatter.format(txCommitMax / 1000.0);
-		stats.append("    max = " + str + " µs\n");
+		stats.append("    max = " + str + " mms\n");
 		str = formatter.format(txCommitMin / 1000.0);
-		stats.append("    min = " + str + " µs\n");
+		stats.append("    min = " + str + " mms\n");
 
 		stats.append("  Distributed Commit\n");
 		stats.append("    Total = " + distCommitIt + "\n");
@@ -640,11 +640,11 @@ public class Profiler
 
 		stats.append("    --Local Reads\n");
 		str = formatter.format(txLReadAvg / 1000.0);
-		stats.append("      avg = " + str + " µs\n");
+		stats.append("      avg = " + str + " mms\n");
 		str = formatter.format(txLReadMax / 1000.0);
-		stats.append("      max = " + str + " µs\n");
+		stats.append("      max = " + str + " mms\n");
 		str = formatter.format(txLReadMin / 1000.0);
-		stats.append("      min = " + str + " µs\n");
+		stats.append("      min = " + str + " mms\n");
 
 		stats.append("    --Remote Reads\n");
 		str = formatter.format(txRReadAvg / 1000000.0);
@@ -663,11 +663,11 @@ public class Profiler
 
 		stats.append("  Waiting for doRead\n");
 		str = formatter.format(waitingReadAvg / 1000.0);
-		stats.append("    avg = " + str + " µs\n");
+		stats.append("    avg = " + str + " mms\n");
 		str = formatter.format(waitingReadMax / 1000.0);
-		stats.append("    max = " + str + " µs\n");
+		stats.append("    max = " + str + " mms\n");
 		str = formatter.format(waitingReadMin / 1000.0);
-		stats.append("    min = " + str + " µs\n");
+		stats.append("    min = " + str + " mms\n");
 
 		stats.append("  Serialization\n");
 		str = formatter.format(serAvg / 1000000.0);

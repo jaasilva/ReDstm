@@ -32,7 +32,7 @@ public class AppiaAddress extends Address
 	@Override
 	public String toString()
 	{
-		return addr.toString();
+		return this.addr.toString();
 	}
 
 	@Override

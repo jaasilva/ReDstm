@@ -19,9 +19,9 @@ public class SimpleLocator implements Locator
 
 	@Override
 	public void put(ObjectMetadata metadata, UniqueObject obj)
-	{
-		//map.put(metadata, new SoftReference<UniqueObject>(obj));
-		map.put(metadata, new WeakReference<UniqueObject>(obj));
+	{ // CHECKME
+		map.put(metadata, new SoftReference<UniqueObject>(obj));
+		//map.put(metadata, new WeakReference<UniqueObject>(obj));
 	}
 
 	@Override

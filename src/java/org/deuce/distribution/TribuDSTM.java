@@ -33,7 +33,8 @@ import org.deuce.transform.localmetadata.type.TxField;
 public class TribuDSTM
 {
 	private static final Logger LOGGER = Logger.getLogger(TribuDSTM.class);
-	private static final String SEP = "================================================================================";
+	private static final String SEP = "================================"
+			+ "================================================";
 
 	public static final String DESC = Type.getDescriptor(TribuDSTM.class);
 	public static final String NAME = Type.getInternalName(TribuDSTM.class);
