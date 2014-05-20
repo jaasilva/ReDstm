@@ -9,6 +9,15 @@ _replicas=10
 _bench=RedBTreeZ
 _runs=10
 
+nodes10=(node2-vm1 node3-vm1 node4-vm1 node5-vm1 node6-vm1 node7-vm1 node8-vm1 node9-vm1 node10-vm1 node11-vm1)
+groups10=(1 2 5 10)
+nodes20=(node2-vm1 node2-vm2 node3-vm1 node3-vm2 node4-vm1 node4-vm2 node5-vm1 node5-vm2 node6-vm1 node7-vm1 node8-vm1 node9-vm1 node10-vm1 node11-vm1 node12-vm1 node15-vm1 node16-vm1 node17-vm1 node18-vm1 node19-vm1)
+groups20=(1 2 4 5 10 20)
+nodes40=(node2-vm1 node2-vm2 node2-vm3 node3-vm1 node3-vm2 node3-vm3 node4-vm1 node4-vm2 node4-vm3 node5-vm1 node5-vm2 node5-vm3 node6-vm1 node6-vm2 node6-vm3 node7-vm1 node7-vm2 node7-vm3 node8-vm1 node8-vm2 node8-vm3 node9-vm1 node9-vm2 node9-vm3 node10-vm1 node10-vm2 node11-vm1 node11-vm2 node12-vm1 node12-vm2 node15-vm1 node15-vm2 node16-vm1 node16-vm2 node17-vm1 node17-vm2 node18-vm1 node18-vm2 node19-vm1 node19-vm2)
+groups40=(1 2 4 5 8 10 20 40)
+nodes60=(node2-vm1 node2-vm2 node2-vm3 node2-vm4 node3-vm1 node3-vm2 node3-vm3 node3-vm4 node4-vm1 node4-vm2 node4-vm3 node4-vm4 node5-vm1 node5-vm2 node5-vm3 node5-vm4 node6-vm1 node6-vm2 node6-vm3 node6-vm4 node7-vm1 node7-vm2 node7-vm3 node7-vm4 node8-vm1 node8-vm2 node8-vm3 node8-vm4 node9-vm1 node9-vm2 node9-vm3 node9-vm4 node10-vm1 node10-vm2 node10-vm3 node10-vm4 node11-vm1  node11-vm2 node11-vm3 node11-vm4 node12-vm1 node12-vm2 node12-vm3 node12-vm4 node15-vm1 node15-vm2 node15-vm3 node15-vm4 node16-vm1 node16-vm2 node16-vm3 node16-vm4 node17-vm1 node17-vm2 node17-vm3 node17-vm4 node18-vm1 node18-vm2 node18-vm3 node18-vm4)
+groups60=(1 2 4 5 6 10 12 15 20 30 60)
+
 _partial_rep=false
 #_partial_rep=true
 #_full_rep=false
@@ -45,21 +54,7 @@ pids=()
 i=0
 
 # launch jobs in nodes
-for _node in node2-vm1 \\ #node2-vm2 node2-vm3 node2-vm4 \\
-  node3-vm1 \\ #node3-vm2 node3-vm3 node3-vm4 \\
-  node4-vm1 \\ #node4-vm2 node4-vm3 node4-vm4 \\
-  node5-vm1 \\ #node5-vm2 node5-vm3 node5-vm4 \\
-  node6-vm1 \\ #node6-vm2 node6-vm3 node6-vm4 \\
-  node7-vm1 \\ #node7-vm2 node7-vm3 node7-vm4 \\
-  node8-vm1 \\ #node8-vm2 node8-vm3 node8-vm4 \\
-  node9-vm1 \\ #node9-vm2 node9-vm3 node9-vm4 \\
-  node10-vm1 \\ #node10-vm2 node10-vm3 node10-vm4 \\
-  node11-vm1 #node11-vm2 node11-vm3 node11-vm4 \\
-  #node12-vm1 node12-vm2 node12-vm3 node12-vm4 \\
-  #node15-vm1 node15-vm2 node15-vm3 node15-vm4 \\
-  #node16-vm1 node16-vm2 node16-vm3 node16-vm4 \\
-  #node17-vm1 node17-vm2 node17-vm3 node17-vm4 \\
-  #node18-vm1 node18-vm2 node18-vm3 node18-vm4
+for _node in ${nodes10[@]}
 do
 	ssh $_node "cd ./rdstm; ./scripts/run/intset-par_rep.sh ${_bench} \
 		${_thrs} ${_replicas} ${_run} ${_writes} ${_groups} \
@@ -126,21 +121,7 @@ pids=()
 i=0
 
 # launch jobs in nodes
-for _node in node2-vm1 \\ #node2-vm2 node2-vm3 node2-vm4 \\
-  node3-vm1 \\ #node3-vm2 node3-vm3 node3-vm4 \\
-  node4-vm1 \\ #node4-vm2 node4-vm3 node4-vm4 \\
-  node5-vm1 \\ #node5-vm2 node5-vm3 node5-vm4 \\
-  node6-vm1 \\ #node6-vm2 node6-vm3 node6-vm4 \\
-  node7-vm1 \\ #node7-vm2 node7-vm3 node7-vm4 \\
-  node8-vm1 \\ #node8-vm2 node8-vm3 node8-vm4 \\
-  node9-vm1 \\ #node9-vm2 node9-vm3 node9-vm4 \\
-  node10-vm1 \\ #node10-vm2 node10-vm3 node10-vm4 \\
-  node11-vm1 #node11-vm2 node11-vm3 node11-vm4 \\
-  #node12-vm1 node12-vm2 node12-vm3 node12-vm4 \\
-  #node15-vm1 node15-vm2 node15-vm3 node15-vm4 \\
-  #node16-vm1 node16-vm2 node16-vm3 node16-vm4 \\
-  #node17-vm1 node17-vm2 node17-vm3 node17-vm4 \\
-  #node18-vm1 node18-vm2 node18-vm3 node18-vm4
+for _node in ${nodes10[@]}
 do
 	ssh $_node "cd ./rdstm; ./scripts/run/intset-full_rep.sh ${_bench} \
 		${_thrs} ${_replicas} ${_run} ${_writes} \
