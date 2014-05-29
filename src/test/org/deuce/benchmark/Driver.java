@@ -145,7 +145,7 @@ public class Driver
 		}
 
 		System.out.print("Waiting for threads to finish...");
-		LogManager.getRootLogger().setLevel(Level.ALL); // XXX
+//		LogManager.getRootLogger().setLevel(Level.ALL); // XXX
 		for (int i = 0; i < t.length; i++)
 		{
 			try

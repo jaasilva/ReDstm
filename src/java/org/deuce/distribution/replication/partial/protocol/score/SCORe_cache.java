@@ -181,7 +181,7 @@ public class SCORe_cache extends SCORe
 	private CacheMsg createCacheMessage(Version ver, int lastCommitted)
 	{
 		CacheMsg msg = new CacheMsg();
-		msg.validity = ver.validity == -1 ? lastCommitted : ver.validity - 1;
+		msg.validity = ver.validity == -1 ? lastCommitted : ver.validity;
 		msg.version = ver.version;
 		msg.groupId = TribuDSTM.getLocalGroup().getId();
 

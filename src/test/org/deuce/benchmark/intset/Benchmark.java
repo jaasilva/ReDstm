@@ -18,6 +18,24 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 	int m_rate = 20;
 	int initial = 32768; // 2^15
 
+	@Atomic
+	private void setRange(int x)
+	{
+		m_range = x;
+	}
+
+	@Atomic
+	private void setWrites(int x)
+	{
+		m_rate = x;
+	}
+
+	@Atomic
+	private void setInitial(int x)
+	{
+		initial = x;
+	}
+
 	@Override
 	public void init(String[] args)
 	{
@@ -32,6 +50,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 				if (++i < args.length)
 				{
 					initial = Integer.parseInt(args[i]);
+					setInitial(initial);
 					System.setProperty(Defaults.RBTREE_INITIAL, "" + initial);
 				}
 				else
@@ -40,14 +59,20 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			else if (args[i].equals("-r"))
 			{
 				if (++i < args.length)
+				{
 					m_range = Integer.parseInt(args[i]);
+					setRange(m_range);
+				}
 				else
 					error = true;
 			}
 			else if (args[i].equals("-w"))
 			{
 				if (++i < args.length)
+				{
 					m_rate = Integer.parseInt(args[i]);
+					setWrites(m_rate);
+				}
 				else
 					error = true;
 			}

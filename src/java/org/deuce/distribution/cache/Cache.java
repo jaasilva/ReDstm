@@ -49,10 +49,6 @@ public class Cache
 	public static final Executor recvExec = Executors
 			.newFixedThreadPool(TribuDSTM.getNumGroups());
 
-	public static AtomicInteger a = new AtomicInteger(0);
-	public static AtomicInteger b = new AtomicInteger(0);
-	public static AtomicInteger z = new AtomicInteger(0);
-
 	@ExcludeTM
 	public enum Invalidation
 	{
@@ -114,61 +110,26 @@ public class Cache
 					if (validity == mrv.validity)
 					{ // link new version's validity
 						newVer.validity = mrv;
-						z.incrementAndGet();
 					}
 				}
 				if (newVer.validity == null)
 				{
 					newVer.validity = new Validity(validity, false);
 				}
-
-				// Validity mrv = mostRecentValidities.get(group);
-				//
-				// if (mrv == null)
-				// {
-				// mrv = new Validity(validity, true);
-				// mostRecentValidities.put(group, mrv);
-				// }
-				// else if (first.validity.isShared) // mrv is not null
-				// { // unlink old version's validity
-				// first.validity = new Validity(first.validity.validity,
-				// false);
-				// }
-				// if (validity == mrv.validity)
-				// { // link new version's validity
-				// newVer.validity = mrv;
-				// z.incrementAndGet();
-				// }
-				// else
-				// {
-				// newVer.validity = new Validity(validity, false);
-				// }
-
-				a.incrementAndGet();
 			}
 			else if (newVer.version == first.version)
 			{ // updating validity
-				if (!first.validity.isShared)
-				{
-					if (validity > first.validity.validity)
-					{ // update version's validity
-						first.validity.validity = validity;
-					}
-				}
-
 				// if (validity > first.validity.validity)
 				// {
-				// if (first.validity.isShared)
-				// { // unlink version's validity
+				if (!first.validity.isShared)
+				{
+					first.validity.validity = validity;
+				}
+				// else
+				// {
 				// first.validity = new Validity(validity, false);
 				// }
-				// else
-				// { // version's validity is not shared
-				// first.validity.validity = validity;
 				// }
-				// }
-
-				b.incrementAndGet();
 			}
 			else
 			{ // installing older version
@@ -187,9 +148,7 @@ public class Cache
 				if (validity == mrv.validity)
 				{ // link new version's validity
 					newVer.validity = mrv;
-					z.incrementAndGet();
 				}
-
 			}
 			if (newVer.validity == null)
 			{
@@ -286,7 +245,7 @@ public class Cache
 
 			if (msg != null)
 			{
-				LOGGER.trace("% Send iSet (" + msg.iSet.size() + ")");
+				LOGGER.info("% Send iSet (" + msg.iSet.size() + ")");
 
 				byte[] payload = ObjectSerializer.object2ByteArray(msg);
 				PartialReplicationProtocol.serializationReadCtx.set(true);
@@ -324,7 +283,7 @@ public class Cache
 	public synchronized void invalidateKeys(int group, int mostRecent,
 			Collection<ObjectMetadata> iSet)
 	{
-		LOGGER.trace("$ Received iSet (" + iSet.size() + ") from group: "
+		LOGGER.info("$ Received iSet (" + iSet.size() + ") from group: "
 				+ group);
 
 		for (ObjectMetadata k : iSet)
@@ -340,15 +299,14 @@ public class Cache
 			}
 		}
 
-		Validity mostRecentValidity = mostRecentValidities.get(group);
-		if (mostRecentValidity == null)
+		Validity mrv = mostRecentValidities.get(group);
+		if (mrv == null)
 		{
-			Validity validity = new Validity(mostRecent, true);
-			mostRecentValidities.put(group, validity);
+			mostRecentValidities.put(group, new Validity(mostRecent, true));
 		}
 		else
 		{
-			mostRecentValidity.validity = mostRecent;
+			mrv.validity = mostRecent;
 		}
 	}
 }
