@@ -197,7 +197,7 @@ public class Cache
 		committedKeys.addAll(set);
 
 		if (invalidationStrategy == Invalidation.EAGER
-				&& TribuDSTM.isGroupMaster())
+				/*&& TribuDSTM.isGroupMaster()*/)
 		{
 			senderExec.execute(new InvalidationSenderHandler());
 		}
