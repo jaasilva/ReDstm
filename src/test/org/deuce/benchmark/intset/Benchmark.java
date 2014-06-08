@@ -126,13 +126,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 				m_set = new IntSetLinkedList();
 			}
 		}
-		else if (type.equals("RBTree"))
-		{
-			if (m_set == null)
-			{
-				m_set = new RBTree();
-			}
-		}
 		else if (type.equals("RedBTree"))
 		{ // supposed good red black tree
 			if (m_set == null)
@@ -159,20 +152,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			if (m_set == null)
 			{
 				m_set = new IntSetSkipList();
-			}
-		}
-		else if (type.equals("IntSetHash"))
-		{
-			if (m_set == null)
-			{
-				m_set = new IntSetHash();
-			}
-		}
-		else if (type.equals("IntJavaConcurrentHashSet"))
-		{
-			if (m_set == null)
-			{
-				m_set = new IntJavaConcurrentHashSet();
 			}
 		}
 		else
