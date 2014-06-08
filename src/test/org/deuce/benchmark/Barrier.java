@@ -5,13 +5,13 @@ import org.deuce.Atomic;
 public class Barrier
 {
 	public static boolean quiet = false;
-	protected volatile int counter;
-	protected volatile int expected;
+	private volatile int counter;
+	private volatile int expected;
 	private static final long pollingPeriod = 500;
 
 	public Barrier(int expected)
 	{
-		counter = 0;
+		this.counter = 0;
 		this.expected = expected;
 	}
 

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.deuce.Defaults;
+import org.deuce.distribution.Defaults;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
 import org.deuce.distribution.replication.full.FullReplicationSerializer;

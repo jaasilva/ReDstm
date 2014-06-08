@@ -1,8 +1,8 @@
 package org.deuce.transaction;
 
 import org.apache.log4j.Logger;
-import org.deuce.Defaults;
 import org.deuce.LocalMetadata;
+import org.deuce.distribution.Defaults;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.reflection.AddressUtil;
 import org.deuce.transform.ExcludeTM;

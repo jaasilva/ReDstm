@@ -12,13 +12,13 @@ import org.deuce.transform.localmetadata.FieldVisitorAdapter;
 import org.deuce.transform.localmetadata.replication.full.BootstrapAnnotationVisitor;
 
 @ExcludeTM
-public class SpecificAnnotationsFieldVisitor extends FieldVisitorAdapter
+public class AnnotationsFieldVisitor extends FieldVisitorAdapter
 {
 	private Map<String, Integer> field2OID;
 	private Set<String> partialRepFields;
 	private String field;
 
-	public SpecificAnnotationsFieldVisitor(FieldVisitor next,
+	public AnnotationsFieldVisitor(FieldVisitor next,
 			Map<String, Integer> field2OID, Set<String> partialRepFields,
 			String field)
 	{

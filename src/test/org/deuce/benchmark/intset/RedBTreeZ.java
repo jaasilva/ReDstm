@@ -3,7 +3,7 @@ package org.deuce.benchmark.intset;
 import java.util.Random;
 
 import org.deuce.Atomic;
-import org.deuce.Defaults;
+import org.deuce.distribution.Defaults;
 import org.deuce.distribution.replication.partial.Partial;
 
 /*

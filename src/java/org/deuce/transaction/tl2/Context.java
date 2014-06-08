@@ -2,8 +2,8 @@ package org.deuce.transaction.tl2;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.deuce.Defaults;
 import org.deuce.LocalMetadata;
+import org.deuce.distribution.Defaults;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.profiling.Profiler;
 import org.deuce.transaction.DistributedContext;

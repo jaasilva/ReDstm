@@ -2,7 +2,7 @@ package org.deuce.transaction.mvstm.field;
 
 import java.io.Serializable;
 
-import org.deuce.Defaults;
+import org.deuce.distribution.Defaults;
 import org.deuce.transaction.TransactionException;
 import org.deuce.transform.ExcludeTM;
 

@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.deuce.Defaults;
 import org.deuce.distribution.cache.Cache;
 import org.deuce.distribution.cache.CacheContainer;
 import org.deuce.distribution.cache.iSetMsg;

@@ -5,6 +5,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.deuce.distribution.Defaults;
+
 /**
  * @author Guy Korland
  * @since 1.0

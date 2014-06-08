@@ -3,7 +3,7 @@ package org.deuce.distribution.groupcomm.spread;
 import java.net.InetAddress;
 import java.util.List;
 
-import org.deuce.Defaults;
+import org.deuce.distribution.Defaults;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.GroupCommunication;

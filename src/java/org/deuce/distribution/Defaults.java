@@ -1,4 +1,4 @@
-package org.deuce;
+package org.deuce.distribution;
 
 import org.deuce.transform.ExcludeTM;
 

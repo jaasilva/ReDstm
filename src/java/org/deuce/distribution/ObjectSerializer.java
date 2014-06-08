@@ -11,7 +11,6 @@ import java.io.ObjectStreamException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import org.deuce.Defaults;
 import org.deuce.distribution.serialization.GCPayloadException;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.profiling.Profiler;

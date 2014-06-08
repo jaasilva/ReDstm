@@ -3,7 +3,7 @@ package org.deuce.distribution.groupcomm;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import org.deuce.Defaults;
+import org.deuce.distribution.Defaults;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.group.Group;
 import org.deuce.transform.ExcludeTM;
@@ -23,7 +23,7 @@ public abstract class GroupCommunication
 		System.err.println("-- Waiting for members...");
 		try
 		{
-			waitForMembers.await();
+			this.waitForMembers.await();
 		}
 		catch (InterruptedException e)
 		{
@@ -39,7 +39,7 @@ public abstract class GroupCommunication
 
 	protected void membersArrived()
 	{
-		waitForMembers.countDown();
+		this.waitForMembers.countDown();
 	}
 
 	public abstract void init();
@@ -65,13 +65,13 @@ public abstract class GroupCommunication
 
 	protected void notifyDelivery(Object obj, Address src, int payloadSize)
 	{
-		if (subscriber != null)
-			subscriber.onDelivery(obj, src, payloadSize);
+		if (this.subscriber != null)
+			this.subscriber.onDelivery(obj, src, payloadSize);
 	}
 
 	public boolean isLocal(Address addr)
 	{
-		return myAddress.equals(addr);
+		return this.myAddress.equals(addr);
 	}
 
 	public Address getLocalAddress()

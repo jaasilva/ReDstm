@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import org.deuce.Defaults;
+import org.deuce.distribution.Defaults;
 import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
@@ -24,7 +24,7 @@ import org.deuce.transform.asm.ByteCodeVisitor;
 import org.deuce.transform.asm.FieldsHolder;
 import org.deuce.transform.asm.type.TypeCodeResolver;
 import org.deuce.transform.asm.type.TypeCodeResolverFactory;
-import org.deuce.transform.localmetadata.replication.SpecificAnnotationsFieldVisitor;
+import org.deuce.transform.localmetadata.replication.AnnotationsFieldVisitor;
 import org.deuce.transform.util.Util;
 
 @ExcludeTM
@@ -296,7 +296,7 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 		}
 
 		// ################################# @Bootstrap @Partial
-		FieldVisitor bootstrapFv = new SpecificAnnotationsFieldVisitor(fv,
+		FieldVisitor bootstrapFv = new AnnotationsFieldVisitor(fv,
 				field2OID, partialRepFields, name);
 
 		return bootstrapFv;
