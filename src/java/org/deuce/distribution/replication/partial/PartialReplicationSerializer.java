@@ -38,7 +38,7 @@ public class PartialReplicationSerializer extends ObjectSerializer
 			throws ObjectStreamException
 	{
 		PartialReplicationOID oid = (PartialReplicationOID) obj.getMetadata();
-		boolean isRead = PartialReplicationProtocol.serializationReadCtx.get();
+		boolean isRead = PartialReplicationProtocol.isRead.get();
 
 		if (isRead)
 		{ // read context. I have to send the object
@@ -112,12 +112,6 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		}
 	}
 
-	@Override
-	public ObjectMetadata createMetadata()
-	{ // id = rand(), group = ALL, partialGroup = []
-		return factory.generateOID();
-	}
-
 	public static final String CREATE_PARTIAL_METADATA_METHOD_NAME = "createPartialReplicationMetadata";
 	public static final String CREATE_PARTIAL_METADATA_METHOD_DESC = "("
 			+ UniqueObject.DESC + ")" + Type.VOID_TYPE.getDescriptor();
@@ -133,8 +127,8 @@ public class PartialReplicationSerializer extends ObjectSerializer
 		ObjectMetadata meta = factory.generateOID();
 		obj.setMetadata(meta);
 		final Group toPublish = TribuDSTM.publishObjectTo(obj);
-		((PartialReplicationOID) meta).getPartialGroup().getAll()
-				.addAll(toPublish.getAll()); // CHECKME find better way!!!
+		((PartialReplicationOID) meta).getPartialGroup().getMembers()
+				.addAll(toPublish.getMembers()); // CHECKME find better way!!!
 		TribuDSTM.putObject(meta, obj); // CHECKME
 	}
 

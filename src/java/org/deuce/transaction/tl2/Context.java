@@ -39,7 +39,7 @@ import org.deuce.trove.TObjectProcedure;
 public class Context extends DistributedContext
 {
 	private static final boolean TX_LOAD_OPT = Boolean
-			.getBoolean(Defaults.TL2_TX_LOAD_OPT);
+			.getBoolean(Defaults._TL2_TX_LOAD_OPT);
 
 	protected ReadSet readSet;
 	protected WriteSet writeSet;

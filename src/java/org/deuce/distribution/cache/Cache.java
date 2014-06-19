@@ -197,7 +197,7 @@ public class Cache
 		committedKeys.addAll(set);
 
 		if (invalidationStrategy == Invalidation.EAGER
-				/*&& TribuDSTM.isGroupMaster()*/)
+				&& TribuDSTM.isGroupMaster())
 		{
 			senderExec.execute(new InvalidationSenderHandler());
 		}
@@ -208,7 +208,7 @@ public class Cache
 		iSetMsg msg = null;
 		int mostRecentSid = Context.commitId.get();
 
-		if (mostRecentSid > lastSentSid /* && !committedKeys.isEmpty() */)
+		if (mostRecentSid > lastSentSid)
 		{
 			Set<WriteFieldAccess> keys = new HashSet<WriteFieldAccess>(
 					committedKeys);
@@ -248,19 +248,19 @@ public class Cache
 				LOGGER.info("% Send iSet (" + msg.iSet.size() + ")");
 
 				byte[] payload = ObjectSerializer.object2ByteArray(msg);
-				PartialReplicationProtocol.serializationReadCtx.set(true);
-				TribuDSTM.sendReliably(payload); // CHECKME send to other groups
-				PartialReplicationProtocol.serializationReadCtx.set(false);
+				PartialReplicationProtocol.isRead.set(true);
+				TribuDSTM.sendReliably(payload);
+				PartialReplicationProtocol.isRead.set(false);
 			}
 		}
 	}
 
 	public void processInvalidationMessage(iSetMsg msg)
 	{
-		if (msg.group != TribuDSTM.getLocalGroup().getId())
-		{ // if is not my group
-			recvExec.execute(new InvalidationReceiverHandler(msg));
-		}
+		// if (msg.group != TribuDSTM.getLocalGroup().getId())
+		// { // if is not my group
+		recvExec.execute(new InvalidationReceiverHandler(msg));
+		// }
 	}
 
 	@ExcludeTM

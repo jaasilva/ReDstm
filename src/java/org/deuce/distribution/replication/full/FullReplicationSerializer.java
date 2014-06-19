@@ -2,7 +2,6 @@ package org.deuce.distribution.replication.full;
 
 import java.io.ObjectStreamException;
 
-import org.deuce.distribution.ObjectMetadata;
 import org.deuce.distribution.ObjectSerializer;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.UniqueObject;
@@ -70,12 +69,6 @@ public class FullReplicationSerializer extends ObjectSerializer
 
 		TribuDSTM.putObject(oid, obj); // newly published object. save it.
 		return obj; // return received object
-	}
-
-	@Override
-	public ObjectMetadata createMetadata()
-	{
-		return factory.generateOID();
 	}
 
 	public static final String BOOTSTRAP_METHOD_NAME = "createBootstrapOID";

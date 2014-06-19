@@ -2,7 +2,9 @@ package org.deuce.profiling;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.concurrent.atomic.AtomicLong;
 
+import org.deuce.distribution.Defaults;
 import org.deuce.transform.ExcludeTM;
 
 @ExcludeTM
@@ -14,7 +16,8 @@ public class Profiler
 	/**
 	 * Transaction throughput related.
 	 */
-	private static long txCommitted = 0, txAborted = 0, txTimeout = 0;
+	private static AtomicLong txCommitted = new AtomicLong(0),
+			txAborted = new AtomicLong(0), txTimeout = new AtomicLong(0);
 
 	/**
 	 * Incremental average.
@@ -43,13 +46,18 @@ public class Profiler
 			txLReadMin = Long.MAX_VALUE, serAvg = 0, serMax = Long.MIN_VALUE,
 			serMin = Long.MAX_VALUE, waitingReadAvg = 0,
 			waitingReadMax = Long.MIN_VALUE, waitingReadMin = Long.MAX_VALUE,
-			txLocalRead = 0, txRemoteRead = 0, txReads = 0, txWsReads = 0,
-			totalCommit = 0, confirmationMax = Long.MIN_VALUE,
-			confirmationMin = Long.MAX_VALUE, confirmationAvg = 0,
-			cacheTry = 0, cacheHit = 0, remoteReadMsgSizeAvg = 0,
+			confirmationMax = Long.MIN_VALUE, confirmationMin = Long.MAX_VALUE,
+			confirmationAvg = 0, remoteReadMsgSizeAvg = 0,
 			remoteMsgSizeMin = Long.MAX_VALUE,
-			remoteMsgSizeMax = Long.MIN_VALUE, remoteReadOk = 0,
-			cacheNoKey = 0, cacheNoVisibleVersion = 0, cacheNoValidVersion = 0;
+			remoteMsgSizeMax = Long.MIN_VALUE;
+
+	private static AtomicLong txLocalRead = new AtomicLong(0),
+			txRemoteRead = new AtomicLong(0), txReads = new AtomicLong(0),
+			txWsReads = new AtomicLong(0), totalCommit = new AtomicLong(0),
+			cacheTry = new AtomicLong(0), cacheHit = new AtomicLong(0),
+			remoteReadOk = new AtomicLong(0), cacheNoKey = new AtomicLong(0),
+			cacheNoVisibleVersion = new AtomicLong(0),
+			cacheNoValidVersion = new AtomicLong(0);
 
 	/**
 	 * Network related, in bytes.
@@ -73,29 +81,19 @@ public class Profiler
 		return currAvg + ((value - currAvg) / (currIt + 1));
 	}
 
-	private static final Object lock1 = new Object();
-
 	public static void txCommitted()
 	{
 		if (ENABLED)
 		{
-			synchronized (lock1)
-			{
-				txCommitted++;
-			}
+			txCommitted.incrementAndGet();
 		}
 	}
-
-	private static final Object lock2 = new Object();
 
 	public static void txAborted()
 	{
 		if (ENABLED)
 		{
-			synchronized (lock2)
-			{
-				txAborted++;
-			}
+			txAborted.incrementAndGet();
 		}
 	}
 
@@ -114,16 +112,11 @@ public class Profiler
 		}
 	}
 
-	private static final Object lock3 = new Object();
-
 	public static void txTimeout()
 	{
 		if (ENABLED)
 		{
-			synchronized (lock3)
-			{
-				txTimeout++;
-			}
+			txTimeout.incrementAndGet();
 		}
 	}
 
@@ -202,19 +195,14 @@ public class Profiler
 		}
 	}
 
-	private static final Object lock8 = new Object();
-
 	public static void onTxRemoteReadBegin(int ctxID)
 	{
 		if (ENABLED)
 		{
 			long txReadStart = System.nanoTime();
 			txRRead[ctxID] = txReadStart;
-			synchronized (lock8)
-			{
-				txReads++;
-				txRemoteRead++;
-			}
+			txReads.incrementAndGet();
+			txRemoteRead.incrementAndGet();
 		}
 	}
 
@@ -252,11 +240,8 @@ public class Profiler
 		{
 			long txReadStart = System.nanoTime();
 			txLRead[ctxID] = txReadStart;
-			synchronized (lock8)
-			{
-				txReads++;
-				txLocalRead++;
-			}
+			txReads.incrementAndGet();
+			txLocalRead.incrementAndGet();
 		}
 	}
 
@@ -292,11 +277,8 @@ public class Profiler
 	{
 		if (ENABLED)
 		{
-			synchronized (lock8)
-			{
-				txReads++;
-				txWsReads++;
-			}
+			txReads.incrementAndGet();
+			txWsReads.incrementAndGet();
 		}
 	}
 
@@ -425,8 +407,7 @@ public class Profiler
 		}
 	}
 
-	private static final Object lock21 = new Object();
-	private static final int REPLICAS = Integer.getInteger("tribu.replicas");
+	private static final int REPLICAS = Integer.getInteger(Defaults._REPLICAS);
 
 	public static void whatNodes(int nodes)
 	{
@@ -434,10 +415,7 @@ public class Profiler
 		{
 			if (nodes == REPLICAS)
 			{
-				synchronized (lock21)
-				{
-					totalCommit++;
-				}
+				totalCommit.incrementAndGet();
 			}
 		}
 	}
@@ -480,29 +458,19 @@ public class Profiler
 		}
 	}
 
-	private static final Object lock23 = new Object();
-
 	public static void onCacheTry()
 	{
 		if (ENABLED)
 		{
-			synchronized (lock23)
-			{
-				cacheTry++;
-			}
+			cacheTry.incrementAndGet();
 		}
 	}
-
-	private static final Object lock24 = new Object();
 
 	public static void onCacheHit()
 	{
 		if (ENABLED)
 		{
-			synchronized (lock24)
-			{
-				cacheHit++;
-			}
+			cacheHit.incrementAndGet();
 		}
 	}
 
@@ -528,55 +496,35 @@ public class Profiler
 		}
 	}
 
-	private static final Object lock26 = new Object();
-
 	public static void remoteReadOk()
 	{
 		if (ENABLED)
 		{
-			synchronized (lock26)
-			{
-				remoteReadOk++;
-			}
+			remoteReadOk.incrementAndGet();
 		}
 	}
-
-	private static final Object lock27 = new Object();
 
 	public static void onCacheNoKey()
 	{
 		if (ENABLED)
 		{
-			synchronized (lock27)
-			{
-				cacheNoKey++;
-			}
+			cacheNoKey.incrementAndGet();
 		}
 	}
-
-	private static final Object lock28 = new Object();
 
 	public static void onCacheNoVisibleVersion()
 	{
 		if (ENABLED)
 		{
-			synchronized (lock28)
-			{
-				cacheNoVisibleVersion++;
-			}
+			cacheNoVisibleVersion.incrementAndGet();
 		}
 	}
-
-	private static final Object lock29 = new Object();
 
 	public static void onCacheNoValidVersion()
 	{
 		if (ENABLED)
 		{
-			synchronized (lock29)
-			{
-				cacheNoValidVersion++;
-			}
+			cacheNoValidVersion.incrementAndGet();
 		}
 	}
 
@@ -593,9 +541,9 @@ public class Profiler
 		stats.append("=== Throughput\n");
 
 		stats.append("  Committed = " + txCommitted + "\n");
-		str = formatter.format((txAborted * 100.0) / txCommitted);
+		str = formatter.format((txAborted.get() * 100.0) / txCommitted.get());
 		stats.append("  Aborted   = " + txAborted + " (" + str + ")\n");
-		str = formatter.format((txTimeout * 100.0) / txCommitted);
+		str = formatter.format((txTimeout.get() * 100.0) / txCommitted.get());
 		stats.append("  Timetout  = " + txTimeout + " (" + str + ")\n");
 
 		stats.append("=== Transactions\n");
@@ -618,7 +566,7 @@ public class Profiler
 
 		stats.append("  Distributed Commit\n");
 		stats.append("    Total = " + distCommitIt + "\n");
-		str = formatter.format((totalCommit * 100.0) / distCommitIt);
+		str = formatter.format((totalCommit.get() * 100.0) / distCommitIt);
 		stats.append("    Full  = " + totalCommit + " (" + str + ")\n");
 
 		str = formatter.format(confirmationAvg / 1000000.0);
@@ -628,14 +576,15 @@ public class Profiler
 		str = formatter.format(confirmationMin / 1000000.0);
 		stats.append("    min = " + str + " ms\n");
 
-		boolean correct = (txReads == (txWsReads + txRemoteRead + txLocalRead));
+		boolean correct = (txReads.get() == (txWsReads.get()
+				+ txRemoteRead.get() + txLocalRead.get()));
 		stats.append("  Reads " + txReads + " (" + correct + ")\n");
 
-		str = formatter.format((txLocalRead * 100.0) / txReads);
+		str = formatter.format((txLocalRead.get() * 100.0) / txReads.get());
 		stats.append("    Local  = " + txLocalRead + " (" + str + ")\n");
-		str = formatter.format((txWsReads * 100.0) / txReads);
+		str = formatter.format((txWsReads.get() * 100.0) / txReads.get());
 		stats.append("    WS     = " + txWsReads + " (" + str + ")\n");
-		str = formatter.format((txRemoteRead * 100.0) / txReads);
+		str = formatter.format((txRemoteRead.get() * 100.0) / txReads.get());
 		stats.append("    Remote = " + txRemoteRead + " (" + str + ")\n");
 
 		stats.append("    --Local Reads\n");
@@ -654,7 +603,7 @@ public class Profiler
 		str = formatter.format(txRReadMin / 1000000.0);
 		stats.append("      min = " + str + " ms\n");
 
-		str = formatter.format((cacheHit * 100.0) / cacheTry);
+		str = formatter.format((cacheHit.get() * 100.0) / cacheTry.get());
 		stats.append("    --Cache Hits " + cacheHit + "/" + cacheTry + " ("
 				+ str + ")\n");
 		stats.append("      no key = " + cacheNoKey + "\n");
@@ -697,7 +646,7 @@ public class Profiler
 		stats.append("    max = " + msgRecvSizeMax + " bytes\n");
 		stats.append("    min = " + msgRecvSizeMin + " bytes\n");
 
-		str = formatter.format((remoteReadOk * 100.0) / remoteReadMsgIt);
+		str = formatter.format((remoteReadOk.get() * 100.0) / remoteReadMsgIt);
 		stats.append("  Remote Read Msgs Recv = " + remoteReadOk + "/"
 				+ remoteReadMsgIt + " (" + str + ")\n");
 		stats.append("    avg = " + remoteReadMsgSizeAvg + " bytes\n");

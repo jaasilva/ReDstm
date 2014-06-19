@@ -1,7 +1,7 @@
 package org.deuce;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.RetentionPolicy;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.CLASS;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -12,8 +12,8 @@ import java.lang.annotation.Target;
  * @author Guy Korland
  * @since 2.0
  */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.CLASS)
+@Target(METHOD)
+@Retention(CLASS)
 public @interface Irrevocable
 {
 }

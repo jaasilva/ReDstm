@@ -21,53 +21,54 @@ public abstract class Partitioner implements GroupPartitioner
 
 	public Partitioner()
 	{
-		groups = null;
-		localGroup = null;
-		numGroups = 0;
+		this.groups = null;
+		this.localGroup = null;
+		this.numGroups = 0;
 	}
 
 	@Override
 	public void init(int numGroups)
 	{
-		groups = new ArrayList<Group>(numGroups);
-		localGroup = null;
+		this.groups = new ArrayList<Group>(numGroups);
+		this.localGroup = null;
 		this.numGroups = numGroups;
 
 		for (int i = 0; i < numGroups; i++)
 		{
-			groups.add(new PartialReplicationGroup(i));
+			this.groups.add(new PartialReplicationGroup(i));
 		}
 	}
 
 	@Override
 	public List<Group> getGroups()
 	{
-		return groups;
+		return this.groups;
 	}
 
 	@Override
 	public Group getGroup(int id)
 	{
-		return groups.get(id);
+		return this.groups.get(id);
 	}
 
 	@Override
 	public Group getLocalGroup()
 	{
-		return localGroup;
+		return this.localGroup;
 	}
 
 	public void setLocalGroup(Group group)
 	{
-		localGroup = group;
+		this.localGroup = group;
 	}
 
 	@Override
 	public int getNumGroups()
 	{
-		return numGroups;
+		return this.numGroups;
 	}
 
+	@Override
 	public abstract void partitionGroups(Collection<Address> members);
 
 	@Override

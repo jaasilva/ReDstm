@@ -15,7 +15,6 @@ import org.deuce.objectweb.asm.Opcodes;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.objectweb.asm.commons.AnalyzerAdapter;
 import org.deuce.objectweb.asm.commons.Method;
-import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
@@ -53,7 +52,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 	protected final String className;
 	protected final String superName;
 
-	// ################################# @Bootstrap @Partial
+	// #################################################### @Bootstrap @Partial
 	protected final Map<String, Integer> field2OID;
 	protected final Set<String> partialRepFields;
 	protected boolean partial;
@@ -311,14 +310,15 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 	protected void initField(Field field)
 	{
 		if (partial)
-		{
+		{ // XXX pedreiro style (SCORe)
 			// stack: ... =>
 			mv.visitVarInsn(Opcodes.ALOAD, 0);
 			// stack: ..., Object (this) =>
 			mv.visitFieldInsn(Opcodes.GETFIELD, fieldsHolderName, field
 					.getFieldNameAddress(), field.getType().getDescriptor());
 			// stack: ..., TxField =>
-			mv.visitTypeInsn(Opcodes.CHECKCAST, VBoxField.NAME);
+			mv.visitTypeInsn(Opcodes.CHECKCAST,
+					org.deuce.transaction.score.field.VBoxField.NAME);
 			// stack: ..., VBoxField =>
 			switch (field.getOriginalType().getSort())
 			{
@@ -354,9 +354,11 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 				break;
 			}
 			// stack: ..., VBoxField, Type =>
-			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, VBoxField.NAME,
-					VBoxField.SET_TYPE_METHOD_NAME,
-					VBoxField.SET_TYPE_METHOD_DESC);
+			mv.visitMethodInsn(
+					Opcodes.INVOKEVIRTUAL,
+					org.deuce.transaction.score.field.VBoxField.NAME,
+					org.deuce.transaction.score.field.VBoxField.SET_TYPE_METHOD_NAME,
+					org.deuce.transaction.score.field.VBoxField.SET_TYPE_METHOD_DESC);
 			// stack: ... =>
 		}
 
@@ -364,7 +366,7 @@ public class ConstructorMethodTransformer extends AnalyzerAdapter
 				Defaults.CTX_CLASS);
 		if (className.equals(org.deuce.transaction.mvstm.Context.class
 				.getName()))
-		{ // XXX pedreiro style
+		{ // XXX pedreiro style (MVSTM)
 			// stack: ... =>
 			mv.visitVarInsn(Opcodes.ALOAD, 0);
 			// stack: ..., Object (this) =>

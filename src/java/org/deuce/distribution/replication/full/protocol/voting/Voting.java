@@ -26,7 +26,6 @@ public class Voting extends FullReplicationProtocol implements
 		DeliverySubscriber
 {
 	public static final Logger LOGGER = Logger.getLogger(Voting.class);
-
 	private final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 	private final List<PendingTx> pendingTxs = new LinkedList<PendingTx>();
 	private final List<PendingResult> pendingResults = new LinkedList<PendingResult>();
@@ -41,66 +40,71 @@ public class Voting extends FullReplicationProtocol implements
 	public void onDelivery(Object obj, Address src, int payloadSize)
 	{
 		Profiler.newMsgRecv(payloadSize);
-
 		if (obj instanceof DistributedContextState)
 		{ // WS message
-			DistributedContextState ctxState = (DistributedContextState) obj;
-			PendingTx tx = new PendingTx(src, ctxState);
-
-			if (src.isLocal())
-			{ // local context
-				Profiler.onLastVoteReceived(ctxState.ctxID);
-			}
-
-			// Check for existing result
-			PendingResult pendingResult = null;
-			boolean exists = false;
-			for (PendingResult res : pendingResults)
-			{
-				if (res.src.equals(src) && res.msg.ctxID == ctxState.ctxID)
-				{
-					exists = true;
-					pendingResult = res;
-					break;
-				}
-			}
-
-			if (exists)
-			{ // If it exists, set the tx state
-				tx.result = pendingResult.msg.result ? PendingTx.COMMITTED
-						: PendingTx.ABORTED;
-				pendingResults.remove(pendingResult);
-			}
-			pendingTxs.add(tx);
+			prepareMessage((DistributedContextState) obj, src, payloadSize);
 		}
 		else if (obj instanceof ResultMessage)
 		{ // Result message
-			ResultMessage msg = (ResultMessage) obj;
-
-			// Check for existing tx
-			PendingTx pendingTx = null;
-			boolean exists = false;
-			for (PendingTx tx : pendingTxs)
-			{
-				if (tx.src.equals(src) && tx.ctxState.ctxID == msg.ctxID)
-				{
-					exists = true;
-					pendingTx = tx;
-					break;
-				}
-			}
-			// If it exists, set the tx state
-			if (exists)
-			{
-				pendingTx.result = msg.result ? PendingTx.COMMITTED
-						: PendingTx.ABORTED;
-			}
-			else
-			{
-				pendingResults.add(new PendingResult(src, msg));
-			}
+			resultMessage((ResultMessage) obj, src, payloadSize);
 		}
 		processTx();
+	}
+
+	private void prepareMessage(DistributedContextState ctxState, Address src,
+			int payloadSize)
+	{
+		PendingTx tx = new PendingTx(src, ctxState);
+
+		if (src.isLocal())
+		{ // local context
+			Profiler.onLastVoteReceived(ctxState.ctxID);
+		}
+
+		PendingResult pendingResult = null;
+		boolean exists = false;
+		for (PendingResult res : pendingResults)
+		{ // Check for existing result
+			if (res.src.equals(src) && res.msg.ctxID == ctxState.ctxID)
+			{
+				exists = true;
+				pendingResult = res;
+				break;
+			}
+		}
+
+		if (exists)
+		{ // If it exists, set the tx state
+			tx.result = pendingResult.msg.result ? PendingTx.COMMITTED
+					: PendingTx.ABORTED;
+			pendingResults.remove(pendingResult);
+		}
+		pendingTxs.add(tx);
+	}
+
+	private void resultMessage(ResultMessage msg, Address src, int payloadSize)
+	{
+		PendingTx pendingTx = null;
+		boolean exists = false;
+		for (PendingTx tx : pendingTxs)
+		{ // Check for existing tx
+			if (tx.src.equals(src) && tx.ctxState.ctxID == msg.ctxID)
+			{
+				exists = true;
+				pendingTx = tx;
+				break;
+			}
+		}
+
+		if (exists)
+		{ // If it exists, set the tx state
+			pendingTx.result = msg.result ? PendingTx.COMMITTED
+					: PendingTx.ABORTED;
+		}
+		else
+		{
+			pendingResults.add(new PendingResult(src, msg));
+		}
 	}
 
 	private void processTx()
@@ -117,10 +121,9 @@ public class Voting extends FullReplicationProtocol implements
 				return;
 
 			DistributedContext ctx = null;
-			// If tx's result has been received, apply it
-			// If not, and tx is local, validate and bcast result
+
 			if (tx.result > PendingTx.VALIDATED)
-			{ // Result already known
+			{ // If tx's result has been received, apply it
 				pendingTxs.remove(0);
 
 				if (tx.src.isLocal())
@@ -137,21 +140,19 @@ public class Voting extends FullReplicationProtocol implements
 				{
 					ctx.applyWriteSet();
 					ctx.processed(true);
-
 					LOGGER.debug(tx.src + ":" + tx.ctxState.ctxID + ":"
 							+ tx.ctxState.atomicBlockId + " committed.");
 				}
 				else
 				{
 					ctx.processed(false);
-
 					LOGGER.debug(tx.src + ":" + tx.ctxState.ctxID + ":"
 							+ tx.ctxState.atomicBlockId + " aborted.");
 				}
 				keepProcessing = true;
 			}
 			else if (tx.src.isLocal() && tx.result == PendingTx.WAITING)
-			{ // Validate tx
+			{ // If not, and tx is local, validate and bcast result
 				ctx = ctxs.get(tx.ctxState.ctxID);
 				boolean valid = ctx.validate();
 				tx.result = PendingTx.VALIDATED;

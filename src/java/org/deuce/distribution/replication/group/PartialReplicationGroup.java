@@ -14,7 +14,7 @@ import org.deuce.transform.ExcludeTM;
 public class PartialReplicationGroup implements Group
 {
 	private static final long serialVersionUID = 1L;
-	private Collection<Address> addrs; // CHECKME group
+	private Collection<Address> addrs;
 	private int id;
 
 	public PartialReplicationGroup()
@@ -36,7 +36,7 @@ public class PartialReplicationGroup implements Group
 	}
 
 	@Override
-	public Collection<Address> getAll()
+	public Collection<Address> getMembers()
 	{
 		return this.addrs;
 	}
@@ -81,7 +81,7 @@ public class PartialReplicationGroup implements Group
 	public Group union(Group other)
 	{
 		HashSet<Address> union = new HashSet<Address>(this.addrs);
-		union.addAll(other.getAll());
+		union.addAll(other.getMembers());
 		return new PartialReplicationGroup(union);
 	}
 

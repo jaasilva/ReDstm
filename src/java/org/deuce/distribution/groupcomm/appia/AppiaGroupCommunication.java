@@ -53,7 +53,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 		config = new AppiaGroup();
 		config.setGroupName(System.getProperty(Defaults._COMM_GROUP,
 				Defaults.COMM_GROUP));
-		config.setConfigFileName(Defaults.APPIA_CONFIG_FILE);
+		config.setConfigFileName(Defaults.APPIA_CONF_FILE);
 		try
 		{
 			protocol = new AppiaProtocolFactory().createProtocol();
@@ -259,7 +259,7 @@ public class AppiaGroupCommunication extends GroupCommunication implements
 			msg = dataSession.createMessage();
 			msg.setPayload(payload);
 
-			for (Address a : group.getAll())
+			for (Address a : group.getMembers())
 			{ // assumes group has no duplicate addresses
 				dataSession.send(msg, sendURBService, null,
 						(SocketAddress) a.getSpecificAddress(),

@@ -1,17 +1,10 @@
 package org.deuce.distribution;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import org.deuce.distribution.serialization.GCPayloadException;
+import org.deuce.distribution.serialization.JavaSerializer;
+import org.deuce.distribution.serialization.Serializer;
 import org.deuce.objectweb.asm.Type;
 import org.deuce.profiling.Profiler;
 import org.deuce.transform.ExcludeTM;
@@ -33,6 +26,9 @@ public abstract class ObjectSerializer
 	final static public boolean COMPRESS = Boolean.parseBoolean(System
 			.getProperty(Defaults._SER_COMPRESS, Defaults.SER_COMPRESS));
 
+	// TODO put this generic. system property
+	public static final Serializer SER = new JavaSerializer();
+
 	/**
 	 * Serializes the object given by parameter into an array of bytes.
 	 * 
@@ -42,40 +38,7 @@ public abstract class ObjectSerializer
 	public static byte[] object2ByteArray(Object obj)
 	{
 		long serStart = System.nanoTime();
-		byte[] payload = null;
-		try
-		{
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			BufferedOutputStream bos = null;
-			GZIPOutputStream gzos = null;
-			ObjectOutputStream oos;
-			if (COMPRESS)
-			{
-				gzos = new GZIPOutputStream(baos);
-				bos = new BufferedOutputStream(gzos);
-				oos = new ObjectOutputStream(bos);
-			}
-			else
-			{
-				oos = new ObjectOutputStream(baos);
-			}
-			oos.writeObject(obj);
-			oos.flush();
-			oos.close();
-			if (COMPRESS)
-			{
-				bos.close();
-				gzos.close();
-			}
-			baos.close();
-			payload = baos.toByteArray();
-		}
-		catch (Exception e)
-		{
-			System.err.println("Could not serialize object.");
-			e.printStackTrace();
-			System.exit(-1);
-		}
+		byte[] payload = SER.object2ByteArray(obj);
 		long serEnd = System.nanoTime();
 		Profiler.onSerializationFinish(serEnd - serStart);
 		return payload;
@@ -92,56 +55,7 @@ public abstract class ObjectSerializer
 	public static Object byteArray2Object(byte[] array)
 			throws GCPayloadException
 	{
-		Object obj = null;
-		try
-		{
-			ByteArrayInputStream bais = new ByteArrayInputStream(array);
-			BufferedInputStream bis = null;
-			GZIPInputStream gzis = null;
-			ObjectInputStream ois = null;
-			if (COMPRESS)
-			{
-				gzis = new GZIPInputStream(bais);
-				bis = new BufferedInputStream(gzis);
-				ois = new ObjectInputStream(bis);
-			}
-			else
-			{
-				ois = new ObjectInputStream(bais);
-			}
-			try
-			{
-				obj = ois.readObject();
-			}
-			catch (NullPointerException e)
-			{
-				e.printStackTrace();
-				throw new GCPayloadException();
-			}
-			catch (ClassNotFoundException e)
-			{
-				System.err.println("Could not deserialize object.");
-				e.printStackTrace();
-				System.exit(-1);
-			}
-			finally
-			{
-				ois.close();
-				if (COMPRESS)
-				{
-					bis.close();
-					gzis.close();
-				}
-				bais.close();
-			}
-		}
-		catch (IOException e)
-		{
-			System.err.println("Could not deserialize object.");
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		return obj;
+		return SER.byteArray2Object(array);
 	}
 
 	public static final String WRITE_METHOD_NAME = "writeReplaceHook";
@@ -173,11 +87,4 @@ public abstract class ObjectSerializer
 	 */
 	public abstract Object readResolveHook(UniqueObject obj)
 			throws ObjectStreamException;
-
-	/**
-	 * Creates an empty metadata object.
-	 * 
-	 * @return a new metadata object.
-	 */
-	public abstract ObjectMetadata createMetadata();
 }

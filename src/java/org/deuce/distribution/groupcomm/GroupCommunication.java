@@ -12,9 +12,7 @@ import org.deuce.transform.ExcludeTM;
 public abstract class GroupCommunication
 {
 	protected DeliverySubscriber subscriber = null;
-
 	private final CountDownLatch waitForMembers = new CountDownLatch(1);
-
 	protected Address myAddress;
 
 	public GroupCommunication()
@@ -29,7 +27,6 @@ public abstract class GroupCommunication
 		{
 			e.printStackTrace();
 		}
-
 		// defines node rank based in gcs' members list
 		System.setProperty(Defaults._SITE,
 				"" + (getMembers().indexOf(getLocalAddress()) + 1));

@@ -230,14 +230,14 @@ public class SCORe extends PartialReplicationProtocol implements
 		ReadDone read = doReadRemote(newReadSid, msg.metadata);
 		ReadRet ret = new ReadRet(msg.ctxID, msg.msgVersion, read);
 
-		serializationReadCtx.set(true); // enter read context
+		isRead.set(true); // enter read context
 		byte[] payload = ObjectSerializer.object2ByteArray(ret);
-		serializationReadCtx.set(false); // exit read context
+		isRead.set(false); // exit read context
 
 		Profiler.newMsgSent(payload.length);
-		serializationReadCtx.set(true); // enter read context
+		isRead.set(true); // enter read context
 		TribuDSTM.sendReliably(payload, src);
-		serializationReadCtx.set(false); // exit read context
+		isRead.set(false); // exit read context
 		updateNodeTimestamps(msg.readSid);
 
 		LOGGER.debug("READ REQ (" + src + ") "

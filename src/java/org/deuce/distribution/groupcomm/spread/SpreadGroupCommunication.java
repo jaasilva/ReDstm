@@ -179,7 +179,7 @@ public class SpreadGroupCommunication extends GroupCommunication implements
 	{
 		SpreadMessage message = new SpreadMessage();
 		message.setData(payload);
-		for (Address addr : group.getAll())
+		for (Address addr : group.getMembers())
 		{
 			message.addGroup((String) addr.getSpecificAddress());
 		}

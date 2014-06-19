@@ -255,19 +255,19 @@ public class Context extends DistributedContext
 		else if (txFieldMetadata.isPublished() && !objMetadata.isPublished())
 		{ // published(f) && ~published(o)
 			Group objPGroup = objMetadata.getPartialGroup();
-			objGroup.set(txFieldPGroup.getAll());
-			objPGroup.set(txFieldPGroup.getAll());
+			objGroup.set(txFieldPGroup.getMembers());
+			objPGroup.set(txFieldPGroup.getMembers());
 		}
 		else if (!txFieldMetadata.isPublished() && objMetadata.isPublished())
 		{ // ~published(f) && published(o)
-			txFieldPGroup.set(objGroup.getAll());
+			txFieldPGroup.set(objGroup.getMembers());
 		}
 		else
 		{ // ~published(f) && ~published(o)
 			// txFieldPGroup.set(objGroup.getAll());
 			Group objPGroup = objMetadata.getPartialGroup();
-			objGroup.set(txFieldPGroup.getAll());
-			objPGroup.set(txFieldPGroup.getAll());
+			objGroup.set(txFieldPGroup.getMembers());
+			objPGroup.set(txFieldPGroup.getMembers());
 		}
 	}
 

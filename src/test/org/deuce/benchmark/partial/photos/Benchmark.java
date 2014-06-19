@@ -93,7 +93,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 		if (TribuDSTM.PARTIAL)
 		{
 			group = TribuDSTM.getLocalGroup();
-			master = group.getAll().iterator().next();
+			master = group.getMembers().iterator().next();
 			numGroups = TribuDSTM.getNumGroups();
 
 			// System.out.println(">>> Local addr: " + id);

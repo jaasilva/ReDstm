@@ -35,7 +35,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	{
 		try
 		{
-			channel = new JChannel(Defaults.JGROUPS_CONFIG_FILE);
+			channel = new JChannel(Defaults.JGROUPS_CONF_FILE);
 			channel.setReceiver(this);
 			channel.connect(System.getProperty(Defaults._COMM_GROUP,
 					Defaults.COMM_GROUP));
@@ -79,7 +79,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		msg.setBuffer(payload);
 		msg.setFlag(Message.Flag.NO_TOTAL_ORDER);
 
-		if (PartialReplicationProtocol.serializationReadCtx.get())
+		if (PartialReplicationProtocol.isRead.get())
 		{/*
 		 * *OPTIMIZATION* If in a read context, the message can be passed
 		 * out-of-band safely and avoid the protocol stack overhead.
@@ -154,7 +154,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 	public void sendTotalOrdered(byte[] payload, Group group)
 	{
 		AnycastAddress addr = new AnycastAddress();
-		for (Address a : group.getAll())
+		for (Address a : group.getMembers())
 		{ // assumes group has no duplicate addresses
 			addr.add((org.jgroups.Address) a.getSpecificAddress());
 		}
@@ -183,7 +183,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 			final Message msg = new Message(
 					(org.jgroups.Address) addr.getSpecificAddress(), payload);
 
-			if (PartialReplicationProtocol.serializationReadCtx.get())
+			if (PartialReplicationProtocol.isRead.get())
 			{/*
 			 * *OPTIMIZATION* If in a read context, the message can be passed
 			 * out-of-band safely and avoid the protocol stack overhead.
@@ -210,7 +210,7 @@ public class JGroupsGroupCommunication extends GroupCommunication implements
 		}
 		else
 		{
-			for (Address a : group.getAll())
+			for (Address a : group.getMembers())
 			{ // assumes group has no duplicate addresses
 				try
 				{

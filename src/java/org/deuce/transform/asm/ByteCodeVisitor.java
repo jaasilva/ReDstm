@@ -14,7 +14,6 @@ import org.deuce.objectweb.asm.commons.JSRInlinerAdapter;
  */
 public class ByteCodeVisitor extends ClassAdapter
 {
-
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String desc,
 			String signature, String[] exceptions)

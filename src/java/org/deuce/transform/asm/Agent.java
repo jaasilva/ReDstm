@@ -18,12 +18,13 @@ import java.util.jar.JarOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.deuce.distribution.Defaults;
 import org.deuce.reflection.UnsafeHolder;
 import org.deuce.transaction.ContextDelegator;
 import org.deuce.transform.ExcludeTM;
 
 /**
- * A java agent to dynamically instrument transactional supported classes/
+ * A java agent to dynamically instrument transactional supported classes
  * 
  * @author Guy Korland
  * @since 1.0
@@ -31,13 +32,15 @@ import org.deuce.transform.ExcludeTM;
 @ExcludeTM
 public class Agent implements ClassFileTransformer
 {
-	private static final Logger logger = Logger.getLogger("org.deuce.agent");
-	final private static boolean VERBOSE = Boolean
-			.getBoolean("org.deuce.verbose");
+	private static final Logger logger = Logger
+			.getLogger(Defaults._AGENT_LOGGER);
+	final private static boolean VERBOSE = Boolean.parseBoolean(System
+			.getProperty(Defaults._AGENT_VERBOSE, Defaults.AGENT_VERBOSE));
 	final private static boolean GLOBAL_TXN = Boolean
-			.getBoolean("org.deuce.transaction.global");
-	final public static boolean USE_TXFIELD_POOL = Boolean
-			.getBoolean("org.tribu.pool");
+			.parseBoolean(System.getProperty(Defaults._AGENT_GLOBAL_TXN,
+					Defaults.AGENT_GLOBAL_TXN));
+	final public static boolean USE_TXFIELD_POOL = Boolean.parseBoolean(System
+			.getProperty(Defaults._AGENT_POOL, Defaults.AGENT_POOL));
 
 	/*
 	 * @see

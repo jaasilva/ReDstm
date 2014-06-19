@@ -9,6 +9,7 @@ import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.groupcomm.Address;
 import org.deuce.distribution.groupcomm.subscriber.DeliverySubscriber;
 import org.deuce.distribution.replication.full.FullReplicationProtocol;
+import org.deuce.distribution.replication.group.Group;
 import org.deuce.distribution.replication.group.PartialReplicationGroup;
 import org.deuce.profiling.Profiler;
 import org.deuce.transaction.ContextDelegator;
@@ -22,8 +23,8 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 		DeliverySubscriber
 {
 	private static final Logger LOGGER = Logger.getLogger(NonVotingTOA.class);
-
 	private final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
+	private Group all = new PartialReplicationGroup(TribuDSTM.ALL);
 
 	@Override
 	public void init()
@@ -53,14 +54,12 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 		{
 			ctx.applyWriteSet();
 			ctx.processed(true);
-
 			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
 					+ ctxState.atomicBlockId + " committed.");
 		}
 		else
 		{
 			ctx.processed(false);
-
 			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
 					+ ctxState.atomicBlockId + " aborted.");
 		}
@@ -78,8 +77,7 @@ public class NonVotingTOA extends FullReplicationProtocol implements
 
 		Profiler.newMsgSent(payload.length);
 		Profiler.onPrepSend(ctx.threadID);
-		TribuDSTM.sendTotalOrdered(payload, new PartialReplicationGroup(
-				TribuDSTM.ALL));
+		TribuDSTM.sendTotalOrdered(payload, all);
 	}
 
 	@Override

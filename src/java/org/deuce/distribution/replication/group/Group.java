@@ -26,7 +26,7 @@ public interface Group extends Serializable
 	 * 
 	 * @return the group members.
 	 */
-	public Collection<Address> getAll();
+	public Collection<Address> getMembers();
 
 	/**
 	 * Determines if an address is in this group.

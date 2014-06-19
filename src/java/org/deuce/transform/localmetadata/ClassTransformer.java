@@ -155,7 +155,7 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 
 	private String superName;
 
-	// ################################# @Bootstrap @Partial
+	// #################################################### @Bootstrap @Partial
 	public final Map<String, Integer> field2OID = new java.util.HashMap<String, Integer>();
 	public final Set<String> partialRepFields = new java.util.HashSet<String>(
 			50);
@@ -295,9 +295,9 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 					Type.LONG_TYPE.getDescriptor(), -1L);
 		}
 
-		// ################################# @Bootstrap @Partial
-		FieldVisitor bootstrapFv = new AnnotationsFieldVisitor(fv,
-				field2OID, partialRepFields, name);
+		// ################################################ @Bootstrap @Partial
+		FieldVisitor bootstrapFv = new AnnotationsFieldVisitor(fv, field2OID,
+				partialRepFields, name);
 
 		return bootstrapFv;
 	}
@@ -355,6 +355,7 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 					className, access, name, nm.getDescriptor(), desc, null,
 					fieldsHolder);
 
+			// ############################################ @Bootstrap @Partial
 			return new StaticMethodTransformer(mv, null, fields, field2OID,
 					partialRepFields, partial, staticField, className,
 					fieldsHolder.getFieldsHolderName(className));
@@ -377,6 +378,7 @@ public class ClassTransformer extends ByteCodeVisitor implements FieldsHolder
 					copyMethod, className, access, name, nm.getDescriptor(),
 					desc, newMethod, fieldsHolder);
 
+			// ############################################ @Bootstrap @Partial
 			return new ConstructorMethodTransformer(mv, fields, field2OID,
 					partialRepFields, partial, className, superName, access,
 					name, nm.getDescriptor(),

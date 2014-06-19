@@ -12,7 +12,6 @@ import org.deuce.objectweb.asm.MethodAdapter;
 import org.deuce.objectweb.asm.MethodVisitor;
 import org.deuce.objectweb.asm.Opcodes;
 import org.deuce.objectweb.asm.Type;
-import org.deuce.transaction.score.field.VBoxField;
 import org.deuce.transform.ExcludeTM;
 import org.deuce.transform.localmetadata.type.TxField;
 
@@ -30,7 +29,7 @@ public class StaticMethodTransformer extends MethodAdapter
 	protected final String fieldsHolderName;
 	protected final String staticField;
 
-	// ################################# @Bootstrap @Partial
+	// #################################################### @Bootstrap @Partial
 	protected final Map<String, Integer> field2OID;
 	protected final Set<String> partialRepFields;
 	protected boolean partial;
@@ -88,10 +87,8 @@ public class StaticMethodTransformer extends MethodAdapter
 		super.visitMethodInsn(Opcodes.INVOKESTATIC,
 				"org/deuce/reflection/AddressUtil", "getAddress",
 				"(Ljava/lang/reflect/Field;)J");
-
 		super.visitFieldInsn(Opcodes.PUTSTATIC, fieldsHolderName, "__STATIC__"
 				+ field.getFieldNameAddress(), "J");
-
 	}
 
 	protected void addField(Field field)
@@ -149,12 +146,13 @@ public class StaticMethodTransformer extends MethodAdapter
 		Integer oid = field2OID.get(field.getFieldName());
 		boolean partialField = partialRepFields.contains(field.getFieldName());
 		if (partial)
-		{
+		{ // XXX pedreiro style (SCORe)
 			// ##### setType (VBoxField)
 			// stack: ..., TxField =>
 			super.visitInsn(Opcodes.DUP);
 			// stack: ..., TxField, TxField =>
-			super.visitTypeInsn(Opcodes.CHECKCAST, VBoxField.NAME);
+			super.visitTypeInsn(Opcodes.CHECKCAST,
+					org.deuce.transaction.score.field.VBoxField.NAME);
 			// stack: ..., TxField, VBoxField =>
 			switch (field.getOriginalType().getSort())
 			{
@@ -190,9 +188,11 @@ public class StaticMethodTransformer extends MethodAdapter
 				break;
 			}
 			// stack: ..., TxField, VBoxField, Type =>
-			super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, VBoxField.NAME,
-					VBoxField.SET_TYPE_METHOD_NAME,
-					VBoxField.SET_TYPE_METHOD_DESC);
+			super.visitMethodInsn(
+					Opcodes.INVOKEVIRTUAL,
+					org.deuce.transaction.score.field.VBoxField.NAME,
+					org.deuce.transaction.score.field.VBoxField.SET_TYPE_METHOD_NAME,
+					org.deuce.transaction.score.field.VBoxField.SET_TYPE_METHOD_DESC);
 
 			// ##### setMetadata
 			// stack: ..., TxField =>
@@ -272,7 +272,7 @@ public class StaticMethodTransformer extends MethodAdapter
 				Defaults.CTX_CLASS);
 		if (className.equals(org.deuce.transaction.mvstm.Context.class
 				.getName()))
-		{ // XXX pedreiro style
+		{ // XXX pedreiro style (MVSTM)
 			// ##### setType (VBoxField)
 			// stack: ..., TxField =>
 			super.visitInsn(Opcodes.DUP);

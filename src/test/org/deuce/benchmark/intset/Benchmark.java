@@ -51,7 +51,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 				{
 					initial = Integer.parseInt(args[i]);
 					setInitial(initial);
-					System.setProperty(Defaults.RBTREE_INITIAL, "" + initial);
+					System.setProperty(Defaults._RBTREE_INITIAL, "" + initial);
 				}
 				else
 					error = true;
@@ -81,7 +81,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 				if (++i < args.length)
 				{
 					int partial_ops = Integer.parseInt(args[i]);
-					System.setProperty(Defaults.RBTREE_PARTIAL_OPS, ""
+					System.setProperty(Defaults._RBTREE_PARTIAL_OPS, ""
 							+ partial_ops);
 				}
 				else

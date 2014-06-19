@@ -16,8 +16,8 @@ public class Version implements Serializable
 	public static final TransactionException VERSION_UNAVAILABLE_EXCEPTION = new TransactionException(
 			"Fail on retrieveing an older and unexistent version.");
 	public static int MAX_VERSIONS = Integer
-			.getInteger(Defaults._MVSTM_MVCC_MAX_VERSIONS,
-					Defaults.MVSTM_MVCC_MAX_VERSIONS);
+			.getInteger(Defaults._MVSTM_MAX_VERSIONS,
+					Defaults.MVSTM_MAX_VERSIONS);
 
 	public int version;
 	public Version next;

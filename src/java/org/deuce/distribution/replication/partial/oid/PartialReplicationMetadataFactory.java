@@ -41,7 +41,7 @@ public class PartialReplicationMetadataFactory implements
 
 	@Override
 	public PartialReplicationOID generateOID(int oid)
-	{ // id = rand(), group = partialGroup = null
+	{ // id = rand(oid), group = partialGroup = null
 		return new PartialReplicationMetadata(oid);
 	}
 }

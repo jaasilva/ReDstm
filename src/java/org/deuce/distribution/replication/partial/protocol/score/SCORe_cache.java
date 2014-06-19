@@ -186,7 +186,7 @@ public class SCORe_cache extends SCORe
 		msg.groupId = TribuDSTM.getLocalGroup().getId();
 
 		if (Cache.invalidationStrategy == Invalidation.LAZY
-				/*&& TribuDSTM.isGroupMaster()*/)
+		/* && TribuDSTM.isGroupMaster() */)
 		{
 			msg.piggyback = TribuDSTM.cacheGetInvalidationSet();
 		}

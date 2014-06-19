@@ -33,5 +33,5 @@ public interface IContext
 	public abstract void rollback();
 
 	/** Called before entering an irrevocable block */
-	void onIrrevocableAccess();
+	public void onIrrevocableAccess();
 }

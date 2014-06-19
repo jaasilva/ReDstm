@@ -21,7 +21,6 @@ public class NonVoting extends FullReplicationProtocol implements
 		DeliverySubscriber
 {
 	private static final Logger LOGGER = Logger.getLogger(NonVoting.class);
-
 	private final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 
 	@Override
@@ -52,14 +51,12 @@ public class NonVoting extends FullReplicationProtocol implements
 		{
 			ctx.applyWriteSet();
 			ctx.processed(true);
-
 			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
 					+ ctxState.atomicBlockId + " committed.");
 		}
 		else
 		{
 			ctx.processed(false);
-
 			LOGGER.debug(src + ":" + ctxState.ctxID + ":"
 					+ ctxState.atomicBlockId + " aborted.");
 		}

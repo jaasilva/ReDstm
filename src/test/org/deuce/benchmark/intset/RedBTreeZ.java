@@ -123,10 +123,10 @@ public class RedBTreeZ implements IntSet
 	{
 		root = null;
 		rand = new Random();
-		this.initial = Integer.getInteger(Defaults.RBTREE_INITIAL,
-				Defaults._RBTREE_INITIAL);
-		this.partial_ops = Integer.getInteger(Defaults.RBTREE_PARTIAL_OPS,
-				Defaults._RBTREE_PARTIAL_OPS);
+		this.initial = Integer.getInteger(Defaults._RBTREE_INITIAL,
+				Defaults.RBTREE_INITIAL);
+		this.partial_ops = Integer.getInteger(Defaults._RBTREE_PARTIAL_OPS,
+				Defaults.RBTREE_PARTIAL_OPS);
 	}
 
 	/*****************************************
