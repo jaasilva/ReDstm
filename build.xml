@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="TribuDSTM" default="agent" basedir=".">
+<project name="ReDstm" default="agent" basedir=".">
 
 	<property name="source" location="src/java"/>
 	<property name="testsrc" location="src/test"/>
@@ -8,9 +8,7 @@
 	<property name="dist" location="bin"/>
 	
 	<target name="init">
-	    <!-- Create the time stamp -->
 	    <tstamp/>
-	    <!-- Create the build directory structure used by compile -->
 	    <mkdir dir="${build}"/>
 	 </target>
 	
@@ -31,15 +29,6 @@
 		</jar>
 	</target>
 
-	<target name="Tests">
-		<junit>
-			<classpath>
-				<pathelement location="${build.tests}"/>
-				<pathelement path="${build}/deuceAgent.jar"/>
-			</classpath>
-		</junit>
-	</target>
-
 	<target name="test" depends="compile">
 			<javac includeantruntime="false" srcdir="${testsrc}" destdir="${build}" debug="true" >
 				<classpath> 
@@ -58,7 +47,6 @@
 	
 	<target name="compile" depends="init">
 		<javac includeantruntime="false" srcdir="${source}" destdir="${build}" debug="true" >
-			<exclude name="org/deuce/transaction/tl2cm/**/*.java"/>
 			<classpath> 
 				<pathelement location="lib/appia-core-4.1.2.jar" />
 				<pathelement location="lib/appia-groupcomm-4.1.2.jar" />
@@ -78,3 +66,4 @@
 	</target>
 	
 </project>
+

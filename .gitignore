@@ -1,7 +1,4 @@
 *.class
-
-# Package Files #
-#*.jar
 *.war
 *.ear
 /bin
@@ -9,5 +6,4 @@
 *.log
 *.pdf
 /logs
-intset.sh
 *.pid
