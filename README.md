@@ -1,4 +1,32 @@
-PARdstm - Partial Data Replication for Distributed Transactional Memory in Java 
+ReDstm - Java DTM Framework
 ============
 
-It's a Distributed Transactional Memory framework supporting partial data replication for the Java programming language (actually a fork from https://github.com/trxsys/trxsys-tvale).
+(My Msc thesis work)
+
+ReDstm is a Distributed Transactional Memory framework in Java. It supports multiple data distribution models, from full replication to distribution and partial replication.
+
+*Note: This is actually a fork from https://github.com/trxsys/trxsys-tvale.
+
+## Annotations
+
+
+
+### @Atomic
+
+
+
+### @Bootstrap
+
+
+
+### @Partial
+
+
+
+## Compiling
+
+
+
+## Running Benchmarks
+
+
