@@ -1,6 +1,7 @@
 package org.deuce.distribution.replication.partial.protocol.score;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -49,17 +50,25 @@ public class SCORe extends PartialReplicationProtocol implements
 		DeliverySubscriber
 {
 	private static final Logger LOGGER = Logger.getLogger(SCORe.class);
+	private final Comparator<Pair> comp = new Comparator<Pair>()
+	{
+		@Override
+		public int compare(Pair o1, Pair o2)
+		{
+			return o1.sid - o2.sid;
+		}
+	};
 
 	protected final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 
 	// accessed ONLY by bottom threads
-	private final Queue<Pair> pendQ = new PriorityQueue<Pair>(1000);
+	private final Queue<Pair> pendQ = new PriorityQueue<Pair>(1000, comp);
 	// accessed ONLY by bottom threads
-	private final Queue<Pair> stableQ = new PriorityQueue<Pair>(1000);
+	private final Queue<Pair> stableQ = new PriorityQueue<Pair>(1000, comp);
 
 	// accessed ONLY by bottom threads
 	private final Map<String, DistributedContextState> receivedTxns = new HashMap<String, DistributedContextState>(
-			1000); 
+			1000);
 	// accessed ONLY by bottom threads
 	private final Set<String> rejectTxns = new HashSet<String>();
 
@@ -591,7 +600,7 @@ public class SCORe extends PartialReplicationProtocol implements
 	}
 
 	@ExcludeTM
-	class Pair implements Comparable<Pair>
+	class Pair
 	{
 		public String txnId;
 		public int sid;
@@ -613,14 +622,6 @@ public class SCORe extends PartialReplicationProtocol implements
 		public String toString()
 		{
 			return "(" + txnId + "," + sid + ")";
-		}
-
-		@Override
-		public int compareTo(Pair other)
-		{
-			if (other == null)
-				return 1;
-			return this.sid - other.sid;
 		}
 	}
 }
