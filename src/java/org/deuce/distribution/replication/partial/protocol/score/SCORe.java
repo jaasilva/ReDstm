@@ -455,8 +455,7 @@ public class SCORe extends PartialReplicationProtocol implements
 			stableQ.add(new Pair(txnID, finalSid));
 		}
 
-		Pair rem = new Pair(txnID, -1);
-		boolean remove = pendQ.remove(rem);
+		boolean remove = pendQ.remove(new Pair(txnID, -1));
 		advanceCommitId();
 
 		ContextState tx = (ContextState) receivedTxns.get(txnID);

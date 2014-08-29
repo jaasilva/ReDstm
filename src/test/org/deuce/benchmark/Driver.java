@@ -144,12 +144,13 @@ public class Driver
 			bt[i].setPhase(Benchmark.SHUTDOWN_PHASE);
 		}
 
-		System.out.print("Waiting for threads to finish...");
+		System.out.print("Waiting for threads to finish... ");
 		LogManager.getRootLogger().setLevel(Level.ALL); // XXX
 		for (int i = 0; i < t.length; i++)
 		{
 			try
 			{
+				System.out.print(i + " ");
 				t[i].join();
 			}
 			catch (InterruptedException e)
