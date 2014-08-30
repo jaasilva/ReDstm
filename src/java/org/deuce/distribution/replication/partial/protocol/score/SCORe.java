@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,9 +54,9 @@ public class SCORe extends PartialReplicationProtocol implements
 	protected final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 
 	// accessed ONLY by bottom threads
-	private final Queue<Pair> pendQ = new PriorityBlockingQueue<Pair>(1000);
+	private final Queue<Pair> pendQ = new PriorityQueue<Pair>(1000);
 	// accessed ONLY by bottom threads
-	private final Queue<Pair> stableQ = new PriorityBlockingQueue<Pair>(1000);
+	private final Queue<Pair> stableQ = new PriorityQueue<Pair>(1000);
 
 	// accessed ONLY by bottom threads
 	private final Map<String, DistributedContextState> receivedTxns = new HashMap<String, DistributedContextState>(
