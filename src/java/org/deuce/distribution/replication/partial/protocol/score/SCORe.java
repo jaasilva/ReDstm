@@ -619,8 +619,6 @@ public class SCORe extends PartialReplicationProtocol implements
 		@Override
 		public int compareTo(Pair other)
 		{
-			if (other == null)
-				return 1;
 			return this.sid - other.sid;
 		}
 	}
