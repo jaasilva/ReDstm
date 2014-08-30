@@ -457,6 +457,7 @@ public class SCORe extends PartialReplicationProtocol implements
 		}
 
 		boolean remove = pendQ.remove(new Pair(txnID, -1));
+		if (!remove) System.out.println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
 		advanceCommitId();
 
 		ContextState tx = (ContextState) receivedTxns.get(txnID);
