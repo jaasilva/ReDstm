@@ -54,9 +54,9 @@ public class SCORe extends PartialReplicationProtocol implements
 	protected final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 
 	// accessed ONLY by bottom threads
-	private final Queue<Pair> pendQ = new PriorityQueue<Pair>(1000);
+	private final Queue<Pair> pendQ = new PriorityBlockingQueue<Pair>(1000);
 	// accessed ONLY by bottom threads
-	private final Queue<Pair> stableQ = new PriorityQueue<Pair>(1000);
+	private final Queue<Pair> stableQ = new PriorityBlockingQueue<Pair>(1000);
 
 	// accessed ONLY by bottom threads
 	private final Map<String, DistributedContextState> receivedTxns = new HashMap<String, DistributedContextState>(
@@ -619,8 +619,6 @@ public class SCORe extends PartialReplicationProtocol implements
 		@Override
 		public int compareTo(Pair other)
 		{
-			if (other == null)
-				return 1;
 			return this.sid - other.sid;
 		}
 	}
