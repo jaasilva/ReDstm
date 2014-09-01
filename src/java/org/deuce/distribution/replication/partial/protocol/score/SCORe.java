@@ -621,8 +621,8 @@ public class SCORe extends PartialReplicationProtocol implements
 		{
 			if (other == null)
 			{
-				System.out.println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
-				return -1;
+				System.out.println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ " + this.toString());
+				return 0;
 			}
 			return this.sid - other.sid;
 		}
