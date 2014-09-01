@@ -54,13 +54,13 @@ public class SCORe extends PartialReplicationProtocol implements
 	protected final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 
 	// accessed ONLY by bottom threads
-	private final Queue<Pair> pendQ = new PriorityQueue<Pair>(1000);
+	private final Queue<Pair> pendQ = new PriorityQueue<Pair>(10000);
 	// accessed ONLY by bottom threads
-	private final Queue<Pair> stableQ = new PriorityQueue<Pair>(1000);
+	private final Queue<Pair> stableQ = new PriorityQueue<Pair>(10000);
 
 	// accessed ONLY by bottom threads
 	private final Map<String, DistributedContextState> receivedTxns = new HashMap<String, DistributedContextState>(
-			1000);
+			10000);
 	// accessed ONLY by bottom threads
 	private final Set<String> rejectTxns = new HashSet<String>();
 
@@ -457,13 +457,17 @@ public class SCORe extends PartialReplicationProtocol implements
 		}
 
 		boolean remove = true;
-		try {
+		try
+		{
 			remove = pendQ.remove(new Pair(txnID, -1));
-		} catch (NullPointerException e) {
-			System.out.println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ " + result + " " + remove);
+		}
+		catch (NullPointerException e)
+		{
+			System.out.println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ " + result
+					+ " " + remove);
 			throw new NullPointerException();
 		}
-		
+
 		advanceCommitId();
 
 		ContextState tx = (ContextState) receivedTxns.get(txnID);
