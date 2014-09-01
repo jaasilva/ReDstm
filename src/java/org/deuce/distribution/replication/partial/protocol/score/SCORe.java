@@ -456,18 +456,7 @@ public class SCORe extends PartialReplicationProtocol implements
 			stableQ.add(new Pair(txnID, finalSid));
 		}
 
-		boolean remove = true;
-		try
-		{
-			remove = pendQ.remove(new Pair(txnID, -1));
-		}
-		catch (NullPointerException e)
-		{
-			System.out.println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ " + result
-					+ " " + remove);
-			throw new NullPointerException();
-		}
-
+		boolean remove = pendQ.remove(new Pair(txnID, -1));
 		advanceCommitId();
 
 		ContextState tx = (ContextState) receivedTxns.get(txnID);
@@ -630,6 +619,11 @@ public class SCORe extends PartialReplicationProtocol implements
 		@Override
 		public int compareTo(Pair other)
 		{
+			if (other == null)
+			{
+				System.out.println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+				return -1;
+			}
 			return this.sid - other.sid;
 		}
 	}
