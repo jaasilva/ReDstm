@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import org.apache.log4j.Logger;
 import org.deuce.distribution.Defaults;
@@ -53,9 +54,9 @@ public class SCORe extends PartialReplicationProtocol implements
 	protected final Map<Integer, DistributedContext> ctxs = new ConcurrentHashMap<Integer, DistributedContext>();
 
 	// accessed ONLY by bottom threads
-	private final Queue<Pair> pendQ = new PriorityQueue<Pair>(1000);
+	private final Queue<Pair> pendQ = new PriorityBlockingQueue<Pair>(1000);
 	// accessed ONLY by bottom threads
-	private final Queue<Pair> stableQ = new PriorityQueue<Pair>(1000);
+	private final Queue<Pair> stableQ = new PriorityBlockingQueue<Pair>(1000);
 
 	// accessed ONLY by bottom threads
 	private final Map<String, DistributedContextState> receivedTxns = new HashMap<String, DistributedContextState>(
@@ -480,7 +481,7 @@ public class SCORe extends PartialReplicationProtocol implements
 		}
 
 		LOGGER.debug("DEC (" + src + ") " + ctxID + ":_:" + txnID.split("-")[0]
-				+ " " + result + " " + finalSid + "\n" + stableQ.size() + " "
+				+ " " + result + " " + finalSid + " " + stableQ.size() + " "
 				+ pendQ.size());
 	}
 
@@ -624,7 +625,7 @@ public class SCORe extends PartialReplicationProtocol implements
 		@Override
 		public String toString()
 		{
-			return "(" + txnId + "," + sid + ")";
+			return "(" + txnId.split("-")[0] + "," + sid + ")";
 		}
 
 		@Override
