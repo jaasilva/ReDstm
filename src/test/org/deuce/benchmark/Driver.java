@@ -1,7 +1,5 @@
 package org.deuce.benchmark;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
 import org.deuce.Atomic;
 import org.deuce.distribution.TribuDSTM;
 import org.deuce.distribution.replication.Bootstrap;
