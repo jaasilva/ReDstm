@@ -480,7 +480,8 @@ public class SCORe extends PartialReplicationProtocol implements
 		}
 
 		LOGGER.debug("DEC (" + src + ") " + ctxID + ":_:" + txnID.split("-")[0]
-				+ " " + result + " " + finalSid);
+				+ " " + result + " " + finalSid + "\n" + stableQ.size() + " "
+				+ pendQ.size());
 	}
 
 	private synchronized void processTx()
