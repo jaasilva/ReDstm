@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.PriorityBlockingQueue;
 
 import org.apache.log4j.Logger;
 import org.deuce.distribution.Defaults;
@@ -108,7 +107,7 @@ public class SCORe extends PartialReplicationProtocol implements
 		TribuDSTM.sendReliably(payload, resGroup);
 
 		LOGGER.debug("SEND PREP " + sctx.threadID + ":" + sctx.atomicBlockId
-				+ ":" + sctx.txnID.split("-")[0]);
+				+ ":" + sctx.txnID.split("-")[0] + " " + expVotes);
 	}
 
 	@Override
@@ -420,14 +419,14 @@ public class SCORe extends PartialReplicationProtocol implements
 			rejectTxns.add(ctx.txnID);
 		}
 
-		int finalSid = ctx.maxVote;
+		final int finalSid = ctx.maxVote;
 		ctx.sid = finalSid;
 
-		DecideMsg decide = new DecideMsg(ctx.threadID, ctx.txnID, finalSid,
-				outcome);
-		Group group = ctx.getInvolvedNodes();
+		final DecideMsg decide = new DecideMsg(ctx.threadID, ctx.txnID,
+				finalSid, outcome);
+		final Group group = ctx.getInvolvedNodes();
 
-		byte[] payload = ObjectSerializer.object2ByteArray(decide);
+		final byte[] payload = ObjectSerializer.object2ByteArray(decide);
 
 		Profiler.newMsgSent(payload.length);
 		TribuDSTM.sendReliably(payload, group);
@@ -443,16 +442,12 @@ public class SCORe extends PartialReplicationProtocol implements
 		final int finalSid = msg.finalSid;
 		final int ctxID = msg.ctxID;
 
-		LOGGER.debug("DEC (" + src + ") " + ctxID + ":_:" + txnID.split("-")[0]
-				+ " " + msg.finalSid);
-
 		if (result)
 		{ // DECIDE YES
 			synchronized (Context.nextId)
 			{
 				Context.nextId.set(Math.max(Context.nextId.get(), finalSid));
 			}
-
 			stableQ.add(new Pair(txnID, finalSid));
 		}
 
@@ -470,7 +465,6 @@ public class SCORe extends PartialReplicationProtocol implements
 					sctx.recreateContextFromState(tx);
 					sctx.unlock(); // release shared and exclusive locks
 				}
-
 				receivedTxns.remove(txnID);
 			}
 			else
@@ -484,6 +478,9 @@ public class SCORe extends PartialReplicationProtocol implements
 				ctx.processed(false);
 			}
 		}
+
+		LOGGER.debug("DEC (" + src + ") " + ctxID + ":_:" + txnID.split("-")[0]
+				+ " " + result + " " + finalSid);
 	}
 
 	private synchronized void processTx()
