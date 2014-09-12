@@ -232,19 +232,6 @@ public class TribuDSTM
 		LOGGER.warn(SEP);
 		LOGGER.warn("> TribuDSTM closing...");
 
-		// if (CACHE)
-		// {
-		// System.out.println(Cache.a);
-		// System.out.println(Cache.b);
-		// System.out.println(Cache.c);
-		// System.out.println(Cache.d);
-		// System.out.println(Cache.e);
-		// System.out.println(Cache.f);
-		// System.out.println(Cache.g);
-		// System.out.println(Cache.h);
-		// System.out.println(Cache.z);
-		// }
-
 		groupComm.close();
 
 		LOGGER.warn("> TribuDSTM closed!");
@@ -659,7 +646,7 @@ public class TribuDSTM
 	/**
 	 * Creates the invalidation set.
 	 * 
-	 * @return the invalidation message rady to be sent.
+	 * @return the invalidation message ready to be sent.
 	 */
 	public static final iSetMsg cacheGetInvalidationSet()
 	{
