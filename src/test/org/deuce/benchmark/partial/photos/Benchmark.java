@@ -464,7 +464,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 	@Override
 	public boolean validate()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

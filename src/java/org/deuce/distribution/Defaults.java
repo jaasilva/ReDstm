@@ -85,6 +85,8 @@ public class Defaults
 	public static final int RBTREE_PARTIAL_OPS = 0;
 	public static final String _RBTREE_INITIAL = "benchmarks.rbtree.initial";
 	public static final int RBTREE_INITIAL = 32768;
+	public static final String _RBTREE_RR = "benchmarks.rbtree.remote";
+	public static final int RBTREE_RR = 25;
 
 	/********************************************************************
 	 * Java Agent
