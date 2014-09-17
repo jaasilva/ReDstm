@@ -22,22 +22,13 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 	public RedBTree rbt3;
 	@Bootstrap(id = 8083)
 	public RedBTree rbt4;
-	@Bootstrap(id = 8084)
-	public RedBTree rbt5;
-	@Bootstrap(id = 8085)
-	public RedBTree rbt6;
-	@Bootstrap(id = 8086)
-	public RedBTree rbt7;
-	@Bootstrap(id = 8087)
-	public RedBTree rbt8;
-	@Bootstrap(id = 8088)
-	public RedBTree rbt9;
 
 	int m_range = 1 << 16;
 	int m_rate = 10;
 	int m_remote_read = 25;
 	int initial = 32768; // 2^15;
-	RedBTree[] local, remote;
+	RedBTree local;
+	RedBTree[] remote;
 
 	@Atomic
 	private void setRange(int x)
@@ -113,7 +104,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 				if (++i < args.length)
 				{
 					m_remote_read = Integer.parseInt(args[i]);
-					System.setProperty(Defaults._RBTREE_RR, "" + m_remote_read);
 				}
 				else
 					error = true;
@@ -124,13 +114,9 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			}
 		}
 
-		Address id = TribuDSTM.getLocalAddress();
 		boolean isMaster = TribuDSTM.isGroupMaster();
 		int numGroups = TribuDSTM.getNumGroups();
 		Group group = TribuDSTM.getLocalGroup();
-
-		System.out.println(">>> Local addr: " + id);
-		System.out.println(">>> Is Master: " + isMaster);
 
 		if (isMaster)
 		{
@@ -139,7 +125,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 
 			if (error)
 			{
-				System.out.println("LOL WRONG ARGS!!!");
+				System.err.println("LOL WRONG ARGS!!!");
 				System.exit(1);
 			}
 
@@ -151,20 +137,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			{ // 2 Nodes
 				System.out.println("rbt1");
 				initializeSet(rbt1, rand, initial);
-				System.out.println("rbt2");
-				initializeSet(rbt2, rand, initial);
-				System.out.println("rbt3");
-				initializeSet(rbt3, rand, initial);
-				System.out.println("rbt4");
-				initializeSet(rbt4, rand, initial);
-				System.out.println("rbt5");
-				initializeSet(rbt5, rand, initial);
-				System.out.println("rbt6");
-				initializeSet(rbt6, rand, initial);
-				System.out.println("rbt7");
-				initializeSet(rbt7, rand, initial);
-				System.out.println("rbt8");
-				initializeSet(rbt8, rand, initial);
 			}
 			else if (numGroups == 2)
 			{ // 4 Nodes
@@ -172,23 +144,11 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 				{
 					System.out.println("rbt1");
 					initializeSet(rbt1, rand, initial);
-					System.out.println("rbt2");
-					initializeSet(rbt2, rand, initial);
-					System.out.println("rbt3");
-					initializeSet(rbt3, rand, initial);
-					System.out.println("rbt4");
-					initializeSet(rbt4, rand, initial);
 				}
 				else
 				{
-					System.out.println("rbt5");
-					initializeSet(rbt5, rand, initial);
-					System.out.println("rbt6");
-					initializeSet(rbt6, rand, initial);
-					System.out.println("rbt7");
-					initializeSet(rbt7, rand, initial);
-					System.out.println("rbt8");
-					initializeSet(rbt8, rand, initial);
+					System.out.println("rbt2");
+					initializeSet(rbt2, rand, initial);
 				}
 			}
 			else if (numGroups == 3)
@@ -197,28 +157,16 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 				{
 					System.out.println("rbt1");
 					initializeSet(rbt1, rand, initial);
-					System.out.println("rbt2");
-					initializeSet(rbt2, rand, initial);
-					System.out.println("rbt3");
-					initializeSet(rbt3, rand, initial);
 				}
 				else if (group.getId() == 1)
 				{
-					System.out.println("rbt4");
-					initializeSet(rbt4, rand, initial);
-					System.out.println("rbt5");
-					initializeSet(rbt5, rand, initial);
-					System.out.println("rbt6");
-					initializeSet(rbt6, rand, initial);
+					System.out.println("rbt2");
+					initializeSet(rbt2, rand, initial);
 				}
 				else
 				{
-					System.out.println("rbt7");
-					initializeSet(rbt7, rand, initial);
-					System.out.println("rbt8");
-					initializeSet(rbt8, rand, initial);
-					System.out.println("rbt9");
-					initializeSet(rbt9, rand, initial);
+					System.out.println("rbt3");
+					initializeSet(rbt3, rand, initial);
 				}
 			}
 			else if (numGroups == 4)
@@ -227,29 +175,21 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 				{
 					System.out.println("rbt1");
 					initializeSet(rbt1, rand, initial);
-					System.out.println("rbt2");
-					initializeSet(rbt2, rand, initial);
 				}
 				else if (group.getId() == 1)
 				{
-					System.out.println("rbt3");
-					initializeSet(rbt3, rand, initial);
-					System.out.println("rbt4");
-					initializeSet(rbt4, rand, initial);
+					System.out.println("rbt2");
+					initializeSet(rbt2, rand, initial);
 				}
 				else if (group.getId() == 2)
 				{
-					System.out.println("rbt5");
-					initializeSet(rbt5, rand, initial);
-					System.out.println("rbt6");
-					initializeSet(rbt6, rand, initial);
+					System.out.println("rbt3");
+					initializeSet(rbt3, rand, initial);
 				}
 				else
 				{
-					System.out.println("rbt7");
-					initializeSet(rbt7, rand, initial);
-					System.out.println("rbt8");
-					initializeSet(rbt8, rand, initial);
+					System.out.println("rbt4");
+					initializeSet(rbt4, rand, initial);
 				}
 			}
 			long end = System.nanoTime();
@@ -275,159 +215,101 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			}
 		}
 
+		setCollections(numGroups, group.getId());
+	}
+
+	@Atomic
+	private void setCollections(int numGroups, int groupId)
+	{
 		if (numGroups == 1)
 		{
 			m_remote_read = 0;
-			System.setProperty(Defaults._RBTREE_RR, "" + 0);
 
-			local = new RedBTree[8];
-			local[0] = rbt1;
-			local[1] = rbt2;
-			local[2] = rbt3;
-			local[3] = rbt4;
-			local[4] = rbt5;
-			local[5] = rbt6;
-			local[6] = rbt7;
-			local[7] = rbt8;
+			local = rbt1;
 
 			remote = new RedBTree[0];
 		}
 		else if (numGroups == 2)
 		{
-			if (group.getId() == 0)
+			if (groupId == 0)
 			{
-				local = new RedBTree[4];
-				local[0] = rbt1;
-				local[1] = rbt2;
-				local[2] = rbt3;
-				local[3] = rbt4;
+				local = rbt1;
 
-				remote = new RedBTree[4];
-				remote[0] = rbt5;
-				remote[1] = rbt6;
-				remote[2] = rbt7;
-				remote[3] = rbt8;
+				remote = new RedBTree[1];
+				remote[0] = rbt2;
 			}
 			else
 			{
-				local = new RedBTree[4];
-				local[0] = rbt5;
-				local[1] = rbt6;
-				local[2] = rbt7;
-				local[3] = rbt8;
+				local = rbt2;
 
-				remote = new RedBTree[4];
+				remote = new RedBTree[1];
 				remote[0] = rbt1;
-				remote[1] = rbt2;
-				remote[2] = rbt3;
-				remote[3] = rbt4;
 			}
 		}
 		else if (numGroups == 3)
 		{
-			if (group.getId() == 0)
+			if (groupId == 0)
 			{
-				local = new RedBTree[3];
-				local[0] = rbt1;
-				local[1] = rbt2;
-				local[2] = rbt3;
+				local = rbt1;
 
-				remote = new RedBTree[6];
-				remote[0] = rbt4;
-				remote[1] = rbt5;
-				remote[2] = rbt6;
-				remote[3] = rbt7;
-				remote[4] = rbt8;
-				remote[5] = rbt9;
+				remote = new RedBTree[2];
+				remote[0] = rbt2;
+				remote[1] = rbt3;
 			}
-			else if (group.getId() == 1)
+			else if (groupId == 1)
 			{
-				local = new RedBTree[3];
-				local[0] = rbt4;
-				local[1] = rbt5;
-				local[2] = rbt6;
+				local = rbt2;
 
-				remote = new RedBTree[6];
+				remote = new RedBTree[2];
 				remote[0] = rbt1;
-				remote[1] = rbt2;
-				remote[2] = rbt3;
-				remote[3] = rbt7;
-				remote[4] = rbt8;
-				remote[5] = rbt9;
+				remote[1] = rbt3;
 			}
 			else
 			{
-				local = new RedBTree[3];
-				local[0] = rbt7;
-				local[1] = rbt8;
-				local[2] = rbt9;
+				local = rbt3;
 
-				remote = new RedBTree[6];
+				remote = new RedBTree[2];
 				remote[0] = rbt1;
 				remote[1] = rbt2;
-				remote[2] = rbt3;
-				remote[3] = rbt4;
-				remote[4] = rbt5;
-				remote[5] = rbt6;
 			}
 		}
 		else if (numGroups == 4)
 		{
-			if (group.getId() == 0)
+			if (groupId == 0)
 			{
-				local = new RedBTree[2];
-				local[0] = rbt1;
-				local[1] = rbt2;
+				local = rbt1;
 
-				remote = new RedBTree[6];
-				remote[0] = rbt3;
-				remote[1] = rbt4;
-				remote[2] = rbt5;
-				remote[3] = rbt6;
-				remote[4] = rbt7;
-				remote[5] = rbt8;
+				remote = new RedBTree[3];
+				remote[0] = rbt2;
+				remote[1] = rbt3;
+				remote[2] = rbt4;
 			}
-			else if (group.getId() == 1)
+			else if (groupId == 1)
 			{
-				local = new RedBTree[2];
-				local[0] = rbt3;
-				local[1] = rbt4;
+				local = rbt2;
 
-				remote = new RedBTree[6];
+				remote = new RedBTree[3];
+				remote[0] = rbt1;
+				remote[1] = rbt3;
+				remote[2] = rbt4;
+			}
+			else if (groupId == 2)
+			{
+				local = rbt3;
+
+				remote = new RedBTree[3];
 				remote[0] = rbt1;
 				remote[1] = rbt2;
-				remote[2] = rbt5;
-				remote[3] = rbt6;
-				remote[4] = rbt7;
-				remote[5] = rbt8;
+				remote[2] = rbt4;
 			}
-			else if (group.getId() == 2)
+			else if (groupId == 3)
 			{
-				local = new RedBTree[2];
-				local[0] = rbt5;
-				local[1] = rbt6;
+				local = rbt4;
 
-				remote = new RedBTree[6];
+				remote = new RedBTree[3];
 				remote[0] = rbt1;
 				remote[1] = rbt2;
 				remote[2] = rbt3;
-				remote[3] = rbt4;
-				remote[4] = rbt7;
-				remote[5] = rbt8;
-			}
-			else if (group.getId() == 3)
-			{
-				local = new RedBTree[2];
-				local[0] = rbt7;
-				local[1] = rbt8;
-
-				remote = new RedBTree[6];
-				remote[0] = rbt1;
-				remote[1] = rbt2;
-				remote[2] = rbt3;
-				remote[3] = rbt4;
-				remote[4] = rbt5;
-				remote[5] = rbt6;
 			}
 		}
 	}
@@ -463,16 +345,6 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 			rbt3 = new RedBTree();
 		if (rbt4 == null)
 			rbt4 = new RedBTree();
-		if (rbt5 == null)
-			rbt5 = new RedBTree();
-		if (rbt6 == null)
-			rbt6 = new RedBTree();
-		if (rbt7 == null)
-			rbt7 = new RedBTree();
-		if (rbt8 == null)
-			rbt8 = new RedBTree();
-		if (rbt9 == null)
-			rbt9 = new RedBTree();
 
 		return false;
 	}
