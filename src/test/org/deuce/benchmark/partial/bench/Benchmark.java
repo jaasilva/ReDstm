@@ -277,6 +277,7 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 
 		if (numGroups == 1)
 		{
+			m_remote_read = 0;
 			System.setProperty(Defaults._RBTREE_RR, "" + 0);
 
 			local = new RedBTree[8];
