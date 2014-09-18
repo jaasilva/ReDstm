@@ -147,6 +147,20 @@ public class Benchmark implements org.deuce.benchmark.Benchmark
 				m_set = new RedBTreeZ();
 			}
 		}
+		else if (type.equals("RedBTreeZ2"))
+		{ // partial replication benchmark
+			if (m_set == null)
+			{
+				m_set = new RedBTreeZ2();
+			}
+		}
+		else if (type.equals("RedBTreeZ3"))
+		{ // partial replication benchmark
+			if (m_set == null)
+			{
+				m_set = new RedBTreeZ3();
+			}
+		}
 		else if (type.equals("SkipList"))
 		{
 			if (m_set == null)
