@@ -68,7 +68,6 @@ public class RedBTreeZ3 implements IntSet
 		Node p; // parent
 		Node l; // left
 		Node r; // right
-		@Partial
 		int c; // color
 
 		public Node()
