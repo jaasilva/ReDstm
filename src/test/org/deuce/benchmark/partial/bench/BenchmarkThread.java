@@ -2,7 +2,6 @@ package org.deuce.benchmark.partial.bench;
 
 import java.util.Random;
 
-import org.deuce.Atomic;
 import org.deuce.benchmark.partial.photos.Benchmark;
 
 /**
@@ -43,14 +42,14 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 			if (m_write)
 			{ // ######################## ADD
 				m_write = false;
-				addTen();
+				local.add(m_random.nextInt(m_range));
 				if (phase == Benchmark.TEST_PHASE)
 					m_nb_add++;
 			}
 			else
 			{ // ######################## REMOVE
 				m_write = true;
-				removeTen();
+				local.remove(m_random.nextInt(m_range));
 				if (phase == Benchmark.TEST_PHASE)
 					m_nb_remove++;
 			}
@@ -61,45 +60,17 @@ public class BenchmarkThread extends org.deuce.benchmark.BenchmarkThread
 			if (j < m_remote_read)
 			{ // ######################## REMOTE
 				int rbt = m_random.nextInt(remote.length);
-				containsRemoteTen(rbt);
+				remote[rbt].random_lookup();
 				if (phase == Benchmark.TEST_PHASE)
 					m_nb_contains_remote++;
 			}
 			else
 			{ // ######################## LOCAL
-				containsLocalTen();
+				local.contains(m_random.nextInt(m_range));
 				if (phase == Benchmark.TEST_PHASE)
 					m_nb_contains_local++;
 			}
 		}
-	}
-
-	@Atomic
-	private void addTen()
-	{
-		for (int j = 0; j < 10; ++j)
-			local.add(m_random.nextInt(m_range));
-	}
-
-	@Atomic
-	private void removeTen()
-	{
-		for (int j = 0; j < 10; ++j)
-			local.remove(m_random.nextInt(m_range));
-	}
-
-	@Atomic
-	private void containsLocalTen()
-	{
-		for (int j = 0; j < 10; ++j)
-			local.contains(m_random.nextInt(m_range));
-	}
-
-	@Atomic
-	private void containsRemoteTen(int rbt)
-	{
-		for (int j = 0; j < 10; ++j)
-			remote[rbt].random_lookup();
 	}
 
 	public String getStats()
