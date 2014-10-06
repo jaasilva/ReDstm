@@ -10,6 +10,7 @@ import org.deuce.Atomic;
  */
 public class BenchmarkThread2 extends org.deuce.benchmark.BenchmarkThread
 {
+	private static final int TIMES = 5;
 	final private IntSet m_set;
 	final private int m_range;
 	int m_nb_add;
@@ -60,21 +61,21 @@ public class BenchmarkThread2 extends org.deuce.benchmark.BenchmarkThread
 	@Atomic
 	private void addTen()
 	{
-		for (int j = 0; j < 10; ++j)
+		for (int j = 0; j < TIMES; ++j)
 			m_set.add(m_random.nextInt(m_range));
 	}
 
 	@Atomic
 	private void removeTen()
 	{
-		for (int j = 0; j < 10; ++j)
+		for (int j = 0; j < TIMES; ++j)
 			m_set.remove(m_random.nextInt(m_range));
 	}
 
 	@Atomic
 	private void containsTen()
 	{
-		for (int j = 0; j < 10; ++j)
+		for (int j = 0; j < TIMES; ++j)
 			m_set.contains(m_random.nextInt(m_range));
 	}
 
