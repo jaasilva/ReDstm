@@ -64,10 +64,11 @@ _TASKS=4096
 # vacation-low++  -n2 -q90 -u98 -r1048576 -t4194304
 
 _CTX=score.Context
-_PROTO=score.SCORe
+_PROTO=score.SCORe_cache
 _GCS=jgroups.JGroups
 _DPART=RoundRobin
-_CACHE=false
+_CACHE=true
+_CACHE_INV=$6
 
 _STM="org.deuce.transaction.${_CTX}"
 _COMM="org.deuce.distribution.groupcomm.${_GCS}GroupCommunication"
@@ -77,7 +78,7 @@ _DATAPART="org.deuce.distribution.replication.partitioner.data.${_DPART}DataPart
 _GROUPCOMM="${_BENCH}_${_TASK_QUERIES}_${_PERC_QUERIED}_${_PERC_RESERVATION}_${_USER_CONSULT}_${_RELATIONS}_${_TASKS}_${_THREADS}_${_PROTO}_${_CTX}_${_REPLICAS}_${_RUN}"
 
 _SITE=`hostname | cut -c 5-`
-_FNAME="${_BENCH}_n${_TASK_QUERIES}_q${_PERC_QUERIED}_u${_PERC_RESERVATION}_uc${_USER_CONSULT}_r${_RELATIONS}_t${_TASKS}_t${_THREADS}_${_PROTO}_${_CTX}_${_GCS}_id${_SITE}-${_REPLICAS}_run${_RUN}_g${_GROUPS}_${_DPART}"
+_FNAME="${_BENCH}_n${_TASK_QUERIES}_q${_PERC_QUERIED}_u${_PERC_RESERVATION}_uc${_USER_CONSULT}_r${_RELATIONS}_t${_TASKS}_t${_THREADS}_${_PROTO}_${_CTX}_${_GCS}_id${_SITE}-${_REPLICAS}_run${_RUN}_g${_GROUPS}_${_DPART}${_CACHE_INV}"
 
 _LOG=logs/${_FNAME}.res
 
@@ -85,7 +86,7 @@ echo "#####"
 echo "Benchmark: ${_BENCH} -r ${_USER_CONSULT}, run ${_RUN}"
 echo "Threads: ${_THREADS}, replicas: ${_REPLICAS}, groups: ${_GROUPS}"
 echo "Protocol: ${_PROTO}, context: ${_CTX}"
-echo "Comm: ${_GCS}, data partitioner: ${_DPART}"
+echo "Comm: ${_GCS}, data partitioner: ${_DPART}, cache inv.: ${_CACHE_INV}"
 echo "Start: `date +'%F %H:%M:%S'`"
 echo "#####"
 _start2=`date +%s`
