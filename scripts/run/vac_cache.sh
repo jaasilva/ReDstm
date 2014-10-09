@@ -36,7 +36,7 @@ i=0
 
 for _node in node1 node6
 do
-	ssh $_node "cd ./repos/pardstm; ./scripts/run/vacation-par_rep.sh ${_thrs} \
+	ssh $_node "cd ./repos/pardstm; ./scripts/run/vacation-par_rep-cache.sh ${_thrs} \
 	  ${_replicas} ${_run} ${_groups} ${_reads} \
 	  ${_cache} > $_node.out 2>&1" & pids[$i]=$!
 	(( i++ ))
@@ -92,7 +92,7 @@ i=0
 
 for _node in node1 node2 node6 node7
 do
-	ssh $_node "cd ./repos/pardstm; ./scripts/run/vacation-par_rep.sh ${_thrs} \
+	ssh $_node "cd ./repos/pardstm; ./scripts/run/vacation-par_rep-cache.sh ${_thrs} \
 	  ${_replicas} ${_run} ${_groups} ${_reads} \
 	  ${_cache} > $_node.out 2>&1" & pids[$i]=$!
 	(( i++ ))
@@ -148,7 +148,7 @@ i=0
 
 for _node in node1 node2 node3 node6 node7 node8
 do
-	ssh $_node "cd ./repos/pardstm; ./scripts/run/vacation-par_rep.sh ${_thrs} \
+	ssh $_node "cd ./repos/pardstm; ./scripts/run/vacation-par_rep-cache.sh ${_thrs} \
 	  ${_replicas} ${_run} ${_groups} ${_reads} \
 	  ${_cache} > $_node.out 2>&1" & pids[$i]=$!
 	(( i++ ))
@@ -204,7 +204,7 @@ i=0
 
 for _node in node1 node2 node3 node4 node5 node6 node7 node8
 do
-	ssh $_node "cd ./repos/pardstm; ./scripts/run/vacation-par_rep.sh ${_thrs} \
+	ssh $_node "cd ./repos/pardstm; ./scripts/run/vacation-par_rep-cache.sh ${_thrs} \
 	  ${_replicas} ${_run} ${_groups} ${_reads} \
 	  ${_cache} > $_node.out 2>&1" & pids[$i]=$!
 	(( i++ ))

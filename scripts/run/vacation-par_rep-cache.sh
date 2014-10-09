@@ -1,10 +1,10 @@
 #!/bin/bash
 ###############################################################################
-# <threads> <replicas> <run> <groups> <reads>
+# <threads> <replicas> <run> <groups> <reads> <cache>
 ###############################################################################
 
 if [ $1 = "-h" ]; then
-	echo "<threads> <replicas> <run> <groups> <reads>"
+	echo "<threads> <replicas> <run> <groups> <reads> <cache>"
 	exit
 fi
 
@@ -106,6 +106,7 @@ java -Xmx8g -cp $_CP -javaagent:bin/deuceAgent.jar \
 	-Djava.net.preferIPv4Stack=true \
 	-Dlog=${_SITE} \
 	-Dtribu.distributed.partial.cache=$_CACHE \
+	-Dtribu.distributed.partial.cache.invalidation=$_CACHE_INV \
 	jstamp.vacation.Vacation -c $_THREADS -q $_PERC_QUERIED \
 		-u $_PERC_RESERVATION -r $_RELATIONS -t $_REPLICA_TASKS \
 		-n $_TASK_QUERIES -uc $_USER_CONSULT 2>&1 | tee $_LOG
